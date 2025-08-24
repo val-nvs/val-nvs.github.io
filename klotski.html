@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Klotski</title>
+    <style>
+        @font-face {
+            font-family: 'DSEG7Modern';
+            src: url('./DSEG7Modern-BoldItalic.ttf') format('truetype');
+            font-weight: bold;
+            font-style: italic;
+        }
+        
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #2c3e50;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+        
+        .game-container {
+            position: relative;
+            width: 320px;
+            height: 400px;
+            background: #34495e;
+            border: 3px solid #1a252f;
+            border-radius: 10px;
+        }
+        
+        .piece {
+            position: absolute;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            border: 2px solid #1a252f;
+            border-radius: 5px;
+            cursor: grab;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            user-select: none;
+            will-change: transform;
+        }
+        
+        .piece:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        
+        .piece:active {
+            cursor: grabbing;
+        }
+        
+        .piece.dragging {
+            z-index: 1000;
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+        
+        .target {
+            background: linear-gradient(135deg, #e74c3c, #c0392b) !important;
+        }
+        
+        .small {
+            background: linear-gradient(135deg, #f39c12, #e67e22) !important;
+        }
+        
+        .vertical {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad) !important;
+        }
+        
+        .horizontal {
+            background: linear-gradient(135deg, #27ae60, #229954) !important;
+        }
+        
+        .timer {
+            position: absolute;
+            top: -50px;
+            right: 10px;
+            color: #e74c3c;
+            font-family: 'DSEG7Modern', 'Courier New', monospace;
+            font-size: 28px;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(231, 76, 60, 0.5);
+            letter-spacing: 2px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: 2px solid #e74c3c;
+        }
+        
+        .win-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        
+        .win-message {
+            background: linear-gradient(135deg, #f1c40f, #f39c12);
+            color: #2c3e50;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transform: scale(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .win-time {
+            font-family: 'DSEG7Modern', 'Courier New', monospace;
+            color: #e74c3c;
+            font-size: 20px;
+            margin-top: 15px;
+            text-shadow: 0 0 5px rgba(231, 76, 60, 0.3);
+            letter-spacing: 1px;
+        }
+        
+        .win-overlay.show {
+            display: flex;
+        }
+        
+        .win-overlay.show .win-message {
+            transform: scale(1);
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container" id="gameContainer">
+        <div class="timer" id="timer">000</div>
+        <!-- Pieces will be dynamically created -->
+    </div>
+    
+    <div class="win-overlay" id="winOverlay">
+        <div class="win-message">
+            🎉 YOU WIN! 🎉<br>
+            <div style="font-size: 16px; margin-top: 10px;">You solved the Klotski puzzle!</div>
+            <div class="win-time" id="winTime">Time: 000 seconds</div>
+        </div>
+    </div>
+
+    <script>
+        class KlotskiGame {
+            constructor() {
+                this.container = document.getElementById('gameContainer');
+                this.timerDisplay = document.getElementById('timer');
+                this.gridSize = 80; // Each cell is 80px
+                this.pieces = [];
+                this.draggedPiece = null;
+                this.startPos = { x: 0, y: 0 };
+                this.dragOffset = { x: 0, y: 0 };
+                this.isDragging = false;
+                
+                // Timer variables
+                this.startTime = null;
+                this.timerInterval = null;
+                this.currentSeconds = 0;
+                this.gameStarted = false;
+                
+                this.initializePieces();
+                this.setupEventListeners();
+            }
+            
+            isValidMove(piece, fromX, fromY, toX, toY) {
+                // First check if destination is valid
+                if (!this.isValidPosition(piece, toX, toY)) {
+                    return false;
+                }
+                
+                // Check if path is clear (can't jump over pieces)
+                if (fromX === toX) {
+                    // Vertical movement
+                    const startY = Math.min(fromY, toY);
+                    const endY = Math.max(fromY, toY);
+                    
+                    for (let y = startY; y <= endY; y++) {
+                        for (let x = fromX; x < fromX + piece.pieceData.width; x++) {
+                            // Skip checking the piece's original position
+                            if (y >= fromY && y < fromY + piece.pieceData.height && 
+                                x >= fromX && x < fromX + piece.pieceData.width) {
+                                continue;
+                            }
+                            
+                            if (this.isOccupied(x, y, piece)) {
+                                return false;
+                            }
+                        }
+                    }
+                } else if (fromY === toY) {
+                    // Horizontal movement
+                    const startX = Math.min(fromX, toX);
+                    const endX = Math.max(fromX, toX);
+                    
+                    for (let x = startX; x <= endX; x++) {
+                        for (let y = fromY; y < fromY + piece.pieceData.height; y++) {
+                            // Skip checking the piece's original position
+                            if (x >= fromX && x < fromX + piece.pieceData.width && 
+                                y >= fromY && y < fromY + piece.pieceData.height) {
+                                continue;
+                            }
+                            
+                            if (this.isOccupied(x, y, piece)) {
+                                return false;
+                            }
+                        }
+                    }
+                } else {
+                    // Diagonal movement not allowed in Klotski
+                    return false;
+                }
+                
+                return true;
+            }
+            
+            isOccupied(x, y, excludePiece) {
+                for (let piece of this.pieces) {
+                    if (piece === excludePiece) continue;
+                    
+                    const px = piece.pieceData.x;
+                    const py = piece.pieceData.y;
+                    const pw = piece.pieceData.width;
+                    const ph = piece.pieceData.height;
+                    
+                    if (x >= px && x < px + pw && y >= py && y < py + ph) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            
+            initializePieces() {
+                // Classic Klotski setup
+                const pieceConfigs = [
+                    // Target piece (2x2) - the one that needs to reach the bottom
+                    { id: 'target', width: 2, height: 2, x: 1, y: 0, class: 'target', label: '目' },
+                    
+                    // Vertical pieces (1x2)
+                    { id: 'v1', width: 1, height: 2, x: 0, y: 0, class: 'vertical', label: '兵' },
+                    { id: 'v2', width: 1, height: 2, x: 3, y: 0, class: 'vertical', label: '兵' },
+                    { id: 'v3', width: 1, height: 2, x: 0, y: 2, class: 'vertical', label: '兵' },
+                    { id: 'v4', width: 1, height: 2, x: 3, y: 2, class: 'vertical', label: '兵' },
+                    
+                    // Horizontal pieces (2x1)
+                    { id: 'h1', width: 2, height: 1, x: 1, y: 2, class: 'horizontal', label: '将' },
+                    
+                    // Small pieces (1x1)
+                    { id: 's1', width: 1, height: 1, x: 1, y: 3, class: 'small', label: '卒' },
+                    { id: 's2', width: 1, height: 1, x: 2, y: 3, class: 'small', label: '卒' },
+                    { id: 's3', width: 1, height: 1, x: 0, y: 4, class: 'small', label: '卒' },
+                    { id: 's4', width: 1, height: 1, x: 3, y: 4, class: 'small', label: '卒' }
+                ];
+                
+                pieceConfigs.forEach(config => {
+                    this.createPiece(config);
+                });
+            }
+            
+            createPiece(config) {
+                const piece = document.createElement('div');
+                piece.className = `piece ${config.class}`;
+                piece.id = config.id;
+                piece.textContent = config.label;
+                
+                const width = config.width * this.gridSize;
+                const height = config.height * this.gridSize;
+                
+                piece.style.width = width + 'px';
+                piece.style.height = height + 'px';
+                piece.style.left = (config.x * this.gridSize) + 'px';
+                piece.style.top = (config.y * this.gridSize) + 'px';
+                
+                piece.pieceData = {
+                    width: config.width,
+                    height: config.height,
+                    x: config.x,
+                    y: config.y
+                };
+                
+                this.container.appendChild(piece);
+                this.pieces.push(piece);
+            }
+            
+            setupEventListeners() {
+                this.pieces.forEach(piece => {
+                    piece.addEventListener('mousedown', (e) => this.startDrag(e, piece));
+                    piece.addEventListener('touchstart', (e) => this.startDrag(e, piece));
+                });
+                
+                document.addEventListener('mousemove', (e) => this.drag(e));
+                document.addEventListener('touchmove', (e) => this.drag(e));
+                
+                document.addEventListener('mouseup', (e) => this.endDrag(e));
+                document.addEventListener('touchend', (e) => this.endDrag(e));
+            }
+            
+            startDrag(e, piece) {
+                e.preventDefault();
+                
+                // Start timer on first move
+                if (!this.gameStarted) {
+                    this.startTimer();
+                    this.gameStarted = true;
+                }
+                
+                this.draggedPiece = piece;
+                this.isDragging = true;
+                piece.classList.add('dragging');
+                
+                const rect = this.container.getBoundingClientRect();
+                const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+                const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+                
+                this.startPos = {
+                    x: piece.pieceData.x,
+                    y: piece.pieceData.y
+                };
+                
+                // Calculate offset from piece center
+                const pieceRect = piece.getBoundingClientRect();
+                this.dragOffset = {
+                    x: clientX - pieceRect.left - pieceRect.width / 2,
+                    y: clientY - pieceRect.top - pieceRect.height / 2
+                };
+            }
+            
+            drag(e) {
+                if (!this.isDragging || !this.draggedPiece) return;
+                e.preventDefault();
+                
+                const rect = this.container.getBoundingClientRect();
+                const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+                const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+                
+                // Calculate position relative to container
+                const x = clientX - rect.left - this.dragOffset.x - (this.draggedPiece.offsetWidth / 2);
+                const y = clientY - rect.top - this.dragOffset.y - (this.draggedPiece.offsetHeight / 2);
+                
+                // Use transform for smooth, hardware-accelerated movement
+                this.draggedPiece.style.transform = `translate(${x - this.startPos.x * this.gridSize}px, ${y - this.startPos.y * this.gridSize}px)`;
+            }
+            
+            endDrag(e) {
+                if (!this.isDragging || !this.draggedPiece) return;
+                
+                const piece = this.draggedPiece;
+                piece.classList.remove('dragging');
+                this.isDragging = false;
+                
+                // Get current position
+                const rect = piece.getBoundingClientRect();
+                const containerRect = this.container.getBoundingClientRect();
+                
+                // Calculate grid position from center of piece
+                const centerX = rect.left + rect.width / 2 - containerRect.left;
+                const centerY = rect.top + rect.height / 2 - containerRect.top;
+                
+                let targetX = Math.round((centerX - piece.offsetWidth / 2) / this.gridSize);
+                let targetY = Math.round((centerY - piece.offsetHeight / 2) / this.gridSize);
+                
+                // Clamp to boundaries
+                targetX = Math.max(0, Math.min(4 - piece.pieceData.width, targetX));
+                targetY = Math.max(0, Math.min(5 - piece.pieceData.height, targetY));
+                
+                // Check if position is valid and path is clear
+                if (this.isValidMove(piece, this.startPos.x, this.startPos.y, targetX, targetY)) {
+                    // Update piece position
+                    piece.pieceData.x = targetX;
+                    piece.pieceData.y = targetY;
+                    
+                    // Reset transform and update position
+                    piece.style.transform = '';
+                    piece.style.left = (targetX * this.gridSize) + 'px';
+                    piece.style.top = (targetY * this.gridSize) + 'px';
+                    
+                    this.checkWin();
+                } else {
+                    // Reset to original position
+                    piece.style.transform = '';
+                    piece.style.left = (this.startPos.x * this.gridSize) + 'px';
+                    piece.style.top = (this.startPos.y * this.gridSize) + 'px';
+                }
+                
+                this.draggedPiece = null;
+            }
+            
+            isValidPosition(piece, x, y) {
+                // Check boundaries
+                if (x < 0 || y < 0 || x + piece.pieceData.width > 4 || y + piece.pieceData.height > 5) {
+                    return false;
+                }
+                
+                // Check collision with other pieces
+                for (let otherPiece of this.pieces) {
+                    if (otherPiece === piece) continue;
+                    
+                    const otherX = otherPiece.pieceData.x;
+                    const otherY = otherPiece.pieceData.y;
+                    const otherW = otherPiece.pieceData.width;
+                    const otherH = otherPiece.pieceData.height;
+                    
+                    // Check overlap
+                    if (x < otherX + otherW && x + piece.pieceData.width > otherX &&
+                        y < otherY + otherH && y + piece.pieceData.height > otherY) {
+                        return false;
+                    }
+                }
+                
+                return true;
+            }
+            
+            checkWin() {
+                const targetPiece = document.getElementById('target');
+                if (targetPiece && targetPiece.pieceData.x === 1 && targetPiece.pieceData.y === 3) {
+                    // Stop timer
+                    this.stopTimer();
+                    
+                    setTimeout(() => {
+                        const winOverlay = document.getElementById('winOverlay');
+                        const winTimeDisplay = document.getElementById('winTime');
+                        
+                        winTimeDisplay.textContent = `Time: ${this.formatTime(this.currentSeconds)} seconds`;
+                        winOverlay.classList.add('show');
+                        
+                        // Hide overlay when clicked
+                        winOverlay.addEventListener('click', () => {
+                            winOverlay.classList.remove('show');
+                        });
+                    }, 300);
+                }
+            }
+            
+            startTimer() {
+                this.startTime = Date.now();
+                this.timerInterval = setInterval(() => {
+                    this.currentSeconds = Math.floor((Date.now() - this.startTime) / 1000);
+                    this.updateTimerDisplay();
+                }, 100); // Update every 100ms for smooth counting
+            }
+            
+            stopTimer() {
+                if (this.timerInterval) {
+                    clearInterval(this.timerInterval);
+                    this.timerInterval = null;
+                }
+            }
+            
+            updateTimerDisplay() {
+                this.timerDisplay.textContent = this.formatTime(this.currentSeconds);
+            }
+            
+            formatTime(seconds) {
+                // Format as 3-digit number (000-999)
+                return Math.min(999, seconds).toString().padStart(3, '0');
+            }
+        }
+        
+        // Initialize game when page loads
+        window.addEventListener('DOMContentLoaded', () => {
+            new KlotskiGame();
+        });
+    </script>
+</body>
+</html>
