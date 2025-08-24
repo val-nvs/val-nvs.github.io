@@ -158,13 +158,17 @@
     <script>
         const canvas = document.getElementById('matrix-bg');
         const ctx = canvas.getContext('2d');
-        let cols, drops;
-        
+        let cols, drops, trails, lastRestart;
+        const maxTrailLength = 40;
+        const minRestartDelay = 80; // Minimum 80 frames before restart
+
         function resizeCanvas() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             cols = Math.floor(canvas.width / 40);
             drops = Array(cols).fill().map(() => Math.floor(Math.random() * canvas.height / 40));
+            trails = Array(cols).fill().map(() => []);
+            lastRestart = Array(cols).fill(0); // Track when each column last restarted
         }
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
@@ -179,21 +183,56 @@
             return String.fromCharCode(code);
         }
 
+        let frameCounter = 0;
+
         function draw() {
-            ctx.fillStyle = 'rgba(13, 17, 23, 0.05)';
+            // Clear entire canvas each frame
+            ctx.fillStyle = '#0d1117';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            ctx.fillStyle = '#2d3339'; // Dark white/gray color
             ctx.font = '30px monospace';
             
             for (let i = 0; i < drops.length; i++) {
-                const text = randomChar();
-                ctx.fillText(text, i * 40, drops[i] * 40);
+                // Add new character to trail
+                trails[i].push({
+                    char: randomChar(),
+                    y: drops[i] * 40,
+                    age: 0
+                });
                 
-                if (drops[i] * 40 > canvas.height && Math.random() > 0.975)
-                    drops[i] = 0;
-                drops[i]++;
+                // Remove old characters from trail
+                if (trails[i].length > maxTrailLength) {
+                    trails[i].shift();
+                }
+                
+                // Draw trail with fading
+                for (let j = 0; j < trails[i].length; j++) {
+                    const char = trails[i][j];
+                    const opacity = 1 - (char.age / maxTrailLength);
+                    const gray = Math.floor(15 + opacity * 50); // Fade from bright to very dark
+                    
+                    ctx.fillStyle = `rgba(${gray}, ${gray + 3}, ${gray + 5}, ${opacity})`;
+                    ctx.fillText(char.char, i * 40, char.y);
+                    
+                    char.age++; // Age the character
+                }
+                
+                // Move drop down and handle restart
+                if (drops[i] * 40 > canvas.height) {
+                    const framesSinceRestart = frameCounter - lastRestart[i];
+                    
+                    // Only allow restart after minimum delay AND with 1/80 probability
+                    if (framesSinceRestart >= minRestartDelay && Math.random() > 0.9875) {
+                        drops[i] = 0;
+                        trails[i] = []; // Clear trail when restarting
+                        lastRestart[i] = frameCounter; // Record restart time
+                    }
+                } else {
+                    drops[i]++;
+                }
             }
+            
+            frameCounter++;
         }
 
         setInterval(draw, 50);
