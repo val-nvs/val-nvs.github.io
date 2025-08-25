@@ -14,14 +14,12 @@
         
         body {
             margin: 0;
-            padding: 10px;
+            padding: 20px;
             background: #0D1117;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            max-height: 100vh;
-            overflow: hidden;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
             box-sizing: border-box;
         }
@@ -34,8 +32,6 @@
             border: 10px solid #484f58;
             border-radius: 8px;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-            margin-top: 20px;
-            padding: 10px;
             box-sizing: border-box;
         }
         
@@ -52,8 +48,8 @@
         
         .piece {
             position: absolute;
-            background: #484f58;
-            border: 2px solid #6e7681;
+            background: #7c8998;
+            border: 2px solid #a6adb6;
             border-radius: 4px;
             cursor: grab;
             user-select: none;
@@ -62,8 +58,8 @@
         }
         
         .piece:hover {
-            background: #56606a;
-            border-color: #8b949e;
+            background: #8b949e;
+            border-color: #b1b8c0;
         }
         
         .piece:active {
@@ -76,18 +72,18 @@
         }
         
         .target {
-            background: #7c8998 !important;
-            border-color: #a6adb6 !important;
+            background: #484f58 !important;
+            border-color: #6e7681 !important;
         }
         
         .target:hover {
-            background: #8b949e !important;
-            border-color: #b1b8c0 !important;
+            background: #56606a !important;
+            border-color: #8b949e !important;
         }
         
         .timer {
             position: absolute;
-            top: -60px;
+            top: -80px;
             right: 10px;
             color: #ff4444;
             font-family: 'DSEG7Modern', 'Courier New', monospace;
@@ -98,12 +94,12 @@
             background: rgba(13, 17, 23, 0.8);
             padding: 8px 12px;
             border-radius: 6px;
-            border: 2px solid #30363d;
+            border: 2px solid #484f58;
         }
         
         .timer-left {
             position: absolute;
-            top: -60px;
+            top: -80px;
             left: 10px;
             color: #00d7ff;
             font-family: 'DSEG7Modern', 'Courier New', monospace;
@@ -114,7 +110,7 @@
             background: rgba(13, 17, 23, 0.8);
             padding: 8px 12px;
             border-radius: 6px;
-            border: 2px solid #30363d;
+            border: 2px solid #484f58;
         }
         
         .win-overlay {
@@ -211,73 +207,7 @@
                 this.initializePieces();
                 this.setupEventListeners();
                 this.updateMovesDisplay(); // Initialize moves display
-            }
-            
-            isValidMove(piece, fromX, fromY, toX, toY) {
-                // First check if destination is valid
-                if (!this.isValidPosition(piece, toX, toY)) {
-                    return false;
-                }
-                
-                // Check if path is clear (can't jump over pieces)
-                if (fromX === toX) {
-                    // Vertical movement
-                    const startY = Math.min(fromY, toY);
-                    const endY = Math.max(fromY, toY);
-                    
-                    for (let y = startY; y <= endY; y++) {
-                        for (let x = fromX; x < fromX + piece.pieceData.width; x++) {
-                            // Skip checking the piece's original position
-                            if (y >= fromY && y < fromY + piece.pieceData.height && 
-                                x >= fromX && x < fromX + piece.pieceData.width) {
-                                continue;
-                            }
-                            
-                            if (this.isOccupied(x, y, piece)) {
-                                return false;
-                            }
-                        }
-                    }
-                } else if (fromY === toY) {
-                    // Horizontal movement
-                    const startX = Math.min(fromX, toX);
-                    const endX = Math.max(fromX, toX);
-                    
-                    for (let x = startX; x <= endX; x++) {
-                        for (let y = fromY; y < fromY + piece.pieceData.height; y++) {
-                            // Skip checking the piece's original position
-                            if (x >= fromX && x < fromX + piece.pieceData.width && 
-                                y >= fromY && y < fromY + piece.pieceData.height) {
-                                continue;
-                            }
-                            
-                            if (this.isOccupied(x, y, piece)) {
-                                return false;
-                            }
-                        }
-                    }
-                } else {
-                    // Diagonal movement not allowed in Klotski
-                    return false;
-                }
-                
-                return true;
-            }
-            
-            isOccupied(x, y, excludePiece) {
-                for (let piece of this.pieces) {
-                    if (piece === excludePiece) continue;
-                    
-                    const px = piece.pieceData.x;
-                    const py = piece.pieceData.y;
-                    const pw = piece.pieceData.width;
-                    const ph = piece.pieceData.height;
-                    
-                    if (x >= px && x < px + pw && y >= py && y < py + ph) {
-                        return true;
-                    }
-                }
-                return false;
+                this.updateTimerDisplay(); // Initialize timer display
             }
             
             initializePieces() {
@@ -444,6 +374,73 @@
                 }
                 
                 this.draggedPiece = null;
+            }
+            
+            isValidMove(piece, fromX, fromY, toX, toY) {
+                // First check if destination is valid
+                if (!this.isValidPosition(piece, toX, toY)) {
+                    return false;
+                }
+                
+                // Check if path is clear (can't jump over pieces)
+                if (fromX === toX) {
+                    // Vertical movement
+                    const startY = Math.min(fromY, toY);
+                    const endY = Math.max(fromY, toY);
+                    
+                    for (let y = startY; y <= endY; y++) {
+                        for (let x = fromX; x < fromX + piece.pieceData.width; x++) {
+                            // Skip checking the piece's original position
+                            if (y >= fromY && y < fromY + piece.pieceData.height && 
+                                x >= fromX && x < fromX + piece.pieceData.width) {
+                                continue;
+                            }
+                            
+                            if (this.isOccupied(x, y, piece)) {
+                                return false;
+                            }
+                        }
+                    }
+                } else if (fromY === toY) {
+                    // Horizontal movement
+                    const startX = Math.min(fromX, toX);
+                    const endX = Math.max(fromX, toX);
+                    
+                    for (let x = startX; x <= endX; x++) {
+                        for (let y = fromY; y < fromY + piece.pieceData.height; y++) {
+                            // Skip checking the piece's original position
+                            if (x >= fromX && x < fromX + piece.pieceData.width && 
+                                y >= fromY && y < fromY + piece.pieceData.height) {
+                                continue;
+                            }
+                            
+                            if (this.isOccupied(x, y, piece)) {
+                                return false;
+                            }
+                        }
+                    }
+                } else {
+                    // Diagonal movement not allowed in Klotski
+                    return false;
+                }
+                
+                return true;
+            }
+            
+            isOccupied(x, y, excludePiece) {
+                for (let piece of this.pieces) {
+                    if (piece === excludePiece) continue;
+                    
+                    const px = piece.pieceData.x;
+                    const py = piece.pieceData.y;
+                    const pw = piece.pieceData.width;
+                    const ph = piece.pieceData.height;
+                    
+                    if (x >= px && x < px + pw && y >= py && y < py + ph) {
+                        return true;
+                    }
+                }
+                return false;
             }
             
             isValidPosition(piece, x, y) {
