@@ -81,10 +81,33 @@
             border-color: #8b949e !important;
         }
         
-        .timer {
+        .controls-container {
             position: absolute;
-            top: -80px;
+            top: -95px;
+            left: 10px;
             right: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+        
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .control-label {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #8b949e;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        
+        .timer {
             color: #ff4444;
             font-family: 'DSEG7Modern', 'Courier New', monospace;
             font-size: 32px;
@@ -98,9 +121,6 @@
         }
         
         .timer-left {
-            position: absolute;
-            top: -80px;
-            left: 10px;
             color: #00d7ff;
             font-family: 'DSEG7Modern', 'Courier New', monospace;
             font-size: 32px;
@@ -111,6 +131,29 @@
             padding: 8px 12px;
             border-radius: 6px;
             border: 2px solid #484f58;
+        }
+        
+        .reset-button {
+            background: rgba(13, 17, 23, 0.8);
+            color: #f0f6fc;
+            border: 2px solid #484f58;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .reset-button:hover {
+            background: #21262d;
+            border-color: #6e7681;
+            color: #fff;
+        }
+        
+        .reset-button:active {
+            transform: scale(0.95);
         }
         
         .win-overlay {
@@ -169,8 +212,20 @@
 </head>
 <body>
     <div class="game-container" id="gameContainer">
-        <div class="timer-left" id="timerLeft">000</div>
-        <div class="timer" id="timer">000</div>
+        <div class="controls-container">
+            <div class="control-group">
+                <div class="control-label">MOVES</div>
+                <div class="timer-left" id="timerLeft">000</div>
+            </div>
+            <div class="control-group">
+                <div class="control-label">RESET</div>
+                <button class="reset-button" id="resetButton">RESET</button>
+            </div>
+            <div class="control-group">
+                <div class="control-label">TIMER</div>
+                <div class="timer" id="timer">000</div>
+            </div>
+        </div>
         <!-- Pieces will be dynamically created -->
     </div>
     
@@ -204,10 +259,48 @@
                 // Moves counter
                 this.moves = 0;
                 
+                // Bound event handlers for cleanup
+                this.dragHandler = null;
+                this.endDragHandler = null;
+                
                 this.initializePieces();
                 this.setupEventListeners();
                 this.updateMovesDisplay(); // Initialize moves display
                 this.updateTimerDisplay(); // Initialize timer display
+                this.setupResetButton(); // Setup reset functionality
+            }
+            
+            setupResetButton() {
+                const resetButton = document.getElementById('resetButton');
+                resetButton.addEventListener('click', () => this.resetGame());
+            }
+            
+            resetGame() {
+                // Stop timer
+                this.stopTimer();
+                
+                // Hide win overlay if showing
+                const winOverlay = document.getElementById('winOverlay');
+                winOverlay.classList.remove('show');
+                
+                // Reset game state
+                this.currentSeconds = 0;
+                this.moves = 0;
+                this.gameStarted = false;
+                
+                // Update displays
+                this.updateMovesDisplay();
+                this.updateTimerDisplay();
+                
+                // Reset all pieces to original positions
+                this.pieces.forEach(piece => {
+                    this.container.removeChild(piece);
+                });
+                this.pieces = [];
+                
+                // Reinitialize pieces
+                this.initializePieces();
+                this.setupEventListeners();
             }
             
             initializePieces() {
@@ -263,16 +356,26 @@
             }
             
             setupEventListeners() {
+                // Remove existing listeners to prevent duplicates on reset
+                document.removeEventListener('mousemove', this.dragHandler);
+                document.removeEventListener('touchmove', this.dragHandler);
+                document.removeEventListener('mouseup', this.endDragHandler);
+                document.removeEventListener('touchend', this.endDragHandler);
+                
+                // Create bound handlers for removal later
+                this.dragHandler = (e) => this.drag(e);
+                this.endDragHandler = (e) => this.endDrag(e);
+                
                 this.pieces.forEach(piece => {
                     piece.addEventListener('mousedown', (e) => this.startDrag(e, piece));
                     piece.addEventListener('touchstart', (e) => this.startDrag(e, piece));
                 });
                 
-                document.addEventListener('mousemove', (e) => this.drag(e));
-                document.addEventListener('touchmove', (e) => this.drag(e));
+                document.addEventListener('mousemove', this.dragHandler);
+                document.addEventListener('touchmove', this.dragHandler);
                 
-                document.addEventListener('mouseup', (e) => this.endDrag(e));
-                document.addEventListener('touchend', (e) => this.endDrag(e));
+                document.addEventListener('mouseup', this.endDragHandler);
+                document.addEventListener('touchend', this.endDragHandler);
             }
             
             startDrag(e, piece) {
