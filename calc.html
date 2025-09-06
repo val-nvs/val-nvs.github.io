@@ -5,10 +5,440 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>calc</title>
 	<style>
-		body {background-color: #000}
+
+
+/* ========================================
+   PURE CSS RESET 2025
+   Complete removal of all default styling
+   ======================================== */
+
+/* Box Model Reset */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    box-sizing: border-box;
+}
+
+/* Root Setup */
+:root {
+    /* Modern viewport units */
+    --vh: 1vh;
+    --dvh: 1dvh;
+    --lvh: 1lvh;
+    --svh: 1svh;
+    --vw: 1vw;
+    --dvw: 1dvw;
+    --lvw: 1lvw;
+    --svw: 1svw;
+    
+    /* Prevent text size adjustment */
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    
+    /* Remove font smoothing */
+    -webkit-font-smoothing: auto;
+    -moz-osx-font-smoothing: auto;
+}
+
+/* HTML and Body */
+html, body {
+    min-height: 100dvh;
+    line-height: 1;
+    font-family: sans-serif;
+    font-size: 16px;
+    font-weight: normal;
+    text-rendering: auto;
+    scroll-behavior: auto;
+}
+
+/* All elements */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video, main {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+
+/* HTML5 display reset */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section, main {
+    display: block;
+}
+
+/* Lists */
+ol, ul, menu {
+    list-style: none;
+}
+
+/* Quotes */
+blockquote, q {
+    quotes: none;
+}
+
+blockquote::before, blockquote::after,
+q::before, q::after {
+    content: '';
+    content: none;
+}
+
+/* Tables */
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+/* Links */
+a {
+    color: inherit;
+    text-decoration: none;
+    background-color: transparent;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Images and Media */
+img, picture, video, canvas, svg, iframe, embed, object {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    vertical-align: baseline;
+}
+
+/* Form Elements - Complete Reset */
+button, input, optgroup, select, textarea, fieldset, legend {
+    /* Remove all appearance */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    
+    /* Reset all inherited styles */
+    font-family: inherit;
+    font-size: 100%;
+    font-weight: inherit;
+    line-height: inherit;
+    color: inherit;
+    
+    /* Remove spacing */
+    margin: 0;
+    padding: 0;
+    
+    /* Remove backgrounds and borders */
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    outline: none;
+    
+    /* Reset text properties */
+    text-align: inherit;
+    text-transform: none;
+    text-decoration: none;
+    
+    /* Remove shadows */
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+/* Button Reset */
+button, [type="button"], [type="reset"], [type="submit"] {
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Input and Textarea */
+input, textarea {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border-radius: 0;
+}
+
+/* Remove number input spinners */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+    display: none;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+/* Remove search input decorations */
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
+    -webkit-appearance: none;
+    display: none;
+}
+
+/* Remove date/time input decorations */
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="datetime-local"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator,
+input[type="month"]::-webkit-calendar-picker-indicator,
+input[type="week"]::-webkit-calendar-picker-indicator {
+    -webkit-appearance: none;
+    display: none;
+}
+
+/* Select dropdown arrow removal */
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+select::-ms-expand {
+    display: none;
+}
+
+/* File input button reset */
+input[type="file"]::-webkit-file-upload-button {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+input[type="file"]::file-selector-button {
+    appearance: none;
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* Range input reset */
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+input[type="range"]::-moz-range-thumb {
+    appearance: none;
+    border: none;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+    -webkit-appearance: none;
+}
+
+input[type="range"]::-moz-range-track {
+    appearance: none;
+}
+
+/* Color input reset */
+input[type="color"] {
+    -webkit-appearance: none;
+    appearance: none;
+    border: none;
+    width: auto;
+    height: auto;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+input[type="color"]::-webkit-color-swatch {
+    border: none;
+}
+
+/* Textarea */
+textarea {
+    resize: none;
+    overflow: auto;
+}
+
+/* Placeholder reset */
+::placeholder {
+    color: inherit;
+    opacity: 1;
+}
+
+::-webkit-input-placeholder {
+    color: inherit;
+    opacity: 1;
+}
+
+::-moz-placeholder {
+    color: inherit;
+    opacity: 1;
+}
+
+:-ms-input-placeholder {
+    color: inherit;
+    opacity: 1;
+}
+
+/* Progress and Meter */
+progress, meter {
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+progress::-webkit-progress-bar {
+    background: transparent;
+}
+
+progress::-webkit-progress-value {
+    background: transparent;
+}
+
+meter::-webkit-meter-bar {
+    background: transparent;
+}
+
+/* Details/Summary reset */
+details {
+    display: block;
+}
+
+summary {
+    display: list-item;
+    cursor: pointer;
+    outline: none;
+}
+
+summary::-webkit-details-marker {
+    display: none;
+}
+
+summary::marker {
+    display: none;
+}
+
+/* Dialog reset */
+dialog {
+    padding: 0;
+    border: none;
+    background: transparent;
+}
+
+dialog::backdrop {
+    background: transparent;
+}
+
+/* HR reset */
+hr {
+    height: 0;
+    border: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* Pre, Code reset */
+pre, code, kbd, samp {
+    font-family: monospace;
+    font-size: 1em;
+}
+
+/* Sub, Sup reset */
+sub, sup {
+    font-size: 100%;
+    line-height: inherit;
+    position: static;
+    vertical-align: baseline;
+}
+
+/* Focus reset */
+*:focus {
+    outline: none;
+}
+
+/* Selection reset */
+::selection {
+    background: transparent;
+    color: inherit;
+}
+
+::-moz-selection {
+    background: transparent;
+    color: inherit;
+}
+
+/* Disabled state */
+[disabled] {
+    cursor: default;
+}
+
+/* Hidden attribute */
+[hidden] {
+    display: none !important;
+}
+
+/* Remove all animations/transitions for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+
+
+
+
+
+
+
+
+		body {
+			background-color: #111;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 100dvh;
+		}
+
 		#calculator{
 			font-family: Arial, sans-serif;
 			background-color: #000;
+			width:50%;
+			height: 90%;
+			border-radius: 20px;
+			overflow:hidden;
+		}
+		#display{
+			width: 100%;
+			padding: 0px;
+			font-size:5rem;
+			text-align: left;
+			border: none;
+			background-color: #004;
+			color: #fff;
 		}
 		#keys{
 			display: grid;
@@ -23,36 +453,63 @@
 			cursor: pointer;
 			font-weight: bold;
 			font-size: 3rem;
-			width: 100px;
-			height: 100px;
+			width: 100%;
+			aspect-ratio: 1/1;
+			text-align: center;
+			color: #fff;
 		}
+		button:hover{
+			background-color: #808;
+		}
+		button:active{
+			background-color: #f0f;
+		}
+		.top{background-color: #5C5C5F}
+		.orange{background-color: #FF9F0A}
 	</style>
 </head>
 <body>
 	<div id="calculator">
 		<input id="display" readonly>
 		<div id="keys">
-			<button onclick="clearDisplay('C')">C</button>
-			<button onclick="appendToDisplay('/')">/</button>
-			<button onclick="appendToDisplay('/')">/</button>
-			<button onclick="appendToDisplay('/')">/</button>
+			<button onclick="clearDisplay('C')" class="top">C</button>
+			<button onclick="appendToDisplay('/')" class="top">/</button>
+			<button onclick="appendToDisplay('/')" class="top">/</button>
+			<button onclick="appendToDisplay('/')" class="orange">/</button>
 			<button onclick="appendToDisplay('7')">7</button>
 			<button onclick="appendToDisplay('8')">8</button>
 			<button onclick="appendToDisplay('9')">9</button>
-			<button onclick="appendToDisplay('*')">*</button>
+			<button onclick="appendToDisplay('*')" class="orange">*</button>
 			<button onclick="appendToDisplay('4')">4</button>
 			<button onclick="appendToDisplay('5')">5</button>
 			<button onclick="appendToDisplay('6')">6</button>
-			<button onclick="appendToDisplay('-')">-</button>
+			<button onclick="appendToDisplay('-')" class="orange">-</button>
 			<button onclick="appendToDisplay('1')">1</button>
 			<button onclick="appendToDisplay('2')">2</button>
 			<button onclick="appendToDisplay('3')">3</button>
-			<button onclick="appendToDisplay('+')">+</button>
+			<button onclick="appendToDisplay('+')" class="orange">+</button>
 			<button onclick="appendToDisplay('0')">0</button>
 			<button onclick="appendToDisplay('0')">0</button>
 			<button onclick="appendToDisplay('0')">0</button>
-			<button onclick="calculate('=')">=</button>
+			<button onclick="calculate('=')" class="orange">=</button>
 		</div>
 	</div>
+	<script>
+		const display = document.getElementById("display");
+		function appendToDisplay(input){
+			display.value += input;
+		}
+		function clearDisplay(){
+			display.value = "";
+		}
+		function calculate(){
+			try{
+				display.value = eval(display.value)
+			}
+			catch(error){
+				display.value = "ERROR";
+			}
+		}
+	</script>
 </body>
 </html>
