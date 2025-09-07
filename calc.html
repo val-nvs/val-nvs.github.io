@@ -411,7 +411,12 @@ sub, sup {
 
 
 
-
+@font-face {
+    font-family: 'SF Pro Display';
+    src: url('SF-Pro-Display-Regular.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+}
 
 
 
@@ -424,45 +429,62 @@ sub, sup {
 		}
 
 		#calculator{
-			font-family: Arial, sans-serif;
+            font-family: 'SF Pro Display', Arial, sans-serif;
 			background-color: #000;
-			width:50%;
-			height: 90%;
-			border-radius: 20px;
+			display: inline-block;
+			border-radius: 3rem;
 			overflow:hidden;
-		}
+            max-width: 29rem;
+            max-height: 90vh;
+            width: fit-content;
+        }
 		#display{
+                        font-family: 'SF Pro Display', Arial, sans-serif;
+
 			width: 100%;
-			padding: 0px;
-			font-size:5rem;
-			text-align: left;
+			padding: 1rem;
+			font-size:6rem;
+			text-align: right;
 			border: none;
-			background-color: #004;
+			background-color: #000;
 			color: #fff;
 		}
 		#keys{
 			display: grid;
 			grid-template-columns: repeat(4, 1fr);
-			gap: 10px;
-			padding: 25px;
+			gap: 1rem;
+			padding: 1rem;
+            justify-content: center;
 		}
 		button {
-			border-radius: 50px;
+			border-radius: 3rem;
 			border: none;
 			background-color: #2A2A2C;
 			cursor: pointer;
-			font-weight: bold;
-			font-size: 3rem;
-			width: 100%;
+			font-size: 2.5rem;
+			width: 6rem;
 			aspect-ratio: 1/1;
 			text-align: center;
 			color: #fff;
+            position: relative;
 		}
-		button:hover{
-			background-color: #808;
+        button::after {
+            content: '';
+            background-color: rgba(0, 0, 0, 0);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 3rem; /* ADD THIS - match button shape */
+            pointer-events: none; /* ADD THIS - prevents click interference */
+            transition: background-color 0.1s ease; /* Optional smooth transition */
+        }
+		button:hover::after{
+			background-color: rgba(255, 255, 255, 0.2);
 		}
-		button:active{
-			background-color: #f0f;
+		button:active::after{
+			background-color: rgba(255, 255, 255, 0.7);
 		}
 		.top{background-color: #5C5C5F}
 		.orange{background-color: #FF9F0A}
@@ -473,13 +495,13 @@ sub, sup {
 		<input id="display" readonly>
 		<div id="keys">
 			<button onclick="clearDisplay('C')" class="top">C</button>
-			<button onclick="appendToDisplay('/')" class="top">/</button>
-			<button onclick="appendToDisplay('/')" class="top">/</button>
-			<button onclick="appendToDisplay('/')" class="orange">/</button>
+			<button onclick="appendToDisplay('')" class="top"></button>
+			<button onclick="appendToDisplay('/)" class="top"></button>
+			<button onclick="appendToDisplay('/')" class="orange">÷</button>
 			<button onclick="appendToDisplay('7')">7</button>
 			<button onclick="appendToDisplay('8')">8</button>
 			<button onclick="appendToDisplay('9')">9</button>
-			<button onclick="appendToDisplay('*')" class="orange">*</button>
+			<button onclick="appendToDisplay('*')" class="orange">×</button>
 			<button onclick="appendToDisplay('4')">4</button>
 			<button onclick="appendToDisplay('5')">5</button>
 			<button onclick="appendToDisplay('6')">6</button>
@@ -490,7 +512,7 @@ sub, sup {
 			<button onclick="appendToDisplay('+')" class="orange">+</button>
 			<button onclick="appendToDisplay('0')">0</button>
 			<button onclick="appendToDisplay('0')">0</button>
-			<button onclick="appendToDisplay('0')">0</button>
+			<button onclick="appendToDisplay('.')">,</button>
 			<button onclick="calculate('=')" class="orange">=</button>
 		</div>
 	</div>
