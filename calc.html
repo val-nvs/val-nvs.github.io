@@ -443,11 +443,15 @@ sub, sup {
 
 			width: 100%;
 			padding: 1rem;
-			font-size:6rem;
+			font-size:clamp(2rem, 3vw, 6rem); /* min 2rem, preferred 8vw, max 6rem */;
 			text-align: right;
 			border: none;
 			background-color: #000;
 			color: #fff;
+                white-space: nowrap; /* ADD THIS to keep text on one line */
+                    overflow: hidden; /* ADD THIS to prevent text overflow */
+
+
 		}
 		#keys{
 			display: grid;
@@ -488,6 +492,12 @@ sub, sup {
 		}
 		.top{background-color: #5C5C5F}
 		.orange{background-color: #FF9F0A}
+        .wide{
+            grid-column: span 2;
+            width: 12rem;
+                        aspect-ratio: 2/1;
+
+        }
 	</style>
 </head>
 <body>
@@ -495,8 +505,8 @@ sub, sup {
 		<input id="display" readonly>
 		<div id="keys">
 			<button onclick="clearDisplay('C')" class="top">C</button>
-			<button onclick="appendToDisplay('')" class="top"></button>
-			<button onclick="appendToDisplay('/)" class="top"></button>
+            <button onclick="invertDisplay('+/-')" class="top">+/-</button>
+			<button onclick="percent('%')" class="top">%</button>
 			<button onclick="appendToDisplay('/')" class="orange">÷</button>
 			<button onclick="appendToDisplay('7')">7</button>
 			<button onclick="appendToDisplay('8')">8</button>
@@ -510,8 +520,7 @@ sub, sup {
 			<button onclick="appendToDisplay('2')">2</button>
 			<button onclick="appendToDisplay('3')">3</button>
 			<button onclick="appendToDisplay('+')" class="orange">+</button>
-			<button onclick="appendToDisplay('0')">0</button>
-			<button onclick="appendToDisplay('0')">0</button>
+			<button onclick="appendToDisplay('0')" class="wide">0</button>
 			<button onclick="appendToDisplay('.')">,</button>
 			<button onclick="calculate('=')" class="orange">=</button>
 		</div>
@@ -532,6 +541,17 @@ sub, sup {
 				display.value = "ERROR";
 			}
 		}
+        function invertDisplay(){
+            if (!display.value.startsWith("-")) {
+            display.value = "-" + display.value
+            } else {
+                display.value = display.value.substring(1);
+            }
+        }
+        function percent (){
+            display.value = display.value * 0.01
+        }
+
 	</script>
 </body>
 </html>
