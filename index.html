@@ -98,6 +98,7 @@
     .button.github {
         position: relative;
         border: none;
+        flex-direction: column;
     }
 
     .button.github::before {
@@ -208,7 +209,20 @@
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
-    .button iframe { width:100%; height:200px; border:none; display:block; }
+    .github-contributions {
+        width: 100%;
+        height: 25px;
+        border: none;
+        border-radius: 3px;
+        overflow: hidden;
+        opacity: 0.8;
+        transition: opacity 0.2s ease;
+    }
+
+    .button.github:hover .github-contributions {
+        opacity: 1;
+    }
+
 </style>
 
 </head>
@@ -231,7 +245,7 @@
             <span class="social-tag">
                 ↗ <img src="GitHub_Logo_White.png" alt="GitHub">
             </span>
-            <iframe src="contributions.html" width="800" height="200"></iframe>
+            <iframe class="github-contributions" src="contributions.html"></iframe>
         </a>
 
         <a href="https://val-nvs.github.io/colors/index14.html" class="button github">
