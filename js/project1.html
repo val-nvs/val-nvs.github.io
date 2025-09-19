@@ -80,10 +80,18 @@ footer {
 	position: fixed; bottom: 0;
 }
 .yo {
-	background: #404;
-	display: flex;
+	display: grid;
+	grid-auto-columns: 200px;
+	grid-auto-rows: 1fr;
+	gap: 1rem;
+	grid-template-areas: 
+		"bo-1 bo-2 bo-2 bo-3" 
+		"bo-1 bo-4 bo-5 bo-5"
+;
 }
-.yo > * {flex:1}
+.yo > * {
+		background: #404;
+flex:1}
 
 .icons {
 	font-family: 'Material Symbols Outlined';
@@ -101,10 +109,13 @@ header <button>asdf</button>
 
 <div class="yo">
 
-	<div>asdf</div>
-	<div>asdf</div>
-	<div>asdf</div>
-	<div>asdf</div>
+	<div style="grid-area: bo-1">asdf</div>
+	<div style="grid-area: bo-2">asdf</div>
+	<div style="grid-area: bo-3">asdf</div>
+	<div style="grid-area: bo-4">asdf</div>
+	<div style="grid-area: bo-5">asdf</div>
+	<div style="grid-area: bo-6">asdf</div>
+	<div style="grid-area: bo-7">asdf</div>
 </div>
 asdf<br>
 asdf<br>
