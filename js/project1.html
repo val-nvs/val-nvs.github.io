@@ -11,7 +11,7 @@
 
 <style>
 
-* {background: transparent;color:#fff;margin: 0}
+* {background: transparent;color:#fff;margin: 0;box-sizing: border-box}
 * {box-shadow: -1px -1px 0 2px red}
 
 * {
@@ -50,23 +50,33 @@ a, button {cursor: url('pointer-cursor.png'), pointer;}
 }
 
 :root {
-	--header-height:2rem;
+	--header-height: 4rem;
+	--footer-height: 4rem;
+}
+body{
+	background: #333;
 }
 header {
-	height: 2rem;
+	height: var(--header-height);
+	width: 100%;
 	background: #500;
-	padding: .5rem;
+	padding-block: .5rem;
+	padding-inline: 1rem;
 	position: fixed; top: 0;
 }
 main {
-	margin-block: 4rem;
-	margin-inline: 1rem;
+	margin-top: var(--header-height);
+	margin-bottom: var(--footer-height);
+	padding-block: 1rem;
+	padding-inline: 1rem;
 	background: #050;
 }
 footer {
-	height: 2rem;
+	height: var(--footer-height);
+	width: 100%;
 	background: #005;
-	padding: .5rem;
+	padding-block: .5rem;
+	padding-inline: 1rem;
 	position: fixed; bottom: 0;
 }
 .yo {
@@ -95,7 +105,7 @@ header <button>asdf</button>
 	<div>asdf</div>
 	<div>asdf</div>
 	<div>asdf</div>
-</div><br>
+</div>
 asdf<br>
 asdf<br>
 asdf<br>
