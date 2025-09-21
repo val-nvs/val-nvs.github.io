@@ -11,7 +11,7 @@
 
 <style>
 
-* {background: transparent;color:#fff;margin: 0;box-sizing: border-box}
+* {background: transparent; margin: 0; padding: 0; box-sizing: border-box;}
 * {box-shadow: -1px -1px 0 2px red}
 
 * {
@@ -52,33 +52,51 @@ a, button {cursor: url('pointer-cursor.png'), pointer;}
 :root {
 	--header-height: 4rem;
 	--footer-height: 4rem;
+	--body-dark:#333;
+	--body-light:#aaa;
+	--header-dark:rgb(85, 0, 0, 0.5);
+	--header-light:rgba(255, 0, 0,0.5);
+	--main-dark:rgb(0, 85, 0, 0.5);
+	--main-light:rgba(0, 255, 0,0.5);
+	--footer-dark:rgba(0, 0, 85,0.5);
+	--footer-light:rgba(0, 0, 255,0.5);
 }
-body{
+
+
+body {
 	background: #333;
-}
+} body.light {background: #aaa;}
+
+body {
+	color: #fff;
+} body.light {color: #000;}
+
 header {
 	height: var(--header-height);
 	width: 100%;
-	background: #500;
 	padding-block: .5rem;
 	padding-inline: 1rem;
 	position: fixed; top: 0;
-}
+	background: var(--header-dark);
+} body.light header {background: var(--header-light);}
+
 main {
 	margin-top: var(--header-height);
 	margin-bottom: var(--footer-height);
 	padding-block: 1rem;
 	padding-inline: 1rem;
-	background: #050;
-}
+	background: var(--main-dark);
+} body.light main {background: var(--main-light);}
+
 footer {
 	height: var(--footer-height);
 	width: 100%;
-	background: #005;
 	padding-block: .5rem;
 	padding-inline: 1rem;
 	position: fixed; bottom: 0;
-}
+	background: var(--footer-dark);
+} body.light footer {background: var(--footer-light);}
+
 .yo {
 	display: grid;
 	grid-auto-columns: 200px;
@@ -102,7 +120,7 @@ flex:1}
 </style></head><body><header>
 
 header <button>asdf</button>
-<button><span class="icons">routine</span></button>
+<button onclick="themeBtn()"><span class="icons">routine</span></button>
 
 
 </header><main>
@@ -119,25 +137,6 @@ header <button>asdf</button>
 </div>
 asdf<br>
 asdf<br>
-asdf<br>
-asdf<br>
-asdf<br>
-asdf<br>
-asdf<br>
-asdf<br>
-asdf<br>
-asdf<br>
-asdf<br>
-asdf<br>
-asdf<br>
-asdf<br>
-asdf<br>
-asdf<br>
-asdf<br>
-asdf<br>
-asdf<br>
-asdf<br>
-asdf<br>
 asdf
 
 </main><footer>
@@ -147,6 +146,10 @@ footer
 </footer><script>
 
 100
+
+	function themeBtn() {
+		document.body.classList.toggle("light");
+	}
 
 //document.body.innerHTML = 'hello';
 
