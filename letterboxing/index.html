@@ -3,6 +3,9 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 	<title>letterboxd</title>
 	<style>
 		button {
@@ -14,7 +17,8 @@
 			appearance: none;
 		}
 		* {
-			font-family: sans-serif;
+			font-family: 'Roboto', sans-serif;
+			font-weight: 300;
 			box-sizing: border-box;
 		}
 		body {
@@ -27,9 +31,15 @@
 			display: block;
 			width: 100%;
 		}
-		.a {
+		.section {
 			border-block: 1px solid #64707b;
 			padding: 2vw;
+		}
+		.title {
+			font-size: 1.2rem;
+			margin: 0 0 2vw 0;
+			color: #A1AAB3;
+			letter-spacing: 0.05em;
 		}
 		.grid {
 			display: grid;
@@ -68,12 +78,11 @@
 	</style>
 </head>
 <body>
-<div class="a">
-	<h3>FAVORITES</h3>
+asdf
+
+<div class="section">
+	<div class="title">VIDEOGRAPHY PORTFOLIO</div>
 	<div class="grid">
-		<button class="movie">
-			<img src="amelie.jpg">
-		</button>
 		<button class="movie">
 			<img src="amelie.jpg">
 		</button>
@@ -88,5 +97,46 @@
 		</button>
 	</div>
 </div>
+
+<div class="section">
+	<div class="title">PHOTOGRAPHY PORTFOLIO</div>
+	<div class="grid">
+		<button class="movie">
+			<img src="amelie.jpg">
+		</button>
+		<button class="movie">
+			<img src="amelie.jpg">
+		</button>
+		<button class="movie">
+			<img src="amelie.jpg">
+		</button>
+		<button class="movie">
+			<img src="amelie.jpg">
+		</button>
+	</div>
+</div>
+
+<div class="section">
+	<div class="title">MAKER PORTFOLIO</div>
+	<div class="grid">
+		<button class="movie">
+			<img src="amelie.jpg">
+		</button>
+		<button class="movie">
+			<img src="amelie.jpg">
+		</button>
+		<button class="movie">
+			<img src="amelie.jpg">
+		</button>
+		<button class="movie">
+			<img src="amelie.jpg">
+		</button>
+	</div>
+</div>
+asdf
+
+
+
+
 </body>
 </html>
