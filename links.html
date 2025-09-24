@@ -1,307 +1,307 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Val</title>
-    <link rel="icon" href="favicon.png" type="image/png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Val</title>
+	<link rel="icon" href="favicon.png" type="image/png">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet">
 <style>
-    @font-face {
-        font-family: 'Instagram Sans Headline';
-        src: url('Instagram Sans Headline.otf') format('opentype');
-    }
+	@font-face {
+		font-family: 'Instagram Sans Headline';
+		src: url('Instagram Sans Headline.otf') format('opentype');
+	}
 
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
+	* {
+		margin: 0;
+		padding: 0;
+		box-sizing: border-box;
+	}
 
-    body {
-        background: #0d1117;
-        color: #f0f6fc;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 100vh;
-        padding: 10px;
-    }
+	body {
+		background: #0d1117;
+		color: #f0f6fc;
+		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 100vh;
+		padding: 10px;
+	}
 
-    .container {
-        text-align: center;
-        width: 85vw;
-        max-width: 400px;
-    }
+	.container {
+		text-align: center;
+		width: 85vw;
+		max-width: 400px;
+	}
 
-    .button {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0px;
-        width: 100%;
-        padding: clamp(12px, 3vw, 18px) clamp(16px, 4vw, 24px);
-        margin: clamp(8px, 2vw, 12px) 0;
-        background: #21262d;
-        border: 1px solid #30363d;
-        border-radius: clamp(5px, 1.2vw, 8px);
-        color: #f0f6fc;
-        text-decoration: none;
-        font-size: clamp(14px, 3.5vw, 16px);
-        font-weight: 500;
-        transition: all 0.2s ease;
-        height: 60px;
-        position: relative;
-    }
+	.button {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0px;
+		width: 100%;
+		padding: clamp(12px, 3vw, 18px) clamp(16px, 4vw, 24px);
+		margin: clamp(8px, 2vw, 12px) 0;
+		background: #21262d;
+		border: 1px solid #30363d;
+		border-radius: clamp(5px, 1.2vw, 8px);
+		color: #f0f6fc;
+		text-decoration: none;
+		font-size: clamp(14px, 3.5vw, 16px);
+		font-weight: 500;
+		transition: all 0.2s ease;
+		height: 60px;
+		position: relative;
+	}
 
-    .button.videography {
-        position: relative;
-        border: none;
-    }
+	.button.videography {
+		position: relative;
+		border: none;
+	}
 
-    .button.videography::before {
-        content: '';
-        position: absolute;
-        top: -1px;
-        left: -1px;
-        right: -1px;
-        bottom: -1px;
-        background: linear-gradient(90deg, #000, #fff, #000);
-        background-size: 200% 100%;
-        border-radius: clamp(5px, 1.2vw, 8px);
-        animation: slideGradient 6s linear infinite;
-        z-index: -1;
-    }
+	.button.videography::before {
+		content: '';
+		position: absolute;
+		top: -1px;
+		left: -1px;
+		right: -1px;
+		bottom: -1px;
+		background: linear-gradient(90deg, #000, #fff, #000);
+		background-size: 200% 100%;
+		border-radius: clamp(5px, 1.2vw, 8px);
+		animation: slideGradient 6s linear infinite;
+		z-index: -1;
+	}
 
-    .button.instagram {
-        position: relative;
-        border: none;
-    }
+	.button.instagram {
+		position: relative;
+		border: none;
+	}
 
-    .button.instagram::before {
-        content: '';
-        position: absolute;
-        top: -1px;
-        left: -1px;
-        right: -1px;
-        bottom: -1px;
-        background: linear-gradient(90deg, #FEDA75, #FA7E1E, #D62976, #962FBF, #D62976, #FA7E1E, #FEDA75);
-        background-size: 200% 100%;
-        border-radius: clamp(5px, 1.2vw, 8px);
-        animation: slideGradient 6s linear infinite;
-        z-index: -1;
-    }
+	.button.instagram::before {
+		content: '';
+		position: absolute;
+		top: -1px;
+		left: -1px;
+		right: -1px;
+		bottom: -1px;
+		background: linear-gradient(90deg, #FEDA75, #FA7E1E, #D62976, #962FBF, #D62976, #FA7E1E, #FEDA75);
+		background-size: 200% 100%;
+		border-radius: clamp(5px, 1.2vw, 8px);
+		animation: slideGradient 6s linear infinite;
+		z-index: -1;
+	}
 
-    .button.github {
-        position: relative;
-        border: none;
-        flex-direction: column;
-    }
+	.button.github {
+		position: relative;
+		border: none;
+		flex-direction: column;
+	}
 
-    .button.github::before {
-        content: '';
-        position: absolute;
-        top: -1px;
-        left: -1px;
-        right: -1px;
-        bottom: -1px;
-        background: linear-gradient(90deg, #1f3545, #1e38b9, #5f3bbd, #1e38b9, #1f3545);
-        background-size: 200% 100%;
-        border-radius: clamp(5px, 1.2vw, 8px);
-        animation: slideGradient 6s linear infinite;
-        z-index: -1;
-    }
+	.button.github::before {
+		content: '';
+		position: absolute;
+		top: -1px;
+		left: -1px;
+		right: -1px;
+		bottom: -1px;
+		background: linear-gradient(90deg, #1f3545, #1e38b9, #5f3bbd, #1e38b9, #1f3545);
+		background-size: 200% 100%;
+		border-radius: clamp(5px, 1.2vw, 8px);
+		animation: slideGradient 6s linear infinite;
+		z-index: -1;
+	}
 
-    .button.letterboxd {
-        position: relative;
-        border: none;
-    }
+	.button.letterboxd {
+		position: relative;
+		border: none;
+	}
 
-    .button.letterboxd::before {
-        content: '';
-        position: absolute;
-        top: -1px;
-        left: -1px;
-        right: -1px;
-        bottom: -1px;
-        background: linear-gradient(90deg, #ffffff, #ff8000, #ffffff, #00e054, #ffffff, #40bcf4, #ffffff);
-        background-size: 200% 100%;
-        border-radius: clamp(5px, 1.2vw, 8px);
-        animation: slideGradient 6s linear infinite;
-        z-index: -1;
-    }
+	.button.letterboxd::before {
+		content: '';
+		position: absolute;
+		top: -1px;
+		left: -1px;
+		right: -1px;
+		bottom: -1px;
+		background: linear-gradient(90deg, #ffffff, #ff8000, #ffffff, #00e054, #ffffff, #40bcf4, #ffffff);
+		background-size: 200% 100%;
+		border-radius: clamp(5px, 1.2vw, 8px);
+		animation: slideGradient 6s linear infinite;
+		z-index: -1;
+	}
 
-    @keyframes slideGradient {
-        0% {
-            background-position: 0% 50%;
-        }
-        100% {
-            background-position: 200% 50%;
-        }
-    }
+	@keyframes slideGradient {
+		0% {
+			background-position: 0% 50%;
+		}
+		100% {
+			background-position: 200% 50%;
+		}
+	}
 
-    .social-tag {
-        background: transparent;
-        border: 1px solid transparent;
-        border-radius: 6px;
-        padding: 8px 12px;
-        color: #f0f6fc;
-        font-size: clamp(12px, 3vw, 16px);
-        font-weight: 500;
-        letter-spacing: -0.5px;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        min-height: 36px;
-    }
+	.social-tag {
+		background: transparent;
+		border: 1px solid transparent;
+		border-radius: 6px;
+		padding: 8px 12px;
+		color: #f0f6fc;
+		font-size: clamp(12px, 3vw, 16px);
+		font-weight: 500;
+		letter-spacing: -0.5px;
+		display: flex;
+		align-items: center;
+		gap: 5px;
+		min-height: 36px;
+	}
 
-    .social-tag img {
-        height: 14px;
-        width: auto;
-    }
+	.social-tag img {
+		height: 14px;
+		width: auto;
+	}
 
-    .instagram-text {
-        font-family: 'Instagram Sans Headline', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        font-size: clamp(14px, 3.5vw, 20px);
-    }
+	.instagram-text {
+		font-family: 'Instagram Sans Headline', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+		font-size: clamp(14px, 3.5vw, 20px);
+	}
 
-    .button.under-construction {
-        background: #16181d;
-        border-color: #21262d;
-        color: #6e7681;
-        position: relative;
-        overflow: hidden;
-        pointer-events: none;
-    }
+	.button.under-construction {
+		background: #16181d;
+		border-color: #21262d;
+		color: #6e7681;
+		position: relative;
+		overflow: hidden;
+		pointer-events: none;
+	}
 
-    .button.under-construction::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: repeating-linear-gradient(
-            45deg,
-            rgba(255, 193, 7, 0.1) 0px,
-            rgba(255, 193, 7, 0.1) 10px,
-            rgba(0, 0, 0, 0.1) 10px,
-            rgba(0, 0, 0, 0.1) 20px
-        );
-        pointer-events: none;
-    }
+	.button.under-construction::after {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: repeating-linear-gradient(
+			45deg,
+			rgba(255, 193, 7, 0.1) 0px,
+			rgba(255, 193, 7, 0.1) 10px,
+			rgba(0, 0, 0, 0.1) 10px,
+			rgba(0, 0, 0, 0.1) 20px
+		);
+		pointer-events: none;
+	}
 
-    .button:hover {
-        background: #30363d;
-        border-color: #8b949e;
-        transform: translateY(-1px);
-    }
+	.button:hover {
+		background: #30363d;
+		border-color: #8b949e;
+		transform: translateY(-1px);
+	}
 
-    .button:active {
-        transform: translateY(0);
-    }
-    .archivo-black {
-      font-family: "Archivo Black", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      font-style: normal;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-    .github-contributions {
-        width: 100%;
-        height: 3rem;
-        border: none;
-        overflow: hidden;
-        opacity: 0.8;
-        transition: opacity 0.2s ease;
-    }
+	.button:active {
+		transform: translateY(0);
+	}
+	.archivo-black {
+	  font-family: "Archivo Black", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+	  font-style: normal;
+	  -webkit-font-smoothing: antialiased;
+	  -moz-osx-font-smoothing: grayscale;
+	}
+	.github-contributions {
+		width: 100%;
+		height: 3rem;
+		border: none;
+		overflow: hidden;
+		opacity: 0.8;
+		transition: opacity 0.2s ease;
+	}
 
-    .button.github:hover .github-contributions {
-        opacity: 1;
-    }
-    .special {
-        height: 100px;
-    }
-    .special iframe {
-        width: 22rem;
-    }
+	.button.github:hover .github-contributions {
+		opacity: 1;
+	}
+	.special {
+		height: 100px;
+	}
+	.special iframe {
+		width: 22rem;
+	}
 
 </style>
 
 </head>
 <body>
-    <div class="container">
+	<div class="container">
 
-        <a href="https://val-nvs.github.io/portfolio/" class="button videography">
-            Videography Portfolio
-        </a>
+		<a href="https://val-nvs.github.io/portfolio/" class="button videography">
+			Videography Portfolio
+		</a>
 
-        <a href="" class="button under-construction">
-            Photography Portfolio
-        </a>
+		<a href="" class="button under-construction">
+			Photography Portfolio
+		</a>
 
-        <a href="https://www.instagram.com/val.nevs/" class="button instagram">
-            <span class="social-tag">↗ <span class="instagram-text">Instagram</span></span>
-        </a>
+		<a href="https://www.instagram.com/val.nevs/" class="button instagram">
+			<span class="social-tag">↗ <span class="instagram-text">Instagram</span></span>
+		</a>
 
-        <a href="https://github.com/val-nvs/" class="button github special">
-            <span class="social-tag">
-                ↗ <img src="GitHub_Logo_White.png" alt="GitHub">
-            </span>
-            <iframe class="github-contributions" src="contributions.html"></iframe>
-        </a>
+		<a href="https://github.com/val-nvs/" class="button github special">
+			<span class="social-tag">
+				↗ <img src="GitHub_Logo_White.png" alt="GitHub"> PROFILE LINK
+			</span>
+			<iframe class="github-contributions" src="contributions.html"></iframe>
+		</a>
 
-        <a href="https://val-nvs.github.io/colors/index14.html" class="button github">
-            Two-strip Technicolor filter
-        </a>
+		<a href="https://val-nvs.github.io/colors/index14.html" class="button github">
+			Two-strip Technicolor filter
+		</a>
 
-        <a href="https://github.com/val-nvs/film-camera" class="button github">
-            3D printed 35mm film cine-camera (WIP)
-        </a>
+		<a href="https://github.com/val-nvs/film-camera" class="button github">
+			3D printed 35mm film cine-camera (WIP)
+		</a>
 
-        <a href="https://val-nvs.github.io/game-engine/" class="button github">
-            3D vis pre-baked from blender (WIP)
-        </a>
+		<a href="https://val-nvs.github.io/game-engine/" class="button github">
+			3D vis pre-baked from blender (WIP)
+		</a>
 
-        <a href="https://val-nvs.github.io/logic/index.html" class="button github">
-            Logic gates (WIP)
-        </a>
+		<a href="https://val-nvs.github.io/logic/index.html" class="button github">
+			Logic gates (WIP)
+		</a>
 
-        <a href="https://val-nvs.github.io/history/" class="button github">
-            My favorite films
-        </a>
+		<a href="https://val-nvs.github.io/history/" class="button github">
+			My favorite films
+		</a>
 
-        <a href="https://letterboxd.com/eerom/" class="button letterboxd">
-            <span class="social-tag">↗ <span class="archivo-black instagram-text">Letterboxd</span></span>
-        </a>
+		<a href="https://letterboxd.com/eerom/" class="button letterboxd">
+			<span class="social-tag">↗ <span class="archivo-black instagram-text">Letterboxd</span></span>
+		</a>
 
-        <a href="https://valdirneves.pixieset.com/portfolio/" class="button videography">
-            ↗ Pixieset photography portfolio
-        </a>
+		<a href="https://valdirneves.pixieset.com/portfolio/" class="button videography">
+			↗ Pixieset photography portfolio
+		</a>
 
 
-        <a href="https://val-nvs.github.io/klotski.html" class="button github">
-            Klotski game
-        </a>
+		<a href="https://val-nvs.github.io/klotski.html" class="button github">
+			Klotski game
+		</a>
 
-        <a href="https://val-nvs.github.io/calc.html" class="button github">
-            Calculator
-        </a>
+		<a href="https://val-nvs.github.io/calc.html" class="button github">
+			Calculator
+		</a>
 
-        <a href="https://val-nvs.github.io/portfolio/" class="button github">
-            Old portfolio
-        </a>
+		<a href="https://val-nvs.github.io/portfolio/" class="button github">
+			Old portfolio
+		</a>
 
-        <a href="https://github.com/val-nvs/minecraft-boring" class="button github">
-            Minecraft Boring Datapack (WIP)
-        </a>
+		<a href="https://github.com/val-nvs/minecraft-boring" class="button github">
+			Minecraft Boring Datapack (WIP)
+		</a>
 
-        <a href="https://val-nvs.github.io/blender-guide/" class="button github">
-            Blender guide
-        </a>
+		<a href="https://val-nvs.github.io/blender-guide/" class="button github">
+			Blender guide
+		</a>
 
-    </div>
+	</div>
 </body>
 </html>
