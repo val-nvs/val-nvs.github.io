@@ -3,271 +3,461 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Valdir Neves</title>
+	<meta name="description" content="Valdir Neves - Videography and Photography Portfolio Links">
+	<title>Valdir Neves - Portfolio Links</title>
 	<link rel="icon" href="favicon.png" type="image/png">
+	
+	<!-- Google Fonts -->
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet">
-<style>
-	@font-face {
-		font-family: 'Instagram Sans Headline';
-		src: url('Instagram Sans Headline.otf') format('opentype');
-	}
-
-	* {
-		margin: 0;
-		padding: 0;
-		box-sizing: border-box;
-	}
-
-	body {
-		background: #0d1117;
-		color: #f0f6fc;
-		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		min-height: 100vh;
-		padding: 10px;
-	}
-
-	.container {
-		text-align: center;
-		width: 85vw;
-		max-width: 400px;
-	}
-
-	.button {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		gap: 0px;
-		width: 100%;
-		padding: clamp(12px, 3vw, 18px) clamp(16px, 4vw, 24px);
-		margin: clamp(8px, 2vw, 12px) 0;
-		background: #21262d;
-		border: 1px solid #30363d;
-		border-radius: clamp(5px, 1.2vw, 8px);
-		color: #f0f6fc;
-		text-decoration: none;
-		font-size: clamp(14px, 3.5vw, 16px);
-		font-weight: 500;
-		transition: all 0.2s ease;
-		height: 60px;
-		position: relative;
-	}
-
-	.button.videography {
-		position: relative;
-		border: none;
-	}
-
-	.button.videography::before {
-		content: '';
-		position: absolute;
-		top: -1px;
-		left: -1px;
-		right: -1px;
-		bottom: -1px;
-		background: linear-gradient(90deg,#004, #400, #040, #004,#400, #040,#004);
-		background-size: 200% 100%;
-		border-radius: clamp(5px, 1.2vw, 8px);
-		animation: slideGradient 6s linear infinite;
-		z-index: -1;
-	}
-
-	.button.instagram {
-		position: relative;
-		border: none;
-	}
-
-	.button.instagram::before {
-		content: '';
-		position: absolute;
-		top: -1px;
-		left: -1px;
-		right: -1px;
-		bottom: -1px;
-		background: linear-gradient(90deg, #FEDA75, #FA7E1E, #D62976, #962FBF, #D62976, #FA7E1E, #FEDA75);
-		background-size: 200% 100%;
-		border-radius: clamp(5px, 1.2vw, 8px);
-		animation: slideGradient 6s linear infinite;
-		z-index: -1;
-	}
-
-	.button.github {
-		position: relative;
-		border: none;
-		flex-direction: column;
-	}
-
-	.button.github::before {
-		content: '';
-		position: absolute;
-		top: -1px;
-		left: -1px;
-		right: -1px;
-		bottom: -1px;
-		background: linear-gradient(90deg, #1f3545, #1e38b9, #5f3bbd, #1e38b9, #1f3545);
-		background-size: 200% 100%;
-		border-radius: clamp(5px, 1.2vw, 8px);
-		animation: slideGradient 6s linear infinite;
-		z-index: -1;
-	}
-
-	.button.letterboxd {
-		position: relative;
-		border: none;
-	}
-
-	.button.letterboxd::before {
-		content: '';
-		position: absolute;
-		top: -1px;
-		left: -1px;
-		right: -1px;
-		bottom: -1px;
-		background: linear-gradient(90deg, #ffffff, #ff8000, #ffffff, #00e054, #ffffff, #40bcf4, #ffffff);
-		background-size: 200% 100%;
-		border-radius: clamp(5px, 1.2vw, 8px);
-		animation: slideGradient 6s linear infinite;
-		z-index: -1;
-	}
-
-	@keyframes slideGradient {
-		0% {
-			background-position: 0% 50%;
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+	
+	<style>
+		@font-face {
+			font-family: 'Instagram Sans Headline';
+			src: url('Instagram Sans Headline.otf') format('opentype');
 		}
-		100% {
-			background-position: 200% 50%;
+		@font-face {
+			font-family: 'Avenir';
+			src: url('Avenir-LT-Std-95-Black.otf') format('opentype');
 		}
-	}
+		/* Reset and Base Styles */
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
 
-	.social-tag {
-		background: transparent;
-		border: 1px solid transparent;
-		border-radius: 6px;
-		padding: 8px 12px;
-		color: #f0f6fc;
-		font-size: clamp(12px, 3vw, 16px);
-		font-weight: 500;
-		letter-spacing: -0.5px;
-		display: flex;
-		align-items: center;
-		gap: 5px;
-		min-height: 36px;
-	}
+		:root {
+			/* Color Palette */
+			--bg-primary: #0d1117;
+			--text-primary: #f0f6fc;
+			--text-secondary: #6e7681;
+			--button-bg: #21262d;
+			--button-border: #30363d;
+			--button-hover-bg: rgba(33, 38, 45, 0.5);
+			--button-hover-border: #8b949e;
+			--disabled-bg: #16181d;
+			--disabled-border: #21262d;
+			
+			/* Spacing */
+			--button-padding: clamp(12px, 3vw, 18px) clamp(16px, 4vw, 24px);
+			--button-margin: clamp(8px, 2vw, 12px) 0;
+			--border-radius: clamp(5px, 1.2vw, 8px);
+			
+			/* Typography */
+			--font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+		}
 
-	.social-tag img {
-		height: 14px;
-		width: auto;
-	}
+		body {
+			background: var(--bg-primary);
+			color: var(--text-primary);
+			font-family: var(--font-primary);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			min-height: 100vh;
+			padding: 20px;
+		}
 
-	.instagram-text {
-		font-family: 'Instagram Sans Headline', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-		font-size: clamp(14px, 3.5vw, 20px);
-	}
+		/* Container */
+		.container {
+			text-align: center;
+			width: 100%;
+			max-width: 400px;
+		}
 
-	.button.under-construction {
-		background: #16181d;
-		border-color: #21262d;
-		color: #6e7681;
-		position: relative;
-		overflow: hidden;
-		pointer-events: none;
-	}
+		/* Base Button Styles */
+		.link-button {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 100%;
+			padding: var(--button-padding);
+			margin: var(--button-margin);
+			background: var(--button-bg);
+			border: 1px solid var(--button-border);
+			border-radius: var(--border-radius);
+			color: var(--text-primary);
+			text-decoration: none;
+			font-size: clamp(14px, 3.5vw, 16px);
+			font-weight: 500;
+			transition: all 0.2s ease;
+			min-height: 60px;
+			position: relative;
+		}
 
-	.button.under-construction::after {
-		content: '';
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		background: repeating-linear-gradient(
-			45deg,
-			rgba(255, 193, 7, 0.1) 0px,
-			rgba(255, 193, 7, 0.1) 10px,
-			rgba(0, 0, 0, 0.1) 10px,
-			rgba(0, 0, 0, 0.1) 20px
-		);
-		pointer-events: none;
-	}
+		.link-button:hover:not(.disabled) {
+			background: #30363d;
+			border-color: var(--button-hover-border);
+			transform: translateY(-1px);
+		}
 
-	.button:hover {
-		background: #30363d;
-		border-color: #8b949e;
-		transform: translateY(-1px);
-	}
+		.link-button:active:not(.disabled) {
+			transform: translateY(0);
+		}
 
-	.button:active {
-		transform: translateY(0);
-	}
-	.archivo-black {
-	  font-family: "Archivo Black", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-	  font-style: normal;
-	  -webkit-font-smoothing: antialiased;
-	  -moz-osx-font-smoothing: grayscale;
-	}
-	.github-contributions {
-		width: 100%;
-		height: 3rem;
-		border: none;
-		overflow: hidden;
-		opacity: 0.8;
-		transition: opacity 0.2s ease;
-	}
+		/* Animated Gradient Background */
+		.animated-border {
+			border: none;
+			background: var(--button-bg);
+			position: relative;
+			overflow: visible;
+		}
 
-	.button.github:hover .github-contributions {
-		opacity: 1;
-	}
-	.special {
-		height: 100px;
-	}
-	.special iframe {
-		width: 22rem;
-	}
-	.button.in::before {
-		content: '';
-		position: absolute;
-		top: -1px;
-		left: -1px;
-		right: -1px;
-		bottom: -1px;
-		background: linear-gradient(90deg, #0e76a8, #0e76a8, #666, #0e76a8, #0e76a8, #666, #0e76a8);
-		background-size: 200% 100%;
-		border-radius: clamp(5px, 1.2vw, 8px);
-		animation: slideGradient 6s linear infinite;
-		z-index: -1;
-	}
-</style>
+		.animated-border::before {
+			content: '';
+			position: absolute;
+			top: -1px;
+			left: -1px;
+			right: -1px;
+			bottom: -1px;
+			border-radius: var(--border-radius);
+			background: var(--gradient);
+			background-size: 200% 100%;
+			animation: gradientSlide 6s linear infinite;
+			z-index: -1;
+		}
 
+		.animated-border:hover {
+			background: var(--button-hover-bg);
+			backdrop-filter: blur(10px);
+			transform: translateY(-1px);
+		}
+
+		@keyframes gradientSlide {
+			0% { background-position: 0% 50%; }
+			100% { background-position: 200% 50%; }
+		}
+
+		/* Individual Button Gradients */
+		.portfolio-button {
+			--gradient: linear-gradient(90deg, #004, #400, #040, #004, #400, #040, #004);
+		}
+
+		.instagram-button {
+			--gradient: linear-gradient(90deg, #FEDA75, #FA7E1E, #D62976, #962FBF, #D62976, #FA7E1E, #FEDA75);
+		}
+
+		.linkedin-button {
+			--gradient: linear-gradient(90deg, #0e76a8, #0e76a8, #fff, #0e76a8, #0e76a8, #fff, #0e76a8);
+		}
+
+		/* GitHub Expandable Section */
+		.github-dropdown {
+			position: relative;
+			margin: var(--button-margin);
+		}
+
+		.github-main-button {
+			width: 100%;
+			padding: var(--button-padding);
+			background: var(--button-bg);
+			border: none;
+			border-radius: var(--border-radius);
+			color: var(--text-primary);
+			font-size: clamp(14px, 3.5vw, 16px);
+			font-weight: 500;
+			transition: all 0.2s ease;
+			min-height: 60px;
+			position: relative;
+			overflow: visible;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 8px;
+		}
+
+		.github-main-button::before {
+			content: '';
+			position: absolute;
+			top: -1px;
+			left: -1px;
+			right: -1px;
+			bottom: -1px;
+			border-radius: var(--border-radius);
+			background: linear-gradient(90deg, #1f3545, #1e38b9, #5f3bbd, #1e38b9, #1f3545);
+			background-size: 200% 100%;
+			animation: gradientSlide 6s linear infinite;
+			z-index: -1;
+		}
+
+		.github-main-button:hover {
+			background: var(--button-hover-bg);
+			backdrop-filter: blur(10px);
+			transform: translateY(-1px);
+		}
+
+		.github-main-button:active {
+			transform: translateY(0);
+		}
+
+		.dropdown-arrow {
+			transition: transform 0.3s ease;
+			font-size: 0.8em;
+			opacity: 0.7;
+		}
+
+		.github-dropdown.expanded .dropdown-arrow {
+			transform: rotate(180deg);
+		}
+
+		/* GitHub Projects List */
+		.github-projects {
+			max-height: 0;
+			overflow: hidden;
+			transition: max-height 0.3s ease, margin 0.3s ease;
+			background: rgba(21, 26, 31, 0.9);
+			backdrop-filter: blur(10px);
+			border-radius: var(--border-radius);
+			margin-top: 0;
+		}
+
+		.github-dropdown.expanded .github-projects {
+			max-height: 600px;
+			margin-top: 10px;
+			border: 1px solid var(--button-border);
+		}
+
+		.github-project-link {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 12px 16px;
+			color: var(--text-primary);
+			text-decoration: none;
+			font-size: clamp(12px, 3vw, 14px);
+			transition: all 0.2s ease;
+			border-bottom: 1px solid rgba(48, 54, 61, 0.3);
+		}
+
+		.github-project-link:last-child {
+			border-bottom: none;
+		}
+
+		.github-project-link:hover {
+			background: rgba(48, 54, 61, 0.3);
+			padding-left: 20px;
+		}
+
+		.project-name {
+			font-weight: 500;
+		}
+
+		.project-type {
+			font-size: 0.85em;
+			color: var(--text-secondary);
+			background: rgba(48, 54, 61, 0.5);
+			padding: 2px 8px;
+			border-radius: 4px;
+		}
+
+		/* Button Content */
+		.button-content {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			font-size: clamp(14px, 3.5vw, 18px);
+			position: relative;
+			z-index: 1;
+		}
+
+		.arrow {
+			font-size: 1.1em;
+			opacity: 0.8;
+		}
+
+		/* Disabled State */
+		.disabled {
+			background: var(--disabled-bg);
+			border-color: var(--disabled-border);
+			color: var(--text-secondary);
+			cursor: not-allowed;
+			pointer-events: none;
+			position: relative;
+		}
+
+		.disabled::after {
+			content: 'Coming Soon';
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			font-size: 0.75rem;
+			text-transform: uppercase;
+			letter-spacing: 1px;
+			opacity: 0.5;
+			background: var(--bg-primary);
+			padding: 2px 8px;
+			border-radius: 4px;
+		}
+
+		/* Section Divider */
+		.divider {
+			margin: 2rem 0;
+			height: 1px;
+			background: linear-gradient(90deg, transparent, var(--button-border), transparent);
+		}
+
+		/* Responsive Adjustments */
+		@media (max-width: 480px) {
+			body {
+				padding: 15px;
+			}
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			.animated-border::before,
+			.github-main-button::before {
+				animation: none;
+			}
+			
+			.link-button,
+			.github-projects,
+			.dropdown-arrow {
+				transition: none;
+			}
+		}
+	</style>
 </head>
 <body>
-	<div class="container">
+	<main class="container">
+		<!-- Portfolio Section -->
+		<section aria-label="Portfolio Links">
+			<a href="https://val-nvs.github.io/portfolio/" class="link-button animated-border portfolio-button">
+				<span class="button-content">
+					Videography Portfolio
+				</span>
+			</a>
 
-		<a href="https://val-nvs.github.io/portfolio/" class="button videography">
-			Valdir Neves' Videography Portfolio
-		</a>
+			<a href="#" class="link-button disabled" aria-disabled="true">
+				<span class="button-content">
+					Photography Portfolio
+				</span>
+			</a>
+		</section>
 
-		<a href="" class="button under-construction">
-			Photography Portfolio
-		</a>
+		<div class="divider"></div>
 
-		<a href="https://www.linkedin.com/in/valdir-neves/" class="button videography in">
-			<span class="social-tag">↗ LinkedIn</span>
-		</a>
+		<!-- Social Links Section -->
+		<section aria-label="Social Media Links">
+			<a href="https://www.linkedin.com/in/valdir-neves/" class="link-button animated-border linkedin-button" aria-label="LinkedIn Profile">
+				<span class="button-content">
+					<span class="arrow">↗</span>
+					<span style="font-family: 'Avenir', var(--font-primary);">LinkedIn</span>
+				</span>
+			</a>
 
-		<a href="https://www.instagram.com/val.nevs/" class="button instagram">
-			<span class="social-tag">↗ <span class="instagram-text">Instagram</span></span>
-		</a>
+			<a href="https://www.instagram.com/val.nevs/" class="link-button animated-border instagram-button" aria-label="Instagram Profile">
+				<span class="button-content">
+					<span class="arrow">↗</span>
+					<span style="font-family: 'Instagram Sans Headline', var(--font-primary);">Instagram</span>
+				</span>
+			</a>
 
-		<a href="https://val-nvs.github.io/links" class="button github">
-			<span class="social-tag">
-				↗ <img src="GitHub_Logo_White.png" alt="GitHub">
-			</span>
-		</a>
+			<!-- GitHub Expandable Section -->
+			<div class="github-dropdown" id="githubDropdown">
+				<button class="github-main-button" onclick="toggleGitHub()" aria-expanded="false" aria-controls="githubProjects">
+					<span class="button-content">
+						<span class="arrow">↗</span>
+						<img src="GitHub_Logo_White.png" alt="GitHub" style="height: 16px; opacity: 0.9;">
+						Projects
+						<span class="dropdown-arrow">▼</span>
+					</span>
+				</button>
+				<div class="github-projects" id="githubProjects" aria-hidden="true">
+					<a href="https://github.com/val-nvs/" class="github-project-link" target="_blank">
+						<span class="project-name">GitHub Profile</span>
+						<span class="project-type">↗</span>
+					</a>
+					<a href="https://val-nvs.github.io/colors/" class="github-project-link" target="_blank">
+						<span class="project-name">Two-strip Technicolor filter</span>
+						<span class="project-type">Tool</span>
+					</a>
+					<a href="https://github.com/val-nvs/film-camera" class="github-project-link" target="_blank">
+						<span class="project-name">3D printed 35mm film cine-camera</span>
+						<span class="project-type">WIP</span>
+					</a>
+					<a href="https://val-nvs.github.io/game-engine/" class="github-project-link" target="_blank">
+						<span class="project-name">3D vis pre-baked from blender</span>
+						<span class="project-type">WIP</span>
+					</a>
+					<a href="https://val-nvs.github.io/logic/index.html" class="github-project-link" target="_blank">
+						<span class="project-name">Logic gates</span>
+						<span class="project-type">WIP</span>
+					</a>
+					<a href="https://val-nvs.github.io/history/" class="github-project-link" target="_blank">
+						<span class="project-name">My favorite films</span>
+						<span class="project-type">List</span>
+					</a>
+					<a href="https://val-nvs.github.io/klotski.html" class="github-project-link" target="_blank">
+						<span class="project-name">Klotski game</span>
+						<span class="project-type">Game</span>
+					</a>
+					<a href="https://val-nvs.github.io/calc.html" class="github-project-link" target="_blank">
+						<span class="project-name">Calculator</span>
+						<span class="project-type">Tool</span>
+					</a>
+					<a href="https://val-nvs.github.io/portfolio/old.html" class="github-project-link" target="_blank">
+						<span class="project-name">Old portfolio</span>
+						<span class="project-type">Archive</span>
+					</a>
+					<a href="https://github.com/val-nvs/minecraft-boring" class="github-project-link" target="_blank">
+						<span class="project-name">Minecraft Boring Datapack</span>
+						<span class="project-type">WIP</span>
+					</a>
+					<a href="https://val-nvs.github.io/blender-guide/" class="github-project-link" target="_blank">
+						<span class="project-name">Blender guide</span>
+						<span class="project-type">Guide</span>
+					</a>
+				</div>
+			</div>
+		</section>
+	</main>
 
-	</div>
+	<script>
+		function toggleGitHub() {
+			const dropdown = document.getElementById('githubDropdown');
+			const button = dropdown.querySelector('.github-main-button');
+			const projects = document.getElementById('githubProjects');
+			const isExpanded = dropdown.classList.contains('expanded');
+			
+			if (isExpanded) {
+				dropdown.classList.remove('expanded');
+				button.setAttribute('aria-expanded', 'false');
+				projects.setAttribute('aria-hidden', 'true');
+			} else {
+				dropdown.classList.add('expanded');
+				button.setAttribute('aria-expanded', 'true');
+				projects.setAttribute('aria-hidden', 'false');
+			}
+		}
+
+		// Close dropdown when clicking outside
+		document.addEventListener('click', function(event) {
+			const dropdown = document.getElementById('githubDropdown');
+			const button = dropdown.querySelector('.github-main-button');
+			
+			if (!dropdown.contains(event.target)) {
+				dropdown.classList.remove('expanded');
+				button.setAttribute('aria-expanded', 'false');
+				document.getElementById('githubProjects').setAttribute('aria-hidden', 'true');
+			}
+		});
+
+		// Keyboard navigation
+		document.addEventListener('keydown', function(event) {
+			const dropdown = document.getElementById('githubDropdown');
+			const isExpanded = dropdown.classList.contains('expanded');
+			
+			if (event.key === 'Escape' && isExpanded) {
+				dropdown.classList.remove('expanded');
+				dropdown.querySelector('.github-main-button').setAttribute('aria-expanded', 'false');
+				document.getElementById('githubProjects').setAttribute('aria-hidden', 'true');
+				dropdown.querySelector('.github-main-button').focus();
+			}
+		});
+	</script>
 </body>
 </html>
