@@ -18,7 +18,7 @@
 		}
 		* {
 			font-family: 'Roboto', sans-serif;
-			font-weight: 300;
+			font-weight: 400;
 			box-sizing: border-box;
 		}
 		body {
@@ -27,29 +27,36 @@
 			background: #191C21;
 			color: #A1AAB3
 		}
+		main {
+			max-width:1400px;
+			margin: 0 auto;
+		}
+		@media (orientation: landscape) {
+			main {
+			max-width: 30vw;
+		}}
 		img {
 			display: block;
 			width: 100%;
 		}
 		.section {
 			border-block: 1px solid #64707b;
-			padding: 2vw;
+			padding: 1rem;
 		}
 		.title {
 			font-size: 1.2rem;
-			margin: 0 0 2vw 0;
+			margin: 0 0 1rem 0;
 			color: #A1AAB3;
 			letter-spacing: 0.05em;
 		}
 		.grid {
 			display: grid;
-			grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
 			width: 100%;
-			gap: 2vw;
+			gap: 1rem;
 		}
 		.movie {
 			background: #404;
-			border-radius: 1vw;
+			border-radius: 1rem;
 			position: relative; /* moved from div */
 		}
 		.movie::before { /* changed from div::before */
@@ -66,7 +73,6 @@
 			z-index: 1;
 		}
 		.movie img { /* changed from div img */
-			aspect-ratio: 2/3;
 			object-fit: cover;
 			border-radius: inherit;
 		}
@@ -78,64 +84,64 @@
 	</style>
 </head>
 <body>
-asdf
+body
+<main>
+	main
 
 <div class="section">
 	<div class="title">VIDEOGRAPHY PORTFOLIO</div>
-	<div class="grid">
+	<div class="grid" style="grid-template-columns: repeat(1, 1fr);">
 		<button class="movie">
-			<img src="amelie.jpg">
-		</button>
-		<button class="movie">
-			<img src="amelie.jpg">
-		</button>
-		<button class="movie">
-			<img src="amelie.jpg">
-		</button>
-		<button class="movie">
-			<img src="amelie.jpg">
+			<img src="cctv.jpg">
+
 		</button>
 	</div>
 </div>
 
 <div class="section">
 	<div class="title">PHOTOGRAPHY PORTFOLIO</div>
-	<div class="grid">
+	<div class="grid" style="grid-template-columns: repeat(1, 1fr);">
 		<button class="movie">
-			<img src="amelie.jpg">
+			<img src="pic1.jpg">
 		</button>
-		<button class="movie">
-			<img src="amelie.jpg">
-		</button>
-		<button class="movie">
-			<img src="amelie.jpg">
-		</button>
-		<button class="movie">
-			<img src="amelie.jpg">
-		</button>
+
 	</div>
 </div>
 
 <div class="section">
 	<div class="title">MAKER PORTFOLIO</div>
-	<div class="grid">
+	<div class="grid" style="grid-template-columns: repeat(1, 1fr);">
 		<button class="movie">
+			<img src="nodes.png">
+		</button>
+
+	</div>
+</div>
+
+
+
+<div class="section">
+	<div class="title">FAVORITE FILMS</div>
+	<div class="grid" style="grid-template-columns: repeat(4, 1fr);">
+		<button class="movie" onclick="window.open('https://letterboxd.com/film/everything-everywhere-all-at-once/', '_blank')">
+			<img src="everything.jpg">
+		</button>
+		<button class="movie" onclick="window.open('https://letterboxd.com/film/amelie/', '_blank')">
 			<img src="amelie.jpg">
 		</button>
-		<button class="movie">
-			<img src="amelie.jpg">
+		<button class="movie" onclick="window.open('https://letterboxd.com/film/the-secret-life-of-walter-mitty-2013/', '_blank')">
+			<img src="mitty.jpg">
 		</button>
-		<button class="movie">
-			<img src="amelie.jpg">
-		</button>
-		<button class="movie">
-			<img src="amelie.jpg">
+		<button class="movie" onclick="window.open('https://letterboxd.com/film/all-about-lily-chou-chou/', '_blank')">
+			<img src="lily.jpg">
 		</button>
 	</div>
 </div>
-asdf
 
+main
 
+</main>
+body
 
 
 </body>
