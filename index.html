@@ -17,6 +17,7 @@
 			font-family: 'Instagram Sans Headline';
 			src: url('Instagram Sans Headline.otf') format('opentype');
 		}
+		
 		@font-face {
 			font-family: 'Avenir';
 			src: url('Avenir-LT-Std-95-Black.otf') format('opentype');
@@ -116,7 +117,21 @@
 			background: var(--gradient);
 			background-size: 200% 100%;
 			animation: gradientSlide 6s linear infinite;
+			z-index: -2;
+		}
+
+		/* Oval shadow under button bg, above gradient */
+		.animated-border::after {
+			content: '';
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			transform: translate(-50%, -50%);
+			width: 70%;
+			height: 120%;
+			background: radial-gradient(ellipse at center, rgba(13, 17, 23, 0.95) 0%, rgba(13, 17, 23, 0.7) 40%, transparent 70%);
 			z-index: -1;
+			pointer-events: none;
 		}
 
 		.animated-border:hover {
@@ -132,7 +147,7 @@
 
 		/* Individual Button Gradients */
 		.portfolio-button {
-			--gradient: linear-gradient(90deg, #004, #400, #040, #004, #400, #040, #004);
+			--gradient: linear-gradient(90deg, #00f, #f00, #0f0, #00f, #f00, #0f0, #00f);
 		}
 
 		.instagram-button {
@@ -180,7 +195,21 @@
 			background: linear-gradient(90deg, #1f3545, #1e38b9, #5f3bbd, #1e38b9, #1f3545);
 			background-size: 200% 100%;
 			animation: gradientSlide 6s linear infinite;
+			z-index: -2;
+		}
+
+		/* Oval shadow for GitHub button */
+		.github-main-button::after {
+			content: '';
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			transform: translate(-50%, -50%);
+			width: 70%;
+			height: 120%;
+			background: radial-gradient(ellipse at center, rgba(13, 17, 23, 0.95) 0%, rgba(13, 17, 23, 0.7) 40%, transparent 70%);
 			z-index: -1;
+			pointer-events: none;
 		}
 
 		.github-main-button:hover {
@@ -323,6 +352,7 @@
 </head>
 <body>
 	<main class="container">
+		<h1>Valdir Neves</h1>
 		<!-- Portfolio Section -->
 		<section aria-label="Portfolio Links">
 			<a href="https://val-nvs.github.io/portfolio/" class="link-button animated-border portfolio-button">
@@ -360,7 +390,6 @@
 			<div class="github-dropdown" id="githubDropdown">
 				<button class="github-main-button" onclick="toggleGitHub()" aria-expanded="false" aria-controls="githubProjects">
 					<span class="button-content">
-						<span class="arrow">↗</span>
 						<img src="GitHub_Logo_White.png" alt="GitHub" style="height: 16px; opacity: 0.9;">
 						Projects
 						<span class="dropdown-arrow">▼</span>
