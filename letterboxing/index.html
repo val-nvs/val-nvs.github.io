@@ -52,11 +52,11 @@
 		.grid {
 			display: grid;
 			width: 100%;
-			gap: 1rem;
+			gap: 6px;
 		}
 		.movie {
 			background: #404;
-			border-radius: 1rem;
+			border-radius: 6px;
 			position: relative; /* moved from div */
 		}
 		.movie::before { /* changed from div::before */
@@ -81,12 +81,48 @@
 			border: 3px solid #00E054;
 			transition: border 0.1s ease;
 		}
+		header {
+			background: #000;
+			display: flex;
+	justify-content: center;
+	padding: 1rem;
+		}
+		header ul {
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);gap: 10px;
+			background: #1D1F25;
+			list-style: none;
+			border-radius: 5px;
+			padding: 2px;
+			width: 100%;
+		}
+		header ul li {
+			text-align: center;
+			padding-inline: 1rem;
+			padding-block: 5px;
+			border-radius: 5px;
+			font-weight: bold;
+			cursor: pointer;
+			transition: all 0.2s ease;
+
+		}
+		header ul li.active {
+			background: #728393;
+			color: #fff;
+			cursor: default;
+		}
 	</style>
 </head>
 <body>
-body
 <main>
-	main
+	
+<header>
+	<ul>
+		<li class="nav-btn active">Home</li>
+		<li class="nav-btn">About</li>
+		<li class="nav-btn">Contact</li>
+	</ul>
+</header>
 
 <div class="section">
 	<div class="title">VIDEOGRAPHY PORTFOLIO</div>
@@ -143,6 +179,35 @@ main
 </main>
 body
 
+<script>
+// Get all navigation buttons
+const buttons = document.querySelectorAll('.nav-btn');
 
+// Add click event to each button
+buttons.forEach(button => {
+    button.addEventListener('click', function() {
+        // Remove 'active' class from all buttons
+        buttons.forEach(btn => btn.classList.remove('active'));
+        
+        // Add 'active' class to clicked button
+        this.classList.add('active');
+        
+        // Get which page was clicked
+        const selectedPage = this.dataset.page;
+        console.log('Clicked:', selectedPage);
+    });
+});
+
+// In the click event, add:
+const selectedPage = this.dataset.page;
+
+// Hide all pages
+document.querySelectorAll('.page').forEach(page => {
+    page.style.display = 'none';
+});
+
+// Show selected page
+document.getElementById(selectedPage).style.display = 'block';
+</script>
 </body>
 </html>
