@@ -24,22 +24,25 @@
 		body {
 			margin: 0;
 			padding: 0;
-			background: #191C21;
+			background: #000;
 			color: #A1AAB3
 		}
-		main {
+		.app {
 			max-width:1400px;
 			margin: 0 auto;
+			background: #505;
+		}
+		main {
+			background: #191C21;
 		}
 		@media (orientation: landscape) {
-			main {
-			max-width: 30vw;
-		}}
+			.app {max-width: 30vw;}
+		}
 		img {
 			display: block;
 			width: 100%;
 		}
-		.section {
+		section {
 			border-block: 1px solid #64707b;
 			padding: 1rem;
 		}
@@ -81,24 +84,24 @@
 			border: 3px solid #00E054;
 			transition: border 0.1s ease;
 		}
-		header {
+		nav {
 			background: #000;
 			display: flex;
-	justify-content: center;
-	padding: 1rem;
+			justify-content: center;
+			padding-block: 5px;
+			padding-inline: 1rem;
 		}
-		header ul {
+		nav ul {
 			display: grid;
-			grid-template-columns: repeat(3, 1fr);gap: 10px;
+			grid-template-columns: repeat(3, 1fr);
 			background: #1D1F25;
 			list-style: none;
 			border-radius: 5px;
 			padding: 2px;
 			width: 100%;
 		}
-		header ul li {
+		nav ul li {
 			text-align: center;
-			padding-inline: 1rem;
 			padding-block: 5px;
 			border-radius: 5px;
 			font-weight: bold;
@@ -106,7 +109,7 @@
 			transition: all 0.2s ease;
 
 		}
-		header ul li.active {
+		nav ul li.active {
 			background: #728393;
 			color: #fff;
 			cursor: default;
@@ -114,17 +117,19 @@
 	</style>
 </head>
 <body>
-<main>
-	
-<header>
+	body
+<div class="app">
+	app
+<nav>
 	<ul>
 		<li class="nav-btn active">Home</li>
 		<li class="nav-btn">About</li>
 		<li class="nav-btn">Contact</li>
 	</ul>
-</header>
+</nav>
+<main>
 
-<div class="section">
+<section>
 	<div class="title">VIDEOGRAPHY PORTFOLIO</div>
 	<div class="grid" style="grid-template-columns: repeat(1, 1fr);">
 		<button class="movie">
@@ -132,9 +137,9 @@
 
 		</button>
 	</div>
-</div>
+</section>
 
-<div class="section">
+<section>
 	<div class="title">PHOTOGRAPHY PORTFOLIO</div>
 	<div class="grid" style="grid-template-columns: repeat(1, 1fr);">
 		<button class="movie">
@@ -142,9 +147,9 @@
 		</button>
 
 	</div>
-</div>
+</section>
 
-<div class="section">
+<section>
 	<div class="title">MAKER PORTFOLIO</div>
 	<div class="grid" style="grid-template-columns: repeat(1, 1fr);">
 		<button class="movie">
@@ -152,11 +157,11 @@
 		</button>
 
 	</div>
-</div>
+</section>
 
 
 
-<div class="section">
+<section>
 	<div class="title">FAVORITE FILMS</div>
 	<div class="grid" style="grid-template-columns: repeat(4, 1fr);">
 		<button class="movie" onclick="window.open('https://letterboxd.com/film/everything-everywhere-all-at-once/', '_blank')">
@@ -172,30 +177,46 @@
 			<img src="lily.jpg">
 		</button>
 	</div>
-</div>
+</section>
+
+<section>
+	<div class="title">FAVORITE SONGS</div>
+
+
+	<iframe style="border: 0; width: 350px; height: 470px;" src="https://bandcamp.com/EmbeddedPlayer/album=1349219244/size=large/bgcol=333333/linkcol=2ebd35/tracklist=false/track=1757138908/transparent=true/" seamless><a href="https://c418.bandcamp.com/album/minecraft-volume-alpha">Minecraft - Volume Alpha by C418</a></iframe>
+
+	<iframe style="border: 0; width: 350px; height: 470px;" src="https://bandcamp.com/EmbeddedPlayer/album=1115961286/size=large/bgcol=333333/linkcol=e32c14/tracklist=false/track=2396083684/transparent=true/" seamless><a href="https://menitrust.bandcamp.com/album/oncle-jazz">Oncle Jazz by Men I Trust</a></iframe>
+
+</section>
+
+<section>
+	<div class="title">FAVORITE SONGS</div>
+
+<iframe style="border: 0; width: 100%; height: 42px;" src="https://bandcamp.com/EmbeddedPlayer/album=1115961286/size=small/bgcol=333333/linkcol=e32c14/track=2396083684/transparent=true/" seamless><a href="https://menitrust.bandcamp.com/album/oncle-jazz">Oncle Jazz by Men I Trust</a></iframe>
+</section>
 
 main
-
 </main>
+app
+</div class="app">
 body
-
 <script>
 // Get all navigation buttons
 const buttons = document.querySelectorAll('.nav-btn');
 
 // Add click event to each button
 buttons.forEach(button => {
-    button.addEventListener('click', function() {
-        // Remove 'active' class from all buttons
-        buttons.forEach(btn => btn.classList.remove('active'));
-        
-        // Add 'active' class to clicked button
-        this.classList.add('active');
-        
-        // Get which page was clicked
-        const selectedPage = this.dataset.page;
-        console.log('Clicked:', selectedPage);
-    });
+	button.addEventListener('click', function() {
+		// Remove 'active' class from all buttons
+		buttons.forEach(btn => btn.classList.remove('active'));
+		
+		// Add 'active' class to clicked button
+		this.classList.add('active');
+		
+		// Get which page was clicked
+		const selectedPage = this.dataset.page;
+		constnsole.log('Clicked:', selectedPage);
+	});
 });
 
 // In the click event, add:
@@ -203,7 +224,7 @@ const selectedPage = this.dataset.page;
 
 // Hide all pages
 document.querySelectorAll('.page').forEach(page => {
-    page.style.display = 'none';
+	page.style.display = 'none';
 });
 
 // Show selected page
