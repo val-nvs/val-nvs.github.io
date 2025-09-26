@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Broadcast Table</title>
+<style>
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	background: #0a0a0a;
+	font-family: 'Arial', sans-serif;
+	overflow: hidden;
+	position: relative;
+	height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+/* Unified Broadcast Unit */
+.broadcast-unit {
+	background: #1a1a1a;
+	border-radius: 15px;
+	padding: 30px;
+	box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+	position: relative;
+	max-width: 95vw;
+	margin: 0 auto;
+}
+
+/* Top Section with Monitor and SDI Ports */
+.top-section {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 20px;
+	padding-bottom: 20px;
+	border-bottom: 2px solid #333;
+}
+
+/* SDI Ports Section */
+.sdi-section {
+	display: flex;
+	gap: 20px;
+	flex: 1;
+	justify-content: center;
+}
+
+.sdi-port {
+	width: 45px;
+	height: 45px;
+	background: radial-gradient(circle, #2a2a2a 40%, #1a1a1a 100%);
+	border: 3px solid #444;
+	border-radius: 50%;
+	position: relative;
+	cursor: pointer;
+	transition: all 0.2s;
+}
+
+.sdi-port::before {
+	content: '';
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 18px;
+	height: 18px;
+	background: #000;
+	border-radius: 50%;
+}
+
+.sdi-port::after {
+	content: attr(data-label);
+	position: absolute;
+	bottom: -18px;
+	left: 50%;
+	transform: translateX(-50%);
+	color: #666;
+	font-size: 9px;
+	white-space: nowrap;
+}
+
+.sdi-port.connected {
+	border-color: #0f0;
+	background: radial-gradient(circle, #1a3a1a 40%, #0a2a0a 100%);
+	box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+}
+
+/* Monitor Section */
+.monitor-section {
+	width: 200px;
+}
+
+.monitor {
+	background: #111;
+	border: 2px solid #333;
+	border-radius: 5px;
+	padding: 8px;
+	height: 80px;
+}
+
+.monitor-screen {
+	width: 100%;
+	height: 100%;
+	background: #000;
+	border-radius: 3px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #0f0;
+	font-family: monospace;
+	font-size: 11px;
+	position: relative;
+}
+
+.monitor-screen::after {
+	content: 'NO SIGNAL';
+	opacity: 0.5;
+}
+
+.monitor-screen.active::after {
+	content: 'SIGNAL OK';
+	opacity: 1;
+	color: #0f0;
+	text-shadow: 0 0 5px #0f0;
+}
+
+.monitor-label {
+	text-align: center;
+	color: #666;
+	font-size: 10px;
+	margin-top: 5px;
+}
+
+/* Main Grid */
+.grid-section {
+	background: #222;
+	padding: 15px;
+	border-radius: 8px;
+}
+
+.grid {
+	display: grid;
+	grid-template-columns: repeat(22, 1fr);
+	grid-template-rows: repeat(4, 1fr);
+	gap: 0.4rem;
+	width: 100%;
+}
+
+.grid > div {
+	aspect-ratio: 1/1;
+}
+
+.grid > div > button {
+	width: 100%;
+	height: 100%;
+	border: none;
+	border-radius: 3px;
+	font-size: 9px;
+	font-weight: bold;
+	transition: all 0.1s;
+	position: relative;
+	overflow: hidden;
+}
+
+/* Screen buttons (no class) */
+.grid > div > button:not(.off) {
+	background: #005;
+	cursor: default;
+	border: 1px solid #003;
+}
+
+/* Off buttons (clickable) */
+.grid > div > button.off {
+	background: #aaa;
+	cursor: pointer;
+	border: 1px solid #888;
+	color: #333;
+}
+
+.grid > div > button.off:hover {
+	background: #bbb;
+}
+
+/* Active states */
+.grid > div > button.off.red {
+	background: #f00;
+	color: #fff;
+	box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+}
+
+.grid > div > button.off.green {
+	background: #0f0;
+	color: #000;
+	box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+}
+
+/* LED indicator on buttons */
+.grid > div > button.off::after {
+	content: '';
+	position: absolute;
+	top: 2px;
+	right: 2px;
+	width: 3px;
+	height: 3px;
+	background: #666;
+	border-radius: 50%;
+}
+
+.grid > div > button.off.red::after,
+.grid > div > button.off.green::after {
+	background: #fff;
+	box-shadow: 0 0 3px currentColor;
+}
+
+/* SDI Cables with Bezier curves */
+.cable-svg {
+	width: 100vw;
+	height: 100vh;
+	position: fixed;
+	top: 0;
+	left: 0;
+	pointer-events: none;
+	z-index: 5;
+}
+
+.cable-path {
+	fill: none;
+	stroke-width: 6;
+	stroke-linecap: round;
+	filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+	pointer-events: none;
+}
+
+.cable-connector {
+	position: absolute;
+	width: 30px;
+	height: 30px;
+	background: radial-gradient(circle, #666 30%, #333 100%);
+	border: 2px solid #222;
+	border-radius: 50%;
+	cursor: grab;
+	pointer-events: all;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: transform 0.2s;
+	z-index: 100;
+}
+
+.cable-connector::before {
+	content: '';
+	width: 10px;
+	height: 10px;
+	background: #111;
+	border-radius: 50%;
+}
+
+.cable-connector:active {
+	cursor: grabbing;
+	transform: scale(1.1);
+}
+
+.cable-connector.dragging {
+	z-index: 1000;
+}
+
+/* Cable colors */
+.cable-1 .cable-path { stroke: #ff006e; }
+.cable-2 .cable-path { stroke: #00ff88; }
+.cable-3 .cable-path { stroke: #00b4ff; }
+.cable-4 .cable-path { stroke: #ffaa00; }
+.cable-5 .cable-path { stroke: #ff00ff; }
+.cable-6 .cable-path { stroke: #88ff00; }
+
+.cable-1 { box-shadow: 0 0 10px #ff006e; }
+.cable-2 { box-shadow: 0 0 10px #00ff88; }
+.cable-3 { box-shadow: 0 0 10px #00b4ff; }
+.cable-4 { box-shadow: 0 0 10px #ffaa00; }
+.cable-5 { box-shadow: 0 0 10px #ff00ff; }
+.cable-6 { box-shadow: 0 0 10px #88ff00; }
+
+</style>
+</head>
+<body>
+
+<!-- SDI Cables with Bezier Curves -->
+<svg class="cable-svg">
+	<g class="sdi-cable cable-1" data-cable="1">
+		<path class="cable-path" d=""></path>
+	</g>
+	<g class="sdi-cable cable-2" data-cable="2">
+		<path class="cable-path" d=""></path>
+	</g>
+	<g class="sdi-cable cable-3" data-cable="3">
+		<path class="cable-path" d=""></path>
+	</g>
+	<g class="sdi-cable cable-4" data-cable="4">
+		<path class="cable-path" d=""></path>
+	</g>
+	<g class="sdi-cable cable-5" data-cable="5">
+		<path class="cable-path" d=""></path>
+	</g>
+	<g class="sdi-cable cable-6" data-cable="6">
+		<path class="cable-path" d=""></path>
+	</g>
+</svg>
+
+<!-- Cable Connectors - All from top -->
+<div class="cable-connector cable-1" data-cable="1" style="left: 100px; top: 0px;"></div>
+<div class="cable-connector cable-2" data-cable="2" style="left: 250px; top: 0px;"></div>
+<div class="cable-connector cable-3" data-cable="3" style="left: 400px; top: 0px;"></div>
+<div class="cable-connector cable-4" data-cable="4" style="left: 550px; top: 0px;"></div>
+<div class="cable-connector cable-5" data-cable="5" style="left: 700px; top: 0px;"></div>
+<div class="cable-connector cable-6" data-cable="6" style="left: 850px; top: 0px;"></div>
+
+<!-- Unified Broadcast Unit -->
+<div class="broadcast-unit">
+	<!-- Top Section with SDI and Monitor -->
+	<div class="top-section">
+		<!-- SDI Ports -->
+		<div class="sdi-section">
+			<div class="sdi-port" data-label="SDI 1"></div>
+			<div class="sdi-port" data-label="SDI 2"></div>
+			<div class="sdi-port" data-label="SDI 3"></div>
+			<div class="sdi-port" data-label="SDI 4"></div>
+		</div>
+		
+		<!-- Monitor -->
+		<div class="monitor-section">
+			<div class="monitor">
+				<div class="monitor-screen" id="monitor-screen"></div>
+			</div>
+			<div class="monitor-label">OUTPUT MONITOR</div>
+		</div>
+	</div>
+	
+	<!-- Grid Section -->
+	<div class="grid-section">
+		<div class="grid">
+			<div><button class="off">1</button></div>
+			<div><button class="off">2</button></div>
+			<div><button class="off">3</button></div>
+			<div><button class="off">4</button></div>
+			<div><button class="off">5</button></div>
+			<div><button class="off">6</button></div>
+			<div><button class="off">7</button></div>
+			<div><button class="off">8</button></div>
+			<div><button class="off">9</button></div>
+			<div><button class="off">10</button></div>
+			<div></div>
+			<div><button class="off">A</button></div>
+			<div></div>
+			<div><button class="off">A</button></div>
+			<div><button class="off">A</button></div>
+			<div><button class="off">A</button></div>
+			<div></div>
+			<div></div>
+			<div><button class="off">A</button></div>
+			<div><button class="off">A</button></div>
+			<div></div>
+			<div></div>
+
+			<div><button class=""></button></div>
+			<div><button class=""></button></div>
+			<div><button class=""></button></div>
+			<div><button class=""></button></div>
+			<div><button class=""></button></div>
+			<div><button class=""></button></div>
+			<div><button class=""></button></div>
+			<div><button class=""></button></div>
+			<div><button class=""></button></div>
+			<div><button class=""></button></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div><button class="off">A</button></div>
+			<div><button class="off">A</button></div>
+			<div><button class="off">A</button></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+
+			<div><button class="off">1</button></div>
+			<div><button class="off">2</button></div>
+			<div><button class="off">3</button></div>
+			<div><button class="off">4</button></div>
+			<div><button class="off">5</button></div>
+			<div><button class="off">6</button></div>
+			<div><button class="off">7</button></div>
+			<div><button class="off">8</button></div>
+			<div><button class="off">9</button></div>
+			<div><button class="off">10</button></div>
+			<div></div>
+			<div><button class="off">A</button></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div><button class="off">A</button></div>
+			<div><button class="off">A</button></div>
+			<div></div>
+			<div></div>
+
+			<div><button class=""></button></div>
+			<div><button class=""></button></div>
+			<div><button class=""></button></div>
+			<div><button class=""></button></div>
+			<div><button class=""></button></div>
+			<div><button class=""></button></div>
+			<div><button class=""></button></div>
+			<div><button class=""></button></div>
+			<div><button class=""></button></div>
+			<div><button class=""></button></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div><button class="off">A</button></div>
+			<div></div>
+			<div><button class="off">A</button></div>
+			<div></div>
+			<div></div>
+			<div><button class="off">A</button></div>
+			<div><button class="off">A</button></div>
+			<div></div>
+			<div><button class="off">A</button></div>
+		</div>
+	</div>
+</div>
+
+<audio id="keySound" preload="auto">
+	<source src="key.wav" type="audio/wav">
+</audio>
+
+<script>
+// Button state colors
+const buttonStates = ['red', 'green'];
+
+// Get elements
+const buttons = document.querySelectorAll('.grid button.off');
+const keySound = document.getElementById('keySound');
+const monitorScreen = document.getElementById('monitor-screen');
+const connectors = document.querySelectorAll('.cable-connector');
+const ports = document.querySelectorAll('.sdi-port');
+
+// Button click handler
+buttons.forEach(button => {
+	button.addEventListener('click', function() {
+		// Play sound
+		try {
+			keySound.currentTime = 0;
+			keySound.play().catch(e => console.log('Audio play failed:', e));
+		} catch(e) {
+			console.log('Audio not available');
+		}
+
+		// Cycle through states
+		let currentState = null;
+		buttonStates.forEach(state => {
+			if (this.classList.contains(state)) {
+				currentState = state;
+			}
+		});
+
+		buttonStates.forEach(state => this.classList.remove(state));
+
+		if (!currentState) {
+			this.classList.add('red');
+		} else if (currentState === 'red') {
+			this.classList.add('green');
+		}
+	});
+});
+
+// Cable data - all from top
+const cableData = {
+	1: { start: { x: 115, y: 15 }, end: null, connected: false },
+	2: { start: { x: 265, y: 15 }, end: null, connected: false },
+	3: { start: { x: 415, y: 15 }, end: null, connected: false },
+	4: { start: { x: 565, y: 15 }, end: null, connected: false },
+	5: { start: { x: 715, y: 15 }, end: null, connected: false },
+	6: { start: { x: 865, y: 15 }, end: null, connected: false }
+};
+
+// Update bezier curves
+function updateCablePath(cableNum) {
+	const cable = cableData[cableNum];
+	const path = document.querySelector(`.cable-${cableNum} .cable-path`);
+	
+	if (!cable.end) {
+		cable.end = { ...cable.start };
+	}
+	
+	// Calculate bezier curve
+	const dx = cable.end.x - cable.start.x;
+	const dy = cable.end.y - cable.start.y;
+	const distance = Math.sqrt(dx * dx + dy * dy);
+	
+	// Create natural hanging curve
+	const sag = Math.min(distance * 0.4, 200);
+	
+	// Control points for hanging cable effect
+	const cp1x = cable.start.x + dx * 0.3;
+	const cp1y = cable.start.y + Math.abs(dy * 0.3) + sag * 0.5;
+	const cp2x = cable.end.x - dx * 0.3;
+	const cp2y = cable.end.y - Math.abs(dy * 0.3) + sag * 0.5;
+	
+	const d = `M ${cable.start.x} ${cable.start.y} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${cable.end.x} ${cable.end.y}`;
+	path.setAttribute('d', d);
+}
+
+// Initialize cables
+Object.keys(cableData).forEach(num => updateCablePath(num));
+
+// Draggable connectors
+connectors.forEach(connector => {
+	let isDragging = false;
+	let offset = { x: 0, y: 0 };
+	const cableNum = connector.dataset.cable;
+	
+	connector.addEventListener('mousedown', function(e) {
+		isDragging = true;
+		this.classList.add('dragging');
+		const rect = this.getBoundingClientRect();
+		offset.x = e.clientX - rect.left - 15;
+		offset.y = e.clientY - rect.top - 15;
+		e.preventDefault();
+	});
+	
+	document.addEventListener('mousemove', function(e) {
+		if (isDragging) {
+			const x = e.clientX - offset.x;
+			const y = e.clientY - offset.y;
+			
+			connector.style.left = (x - 15) + 'px';
+			connector.style.top = (y - 15) + 'px';
+			
+			cableData[cableNum].end = { x: x, y: y };
+			updateCablePath(cableNum);
+			
+			// Check proximity to ports
+			ports.forEach(port => {
+				const rect = port.getBoundingClientRect();
+				const portX = rect.left + rect.width / 2;
+				const portY = rect.top + rect.height / 2;
+				const dist = Math.sqrt((x - portX) ** 2 + (y - portY) ** 2);
+				
+				if (dist < 30) {
+					port.style.transform = 'scale(1.15)';
+					port.style.borderColor = '#0f0';
+				} else if (!port.classList.contains('connected')) {
+					port.style.transform = '';
+					port.style.borderColor = '#444';
+				}
+			});
+		}
+	});
+	
+	document.addEventListener('mouseup', function(e) {
+		if (isDragging) {
+			isDragging = false;
+			connector.classList.remove('dragging');
+			
+			// Check for port connection
+			let connected = false;
+			ports.forEach(port => {
+				const rect = port.getBoundingClientRect();
+				const portX = rect.left + rect.width / 2;
+				const portY = rect.top + rect.height / 2;
+				const x = e.clientX - offset.x;
+				const y = e.clientY - offset.y;
+				const dist = Math.sqrt((x - portX) ** 2 + (y - portY) ** 2);
+				
+				if (dist < 30) {
+					// Snap to port
+					connector.style.left = (portX - 15) + 'px';
+					connector.style.top = (portY - 15) + 'px';
+					cableData[cableNum].end = { x: portX, y: portY };
+					cableData[cableNum].connected = true;
+					updateCablePath(cableNum);
+					
+					port.classList.add('connected');
+					port.style.transform = '';
+					monitorScreen.classList.add('active');
+					connected = true;
+					
+					// Play sound
+					try {
+						keySound.currentTime = 0;
+						keySound.play().catch(e => console.log('Audio play failed:', e));
+					} catch(e) {
+						console.log('Audio not available');
+					}
+				}
+			});
+			
+			// Spring back if not connected
+			if (!connected && !cableData[cableNum].connected) {
+				connector.style.transition = 'all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+				connector.style.left = cableData[cableNum].start.x - 15 + 'px';
+				connector.style.top = '0px';
+				
+				setTimeout(() => {
+					cableData[cableNum].end = null;
+					updateCablePath(cableNum);
+					connector.style.transition = '';
+				}, 500);
+			}
+		}
+	});
+});
+
+// Port click to disconnect
+ports.forEach(port => {
+	port.addEventListener('click', function() {
+		if (this.classList.contains('connected')) {
+			this.classList.remove('connected');
+			this.style.borderColor = '#444';
+			
+			const rect = this.getBoundingClientRect();
+			const portX = rect.left + rect.width / 2;
+			const portY = rect.top + rect.height / 2;
+			
+			Object.keys(cableData).forEach(num => {
+				if (cableData[num].connected) {
+					if (Math.abs(cableData[num].end.x - portX) < 5 && 
+						Math.abs(cableData[num].end.y - portY) < 5) {
+						cableData[num].connected = false;
+						cableData[num].end = null;
+						
+						const connector = document.querySelector(`.cable-connector[data-cable="${num}"]`);
+						connector.style.transition = 'all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+						connector.style.left = cableData[num].start.x - 15 + 'px';
+						connector.style.top = '0px';
+						
+						setTimeout(() => {
+							updateCablePath(num);
+							connector.style.transition = '';
+						}, 500);
+					}
+				}
+			});
+			
+			const anyConnected = Array.from(ports).some(p => p.classList.contains('connected'));
+			if (!anyConnected) {
+				monitorScreen.classList.remove('active');
+			}
+		}
+	});
+});
+
+// Update on resize
+window.addEventListener('resize', () => {
+	Object.keys(cableData).forEach(num => {
+		if (!cableData[num].connected) {
+			updateCablePath(num);
+		}
+	});
+});
+</script>
+</body>
+</html>
