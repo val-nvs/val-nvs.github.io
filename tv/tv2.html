@@ -211,10 +211,6 @@ body {
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
-	display: none;
-}
-
-.video-container.active video {
 	display: block;
 }
 
@@ -336,198 +332,9 @@ body {
 	box-shadow: inset 0 0 5px rgba(0,0,0,0.3);
 }
 
-/* SDI Cables with Bezier curves */
-.cable-svg {
-	width: 100vw;
-	height: 100vh;
-	position: fixed;
-	top: 0;
-	left: 0;
-	pointer-events: none;
-	z-index: 5;
-}
-
-.cable-path {
-	fill: none;
-	stroke-width: 5;
-	stroke-linecap: round;
-	filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
-	pointer-events: none;
-}
-
-/* Cable Connector with realistic plug */
-.cable-connector {
-	position: absolute;
-	width: 40px;
-	height: 24px;
-	cursor: grab;
-	pointer-events: all;
-	z-index: 100;
-	display: flex;
-	align-items: center;
-}
-
-.cable-plug {
-	width: 100%;
-	height: 100%;
-	position: relative;
-	display: flex;
-	align-items: center;
-}
-
-.cable-plug-body {
-	width: 32px;
-	height: 18px;
-	background: linear-gradient(90deg, #444 0%, #666 50%, #444 100%);
-	border: 1px solid #222;
-	border-radius: 3px;
-	position: relative;
-}
-
-.cable-plug-tip {
-	width: 8px;
-	height: 12px;
-	background: linear-gradient(90deg, #222, #333);
-	border: 1px solid #111;
-	border-radius: 0 2px 2px 0;
-	position: absolute;
-	right: -8px;
-	top: 50%;
-	transform: translateY(-50%);
-}
-
-.cable-plug-ring {
-	width: 20px;
-	height: 20px;
-	background: radial-gradient(circle, #555 30%, #333 100%);
-	border: 1px solid #222;
-	border-radius: 50%;
-	position: absolute;
-	left: -10px;
-	top: 50%;
-	transform: translateY(-50%);
-}
-
-.cable-connector:active {
-	cursor: grabbing;
-}
-
-.cable-connector:active .cable-plug-body {
-	transform: scale(1.05);
-}
-
-.cable-connector.dragging {
-	z-index: 1000;
-}
-
-/* Cable colors - 8 cables */
-.cable-1 .cable-path { stroke: #ff006e; }
-.cable-2 .cable-path { stroke: #00ff88; }
-.cable-3 .cable-path { stroke: #00b4ff; }
-.cable-4 .cable-path { stroke: #ffaa00; }
-.cable-5 .cable-path { stroke: #ff00ff; }
-.cable-6 .cable-path { stroke: #88ff00; }
-.cable-7 .cable-path { stroke: #ff6600; }
-.cable-8 .cable-path { stroke: #00ffff; }
-
-.cable-1 .cable-plug-body { box-shadow: 0 0 8px #ff006e; }
-.cable-2 .cable-plug-body { box-shadow: 0 0 8px #00ff88; }
-.cable-3 .cable-plug-body { box-shadow: 0 0 8px #00b4ff; }
-.cable-4 .cable-plug-body { box-shadow: 0 0 8px #ffaa00; }
-.cable-5 .cable-plug-body { box-shadow: 0 0 8px #ff00ff; }
-.cable-6 .cable-plug-body { box-shadow: 0 0 8px #88ff00; }
-.cable-7 .cable-plug-body { box-shadow: 0 0 8px #ff6600; }
-.cable-8 .cable-plug-body { box-shadow: 0 0 8px #00ffff; }
-
 </style>
 </head>
 <body>
-
-<!-- SDI Cables with Bezier Curves -->
-<svg class="cable-svg">
-	<g class="sdi-cable cable-1" data-cable="1">
-		<path class="cable-path" d=""></path>
-	</g>
-	<g class="sdi-cable cable-2" data-cable="2">
-		<path class="cable-path" d=""></path>
-	</g>
-	<g class="sdi-cable cable-3" data-cable="3">
-		<path class="cable-path" d=""></path>
-	</g>
-	<g class="sdi-cable cable-4" data-cable="4">
-		<path class="cable-path" d=""></path>
-	</g>
-	<g class="sdi-cable cable-5" data-cable="5">
-		<path class="cable-path" d=""></path>
-	</g>
-	<g class="sdi-cable cable-6" data-cable="6">
-		<path class="cable-path" d=""></path>
-	</g>
-	<g class="sdi-cable cable-7" data-cable="7">
-		<path class="cable-path" d=""></path>
-	</g>
-	<g class="sdi-cable cable-8" data-cable="8">
-		<path class="cable-path" d=""></path>
-	</g>
-</svg>
-
-<!-- Cable Connectors - Starting from output ports -->
-<div class="cable-connector cable-1" data-cable="1" data-video="1">
-	<div class="cable-plug">
-		<div class="cable-plug-ring"></div>
-		<div class="cable-plug-body"></div>
-		<div class="cable-plug-tip"></div>
-	</div>
-</div>
-<div class="cable-connector cable-2" data-cable="2" data-video="2">
-	<div class="cable-plug">
-		<div class="cable-plug-ring"></div>
-		<div class="cable-plug-body"></div>
-		<div class="cable-plug-tip"></div>
-	</div>
-</div>
-<div class="cable-connector cable-3" data-cable="3" data-video="3">
-	<div class="cable-plug">
-		<div class="cable-plug-ring"></div>
-		<div class="cable-plug-body"></div>
-		<div class="cable-plug-tip"></div>
-	</div>
-</div>
-<div class="cable-connector cable-4" data-cable="4" data-video="4">
-	<div class="cable-plug">
-		<div class="cable-plug-ring"></div>
-		<div class="cable-plug-body"></div>
-		<div class="cable-plug-tip"></div>
-	</div>
-</div>
-<div class="cable-connector cable-5" data-cable="5" data-video="5">
-	<div class="cable-plug">
-		<div class="cable-plug-ring"></div>
-		<div class="cable-plug-body"></div>
-		<div class="cable-plug-tip"></div>
-	</div>
-</div>
-<div class="cable-connector cable-6" data-cable="6" data-video="6">
-	<div class="cable-plug">
-		<div class="cable-plug-ring"></div>
-		<div class="cable-plug-body"></div>
-		<div class="cable-plug-tip"></div>
-	</div>
-</div>
-<div class="cable-connector cable-7" data-cable="7" data-video="7">
-	<div class="cable-plug">
-		<div class="cable-plug-ring"></div>
-		<div class="cable-plug-body"></div>
-		<div class="cable-plug-tip"></div>
-	</div>
-</div>
-<div class="cable-connector cable-8" data-cable="8" data-video="8">
-	<div class="cable-plug">
-		<div class="cable-plug-ring"></div>
-		<div class="cable-plug-body"></div>
-		<div class="cable-plug-tip"></div>
-	</div>
-</div>
 
 <!-- Unified Broadcast Unit -->
 <div class="broadcast-unit">
@@ -536,27 +343,27 @@ body {
 		<!-- Output Panel -->
 		<div class="side-panel output-panel">
 			<div class="panel-label">Outputs</div>
-			<div class="sdi-port" data-label="1" data-output="1" data-type="output"></div>
-			<div class="sdi-port" data-label="2" data-output="2" data-type="output"></div>
-			<div class="sdi-port" data-label="3" data-output="3" data-type="output"></div>
-			<div class="sdi-port" data-label="4" data-output="4" data-type="output"></div>
-			<div class="sdi-port" data-label="5" data-output="5" data-type="output"></div>
-			<div class="sdi-port" data-label="6" data-output="6" data-type="output"></div>
-			<div class="sdi-port" data-label="7" data-output="7" data-type="output"></div>
-			<div class="sdi-port" data-label="8" data-output="8" data-type="output"></div>
+			<div class="sdi-port connected" data-label="1" data-output="1" data-type="output"></div>
+			<div class="sdi-port connected" data-label="2" data-output="2" data-type="output"></div>
+			<div class="sdi-port connected" data-label="3" data-output="3" data-type="output"></div>
+			<div class="sdi-port connected" data-label="4" data-output="4" data-type="output"></div>
+			<div class="sdi-port connected" data-label="5" data-output="5" data-type="output"></div>
+			<div class="sdi-port connected" data-label="6" data-output="6" data-type="output"></div>
+			<div class="sdi-port connected" data-label="7" data-output="7" data-type="output"></div>
+			<div class="sdi-port connected" data-label="8" data-output="8" data-type="output"></div>
 		</div>
 
 		<!-- Input Panel -->
 		<div class="side-panel input-panel">
 			<div class="panel-label">Inputs</div>
-			<div class="sdi-port" data-label="1" data-input="1" data-type="input"></div>
-			<div class="sdi-port" data-label="2" data-input="2" data-type="input"></div>
-			<div class="sdi-port" data-label="3" data-input="3" data-type="input"></div>
-			<div class="sdi-port" data-label="4" data-input="4" data-type="input"></div>
-			<div class="sdi-port" data-label="5" data-input="5" data-type="input"></div>
-			<div class="sdi-port" data-label="6" data-input="6" data-type="input"></div>
-			<div class="sdi-port" data-label="7" data-input="7" data-type="input"></div>
-			<div class="sdi-port" data-label="8" data-input="8" data-type="input"></div>
+			<div class="sdi-port connected" data-label="1" data-input="1" data-type="input"></div>
+			<div class="sdi-port connected" data-label="2" data-input="2" data-type="input"></div>
+			<div class="sdi-port connected" data-label="3" data-input="3" data-type="input"></div>
+			<div class="sdi-port connected" data-label="4" data-input="4" data-type="input"></div>
+			<div class="sdi-port connected" data-label="5" data-input="5" data-type="input"></div>
+			<div class="sdi-port connected" data-label="6" data-input="6" data-type="input"></div>
+			<div class="sdi-port connected" data-label="7" data-input="7" data-type="input"></div>
+			<div class="sdi-port connected" data-label="8" data-input="8" data-type="input"></div>
 		</div>
 	</div>
 	
@@ -590,28 +397,28 @@ body {
 							<div class="source-feed" data-source="1">
 								<div class="video-container" data-channel="IN 1">
 									<video loop muted preload="auto">
-										<source src="" type="video/mp4">
+										<source src="video1.mp4" type="video/mp4">
 									</video>
 								</div>
 							</div>
 							<div class="source-feed" data-source="2">
 								<div class="video-container" data-channel="IN 2">
 									<video loop muted preload="auto">
-										<source src="" type="video/mp4">
+										<source src="video2.mp4" type="video/mp4">
 									</video>
 								</div>
 							</div>
 							<div class="source-feed" data-source="3">
 								<div class="video-container" data-channel="IN 3">
 									<video loop muted preload="auto">
-										<source src="" type="video/mp4">
+										<source src="video3.mp4" type="video/mp4">
 									</video>
 								</div>
 							</div>
 							<div class="source-feed" data-source="4">
 								<div class="video-container" data-channel="IN 4">
 									<video loop muted preload="auto">
-										<source src="" type="video/mp4">
+										<source src="video4.mp4" type="video/mp4">
 									</video>
 								</div>
 							</div>
@@ -621,28 +428,28 @@ body {
 							<div class="source-feed" data-source="5">
 								<div class="video-container" data-channel="IN 5">
 									<video loop muted preload="auto">
-										<source src="" type="video/mp4">
+										<source src="video5.mp4" type="video/mp4">
 									</video>
 								</div>
 							</div>
 							<div class="source-feed" data-source="6">
 								<div class="video-container" data-channel="IN 6">
 									<video loop muted preload="auto">
-										<source src="" type="video/mp4">
+										<source src="video6.mp4" type="video/mp4">
 									</video>
 								</div>
 							</div>
 							<div class="source-feed" data-source="7">
 								<div class="video-container" data-channel="IN 7">
 									<video loop muted preload="auto">
-										<source src="" type="video/mp4">
+										<source src="video7.mp4" type="video/mp4">
 									</video>
 								</div>
 							</div>
 							<div class="source-feed" data-source="8">
 								<div class="video-container" data-channel="IN 8">
 									<video loop muted preload="auto">
-										<source src="" type="video/mp4">
+										<source src="video8.mp4" type="video/mp4">
 									</video>
 								</div>
 							</div>
@@ -668,7 +475,7 @@ body {
 				<div><button class="off">9</button></div>
 				<div><button class="off">10</button></div>
 				<div></div>
-				<div><button class="off" id="maximize-btn">MAXIMIZE</button></div>
+				<div><button class="off" id="view-toggle-btn">MAXIMIZE</button></div>
 				<div></div>
 				<div><button class="off">DIP</button></div>
 				<div><button class="off">DVE</button></div>
@@ -716,7 +523,7 @@ body {
 				<div><button class="off">9</button></div>
 				<div><button class="off">10</button></div>
 				<div></div>
-				<div><button class="off" id="minimize-btn">MINIMIZE</button></div>
+				<div></div>
 				<div></div>
 				<div></div>
 				<div></div>
@@ -762,18 +569,10 @@ body {
 
 <script>
 // Get elements
-const buttons = document.querySelectorAll('.grid button.off');
 const programButtons = document.querySelectorAll('.program-btn');
 const previewButtons = document.querySelectorAll('.preview-btn');
 const keySound = document.getElementById('keySound');
-const monitorScreen = document.getElementById('monitor-screen');
-const connectors = document.querySelectorAll('.cable-connector');
-const ports = document.querySelectorAll('.sdi-port');
-const previewVideo = document.getElementById('preview-video');
-const programVideo = document.getElementById('program-video');
-const sourceFeedsElements = document.querySelectorAll('.source-feed');
-const maximizeBtn = document.getElementById('maximize-btn');
-const minimizeBtn = document.getElementById('minimize-btn');
+const viewToggleBtn = document.getElementById('view-toggle-btn');
 const outputRow = document.getElementById('output-row');
 const sourceContainer = document.getElementById('source-container');
 const previewFeed = document.getElementById('preview-feed');
@@ -784,99 +583,86 @@ let previewSource = null;
 let programSource = null;
 let isMaximized = false;
 
-// Routing: inputPort -> videoSource (which video is connected to each input)
-const inputRouting = {};
-
-// Initialize cables coming from output ports
-function initializeCables() {
-	connectors.forEach((connector, index) => {
-		const cableNum = index + 1;
-		
-		// Get the corresponding output port position
-		const outputPort = document.querySelector(`.sdi-port[data-output="${cableNum}"]`);
-		if (outputPort) {
-			const rect = outputPort.getBoundingClientRect();
-			const startX = rect.right; // Start from right side of output port
-			const startY = rect.top + rect.height / 2;
-			
-			// Position cable at the output port
-			connector.style.left = (startX - 20) + 'px';
-			connector.style.top = (startY - 12) + 'px';
-			
-			// Initialize cable data
-			cableData[cableNum] = {
-				start: { x: startX, y: startY },
-				end: null,
-				connected: false,
-				connectedToInput: null
-			};
-			
-			// Mark output port as connected (cable comes from here)
-			outputPort.classList.add('connected');
-		}
-	});
+// Get current preview and program video elements
+function getPreviewVideo() {
+	// Try to get the maximized preview video first, then fall back to normal preview
+	let previewVideo = document.getElementById('preview-video-max');
+	if (!previewVideo) {
+		previewVideo = document.getElementById('preview-video');
+	}
+	console.log('Found preview video element:', previewVideo ? previewVideo.id : 'none');
+	return previewVideo;
 }
 
-// Update source video based on routing
-function updateSourceVideo(inputPort, videoNum) {
-	const sourceFeed = document.querySelector(`.source-feed[data-source="${inputPort}"]`);
-	if (sourceFeed) {
-		const videoContainer = sourceFeed.querySelector('.video-container');
-		const video = videoContainer.querySelector('video');
-		
-		if (videoNum) {
-			// Set the video source based on video number
-			video.src = `video${videoNum}.mp4`;
-			video.load();
-			videoContainer.classList.add('active');
-		} else {
-			// No source connected - black screen
-			video.pause();
-			video.src = '';
-			videoContainer.classList.remove('active');
-		}
-	}
-	
-	// Update preview/program if this source is selected
-	if (previewSource === inputPort) {
-		updatePreview(inputPort);
-	}
-	if (programSource === inputPort) {
-		updateProgram(inputPort);
-	}
+function getProgramVideo() {
+	return document.getElementById('program-video');
 }
 
-// Update preview video - ALWAYS works, shows black if no video
-function updatePreview(inputPort) {
-	const videoNum = inputRouting[inputPort];
-	if (videoNum) {
-		previewVideo.src = `video${videoNum}.mp4`;
+// Update preview video
+function updatePreview(sourceNum) {
+	const previewVideo = getPreviewVideo();
+	if (previewVideo) {
+		previewVideo.src = `video${sourceNum}.mp4`;
 		previewVideo.load();
 		previewVideo.play().catch(e => console.log('Preview play failed'));
+		console.log('Preview updated to video', sourceNum, 'in', isMaximized ? 'maximized' : 'normal', 'mode');
 	} else {
-		// Show black screen but keep the selection active
+		console.log('Preview video element not found');
+	}
+}
+
+// Update program video
+function updateProgram(sourceNum) {
+	const programVideo = getProgramVideo();
+	if (programVideo) {
+		programVideo.src = `video${sourceNum}.mp4`;
+		programVideo.load();
+		programVideo.play().catch(e => console.log('Program play failed'));
+	}
+}
+
+// Clear preview
+function clearPreview() {
+	const previewVideo = getPreviewVideo();
+	if (previewVideo) {
 		previewVideo.pause();
 		previewVideo.src = '';
 	}
 }
 
-// Update program video - ALWAYS works, shows black if no video
-function updateProgram(inputPort) {
-	const videoNum = inputRouting[inputPort];
-	if (videoNum) {
-		programVideo.src = `video${videoNum}.mp4`;
-		programVideo.load();
-		programVideo.play().catch(e => console.log('Program play failed'));
-	} else {
-		// Show black screen but keep the selection active
+// Clear program
+function clearProgram() {
+	const programVideo = getProgramVideo();
+	if (programVideo) {
 		programVideo.pause();
 		programVideo.src = '';
 	}
 }
 
-// Program buttons (first row) - ALWAYS work, red when active
+// Update source highlights
+function updateSourceHighlights() {
+	// Clear all highlights first
+	document.querySelectorAll('.source-feed').forEach(feed => {
+		feed.classList.remove('selected-preview', 'selected-program');
+	});
+	
+	// Add current highlights
+	if (previewSource) {
+		const selectedFeed = document.querySelector(`.source-feed[data-source="${previewSource}"]`);
+		if (selectedFeed) selectedFeed.classList.add('selected-preview');
+	}
+	if (programSource) {
+		const selectedFeed = document.querySelector(`.source-feed[data-source="${programSource}"]`);
+		if (selectedFeed) selectedFeed.classList.add('selected-program');
+	}
+}
+
+// Program buttons (first row) - red when active, can be deselected
 programButtons.forEach(button => {
 	button.addEventListener('click', function() {
+		const sourceNum = parseInt(this.dataset.source);
+		console.log('Program button clicked:', sourceNum);
+		
 		// Play sound
 		try {
 			keySound.currentTime = 0;
@@ -885,29 +671,31 @@ programButtons.forEach(button => {
 			console.log('Audio not available');
 		}
 
-		// Clear all program buttons
-		programButtons.forEach(btn => btn.classList.remove('active'));
-		
-		// Set this button to active (red) - ALWAYS, regardless of video connection
-		this.classList.add('active');
-		
-		// Update program source
-		const inputPort = parseInt(this.dataset.source);
-		programSource = inputPort;
-		updateProgram(inputPort); // This will show black if no video connected
+		// Check if this button is already active (deselect functionality)
+		if (this.classList.contains('active') && programSource === sourceNum) {
+			// Deselect - clear all program buttons and clear program video
+			programButtons.forEach(btn => btn.classList.remove('active'));
+			programSource = null;
+			clearProgram();
+		} else {
+			// Select - clear all program buttons and activate this one
+			programButtons.forEach(btn => btn.classList.remove('active'));
+			this.classList.add('active');
+			programSource = sourceNum;
+			updateProgram(sourceNum);
+		}
 		
 		// Update source highlights
-		sourceFeedsElements.forEach(feed => {
-			feed.classList.remove('selected-program');
-		});
-		const selectedFeed = document.querySelector(`.source-feed[data-source="${inputPort}"]`);
-		if (selectedFeed) selectedFeed.classList.add('selected-program');
+		updateSourceHighlights();
 	});
 });
 
-// Preview buttons (third row) - ALWAYS work, green when active
+// Preview buttons (third row) - green when active, can be deselected
 previewButtons.forEach(button => {
 	button.addEventListener('click', function() {
+		const sourceNum = parseInt(this.dataset.source);
+		console.log('Preview button clicked:', sourceNum);
+		
 		// Play sound
 		try {
 			keySound.currentTime = 0;
@@ -916,39 +704,49 @@ previewButtons.forEach(button => {
 			console.log('Audio not available');
 		}
 
-		// Clear all preview buttons
-		previewButtons.forEach(btn => btn.classList.remove('active'));
-		
-		// Set this button to active (green) - ALWAYS, regardless of video connection
-		this.classList.add('active');
-		
-		// Update preview source
-		const inputPort = parseInt(this.dataset.source);
-		previewSource = inputPort;
-		updatePreview(inputPort); // This will show black if no video connected
+		// Check if this button is already active (deselect functionality)
+		if (this.classList.contains('active') && previewSource === sourceNum) {
+			// Deselect - clear all preview buttons and clear preview video
+			previewButtons.forEach(btn => btn.classList.remove('active'));
+			previewSource = null;
+			clearPreview();
+		} else {
+			// Select - clear all preview buttons and activate this one
+			previewButtons.forEach(btn => btn.classList.remove('active'));
+			this.classList.add('active');
+			previewSource = sourceNum;
+			updatePreview(sourceNum);
+		}
 		
 		// Update source highlights
-		sourceFeedsElements.forEach(feed => {
-			feed.classList.remove('selected-preview');
-		});
-		const selectedFeed = document.querySelector(`.source-feed[data-source="${inputPort}"]`);
-		if (selectedFeed) selectedFeed.classList.add('selected-preview');
+		updateSourceHighlights();
 	});
 });
 
-// Maximize/Minimize buttons
-maximizeBtn.addEventListener('click', function() {
+// View toggle button (single button for maximize/minimize)
+viewToggleBtn.addEventListener('click', function() {
+	console.log('View toggle button clicked');
+	
+	// Play sound
+	try {
+		keySound.currentTime = 0;
+		keySound.play().catch(e => console.log('Audio play failed:', e));
+	} catch(e) {
+		console.log('Audio not available');
+	}
+	
 	if (!isMaximized) {
+		// Switch to maximized view
 		isMaximized = true;
 		this.classList.add('active');
-		minimizeBtn.classList.remove('active');
+		this.textContent = 'MINIMIZE';
 		
 		// Change layout to maximized view
 		outputRow.classList.add('maximized');
 		previewFeed.style.display = 'none';
 		
 		// Get current preview video source for maximized view
-		const previewSrc = previewSource && inputRouting[previewSource] ? `video${inputRouting[previewSource]}.mp4` : '';
+		const previewSrc = previewSource ? `video${previewSource}.mp4` : '';
 		
 		// Reorganize sources in single row with preview
 		sourceContainer.innerHTML = `
@@ -961,10 +759,10 @@ maximizeBtn.addEventListener('click', function() {
 					</div>
 				</div>
 				${[1,2,3,4,5,6,7,8].map(i => `
-					<div class="source-feed${!inputRouting[i] ? ' disconnected' : ''}" data-source="${i}">
-						<div class="video-container${inputRouting[i] ? ' active' : ''}" data-channel="IN ${i}">
+					<div class="source-feed" data-source="${i}">
+						<div class="video-container" data-channel="IN ${i}">
 							<video loop muted preload="auto">
-								<source src="${inputRouting[i] ? `video${inputRouting[i]}.mp4` : ''}" type="video/mp4">
+								<source src="video${i}.mp4" type="video/mp4">
 							</video>
 						</div>
 					</div>
@@ -974,31 +772,30 @@ maximizeBtn.addEventListener('click', function() {
 		
 		// Restart videos
 		const newPreviewVideo = document.getElementById('preview-video-max');
-		if (newPreviewVideo && previewSrc) {
-			newPreviewVideo.play().catch(e => console.log('Preview play failed'));
+		if (newPreviewVideo) {
+			if (previewSource) {
+				// Set up the preview video with current selection
+				newPreviewVideo.src = `video${previewSource}.mp4`;
+				newPreviewVideo.load();
+				newPreviewVideo.play().catch(e => console.log('Preview play failed'));
+				console.log('Set maximized preview to video', previewSource);
+			} else {
+				console.log('No preview source selected');
+			}
 		}
 		
-		sourceContainer.querySelectorAll('.video-container.active video').forEach(video => {
-			if (video.src) video.play().catch(e => console.log('Video play failed'));
+		sourceContainer.querySelectorAll('video').forEach(video => {
+			video.play().catch(e => console.log('Video play failed'));
 		});
 		
 		// Restore selections
-		if (previewSource) {
-			const selectedFeed = document.querySelector(`.source-feed[data-source="${previewSource}"]`);
-			if (selectedFeed) selectedFeed.classList.add('selected-preview');
-		}
-		if (programSource) {
-			const selectedFeed = document.querySelector(`.source-feed[data-source="${programSource}"]`);
-			if (selectedFeed) selectedFeed.classList.add('selected-program');
-		}
-	}
-});
-
-minimizeBtn.addEventListener('click', function() {
-	if (isMaximized) {
+		updateSourceHighlights();
+		
+	} else {
+		// Switch to normal view
 		isMaximized = false;
-		this.classList.add('active');
-		maximizeBtn.classList.remove('active');
+		this.classList.remove('active');
+		this.textContent = 'MAXIMIZE';
 		
 		// Restore normal layout
 		outputRow.classList.remove('maximized');
@@ -1009,9 +806,9 @@ minimizeBtn.addEventListener('click', function() {
 			<div class="source-row">
 				${[1,2,3,4].map(i => `
 					<div class="source-feed" data-source="${i}">
-						<div class="video-container${inputRouting[i] ? ' active' : ''}" data-channel="IN ${i}">
+						<div class="video-container" data-channel="IN ${i}">
 							<video loop muted preload="auto">
-								<source src="${inputRouting[i] ? `video${inputRouting[i]}.mp4` : ''}" type="video/mp4">
+								<source src="video${i}.mp4" type="video/mp4">
 							</video>
 						</div>
 					</div>
@@ -1020,9 +817,9 @@ minimizeBtn.addEventListener('click', function() {
 			<div class="source-row">
 				${[5,6,7,8].map(i => `
 					<div class="source-feed" data-source="${i}">
-						<div class="video-container${inputRouting[i] ? ' active' : ''}" data-channel="IN ${i}">
+						<div class="video-container" data-channel="IN ${i}">
 							<video loop muted preload="auto">
-								<source src="${inputRouting[i] ? `video${inputRouting[i]}.mp4` : ''}" type="video/mp4">
+								<source src="video${i}.mp4" type="video/mp4">
 							</video>
 						</div>
 					</div>
@@ -1031,29 +828,33 @@ minimizeBtn.addEventListener('click', function() {
 		`;
 		
 		// Restart videos
-		sourceContainer.querySelectorAll('.video-container.active video').forEach(video => {
-			if (video.src) video.play().catch(e => console.log('Video play failed'));
+		sourceContainer.querySelectorAll('video').forEach(video => {
+			video.play().catch(e => console.log('Video play failed'));
 		});
 		
-		// Restore selections
+		// Restore preview and program videos to original elements
 		if (previewSource) {
-			const selectedFeed = document.querySelector(`.source-feed[data-source="${previewSource}"]`);
-			if (selectedFeed) selectedFeed.classList.add('selected-preview');
+			updatePreview(previewSource);
+			console.log('Restored preview to video', previewSource, 'in normal mode');
 		}
 		if (programSource) {
-			const selectedFeed = document.querySelector(`.source-feed[data-source="${programSource}"]`);
-			if (selectedFeed) selectedFeed.classList.add('selected-program');
+			updateProgram(programSource);
+			console.log('Restored program to video', programSource);
 		}
+		
+		// Restore selections
+		updateSourceHighlights();
 	}
 });
 
-// Other buttons - ALWAYS work
-buttons.forEach(button => {
+// Other buttons
+document.querySelectorAll('.grid button.off').forEach(button => {
 	if (!button.classList.contains('program-btn') && 
 		!button.classList.contains('preview-btn') && 
-		button.id !== 'maximize-btn' && 
-		button.id !== 'minimize-btn') {
+		button.id !== 'view-toggle-btn') {
 		button.addEventListener('click', function() {
+			console.log('Other button clicked:', this.textContent);
+			
 			// Play sound
 			try {
 				keySound.currentTime = 0;
@@ -1068,195 +869,13 @@ buttons.forEach(button => {
 	}
 });
 
-// Cable data
-const cableData = {};
-
-// Update bezier curves
-function updateCablePath(cableNum) {
-	const cable = cableData[cableNum];
-	const path = document.querySelector(`.cable-${cableNum} .cable-path`);
-	
-	if (!cable || !cable.end) {
-		// Hide cable if not connected to input
-		path.setAttribute('d', '');
-		return;
-	}
-	
-	// Calculate bezier curve from output to input
-	const dx = cable.end.x - cable.start.x;
-	const dy = cable.end.y - cable.start.y;
-	const distance = Math.sqrt(dx * dx + dy * dy);
-	
-	// Create natural curve
-	const sag = Math.min(distance * 0.3, 100);
-	
-	// Control points for smooth curve
-	const cp1x = cable.start.x + Math.abs(dx) * 0.5;
-	const cp1y = cable.start.y;
-	const cp2x = cable.end.x - Math.abs(dx) * 0.3;
-	const cp2y = cable.end.y;
-	
-	const d = `M ${cable.start.x} ${cable.start.y} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${cable.end.x} ${cable.end.y}`;
-	path.setAttribute('d', d);
-}
-
-// Connection management
-function connectCableToInput(cableNum, inputPort) {
-	const inputPortNum = parseInt(inputPort.dataset.input);
-	const videoNum = parseInt(document.querySelector(`.cable-connector[data-cable="${cableNum}"]`).dataset.video);
-	
-	// Remove previous connection for this cable
-	if (cableData[cableNum].connectedToInput) {
-		delete inputRouting[cableData[cableNum].connectedToInput];
-		updateSourceVideo(cableData[cableNum].connectedToInput, null);
-		const oldInputPort = document.querySelector(`.sdi-port[data-input="${cableData[cableNum].connectedToInput}"]`);
-		if (oldInputPort) oldInputPort.classList.remove('connected');
-	}
-	
-	// Make new connection
-	cableData[cableNum].connectedToInput = inputPortNum;
-	inputRouting[inputPortNum] = videoNum;
-	updateSourceVideo(inputPortNum, videoNum);
-	inputPort.classList.add('connected');
-}
-
-function disconnectCableFromInput(cableNum) {
-	if (cableData[cableNum].connectedToInput) {
-		const inputPortNum = cableData[cableNum].connectedToInput;
-		delete inputRouting[inputPortNum];
-		updateSourceVideo(inputPortNum, null);
-		const inputPort = document.querySelector(`.sdi-port[data-input="${inputPortNum}"]`);
-		if (inputPort) inputPort.classList.remove('connected');
-		cableData[cableNum].connectedToInput = null;
-	}
-}
-
-// Draggable connectors
-connectors.forEach(connector => {
-	let isDragging = false;
-	let offset = { x: 0, y: 0 };
-	const cableNum = parseInt(connector.dataset.cable);
-	
-	connector.addEventListener('mousedown', function(e) {
-		isDragging = true;
-		this.classList.add('dragging');
-		const rect = this.getBoundingClientRect();
-		offset.x = e.clientX - rect.left - 20;
-		offset.y = e.clientY - rect.top - 12;
-		e.preventDefault();
-	});
-	
-	document.addEventListener('mousemove', function(e) {
-		if (isDragging) {
-			const x = e.clientX - offset.x;
-			const y = e.clientY - offset.y;
-			
-			connector.style.left = (x - 20) + 'px';
-			connector.style.top = (y - 12) + 'px';
-			
-			cableData[cableNum].end = { x: x, y: y };
-			updateCablePath(cableNum);
-			
-			// Check proximity to input ports only
-			const inputPorts = document.querySelectorAll('.sdi-port[data-type="input"]');
-			inputPorts.forEach(port => {
-				const rect = port.getBoundingClientRect();
-				const portX = rect.left + rect.width / 2;
-				const portY = rect.top + rect.height / 2;
-				const dist = Math.sqrt((x - portX) ** 2 + (y - portY) ** 2);
-				
-				if (dist < 30) {
-					port.style.transform = 'scale(1.15)';
-					port.style.borderColor = '#0f0';
-				} else if (!port.classList.contains('connected')) {
-					port.style.transform = '';
-					port.style.borderColor = '#444';
-				}
-			});
-		}
-	});
-	
-	document.addEventListener('mouseup', function(e) {
-		if (isDragging) {
-			isDragging = false;
-			connector.classList.remove('dragging');
-			
-			// Check for input port connection
-			let connected = false;
-			const inputPorts = document.querySelectorAll('.sdi-port[data-type="input"]');
-			inputPorts.forEach(port => {
-				const rect = port.getBoundingClientRect();
-				const portX = rect.left + rect.width / 2;
-				const portY = rect.top + rect.height / 2;
-				const x = e.clientX - offset.x;
-				const y = e.clientY - offset.y;
-				const dist = Math.sqrt((x - portX) ** 2 + (y - portY) ** 2);
-				
-				if (dist < 30) {
-					// Connect to input port
-					connectCableToInput(cableNum, port);
-					
-					// Snap to port
-					connector.style.left = (portX - 20) + 'px';
-					connector.style.top = (portY - 12) + 'px';
-					cableData[cableNum].end = { x: portX, y: portY };
-					cableData[cableNum].connected = true;
-					
-					port.style.transform = '';
-					updateCablePath(cableNum);
-					connected = true;
-					
-					// Play sound
-					try {
-						keySound.currentTime = 0;
-						keySound.play().catch(e => console.log('Audio play failed:', e));
-					} catch(e) {
-						console.log('Audio not available');
-					}
-				}
-			});
-			
-			// Spring back if not connected
-			if (!connected) {
-				disconnectCableFromInput(cableNum);
-				
-				cableData[cableNum].connected = false;
-				
-				// Return to output port
-				const outputPort = document.querySelector(`.sdi-port[data-output="${cableNum}"]`);
-				if (outputPort) {
-					const rect = outputPort.getBoundingClientRect();
-					const startX = rect.right;
-					const startY = rect.top + rect.height / 2;
-					
-					connector.style.transition = 'all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
-					connector.style.left = (startX - 20) + 'px';
-					connector.style.top = (startY - 12) + 'px';
-					
-					setTimeout(() => {
-						cableData[cableNum].end = null;
-						updateCablePath(cableNum);
-						connector.style.transition = '';
-					}, 500);
-				}
-			}
-			
-			// Reset input port styles
-			const inputPorts = document.querySelectorAll('.sdi-port[data-type="input"]');
-			inputPorts.forEach(port => {
-				if (!port.classList.contains('connected')) {
-					port.style.transform = '';
-					port.style.borderColor = '#444';
-				}
-			});
-		}
+// Auto-play all source videos on load
+document.addEventListener('DOMContentLoaded', function() {
+	console.log('Starting all source videos...');
+	document.querySelectorAll('.source-feed video').forEach(video => {
+		video.play().catch(e => console.log('Video autoplay failed'));
 	});
 });
-
-// Initialize on load
-setTimeout(() => {
-	initializeCables();
-}, 100);
 </script>
 </body>
 </html>
