@@ -683,6 +683,7 @@ function updateAllMonitorScreens() {
 		updateProgram(programSource);
 	}
 }
+
 // Get current preview and program video elements
 function getPreviewVideo() {
 	let previewVideo = document.getElementById('preview-video-max');
@@ -854,13 +855,16 @@ viewToggleBtn.addEventListener('click', function() {
 		
 		const newPreviewVideo = document.getElementById('preview-video-max');
 		if (newPreviewVideo && previewSource) {
-			newPreviewVideo.src = `video${previewSource}.mp4`;
-			newPreviewVideo.load();
-			newPreviewVideo.play().catch(e => console.log('Preview play failed'));
+			const videoSrc = getVideoForInput(previewSource);
+			if (videoSrc) {
+				newPreviewVideo.src = videoSrc;
+				newPreviewVideo.load();
+				newPreviewVideo.play().catch(e => console.log('Preview play failed'));
+			}
 		}
 		
 		sourceContainer.querySelectorAll('video').forEach(video => {
-			video.play().catch(e => console.log('Video play failed'));
+			if (video.src) video.play().catch(e => console.log('Video play failed'));
 		});
 		
 		updateSourceHighlights();
@@ -903,7 +907,7 @@ viewToggleBtn.addEventListener('click', function() {
 		`;
 		
 		sourceContainer.querySelectorAll('video').forEach(video => {
-			video.play().catch(e => console.log('Video play failed'));
+			if (video.src) video.play().catch(e => console.log('Video play failed'));
 		});
 		
 		if (previewSource) updatePreview(previewSource);
@@ -964,6 +968,14 @@ function initCables() {
 				path.setAttribute('d', d);
 			}
 		}
+	});
+	
+	// Update all screens after initial setup
+	updateAllMonitorScreens();
+	
+	connectors.forEach(connector => {
+		const cableNum = connector.dataset.cable;
+		const outputNum = connector.dataset.output;
 		
 		let isDragging = false;
 		let offset = {x: 0, y: 0};
@@ -1069,20 +1081,17 @@ function initCables() {
 				
 				// Spring back if not connected
 				if (!connected) {
-					// Remove old connection
+					// Remove old connection for this output
 					Object.keys(cableConnections).forEach(input => {
 						if (cableConnections[input] === outputNum) {
 							delete cableConnections[input];
 							const oldPort = document.querySelector(`.sdi-port[data-input="${input}"]`);
 							if (oldPort) oldPort.classList.remove('connected');
-							
-							// Play unplug sound
-							try {
-								plugSound.currentTime = 0;
-								plugSound.play().catch(e => console.log('Plug sound failed'));
-							} catch(e) {}
 						}
 					});
+					
+					// Update all monitor screens since routing changed
+					updateAllMonitorScreens();
 					
 					const outputPort = document.querySelector(`.sdi-port[data-output="${outputNum}"]`);
 					if (outputPort) {
@@ -1096,6 +1105,12 @@ function initCables() {
 							document.getElementById(`cable-${cableNum}`).setAttribute('d', '');
 						}, 300);
 					}
+					
+					// Play unplug sound
+					try {
+						plugSound.currentTime = 0;
+						plugSound.play().catch(e => console.log('Plug sound failed'));
+					} catch(e) {}
 				}
 			}
 		});
@@ -1104,11 +1119,11 @@ function initCables() {
 
 // Auto-play videos and initialize cables
 document.addEventListener('DOMContentLoaded', function() {
-	document.querySelectorAll('.source-feed video').forEach(video => {
-		video.play().catch(e => console.log('Video autoplay failed'));
-	});
-	
-	setTimeout(initCables, 100);
+	setTimeout(() => {
+		initCables();
+		// Update all screens based on initial cable connections
+		updateAllMonitorScreens();
+	}, 100);
 });
 </script>
 </body>
