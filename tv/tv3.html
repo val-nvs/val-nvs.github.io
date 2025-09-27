@@ -669,8 +669,10 @@ function updateAllMonitorScreens() {
 				video.load();
 				video.play().catch(e => console.log('Video play failed'));
 			} else {
+				// Force video to go black immediately
 				video.pause();
-				video.src = '';
+				video.removeAttribute('src');
+				video.load(); // This forces the video to reset to black
 			}
 		}
 	}
@@ -943,6 +945,16 @@ function initCables() {
 		cableConnections[i] = i; // input 1 -> output 1, etc.
 	}
 	
+	// Ensure all input ports start with correct connected state
+	for (let i = 1; i <= 8; i++) {
+		const inputPort = document.querySelector(`.sdi-port[data-input="${i}"]`);
+		if (inputPort && cableConnections[i]) {
+			inputPort.classList.add('connected');
+		} else if (inputPort) {
+			inputPort.classList.remove('connected');
+		}
+	}
+	
 	connectors.forEach(connector => {
 		const cableNum = connector.dataset.cable;
 		const outputNum = connector.dataset.output;
@@ -1086,7 +1098,10 @@ function initCables() {
 						if (cableConnections[input] === outputNum) {
 							delete cableConnections[input];
 							const oldPort = document.querySelector(`.sdi-port[data-input="${input}"]`);
-							if (oldPort) oldPort.classList.remove('connected');
+							if (oldPort) {
+								oldPort.classList.remove('connected');
+								console.log(`Disconnected input ${input}, removed connected class`);
+							}
 						}
 					});
 					
