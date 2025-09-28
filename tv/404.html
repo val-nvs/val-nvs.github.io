@@ -1,0 +1,93 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="favicon.png">
+<title>404</title>
+<style>
+@font-face {
+	font-family: "404";
+	src: url("404") format("truetype");
+}
+* {background: #000; color: #fff; margin: 0; padding: 0; box-sizing: border-box; border: 0;
+	text-shadow: 0 0 30px rgba(255,255,255,0.6), 0 0 5px rgba(255,255,255,0.6);
+}
+body {
+	margin: 3rem;
+	height: calc(100vh - 6rem);
+	font-family: "404", serif;
+	position: relative;
+	overflow: hidden;
+}
+.title-block {
+	position: absolute;
+	top: 0;
+	left: 0;
+	letter-spacing: 0.02em;
+}
+.main-title {
+	font-size: clamp(1.5rem, 8vw, 7rem);
+	margin-bottom: 0.3em;
+	transform: scaleX(0.7);
+	transform-origin: left center;
+}
+.content-unavailable {
+	font-size: 1.5em;
+	display: block;
+	transform: scaleX(0.7);
+	transform-origin: left center;
+	white-space: nowrap;
+}
+.episode {
+	font-family: sans-serif;
+	font-size: clamp(1.2rem, 5vw, 4rem);
+	margin: 0.5em 0 1em 0;
+	letter-spacing: 0;
+}
+.subtitle {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	font-size: clamp(1.3rem, 5vw, 3.5rem);
+	letter-spacing: 0.05em;
+	text-align: right;
+	transform: scaleX(0.7);
+	transform-origin: right center;
+}
+@media (max-width: 480px) {
+	body {
+		margin: 1rem;
+		height: calc(100vh - 2rem);
+	}
+	.content-unavailable {
+		font-size: 1.2em;
+	}
+}
+</style>
+</head>
+<body>
+<div class="title-block">
+	<div class="main-title">VOID<br>PAGE MISSING<br><span class="content-unavailable">CONTENT UNAVAILABLE</span></div>
+	<div class="episode">EPISODE 404</div>
+</div>
+<div class="subtitle" id="subtitle"></div>
+<script>
+const phrases = [
+	"Do you love me?",
+	"Take care of yourself.",
+	"Dance Like You Want to Win!",
+	"A HUMAN WORK",
+	"ANGELS",
+	"PROTOTYPE",
+	"Welcome back.",
+	"Thank you all.",
+	"新世紀エヴァンゲリオン",
+	"Congratulations!"
+];
+const subtitleElement = document.getElementById('subtitle');
+const randomIndex = Math.floor(Math.random() * phrases.length);
+subtitleElement.textContent = phrases[randomIndex];
+</script>
+</body>
+</html>
