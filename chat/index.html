@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Box Drawing Rectangle</title>
+    <style>
+        @font-face {
+            font-family: 'PerfectDOSVGA';
+            src: url('PerfectDosVga.ttf') format('truetype');
+        }
+        
+        body {
+            background-color: #000000;
+            color: #00ff00;
+            font-family: 'PerfectDOSVGA', 'Courier New', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+            position: relative;
+        }
+        
+        .box-container {
+            font-size: 20px;
+            line-height: 1;
+            white-space: pre;
+            text-align: center;
+            position: relative;
+        }
+        
+        .inner-div {
+            position: absolute;
+            background-color: #f0f;
+            width: 500px;
+            height: 160px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+    <div class="box-container">
+        <div class="inner-div"></div><pre>┌─── TOP LEFT ────────────────────────────┐
+│                                          │
+│                                          │
+│                                          │
+│             Box Drawing                  │
+│             Rectangle                    │
+│                                          │
+│                                          │
+│                                          │
+└─────────press─ESC─to─leave─chat─────────┘</pre>
+    </div>
+</body>
+</html>
