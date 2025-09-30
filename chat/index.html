@@ -311,8 +311,8 @@
         function getColorVariants(hexColor) {
             const hsl = hexToHSL(hexColor);
             return {
-                saturated: hslToString(hsl.h, 100, 50),        // Full saturation, mid lightness
-                desaturated: hslToString(hsl.h, 40, 50)        // Low saturation for borders
+                saturated: hslToString(hsl.h, Math.min(hsl.s * 1.2, 100), 60),   // Bright version for text
+                desaturated: hslToString(hsl.h, Math.max(hsl.s * 0.6, 30), 55)   // Muted version for borders
             };
         }
 
