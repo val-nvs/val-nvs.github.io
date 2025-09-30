@@ -4,11 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>guruGROUPS Chat</title>
-    
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-    
     <style>
         * {
             margin: 0;
@@ -205,26 +200,10 @@
     </div>
 
     <script>
-        // Firebase Configuration - REPLACE WITH YOUR OWN CONFIG
-const firebaseConfig = {
-  apiKey: "AIzaSyCxC1qidadTm5uLacKtD9d_6Zw1uq0Mnf0",
-  authDomain: "chat-8a799.firebaseapp.com",
-  projectId: "chat-8a799",
-  storageBucket: "chat-8a799.firebasestorage.app",
-  messagingSenderId: "359690574077",
-  appId: "1:359690574077:web:65ed1801a082314a8a8694"
-};
-
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-        const messagesRef = database.ref('messages');
-
         const messages = [];
         let hasJoined = false;
         let currentUsername = '';
         let isTyping = false;
-        let sessionId = Date.now() + '_' + Math.random().toString(36).substr(2, 9); // Unique session ID
 
         function createBox(text, username, isSystem = false) {
             if (isSystem) {
@@ -326,10 +305,10 @@ const firebaseConfig = {
             }, 80); // 80ms per column
         }
 
-        function addMessageLocal(type, text, fromFirebase = false, messageUsername = null, isOwnMessage = false) {
+        function addMessage(type, text) {
             let boxText = '';
             let isSystem = false;
-            let username = messageUsername || currentUsername || 'anon';
+            let username = currentUsername || 'anon';
             
             if (type === 'join') {
                 boxText = `USER ${text} JOINED`;
@@ -342,17 +321,12 @@ const firebaseConfig = {
                 isSystem = true;
             } else {
                 boxText = text;
-                // Other users' messages appear as system messages (left-aligned)
-                if (!isOwnMessage) {
-                    boxText = `${username}: ${text}`;
-                    isSystem = true;
-                }
             }
             
             const box = createBox(boxText, username, isSystem);
             
-            // Animate user's own messages, show others instantly
-            if (!isSystem && isOwnMessage) {
+            // Animate user messages, show system messages instantly
+            if (!isSystem) {
                 animateMessage(box, isSystem);
             } else {
                 messages.push({ text: box, isSystem: isSystem });
@@ -371,13 +345,8 @@ const firebaseConfig = {
             currentUsername = username;
             hasJoined = true;
             
-            // Send join message to Firebase
-            messagesRef.push({
-                type: 'join',
-                username: username,
-                sessionId: sessionId,
-                timestamp: firebase.database.ServerValue.TIMESTAMP
-            });
+            // Show join message
+            addMessage('join', username);
             
             // Enable message input and buttons
             document.getElementById('userInput').disabled = false;
@@ -393,13 +362,8 @@ const firebaseConfig = {
         function disconnectChat() {
             if (!hasJoined) return;
             
-            // Send leave message to Firebase
-            messagesRef.push({
-                type: 'leave',
-                username: currentUsername,
-                sessionId: sessionId,
-                timestamp: firebase.database.ServerValue.TIMESTAMP
-            });
+            // Show leave message
+            addMessage('leave', currentUsername);
             
             // Reset state
             hasJoined = false;
@@ -424,31 +388,10 @@ const firebaseConfig = {
             const text = input.value.trim();
             
             if (text) {
-                // Send message to Firebase
-                messagesRef.push({
-                    type: 'message',
-                    username: currentUsername,
-                    text: text,
-                    sessionId: sessionId,
-                    timestamp: firebase.database.ServerValue.TIMESTAMP
-                });
+                addMessage('message', text);
                 input.value = '';
             }
         }
-
-        // Listen for new messages from Firebase
-        messagesRef.on('child_added', (snapshot) => {
-            const data = snapshot.val();
-            const isOwnMessage = data.sessionId === sessionId;
-            
-            if (data.type === 'join') {
-                addMessageLocal('join', data.username, true);
-            } else if (data.type === 'leave') {
-                addMessageLocal('leave', data.username, true);
-            } else if (data.type === 'message') {
-                addMessageLocal('message', data.text, true, data.username, isOwnMessage);
-            }
-        });
 
         document.getElementById('usernameInput').addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
