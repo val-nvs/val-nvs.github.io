@@ -275,20 +275,25 @@
             isTyping = true;
             document.getElementById('sendBtn').disabled = true;
             
-            const fullText = messageBox;
-            let currentText = '';
-            let charIndex = 0;
+            const lines = messageBox.split('\n');
+            const maxLength = Math.max(...lines.map(l => l.length));
+            let columnIndex = 0;
             
             // Add placeholder message
             messages.push({ text: '', isSystem: isSystem, isAnimating: true });
             const messageIndex = messages.length - 1;
             
             const interval = setInterval(() => {
-                if (charIndex < fullText.length) {
-                    currentText += fullText[charIndex];
-                    messages[messageIndex].text = currentText;
+                if (columnIndex < maxLength) {
+                    // Build text column by column
+                    let partialText = '';
+                    for (let i = 0; i < lines.length; i++) {
+                        partialText += lines[i].substring(0, columnIndex + 1);
+                        if (i < lines.length - 1) partialText += '\n';
+                    }
+                    messages[messageIndex].text = partialText;
                     renderMessages();
-                    charIndex++;
+                    columnIndex++;
                 } else {
                     clearInterval(interval);
                     messages[messageIndex].isAnimating = false;
@@ -297,7 +302,7 @@
                         document.getElementById('sendBtn').disabled = false;
                     }
                 }
-            }, 20); // 20ms per character
+            }, 80); // 80ms per column
         }
 
         function addMessage(type, text) {
