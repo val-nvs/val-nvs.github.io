@@ -457,8 +457,11 @@
             // Set up Firebase presence - auto disconnect
             const presenceRef = database.ref(`presence/${sessionId}`);
             
+            // Create a push reference for the leave message
+            const leaveMessageRef = messagesRef.push();
+            
             // When user disconnects (closes tab, loses connection, etc)
-            messagesRef.onDisconnect().push({
+            leaveMessageRef.onDisconnect().set({
                 type: 'leave',
                 username: username,
                 sessionId: sessionId,
