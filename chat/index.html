@@ -18,7 +18,7 @@
 
         @font-face {
             font-family: 'PerfectDOSVGA';
-            src: url('./PerfectDosVga.ttf') format('truetype');
+            src: url('/PerfectDosVga.ttf') format('truetype');
         }
 
         body {
@@ -206,15 +206,15 @@
 
     <script>
         // Firebase Configuration - REPLACE WITH YOUR OWN CONFIG
-const firebaseConfig = {
-  apiKey: "AIzaSyCxC1qidadTm5uLacKtD9d_6Zw1uq0Mnf0",
-  authDomain: "chat-8a799.firebaseapp.com",
-  databaseURL: "https://chat-8a799-default-rtdb.firebaseio.com",
-  projectId: "chat-8a799",
-  storageBucket: "chat-8a799.firebasestorage.app",
-  messagingSenderId: "359690574077",
-  appId: "1:359690574077:web:65ed1801a082314a8a8694"
-};
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
 
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
@@ -342,18 +342,15 @@ const firebaseConfig = {
                 boxText = text;
                 isSystem = true;
             } else {
+                // All user messages are treated the same - right side with username
                 boxText = text;
-                // Other users' messages appear as system messages (left-aligned)
-                if (!isOwnMessage) {
-                    boxText = `${username}: ${text}`;
-                    isSystem = true;
-                }
+                isSystem = false;
             }
             
             const box = createBox(boxText, username, isSystem);
             
-            // Animate user's own messages, show others instantly
-            if (!isSystem && isOwnMessage) {
+            // Animate all user messages (both own and others)
+            if (!isSystem) {
                 animateMessage(box, isSystem);
             } else {
                 messages.push({ text: box, isSystem: isSystem });
