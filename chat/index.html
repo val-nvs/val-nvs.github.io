@@ -3,58 +3,330 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Box Drawing Rectangle</title>
+    <title>guruGROUPS Chat</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         @font-face {
             font-family: 'PerfectDOSVGA';
-            src: url('PerfectDosVga.ttf') format('truetype');
+            src: url('/PerfectDosVga.ttf') format('truetype');
         }
-        
+
         body {
-            background-color: #000000;
-            color: #00ff00;
+            background-color: #000;
+            color: #5f9f9f;
             font-family: 'PerfectDOSVGA', 'Courier New', monospace;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            padding: 20px;
-            position: relative;
+            min-height: 100vh;
         }
-        
-        .box-container {
-            font-size: 20px;
-            line-height: 1;
-            white-space: pre;
-            text-align: center;
-            position: relative;
-        }
-        
-        .inner-div {
-            position: absolute;
-            background-color: #f0f;
-            width: 500px;
-            height: 160px;
+
+        .chat-wrapper {
+            position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            z-index: -1;
+        }
+
+        .background-frame {
+            font-size: 14px;
+            line-height: 1.2;
+            white-space: pre;
+            color: #5f9f9f;
+            position: relative;
+        }
+
+        .color-layer {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: calc(100% - 20px);
+            height: calc(100% - 46px);
+            background-color: #000;
+        }
+
+        .messages-layer {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: calc(100% - 20px);
+            height: calc(100% - 46px);
+            overflow-y: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .messages-layer::-webkit-scrollbar {
+            display: none;
+        }
+
+        .messages-container {
+            margin-top: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .message {
+            white-space: pre;
+            line-height: 1.2;
+            font-size: 14px;
+        }
+
+        .message.user-message {
+            color: #5f9f9f;
+        }
+
+        .message-text-cyan {
+            color: #0ff;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .input-area {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+        }
+
+        input {
+            background-color: #000;
+            color: #5f9f9f;
+            border: 1px solid #5f9f9f;
+            padding: 8px 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            width: 400px;
+            max-width: 90vw;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #0ff;
+        }
+
+        input::placeholder {
+            color: #5f9f9f;
+        }
+
+        button {
+            background-color: #000;
+            color: #5f9f9f;
+            border: 1px solid #5f9f9f;
+            padding: 8px 16px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        button:hover {
+            background-color: #5f9f9f;
+            color: #000;
+        }
+
+        .info {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #5f9f9f;
         }
     </style>
 </head>
 <body>
-    <div class="box-container">
-        <div class="inner-div"></div><pre>┌─── TOP LEFT ────────────────────────────┐
-│                                          │
-│                                          │
-│                                          │
-│             Box Drawing                  │
-│             Rectangle                    │
-│                                          │
-│                                          │
-│                                          │
-└─────────press─ESC─to─leave─chat─────────┘</pre>
+    <div class="chat-wrapper">
+        <div class="background-frame">┌──guruGROUPS─────────────────────────────────────────────────┐
+│                                                             │
+│                                                             │
+│                                                             │
+│                                                             │
+│                                                             │
+│                                                             │
+│                                                             │
+│                                                             │
+│                                                             │
+│                                                             │
+│                                                             │
+│                                                             │
+│                                                             │
+│                                                             │
+│                                                             │
+│                                                             │
+│                                                             │
+│                                                             │
+│                                                             │
+│                                                             │
+│                                                             │
+└────────────────────────────────────press─ESC─to─leave─chat──┘</div>
+        
+        <div class="color-layer"></div>
+        <div class="messages-layer" id="messagesLayer">
+            <div class="messages-container" id="messagesContainer"></div>
+        </div>
     </div>
+    
+    <div class="input-area">
+        <input type="text" id="usernameInput" placeholder="enter name" maxlength="6" style="width: 150px;">
+        <input type="text" id="userInput" placeholder="Type a message..." maxlength="40" disabled>
+        <button onclick="sendMessage()" id="sendBtn" disabled>SEND</button>
+        <div class="info" id="infoText">Press ENTER to join</div>
+    </div>
+
+    <script>
+        const messages = [];
+        let hasJoined = false;
+        let currentUsername = '';
+
+        function createBox(text, username, isSystem = false) {
+            if (isSystem) {
+                // System message - no username, simple box
+                const contentWidth = text.length + 2;
+                const topBorder = '┌' + '─'.repeat(contentWidth) + '┐';
+                const messageLine = '│ ' + text + ' │';
+                const bottomBorder = '└' + '─'.repeat(contentWidth) + '┘';
+                return [topBorder, messageLine, bottomBorder].join('\n');
+            }
+            
+            // Regular message with username
+            const usernameContent = username.length + 2;
+            const messageContent = text.length + 2;
+            const contentWidth = Math.max(usernameContent, messageContent);
+            
+            const dashesAfterUsername = contentWidth - username.length - 1;
+            const topBorder = '┌─' + username + '─'.repeat(dashesAfterUsername) + '┐';
+            
+            const spacesAfterText = contentWidth - text.length - 1;
+            const messageLine = '│ ' + text + ' '.repeat(spacesAfterText) + '│';
+            
+            const bottomBorder = '└' + '─'.repeat(contentWidth) + '┘';
+            
+            return [topBorder, messageLine, bottomBorder].join('\n');
+        }
+
+        function renderMessages() {
+            const container = document.getElementById('messagesContainer');
+            const layer = document.getElementById('messagesLayer');
+            container.innerHTML = '';
+            
+            messages.forEach(msgObj => {
+                const div = document.createElement('div');
+                div.className = msgObj.isSystem ? 'message' : 'message user-message';
+                div.style.alignSelf = msgObj.isSystem ? 'flex-start' : 'flex-end';
+                
+                if (msgObj.isSystem) {
+                    div.textContent = msgObj.text;
+                } else {
+                    // Parse the box and highlight only the message text
+                    const lines = msgObj.text.split('\n');
+                    if (lines.length === 3) {
+                        const topLine = lines[0];
+                        const middleLine = lines[1];
+                        const bottomLine = lines[2];
+                        
+                        // Extract message text from middle line (between │ characters)
+                        const messageMatch = middleLine.match(/│(.*)│/);
+                        if (messageMatch) {
+                            const messageContent = messageMatch[1];
+                            const styledMiddle = '│<span class="message-text-cyan">' + messageContent + '</span>│';
+                            div.innerHTML = topLine + '\n' + styledMiddle + '\n' + bottomLine;
+                        } else {
+                            div.textContent = msgObj.text;
+                        }
+                    } else {
+                        div.textContent = msgObj.text;
+                    }
+                }
+                
+                container.appendChild(div);
+            });
+            
+            layer.scrollTop = layer.scrollHeight;
+        }
+
+        function addMessage(type, text) {
+            let boxText = '';
+            let isSystem = false;
+            let username = currentUsername || 'anon';
+            
+            if (type === 'join') {
+                boxText = `USER ${text} JOINED`;
+                isSystem = true;
+            } else if (type === 'leave') {
+                boxText = `USER ${text} LEFT`;
+                isSystem = true;
+            } else if (type === 'system') {
+                boxText = text;
+                isSystem = true;
+            } else {
+                boxText = text;
+            }
+            
+            const box = createBox(boxText, username, isSystem);
+            messages.push({ text: box, isSystem: isSystem });
+            renderMessages();
+        }
+
+        function joinChat() {
+            const usernameInput = document.getElementById('usernameInput');
+            const username = usernameInput.value.trim();
+            
+            if (!username) {
+                return;
+            }
+            
+            currentUsername = username;
+            hasJoined = true;
+            
+            // Show join message
+            addMessage('join', username);
+            
+            // Enable message input
+            document.getElementById('userInput').disabled = false;
+            document.getElementById('sendBtn').disabled = false;
+            usernameInput.disabled = true;
+            
+            // Update info text
+            document.getElementById('infoText').textContent = 'Press ENTER to send • Press ESC to clear';
+            
+            // Focus message input
+            document.getElementById('userInput').focus();
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('userInput');
+            const text = input.value.trim();
+            
+            if (text) {
+                addMessage('message', text);
+                input.value = '';
+            }
+        }
+
+        document.getElementById('usernameInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                joinChat();
+            }
+        });
+
+        document.getElementById('userInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            } else if (e.key === 'Escape') {
+                messages.length = 0;
+                renderMessages();
+            }
+        });
+
+    </script>
 </body>
 </html>
