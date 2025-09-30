@@ -203,6 +203,7 @@
         const messages = [];
         let hasJoined = false;
         let currentUsername = '';
+        let isTyping = false;
 
         function createBox(text, username, isSystem = false) {
             if (isSystem) {
@@ -270,6 +271,35 @@
             layer.scrollTop = layer.scrollHeight;
         }
 
+        function animateMessage(messageBox, isSystem) {
+            isTyping = true;
+            document.getElementById('sendBtn').disabled = true;
+            
+            const fullText = messageBox;
+            let currentText = '';
+            let charIndex = 0;
+            
+            // Add placeholder message
+            messages.push({ text: '', isSystem: isSystem, isAnimating: true });
+            const messageIndex = messages.length - 1;
+            
+            const interval = setInterval(() => {
+                if (charIndex < fullText.length) {
+                    currentText += fullText[charIndex];
+                    messages[messageIndex].text = currentText;
+                    renderMessages();
+                    charIndex++;
+                } else {
+                    clearInterval(interval);
+                    messages[messageIndex].isAnimating = false;
+                    isTyping = false;
+                    if (hasJoined) {
+                        document.getElementById('sendBtn').disabled = false;
+                    }
+                }
+            }, 20); // 20ms per character
+        }
+
         function addMessage(type, text) {
             let boxText = '';
             let isSystem = false;
@@ -289,8 +319,14 @@
             }
             
             const box = createBox(boxText, username, isSystem);
-            messages.push({ text: box, isSystem: isSystem });
-            renderMessages();
+            
+            // Animate user messages, show system messages instantly
+            if (!isSystem) {
+                animateMessage(box, isSystem);
+            } else {
+                messages.push({ text: box, isSystem: isSystem });
+                renderMessages();
+            }
         }
 
         function joinChat() {
@@ -341,6 +377,8 @@
         }
 
         function sendMessage() {
+            if (isTyping) return;
+            
             const input = document.getElementById('userInput');
             const text = input.value.trim();
             
