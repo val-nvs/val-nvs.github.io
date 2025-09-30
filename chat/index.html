@@ -18,7 +18,7 @@
 
         @font-face {
             font-family: 'PerfectDOSVGA';
-            src: url('/PerfectDosVga.ttf') format('truetype');
+            src: url('./PerfectDosVga.ttf') format('truetype');
         }
 
         body {
@@ -92,11 +92,6 @@
             color: #0ff;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
         .input-area {
             position: fixed;
             bottom: 20px;
@@ -152,12 +147,6 @@
             background-color: #5f9f9f;
             color: #000;
         }
-
-        .info {
-            margin-top: 10px;
-            font-size: 12px;
-            color: #5f9f9f;
-        }
     </style>
 </head>
 <body>
@@ -198,22 +187,22 @@
             <button onclick="joinChat()" id="joinBtn">JOIN</button>
         </div>
         <div class="input-row">
-            <input type="text" id="userInput" placeholder="type a message..." maxlength="40" disabled>
+            <input type="text" id="userInput" placeholder="type a message..." maxlength="40" style="width: 300px;" disabled>
             <button onclick="sendMessage()" id="sendBtn" disabled>SEND</button>
             <button onclick="disconnectChat()" id="disconnectBtn" disabled>DISCONNECT</button>
         </div>
     </div>
 
     <script>
-        // Firebase Configuration - REPLACE WITH YOUR OWN CONFIG
+        // Firebase Configuration - ADD YOUR CONFIG HERE
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-            databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT_ID.appspot.com",
-            messagingSenderId: "YOUR_SENDER_ID",
-            appId: "YOUR_APP_ID"
+            apiKey: "AIzaSyCxC1qidadTm5uLacKtD9d_6Zw1uq0Mnf0",
+            authDomain: "chat-8a799.firebaseapp.com",
+            databaseURL: "https://chat-8a799-default-rtdb.firebaseio.com",
+            projectId: "chat-8a799",
+            storageBucket: "chat-8a799.firebasestorage.app",
+            messagingSenderId: "359690574077",
+            appId: "1:359690574077:web:65ed1801a082314a8a8694"
         };
 
         // Initialize Firebase
@@ -225,11 +214,10 @@
         let hasJoined = false;
         let currentUsername = '';
         let isTyping = false;
-        let sessionId = Date.now() + '_' + Math.random().toString(36).substr(2, 9); // Unique session ID
+        let sessionId = Date.now() + '_' + Math.random().toString(36).substr(2, 9);
 
         function createBox(text, username, isSystem = false) {
             if (isSystem) {
-                // System message - no username, simple box
                 const contentWidth = text.length + 2;
                 const topBorder = '┌' + '─'.repeat(contentWidth) + '┐';
                 const messageLine = '│ ' + text + ' │';
@@ -237,7 +225,6 @@
                 return [topBorder, messageLine, bottomBorder].join('\n');
             }
             
-            // Regular message with username
             const usernameContent = username.length + 2;
             const messageContent = text.length + 2;
             const contentWidth = Math.max(usernameContent, messageContent);
@@ -266,14 +253,12 @@
                 if (msgObj.isSystem) {
                     div.textContent = msgObj.text;
                 } else {
-                    // Parse the box and highlight only the message text
                     const lines = msgObj.text.split('\n');
                     if (lines.length === 3) {
                         const topLine = lines[0];
                         const middleLine = lines[1];
                         const bottomLine = lines[2];
                         
-                        // Extract message text from middle line (between │ characters)
                         const messageMatch = middleLine.match(/│(.*)│/);
                         if (messageMatch) {
                             const messageContent = messageMatch[1];
@@ -301,13 +286,11 @@
             const maxLength = Math.max(...lines.map(l => l.length));
             let columnIndex = 0;
             
-            // Add placeholder message
             messages.push({ text: '', isSystem: isSystem, isAnimating: true });
             const messageIndex = messages.length - 1;
             
             const interval = setInterval(() => {
                 if (columnIndex < maxLength) {
-                    // Build text column by column
                     let partialText = '';
                     for (let i = 0; i < lines.length; i++) {
                         partialText += lines[i].substring(0, columnIndex + 1);
@@ -324,7 +307,7 @@
                         document.getElementById('sendBtn').disabled = false;
                     }
                 }
-            }, 80); // 80ms per column
+            }, 80);
         }
 
         function addMessageLocal(type, text, fromFirebase = false, messageUsername = null, isOwnMessage = false) {
@@ -342,14 +325,14 @@
                 boxText = text;
                 isSystem = true;
             } else {
-                // All user messages are treated the same - right side with username
+                // ALL user messages are right-aligned with username in border
                 boxText = text;
                 isSystem = false;
             }
             
             const box = createBox(boxText, username, isSystem);
             
-            // Animate all user messages (both own and others)
+            // Animate ALL user messages (yours and others)
             if (!isSystem) {
                 animateMessage(box, isSystem);
             } else {
@@ -362,14 +345,11 @@
             const usernameInput = document.getElementById('usernameInput');
             const username = usernameInput.value.trim();
             
-            if (!username) {
-                return;
-            }
+            if (!username) return;
             
             currentUsername = username;
             hasJoined = true;
             
-            // Send join message to Firebase
             messagesRef.push({
                 type: 'join',
                 username: username,
@@ -377,21 +357,17 @@
                 timestamp: firebase.database.ServerValue.TIMESTAMP
             });
             
-            // Enable message input and buttons
             document.getElementById('userInput').disabled = false;
             document.getElementById('sendBtn').disabled = false;
             document.getElementById('disconnectBtn').disabled = false;
             usernameInput.disabled = true;
             document.getElementById('joinBtn').disabled = true;
-            
-            // Focus message input
             document.getElementById('userInput').focus();
         }
 
         function disconnectChat() {
             if (!hasJoined) return;
             
-            // Send leave message to Firebase
             messagesRef.push({
                 type: 'leave',
                 username: currentUsername,
@@ -399,10 +375,8 @@
                 timestamp: firebase.database.ServerValue.TIMESTAMP
             });
             
-            // Reset state
             hasJoined = false;
             
-            // Reset inputs and buttons
             document.getElementById('usernameInput').value = '';
             document.getElementById('usernameInput').disabled = false;
             document.getElementById('joinBtn').disabled = false;
@@ -410,8 +384,6 @@
             document.getElementById('userInput').disabled = true;
             document.getElementById('sendBtn').disabled = true;
             document.getElementById('disconnectBtn').disabled = true;
-            
-            // Focus username input
             document.getElementById('usernameInput').focus();
         }
 
@@ -422,7 +394,6 @@
             const text = input.value.trim();
             
             if (text) {
-                // Send message to Firebase
                 messagesRef.push({
                     type: 'message',
                     username: currentUsername,
@@ -434,7 +405,6 @@
             }
         }
 
-        // Listen for new messages from Firebase
         messagesRef.on('child_added', (snapshot) => {
             const data = snapshot.val();
             const isOwnMessage = data.sessionId === sessionId;
@@ -449,9 +419,7 @@
         });
 
         document.getElementById('usernameInput').addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                joinChat();
-            }
+            if (e.key === 'Enter') joinChat();
         });
 
         document.getElementById('userInput').addEventListener('keydown', (e) => {
@@ -462,7 +430,6 @@
                 renderMessages();
             }
         });
-
     </script>
 </body>
 </html>
