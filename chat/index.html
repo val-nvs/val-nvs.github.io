@@ -362,12 +362,15 @@
                         const messageMatch = middleLine.match(/│(.*)│/);
                         if (messageMatch) {
                             const messageContent = messageMatch[1];
-                            const colors = getColorVariants(msgObj.color || '#00ffff');
+                            const userColor = msgObj.color || '#00ffff';
+                            const colors = getColorVariants(userColor);
                             
-                            // Apply colors: desaturated for borders, saturated for text
-                            div.style.color = colors.desaturated;
-                            const styledMiddle = '│<span style="color: ' + colors.saturated + '">' + messageContent + '</span>│';
-                            div.innerHTML = topLine + '\n' + styledMiddle + '\n' + bottomLine;
+                            // Apply desaturated color to borders, saturated to text
+                            const styledTop = '<span style="color: ' + colors.desaturated + '">' + topLine + '</span>';
+                            const styledMiddle = '<span style="color: ' + colors.desaturated + '">│</span><span style="color: ' + colors.saturated + '">' + messageContent + '</span><span style="color: ' + colors.desaturated + '">│</span>';
+                            const styledBottom = '<span style="color: ' + colors.desaturated + '">' + bottomLine + '</span>';
+                            
+                            div.innerHTML = styledTop + '\n' + styledMiddle + '\n' + styledBottom;
                         } else {
                             div.textContent = msgObj.text;
                         }
