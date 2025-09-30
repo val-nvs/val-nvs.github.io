@@ -17,14 +17,12 @@
         }
 
         html {
-            /* Fixed size on desktop */
             font-size: 16px;
         }
 
-        /* Only scale down on mobile when frame doesn't fit */
         @media (max-width: 600px) {
             html {
-                font-size: calc(100vw / 34.375); /* Scales proportionally */
+                font-size: calc(100vw / 34.375);
             }
         }
 
@@ -95,14 +93,6 @@
             white-space: pre;
             line-height: 1.2;
             font-size: 0.875rem;
-        }
-
-        .message.user-message {
-            color: #5f9f9f;
-        }
-
-        .message-text-cyan {
-            color: #0ff;
         }
 
         .input-area {
@@ -185,7 +175,6 @@
             color: #000;
         }
 
-        /* Mobile adjustments */
         @media (max-width: 550px) {
             .input-row {
                 flex-wrap: wrap;
@@ -233,10 +222,10 @@
         <div class="input-row" id="joinRow">
             <input type="text" id="usernameInput" placeholder="enter name" maxlength="6" style="width: 9.375rem;">
             <div class="color-selector">
-                <button class="color-btn selected" data-color="#ff0000" style="background: #ff0000;" onclick="selectColor('#ff0000', this)"></button>
+                <button class="color-btn selected" data-color="#00ffff" style="background: #00ffff;" onclick="selectColor('#00ffff', this)"></button>
+                <button class="color-btn" data-color="#ff0000" style="background: #ff0000;" onclick="selectColor('#ff0000', this)"></button>
                 <button class="color-btn" data-color="#00ff00" style="background: #00ff00;" onclick="selectColor('#00ff00', this)"></button>
                 <button class="color-btn" data-color="#0000ff" style="background: #0000ff;" onclick="selectColor('#0000ff', this)"></button>
-                <button class="color-btn" data-color="#00ffff" style="background: #00ffff;" onclick="selectColor('#00ffff', this)"></button>
                 <button class="color-btn" data-color="#ffff00" style="background: #ffff00;" onclick="selectColor('#ffff00', this)"></button>
                 <button class="color-btn" data-color="#ff00ff" style="background: #ff00ff;" onclick="selectColor('#ff00ff', this)"></button>
             </div>
@@ -250,7 +239,6 @@
     </div>
 
     <script>
-        // Firebase Configuration - ADD YOUR CONFIG HERE
         const firebaseConfig = {
             apiKey: "AIzaSyCxC1qidadTm5uLacKtD9d_6Zw1uq0Mnf0",
             authDomain: "chat-8a799.firebaseapp.com",
@@ -261,7 +249,6 @@
             appId: "1:359690574077:web:65ed1801a082314a8a8694"
         };
 
-        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
         const messagesRef = database.ref('messages');
@@ -269,9 +256,16 @@
         const messages = [];
         let hasJoined = false;
         let currentUsername = '';
-        let currentColor = '#ff0000'; // Default red
+        let currentColor = '#00ffff';
         let isTyping = false;
         let sessionId = Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+
+        // Update message colors periodically based on age
+        setInterval(() => {
+            if (messages.length > 0) {
+                renderMessages();
+            }
+        }, 10000); // Update every 10 seconds
 
         function selectColor(color, element) {
             currentColor = color;
@@ -279,7 +273,6 @@
             element.classList.add('selected');
         }
 
-        // Helper function to convert hex to HSL and create saturated/desaturated versions
         function hexToHSL(hex) {
             const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
             let r = parseInt(result[1], 16) / 255;
@@ -311,16 +304,27 @@
         function getColorVariants(hexColor) {
             const hsl = hexToHSL(hexColor);
             return {
-                saturated: hslToString(hsl.h, Math.min(hsl.s * 1.2, 100), 60),   // Bright version for text
-                desaturated: hslToString(hsl.h, Math.max(hsl.s * 0.6, 30), 55)   // Muted version for borders
+                saturated: hslToString(hsl.h, 100, 60),
+                desaturated: hslToString(hsl.h, 50, 35)  // Darker borders
             };
         }
 
-        function createBox(text, username, isSystem = false) {
+        function createBox(text, username, isSystem = false, userColor = null) {
             if (isSystem) {
                 const contentWidth = text.length + 2;
                 const topBorder = '┌' + '─'.repeat(contentWidth) + '┐';
-                const messageLine = '│ ' + text + ' │';
+                
+                // Check if it's a join/leave message and color the username
+                let messageLine = '│ ' + text + ' │';
+                if (userColor && (text.includes('JOINED') || text.includes('LEFT'))) {
+                    const colors = getColorVariants(userColor);
+                    const match = text.match(/(USER )(\w+)( JOINED| LEFT)/);
+                    if (match) {
+                        const styledText = match[1] + '<span style="color: ' + colors.saturated + '">' + match[2] + '</span>' + match[3];
+                        messageLine = '│ ' + styledText + ' │';
+                    }
+                }
+                
                 const bottomBorder = '└' + '─'.repeat(contentWidth) + '┘';
                 return [topBorder, messageLine, bottomBorder].join('\n');
             }
@@ -345,14 +349,33 @@
             const layer = document.getElementById('messagesLayer');
             container.innerHTML = '';
             
+            const now = Date.now();
+            
             messages.forEach(msgObj => {
                 const div = document.createElement('div');
-                div.className = msgObj.isSystem ? 'message' : 'message user-message';
+                div.className = 'message';
                 div.style.alignSelf = msgObj.isSystem ? 'flex-start' : 'flex-end';
                 
+                // Calculate age-based opacity (fade over 10 minutes)
+                const age = now - (msgObj.timestamp || now);
+                const fadeTime = 10 * 60 * 1000; // 10 minutes in ms
+                const opacity = Math.max(0.2, 1 - (age / fadeTime));
+                div.style.opacity = opacity;
+                
                 if (msgObj.isSystem) {
-                    div.textContent = msgObj.text;
+                    div.style.color = '#5f9f9f';
+                    
+                    // Check if it contains HTML (colored username)
+                    if (msgObj.text.includes('<span')) {
+                        div.innerHTML = msgObj.text.replace(/\n/g, '<br>');
+                    } else {
+                        div.textContent = msgObj.text;
+                    }
                 } else {
+                    // Apply color immediately, even during animation
+                    const userColor = msgObj.color || '#00ffff';
+                    const colors = getColorVariants(userColor);
+                    
                     const lines = msgObj.text.split('\n');
                     if (lines.length === 3) {
                         const topLine = lines[0];
@@ -362,19 +385,20 @@
                         const messageMatch = middleLine.match(/│(.*)│/);
                         if (messageMatch) {
                             const messageContent = messageMatch[1];
-                            const userColor = msgObj.color || '#00ffff';
-                            const colors = getColorVariants(userColor);
                             
-                            // Apply desaturated color to borders, saturated to text
                             const styledTop = '<span style="color: ' + colors.desaturated + '">' + topLine + '</span>';
                             const styledMiddle = '<span style="color: ' + colors.desaturated + '">│</span><span style="color: ' + colors.saturated + '">' + messageContent + '</span><span style="color: ' + colors.desaturated + '">│</span>';
                             const styledBottom = '<span style="color: ' + colors.desaturated + '">' + bottomLine + '</span>';
                             
                             div.innerHTML = styledTop + '\n' + styledMiddle + '\n' + styledBottom;
                         } else {
+                            // During animation before pattern matches, apply desaturated color
+                            div.style.color = colors.desaturated;
                             div.textContent = msgObj.text;
                         }
                     } else {
+                        // Incomplete message during animation - apply desaturated color
+                        div.style.color = colors.desaturated;
                         div.textContent = msgObj.text;
                     }
                 }
@@ -385,7 +409,7 @@
             layer.scrollTop = layer.scrollHeight;
         }
 
-        function animateMessage(messageBox, isSystem) {
+        function animateMessage(messageBox, isSystem, color, timestamp) {
             isTyping = true;
             document.getElementById('sendBtn').disabled = true;
             
@@ -393,7 +417,13 @@
             const maxLength = Math.max(...lines.map(l => l.length));
             let columnIndex = 0;
             
-            messages.push({ text: '', isSystem: isSystem, isAnimating: true });
+            messages.push({ 
+                text: '', 
+                isSystem: isSystem, 
+                isAnimating: true, 
+                color: color,
+                timestamp: timestamp || Date.now()
+            });
             const messageIndex = messages.length - 1;
             
             const interval = setInterval(() => {
@@ -417,10 +447,11 @@
             }, 80);
         }
 
-        function addMessageLocal(type, text, fromFirebase = false, messageUsername = null, isOwnMessage = false) {
+        function addMessageLocal(type, text, fromFirebase = false, messageUsername = null, isOwnMessage = false, messageColor = null, firebaseTimestamp = null) {
             let boxText = '';
             let isSystem = false;
             let username = messageUsername || currentUsername || 'anon';
+            let color = messageColor || currentColor || '#00ffff';
             
             if (type === 'join') {
                 boxText = `USER ${text} JOINED`;
@@ -432,18 +463,25 @@
                 boxText = text;
                 isSystem = true;
             } else {
-                // ALL user messages are right-aligned with username in border
                 boxText = text;
                 isSystem = false;
             }
             
-            const box = createBox(boxText, username, isSystem);
+            const box = createBox(boxText, username, isSystem, isSystem ? color : null);
             
-            // Animate ALL user messages (yours and others)
+            // Use Firebase timestamp if available, otherwise use current time
+            const timestamp = firebaseTimestamp || Date.now();
+            
             if (!isSystem) {
-                animateMessage(box, isSystem);
+                // For user messages during animation, timestamp will be set in animateMessage
+                animateMessage(box, isSystem, color, timestamp);
             } else {
-                messages.push({ text: box, isSystem: isSystem });
+                messages.push({ 
+                    text: box, 
+                    isSystem: isSystem, 
+                    color: color,
+                    timestamp: timestamp
+                });
                 renderMessages();
             }
         }
@@ -457,13 +495,9 @@
             currentUsername = username;
             hasJoined = true;
             
-            // Set up Firebase presence - auto disconnect
             const presenceRef = database.ref(`presence/${sessionId}`);
-            
-            // Create a push reference for the leave message
             const leaveMessageRef = messagesRef.push();
             
-            // When user disconnects (closes tab, loses connection, etc)
             leaveMessageRef.onDisconnect().set({
                 type: 'leave',
                 username: username,
@@ -473,7 +507,6 @@
             
             presenceRef.onDisconnect().remove();
             
-            // Mark as online now
             presenceRef.set({
                 username: username,
                 color: currentColor,
@@ -481,7 +514,6 @@
                 timestamp: firebase.database.ServerValue.TIMESTAMP
             });
             
-            // Send join message
             messagesRef.push({
                 type: 'join',
                 username: username,
@@ -489,9 +521,7 @@
                 timestamp: firebase.database.ServerValue.TIMESTAMP
             });
             
-            // Hide the join row
             document.getElementById('joinRow').style.display = 'none';
-            
             document.getElementById('userInput').disabled = false;
             document.getElementById('sendBtn').disabled = false;
             document.getElementById('disconnectBtn').disabled = false;
@@ -501,7 +531,6 @@
         function disconnectChat() {
             if (!hasJoined) return;
             
-            // Manually send leave message
             messagesRef.push({
                 type: 'leave',
                 username: currentUsername,
@@ -509,14 +538,11 @@
                 timestamp: firebase.database.ServerValue.TIMESTAMP
             });
             
-            // Remove presence
             database.ref(`presence/${sessionId}`).remove();
             
             hasJoined = false;
             
-            // Show the join row again
             document.getElementById('joinRow').style.display = 'flex';
-            
             document.getElementById('usernameInput').value = '';
             document.getElementById('usernameInput').disabled = false;
             document.querySelectorAll('.color-btn').forEach(btn => btn.disabled = false);
@@ -552,11 +578,11 @@
             const isOwnMessage = data.sessionId === sessionId;
             
             if (data.type === 'join') {
-                addMessageLocal('join', data.username, true);
+                addMessageLocal('join', data.username, true, null, false, null, data.timestamp);
             } else if (data.type === 'leave') {
-                addMessageLocal('leave', data.username, true);
+                addMessageLocal('leave', data.username, true, null, false, null, data.timestamp);
             } else if (data.type === 'message') {
-                addMessageLocal('message', data.text, true, data.username, isOwnMessage, data.color);
+                addMessageLocal('message', data.text, true, data.username, isOwnMessage, data.color, data.timestamp);
             }
         });
 
