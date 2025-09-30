@@ -17,8 +17,15 @@
         }
 
         html {
-            /* Normal size on desktop, scales down when viewport < 550px */
-            font-size: clamp(calc(100vw / 34.375), 16px, 16px);
+            /* Fixed size on desktop */
+            font-size: 16px;
+        }
+
+        /* Only scale down on mobile when frame doesn't fit */
+        @media (max-width: 600px) {
+            html {
+                font-size: calc(100vw / 34.375); /* Scales proportionally */
+            }
         }
 
         @font-face {
