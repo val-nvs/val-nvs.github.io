@@ -16,11 +16,6 @@
             box-sizing: border-box;
         }
 
-        html {
-            /* Normal size on desktop, scales down when viewport < 550px */
-            font-size: clamp(calc(100vw / 34.375), 16px, 16px);
-        }
-
         @font-face {
             font-family: 'PerfectDOSVGA';
             src: url('./PerfectDosVga.ttf') format('truetype');
@@ -31,7 +26,6 @@
             color: #5f9f9f;
             font-family: 'PerfectDOSVGA', 'Courier New', monospace;
             min-height: 100vh;
-            overflow-x: hidden;
         }
 
         .chat-wrapper {
@@ -42,7 +36,7 @@
         }
 
         .background-frame {
-            font-size: 0.875rem;
+            font-size: 14px;
             line-height: 1.2;
             white-space: pre;
             color: #5f9f9f;
@@ -54,8 +48,8 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: calc(100% - 1.25rem);
-            height: calc(100% - 2.875rem);
+            width: calc(100% - 20px);
+            height: calc(100% - 46px);
             background-color: #000;
         }
 
@@ -64,8 +58,8 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: calc(100% - 1.25rem);
-            height: calc(100% - 2.875rem);
+            width: calc(100% - 20px);
+            height: calc(100% - 46px);
             overflow-y: auto;
             scrollbar-width: none;
             -ms-overflow-style: none;
@@ -87,7 +81,7 @@
         .message {
             white-space: pre;
             line-height: 1.2;
-            font-size: 0.875rem;
+            font-size: 14px;
         }
 
         .message.user-message {
@@ -100,45 +94,21 @@
 
         .input-area {
             position: fixed;
-            bottom: 1.25rem;
+            bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
             text-align: center;
-            border: 0.125rem solid #5f9f9f;
-            padding: 0.9375rem;
+            border: 2px solid #5f9f9f;
+            padding: 15px;
             background-color: #000;
-            max-width: 95vw;
-        }
-
-        .color-selector {
-            display: flex;
-            gap: 0.3rem;
-            align-items: center;
-        }
-
-        .color-btn {
-            width: 1.5rem;
-            height: 1.5rem;
-            border: 0.125rem solid #5f9f9f;
-            cursor: pointer;
-            transition: transform 0.1s;
-        }
-
-        .color-btn:hover {
-            transform: scale(1.1);
-        }
-
-        .color-btn.selected {
-            border: 0.125rem solid #fff;
-            box-shadow: 0 0 0.3rem rgba(255,255,255,0.5);
         }
 
         .input-row {
             display: flex;
-            gap: 0.625rem;
+            gap: 10px;
             align-items: center;
             justify-content: center;
-            margin-bottom: 0.625rem;
+            margin-bottom: 10px;
         }
 
         .input-row:last-child {
@@ -148,10 +118,10 @@
         input {
             background-color: #000;
             color: #5f9f9f;
-            border: 0.0625rem solid #5f9f9f;
-            padding: 0.5rem 0.75rem;
+            border: 1px solid #5f9f9f;
+            padding: 8px 12px;
             font-family: 'PerfectDOSVGA', 'Courier New', monospace;
-            font-size: 0.875rem;
+            font-size: 14px;
         }
 
         input:focus {
@@ -166,27 +136,16 @@
         button {
             background-color: #000;
             color: #5f9f9f;
-            border: 0.0625rem solid #5f9f9f;
-            padding: 0.5rem 1rem;
+            border: 1px solid #5f9f9f;
+            padding: 8px 16px;
             font-family: 'PerfectDOSVGA', 'Courier New', monospace;
-            font-size: 0.875rem;
+            font-size: 14px;
             cursor: pointer;
         }
 
         button:hover {
             background-color: #5f9f9f;
             color: #000;
-        }
-
-        /* Mobile adjustments */
-        @media (max-width: 550px) {
-            .input-row {
-                flex-wrap: wrap;
-            }
-            
-            input[type="text"]#userInput {
-                width: 100%;
-            }
         }
     </style>
 </head>
@@ -223,20 +182,12 @@
     </div>
     
     <div class="input-area">
-        <div class="input-row" id="joinRow">
-            <input type="text" id="usernameInput" placeholder="enter name" maxlength="6" style="width: 9.375rem;">
-            <div class="color-selector">
-                <button class="color-btn selected" data-color="#ff0000" style="background: #ff0000;" onclick="selectColor('#ff0000', this)"></button>
-                <button class="color-btn" data-color="#00ff00" style="background: #00ff00;" onclick="selectColor('#00ff00', this)"></button>
-                <button class="color-btn" data-color="#0000ff" style="background: #0000ff;" onclick="selectColor('#0000ff', this)"></button>
-                <button class="color-btn" data-color="#00ffff" style="background: #00ffff;" onclick="selectColor('#00ffff', this)"></button>
-                <button class="color-btn" data-color="#ffff00" style="background: #ffff00;" onclick="selectColor('#ffff00', this)"></button>
-                <button class="color-btn" data-color="#ff00ff" style="background: #ff00ff;" onclick="selectColor('#ff00ff', this)"></button>
-            </div>
+        <div class="input-row">
+            <input type="text" id="usernameInput" placeholder="enter name" maxlength="6" style="width: 150px;">
             <button onclick="joinChat()" id="joinBtn">JOIN</button>
         </div>
         <div class="input-row">
-            <input type="text" id="userInput" placeholder="type a message..." maxlength="40" style="width: 18.75rem;" disabled>
+            <input type="text" id="userInput" placeholder="type a message..." maxlength="40" style="width: 300px;" disabled>
             <button onclick="sendMessage()" id="sendBtn" disabled>SEND</button>
             <button onclick="disconnectChat()" id="disconnectBtn" disabled>DISCONNECT</button>
         </div>
@@ -262,52 +213,8 @@
         const messages = [];
         let hasJoined = false;
         let currentUsername = '';
-        let currentColor = '#ff0000'; // Default red
         let isTyping = false;
         let sessionId = Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-
-        function selectColor(color, element) {
-            currentColor = color;
-            document.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('selected'));
-            element.classList.add('selected');
-        }
-
-        // Helper function to convert hex to HSL and create saturated/desaturated versions
-        function hexToHSL(hex) {
-            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-            let r = parseInt(result[1], 16) / 255;
-            let g = parseInt(result[2], 16) / 255;
-            let b = parseInt(result[3], 16) / 255;
-
-            const max = Math.max(r, g, b), min = Math.min(r, g, b);
-            let h, s, l = (max + min) / 2;
-
-            if (max === min) {
-                h = s = 0;
-            } else {
-                const d = max - min;
-                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-                switch (max) {
-                    case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
-                    case g: h = ((b - r) / d + 2) / 6; break;
-                    case b: h = ((r - g) / d + 4) / 6; break;
-                }
-            }
-
-            return { h: h * 360, s: s * 100, l: l * 100 };
-        }
-
-        function hslToString(h, s, l) {
-            return `hsl(${h}, ${s}%, ${l}%)`;
-        }
-
-        function getColorVariants(hexColor) {
-            const hsl = hexToHSL(hexColor);
-            return {
-                saturated: hslToString(hsl.h, 100, 50),        // Full saturation, mid lightness
-                desaturated: hslToString(hsl.h, 40, 50)        // Low saturation for borders
-            };
-        }
 
         function createBox(text, username, isSystem = false) {
             if (isSystem) {
@@ -355,11 +262,7 @@
                         const messageMatch = middleLine.match(/│(.*)│/);
                         if (messageMatch) {
                             const messageContent = messageMatch[1];
-                            const colors = getColorVariants(msgObj.color || '#00ffff');
-                            
-                            // Apply colors: desaturated for borders, saturated for text
-                            div.style.color = colors.desaturated;
-                            const styledMiddle = '│<span style="color: ' + colors.saturated + '">' + messageContent + '</span>│';
+                            const styledMiddle = '│<span class="message-text-cyan">' + messageContent + '</span>│';
                             div.innerHTML = topLine + '\n' + styledMiddle + '\n' + bottomLine;
                         } else {
                             div.textContent = msgObj.text;
@@ -447,28 +350,6 @@
             currentUsername = username;
             hasJoined = true;
             
-            // Set up Firebase presence - auto disconnect
-            const presenceRef = database.ref(`presence/${sessionId}`);
-            
-            // When user disconnects (closes tab, loses connection, etc)
-            messagesRef.onDisconnect().push({
-                type: 'leave',
-                username: username,
-                sessionId: sessionId,
-                timestamp: firebase.database.ServerValue.TIMESTAMP
-            });
-            
-            presenceRef.onDisconnect().remove();
-            
-            // Mark as online now
-            presenceRef.set({
-                username: username,
-                color: currentColor,
-                status: 'online',
-                timestamp: firebase.database.ServerValue.TIMESTAMP
-            });
-            
-            // Send join message
             messagesRef.push({
                 type: 'join',
                 username: username,
@@ -476,19 +357,17 @@
                 timestamp: firebase.database.ServerValue.TIMESTAMP
             });
             
-            // Hide the join row
-            document.getElementById('joinRow').style.display = 'none';
-            
             document.getElementById('userInput').disabled = false;
             document.getElementById('sendBtn').disabled = false;
             document.getElementById('disconnectBtn').disabled = false;
+            usernameInput.disabled = true;
+            document.getElementById('joinBtn').disabled = true;
             document.getElementById('userInput').focus();
         }
 
         function disconnectChat() {
             if (!hasJoined) return;
             
-            // Manually send leave message
             messagesRef.push({
                 type: 'leave',
                 username: currentUsername,
@@ -496,17 +375,10 @@
                 timestamp: firebase.database.ServerValue.TIMESTAMP
             });
             
-            // Remove presence
-            database.ref(`presence/${sessionId}`).remove();
-            
             hasJoined = false;
-            
-            // Show the join row again
-            document.getElementById('joinRow').style.display = 'flex';
             
             document.getElementById('usernameInput').value = '';
             document.getElementById('usernameInput').disabled = false;
-            document.querySelectorAll('.color-btn').forEach(btn => btn.disabled = false);
             document.getElementById('joinBtn').disabled = false;
             document.getElementById('userInput').value = '';
             document.getElementById('userInput').disabled = true;
@@ -525,7 +397,6 @@
                 messagesRef.push({
                     type: 'message',
                     username: currentUsername,
-                    color: currentColor,
                     text: text,
                     sessionId: sessionId,
                     timestamp: firebase.database.ServerValue.TIMESTAMP
@@ -543,7 +414,7 @@
             } else if (data.type === 'leave') {
                 addMessageLocal('leave', data.username, true);
             } else if (data.type === 'message') {
-                addMessageLocal('message', data.text, true, data.username, isOwnMessage, data.color);
+                addMessageLocal('message', data.text, true, data.username, isOwnMessage);
             }
         });
 
