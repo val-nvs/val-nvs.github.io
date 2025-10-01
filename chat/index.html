@@ -1,216 +1,204 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>guruGROUPS Chat</title>
-    
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-    
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>guruGROUPS Chat</title>
+	
+	<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+	
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
 
-        html {
-            font-size: 16px;
-        }
+		html {
+			font-size: 16px;
+		}
 
-        @media (max-width: 600px) {
-            html {
-                font-size: calc(100vw / 34.375);
-            }
-        }
+		@media (max-width: 600px) {
+			html {
+				font-size: calc(100vw / 34.375);
+			}
+		}
 
-        @font-face {
-            font-family: 'PerfectDOSVGA';
-            src: url('./PerfectDosVga.ttf') format('truetype');
-        }
+		@font-face {
+			font-family: 'PerfectDOSVGA';
+			src: url('./PerfectDosVga.ttf') format('truetype');
+		}
 
-        body {
-            background-color: #000;
-            color: #5f9f9f;
-            font-family: 'PerfectDOSVGA', 'Courier New', monospace;
-            min-height: 100vh;
-            overflow-x: hidden;
-            text-shadow: 0 0 8px currentColor, 0 0 12px currentColor;
-        }
+		body {
+			background-color: #000;
+			color: #5f9f9f;
+			font-family: 'PerfectDOSVGA', 'Courier New', monospace;
+			min-height: 100vh;
+			overflow-x: hidden;
+			text-shadow: 0 0 8px currentColor, 0 0 12px currentColor;
+		}
 
-        .chat-wrapper {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
+		.chat-wrapper {
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+		}
 
-        .background-frame {
-            font-size: 0.875rem;
-            line-height: 1.2;
-            white-space: pre;
-            color: #5f9f9f;
-            position: relative;
-        }
+		.background-frame {
+			font-size: 0.875rem;
+			line-height: 1.2;
+			white-space: pre;
+			color: #5f9f9f;
+			position: relative;
+		}
 
-        .color-layer {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: calc(100% - 1.25rem);
-            height: calc(100% - 2.875rem);
-            background-color: #000;
-        }
+		.messages-layer {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			width: calc(100% - 1.25rem);
+			height: calc(100% - 2.875rem);
+			overflow-y: auto;
+			display: flex;
+			flex-direction: column;
+		}
 
-        .messages-layer {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: calc(100% - 1.25rem);
-            height: calc(100% - 2.875rem);
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-        }
+		.messages-layer::-webkit-scrollbar {
+			width: 0.75rem;
+		}
 
-        /* Webkit scrollbar styling (Chrome, Safari, Edge) */
-        .messages-layer::-webkit-scrollbar {
-            width: 0.75rem;
-        }
+		.messages-layer::-webkit-scrollbar-track {
+			background: #1a1a1a;
+		}
 
-        .messages-layer::-webkit-scrollbar-track {
-            background: #1a1a1a;
-        }
+		.messages-layer::-webkit-scrollbar-thumb {
+			background: #00ffff;
+			border-radius: 0;
+		}
 
-        .messages-layer::-webkit-scrollbar-thumb {
-            background: #00ffff;
-            border-radius: 0;
-        }
+		.messages-layer::-webkit-scrollbar-thumb:hover {
+			background: #00cccc;
+		}
 
-        .messages-layer::-webkit-scrollbar-thumb:hover {
-            background: #00cccc;
-        }
+		.messages-layer::-webkit-scrollbar-button {
+			display: none;
+		}
 
-        .messages-layer::-webkit-scrollbar-button {
-            display: none;
-        }
+		.messages-layer {
+			scrollbar-width: thin;
+			scrollbar-color: #00ffff #1a1a1a;
+		}
 
-        /* Firefox scrollbar styling */
-        .messages-layer {
-            scrollbar-width: thin;
-            scrollbar-color: #00ffff #2d4d4d;
-        }
+		.messages-container {
+			margin-top: auto;
+			display: flex;
+			flex-direction: column;
+			align-items: flex-end;
+		}
 
-        .messages-container {
-            margin-top: auto;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-        }
+		.message {
+			white-space: pre;
+			line-height: 1.2;
+			font-size: 0.875rem;
+		}
 
-        .message {
-            white-space: pre;
-            line-height: 1.2;
-            font-size: 0.875rem;
-        }
+		.input-area {
+			position: fixed;
+			bottom: 1.25rem;
+			left: 50%;
+			transform: translateX(-50%);
+			text-align: center;
+			border: 0.125rem solid #5f9f9f;
+			padding: 0.9375rem;
+			background-color: #000;
+			max-width: 95vw;
+		}
 
-        .input-area {
-            position: fixed;
-            bottom: 1.25rem;
-            left: 50%;
-            transform: translateX(-50%);
-            text-align: center;
-            border: 0.125rem solid #5f9f9f;
-            padding: 0.9375rem;
-            background-color: #000;
-            max-width: 95vw;
-        }
+		.color-selector {
+			display: flex;
+			gap: 0.3rem;
+			align-items: center;
+		}
 
-        .color-selector {
-            display: flex;
-            gap: 0.3rem;
-            align-items: center;
-        }
+		.color-btn {
+			width: 1rem;
+			height: 1rem;
+			border: 0.125rem solid #5f9f9f;
+			cursor: pointer;
+			transition: transform 0.1s;
+		}
 
-        .color-btn {
-            width: 1.5rem;
-            height: 1.5rem;
-            border: 0.125rem solid #5f9f9f;
-            cursor: pointer;
-            transition: transform 0.1s;
-        }
+		.color-btn:hover {
+			transform: scale(1.1);
+		}
 
-        .color-btn:hover {
-            transform: scale(1.1);
-        }
+		.color-btn.selected {
+			border: 0.125rem solid #fff;
+			box-shadow: 0 0 0.3rem rgba(255,255,255,0.5);
+		}
 
-        .color-btn.selected {
-            border: 0.125rem solid #fff;
-            box-shadow: 0 0 0.3rem rgba(255,255,255,0.5);
-        }
+		.input-row {
+			display: flex;
+			gap: 0.625rem;
+			align-items: center;
+			justify-content: center;
+			margin-bottom: 0.625rem;
+		}
 
-        .input-row {
-            display: flex;
-            gap: 0.625rem;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 0.625rem;
-        }
+		.input-row:last-child {
+			margin-bottom: 0;
+		}
 
-        .input-row:last-child {
-            margin-bottom: 0;
-        }
+		input {
+			background-color: #000;
+			color: #5f9f9f;
+			border: 0.0625rem solid #5f9f9f;
+			padding: 0.5rem 0.75rem;
+			font-family: 'PerfectDOSVGA', 'Courier New', monospace;
+			font-size: 0.875rem;
+		}
 
-        input {
-            background-color: #000;
-            color: #5f9f9f;
-            border: 0.0625rem solid #5f9f9f;
-            padding: 0.5rem 0.75rem;
-            font-family: 'PerfectDOSVGA', 'Courier New', monospace;
-            font-size: 0.875rem;
-        }
+		input:focus {
+			outline: none;
+			border-color: #0ff;
+		}
 
-        input:focus {
-            outline: none;
-            border-color: #0ff;
-        }
+		input::placeholder {
+			color: #5f9f9f;
+		}
 
-        input::placeholder {
-            color: #5f9f9f;
-        }
+		button {
+			background-color: #000;
+			color: #5f9f9f;
+			border: 0.0625rem solid #5f9f9f;
+			padding: 0.5rem 1rem;
+			font-family: 'PerfectDOSVGA', 'Courier New', monospace;
+			font-size: 0.875rem;
+			cursor: pointer;
+		}
 
-        button {
-            background-color: #000;
-            color: #5f9f9f;
-            border: 0.0625rem solid #5f9f9f;
-            padding: 0.5rem 1rem;
-            font-family: 'PerfectDOSVGA', 'Courier New', monospace;
-            font-size: 0.875rem;
-            cursor: pointer;
-        }
+		button:hover {
+			background-color: #5f9f9f;
+			color: #000;
+		}
 
-        button:hover {
-            background-color: #5f9f9f;
-            color: #000;
-        }
-
-        @media (max-width: 550px) {
-            .input-row {
-                flex-wrap: wrap;
-            }
-            
-            input[type="text"]#userInput {
-                width: 100%;
-            }
-        }
-    </style>
+		@media (max-width: 550px) {
+			.input-row {
+				flex-wrap: wrap;
+			}
+			
+			input[type="text"]#userInput {
+				width: 100%;
+			}
+		}
+	</style>
 </head>
 <body>
-    <div class="chat-wrapper">
-        <div class="background-frame">┌──guruGROUPS─────────────────────────────────────────────────┐
+	<div class="chat-wrapper">
+		<div class="background-frame">┌──guruGROUPS─────────────────────────────────────────────────┐
 │                                                             │
 │                                                             │
 │                                                             │
@@ -233,445 +221,457 @@
 │                                                             │
 │                                                             │
 └────────────────────────────────────press─ESC─to─leave─chat──┘</div>
-        
-        <div class="color-layer"></div>
-        <div class="messages-layer" id="messagesLayer">
-            <div class="messages-container" id="messagesContainer"></div>
-        </div>
-    </div>
-    
-    <div class="input-area">
-        <div class="input-row" id="joinRow">
-            <input type="text" id="usernameInput" placeholder="enter name" maxlength="6" style="width: 9.375rem;">
-            <div class="color-selector">
-                <button class="color-btn selected" data-color="#00ffff" style="background: #00ffff;" onclick="selectColor('#00ffff', this)"></button>
-                <button class="color-btn" data-color="#ff0000" style="background: #ff0000;" onclick="selectColor('#ff0000', this)"></button>
-                <button class="color-btn" data-color="#00ff00" style="background: #00ff00;" onclick="selectColor('#00ff00', this)"></button>
-                <button class="color-btn" data-color="#0000ff" style="background: #0000ff;" onclick="selectColor('#0000ff', this)"></button>
-                <button class="color-btn" data-color="#ffff00" style="background: #ffff00;" onclick="selectColor('#ffff00', this)"></button>
-                <button class="color-btn" data-color="#ff00ff" style="background: #ff00ff;" onclick="selectColor('#ff00ff', this)"></button>
-            </div>
-            <button onclick="joinChat()" id="joinBtn">JOIN</button>
-        </div>
-        <div class="input-row">
-            <input type="text" id="userInput" placeholder="type a message..." maxlength="40" style="width: 18.75rem;" disabled>
-            <button onclick="sendMessage()" id="sendBtn" disabled>SEND</button>
-            <button onclick="disconnectChat()" id="disconnectBtn" disabled>DISCONNECT</button>
-        </div>
-    </div>
+		
+		<div class="messages-layer" id="messagesLayer">
+			<div class="messages-container" id="messagesContainer"></div>
+		</div>
+	</div>
+	
+	<div class="input-area">
+		<div class="input-row" id="joinRow">
+			<input type="text" id="usernameInput" placeholder="enter name" maxlength="6" style="width: 9.375rem;">
+			<div class="color-selector">
+				<button class="color-btn selected" data-color="hsl(180, 100%, 50%)" style="background: hsl(180, 100%, 50%);" onclick="selectColor('hsl(180, 100%, 50%)', this)"></button>
+				<button class="color-btn" data-color="hsl(210, 100%, 50%)" style="background: hsl(210, 100%, 50%);" onclick="selectColor('hsl(210, 100%, 50%)', this)"></button>
+				<button class="color-btn" data-color="hsl(240, 100%, 50%)" style="background: hsl(240, 100%, 50%);" onclick="selectColor('hsl(240, 100%, 50%)', this)"></button>
+				<button class="color-btn" data-color="hsl(270, 100%, 50%)" style="background: hsl(270, 100%, 50%);" onclick="selectColor('hsl(270, 100%, 50%)', this)"></button>
+				<button class="color-btn" data-color="hsl(300, 100%, 50%)" style="background: hsl(300, 100%, 50%);" onclick="selectColor('hsl(300, 100%, 50%)', this)"></button>
+				<button class="color-btn" data-color="hsl(330, 100%, 50%)" style="background: hsl(330, 100%, 50%);" onclick="selectColor('hsl(330, 100%, 50%)', this)"></button>
+				<button class="color-btn" data-color="hsl(0, 100%, 50%)" style="background: hsl(0, 100%, 50%);" onclick="selectColor('hsl(0, 100%, 50%)', this)"></button>
+				<button class="color-btn" data-color="hsl(30, 100%, 50%)" style="background: hsl(30, 100%, 50%);" onclick="selectColor('hsl(30, 100%, 50%)', this)"></button>
+				<button class="color-btn" data-color="hsl(60, 100%, 50%)" style="background: hsl(60, 100%, 50%);" onclick="selectColor('hsl(60, 100%, 50%)', this)"></button>
+				<button class="color-btn" data-color="hsl(90, 100%, 50%)" style="background: hsl(90, 100%, 50%);" onclick="selectColor('hsl(90, 100%, 50%)', this)"></button>
+				<button class="color-btn" data-color="hsl(120, 100%, 50%)" style="background: hsl(120, 100%, 50%);" onclick="selectColor('hsl(120, 100%, 50%)', this)"></button>
+				<button class="color-btn" data-color="hsl(150, 100%, 50%)" style="background: hsl(150, 100%, 50%);" onclick="selectColor('hsl(150, 100%, 50%)', this)"></button>
+			</div>
+			<button onclick="joinChat()" id="joinBtn">JOIN</button>
+		</div>
+		<div class="input-row">
+			<input type="text" id="userInput" placeholder="type a message..." maxlength="40" style="width: 18.75rem;" disabled>
+			<button onclick="sendMessage()" id="sendBtn" disabled>SEND</button>
+			<button onclick="disconnectChat()" id="disconnectBtn" disabled>DISCONNECT</button>
+		</div>
+	</div>
 
-    <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyCxC1qidadTm5uLacKtD9d_6Zw1uq0Mnf0",
-            authDomain: "chat-8a799.firebaseapp.com",
-            databaseURL: "https://chat-8a799-default-rtdb.firebaseio.com",
-            projectId: "chat-8a799",
-            storageBucket: "chat-8a799.firebasestorage.app",
-            messagingSenderId: "359690574077",
-            appId: "1:359690574077:web:65ed1801a082314a8a8694"
-        };
+	<script>
+		const firebaseConfig = {
+			apiKey: "AIzaSyCxC1qidadTm5uLacKtD9d_6Zw1uq0Mnf0",
+			authDomain: "chat-8a799.firebaseapp.com",
+			databaseURL: "https://chat-8a799-default-rtdb.firebaseio.com",
+			projectId: "chat-8a799",
+			storageBucket: "chat-8a799.firebasestorage.app",
+			messagingSenderId: "359690574077",
+			appId: "1:359690574077:web:65ed1801a082314a8a8694"
+		};
 
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-        const messagesRef = database.ref('messages');
+		firebase.initializeApp(firebaseConfig);
+		const database = firebase.database();
+		const messagesRef = database.ref('messages');
 
-        const messages = [];
-        let hasJoined = false;
-        let currentUsername = '';
-        let currentColor = '#00ffff';
-        let isTyping = false;
-        let sessionId = Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-        let initialLoadComplete = false;
-        let onlineCount = 0;
+		const messages = [];
+		let hasJoined = false;
+		let currentUsername = '';
+		let currentColor = 'hsl(0, 100%, 50%)';
+		let isTyping = false;
+		let sessionId = Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+		let initialLoadComplete = false;
+		let onlineCount = 0;
 
-        // Audio setup
-        const sounds = {
-            ping: new Audio('./R_Terminal_ping.wav'),
-            newline: new Audio('./R_terminal_newline_1.wav'),
-            cursor: new Audio('./terminal_cursor.wav')
-        };
+		const sounds = {
+			ping: new Audio('./R_Terminal_ping.wav'),
+			newline: new Audio('./R_terminal_newline_1.wav'),
+			cursor: new Audio('./terminal_cursor.wav')
+		};
 
-        function playSound(soundName) {
-            if (sounds[soundName]) {
-                sounds[soundName].currentTime = 0;
-                sounds[soundName].play().catch(e => console.log('Audio play failed:', e));
-            }
-        }
+		function playSound(soundName) {
+			if (sounds[soundName]) {
+				sounds[soundName].currentTime = 0;
+				sounds[soundName].play().catch(e => console.log('Audio play failed:', e));
+			}
+		}
 
-        function updateHeader() {
-            const baseText = '┌──guruGROUPS───';
-            const watchingText = onlineCount + '─watching';
-            const totalWidth = 62;
-            const fillerDashes = totalWidth - baseText.length - watchingText.length;
-            const headerText = baseText + watchingText + '─'.repeat(Math.max(0, fillerDashes)) + '┐';
-            
-            const lines = document.querySelector('.background-frame').textContent.split('\n');
-            lines[0] = headerText;
-            document.querySelector('.background-frame').textContent = lines.join('\n');
-        }
+		function updateHeader() {
+			const baseText = '┌──guruGROUPS───';
+			const watchingText = onlineCount + '─watching';
+			const totalWidth = 62;
+			const fillerDashes = totalWidth - baseText.length - watchingText.length;
+			const headerText = baseText + watchingText + '─'.repeat(Math.max(0, fillerDashes)) + '┐';
+			
+			const lines = document.querySelector('.background-frame').textContent.split('\n');
+			lines[0] = headerText;
+			document.querySelector('.background-frame').textContent = lines.join('\n');
+		}
 
-        // Listen to presence changes
-        const presenceRef = database.ref('presence');
-        presenceRef.on('value', (snapshot) => {
-            onlineCount = snapshot.numChildren();
-            updateHeader();
-        });
+		const presenceRef = database.ref('presence');
+		presenceRef.on('value', (snapshot) => {
+			onlineCount = snapshot.numChildren();
+			updateHeader();
+		});
 
-        // Track page view immediately (before joining)
-        const viewerPresenceRef = database.ref(`presence/${sessionId}`);
-        viewerPresenceRef.onDisconnect().remove();
-        viewerPresenceRef.set({
-            viewer: true,
-            timestamp: firebase.database.ServerValue.TIMESTAMP
-        });
+		const viewerPresenceRef = database.ref(`presence/${sessionId}`);
+		viewerPresenceRef.onDisconnect().remove();
+		viewerPresenceRef.set({
+			viewer: true,
+			timestamp: firebase.database.ServerValue.TIMESTAMP
+		});
 
-        // Mark initial load complete after a short delay
-        setTimeout(() => {
-            initialLoadComplete = true;
-        }, 1000);
+		setTimeout(() => {
+			initialLoadComplete = true;
+		}, 1000);
 
-        setInterval(() => {
-            if (messages.length > 0) {
-                renderMessages();
-            }
-        }, 10000);
+		setInterval(() => {
+			if (messages.length > 0) {
+				renderMessages();
+			}
+		}, 10000);
 
-        function selectColor(color, element) {
-            currentColor = color;
-            document.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('selected'));
-            element.classList.add('selected');
-        }
+		function selectColor(color, element) {
+			currentColor = color;
+			document.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('selected'));
+			element.classList.add('selected');
+		}
 
-        function hexToHSL(hex) {
-            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-            let r = parseInt(result[1], 16) / 255;
-            let g = parseInt(result[2], 16) / 255;
-            let b = parseInt(result[3], 16) / 255;
+		function hexToHSL(hex) {
+			const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+			let r = parseInt(result[1], 16) / 255;
+			let g = parseInt(result[2], 16) / 255;
+			let b = parseInt(result[3], 16) / 255;
 
-            const max = Math.max(r, g, b), min = Math.min(r, g, b);
-            let h, s, l = (max + min) / 2;
+			const max = Math.max(r, g, b), min = Math.min(r, g, b);
+			let h, s, l = (max + min) / 2;
 
-            if (max === min) {
-                h = s = 0;
-            } else {
-                const d = max - min;
-                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-                switch (max) {
-                    case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
-                    case g: h = ((b - r) / d + 2) / 6; break;
-                    case b: h = ((r - g) / d + 4) / 6; break;
-                }
-            }
+			if (max === min) {
+				h = s = 0;
+			} else {
+				const d = max - min;
+				s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+				switch (max) {
+					case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+					case g: h = ((b - r) / d + 2) / 6; break;
+					case b: h = ((r - g) / d + 4) / 6; break;
+				}
+			}
 
-            return { h: h * 360, s: s * 100, l: l * 100 };
-        }
+			return { h: h * 360, s: s * 100, l: l * 100 };
+		}
 
-        function hslToString(h, s, l) {
-            return `hsl(${h}, ${s}%, ${l}%)`;
-        }
+		function hslToString(h, s, l) {
+			return `hsl(${h}, ${s}%, ${l}%)`;
+		}
 
-        function getColorVariants(hexColor) {
-            const hsl = hexToHSL(hexColor);
-            return {
-                saturated: hslToString(hsl.h, 100, 60),
-                desaturated: hslToString(hsl.h, 50, 35)
-            };
-        }
+		function getColorVariants(color) {
+			// Handle both hex and hsl formats
+			let hue, sat, light;
+			
+			if (color.startsWith('hsl')) {
+				// Parse HSL string
+				const match = color.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
+				if (match) {
+					hue = parseInt(match[1]);
+					sat = parseInt(match[2]);
+					light = parseInt(match[3]);
+				}
+			} else {
+				// Convert hex to HSL
+				const hsl = hexToHSL(color);
+				hue = hsl.h;
+				sat = hsl.s;
+				light = hsl.l;
+			}
+			
+			return {
+				saturated: hslToString(hue, 100, 60),   // Bright for text
+				desaturated: hslToString(hue, 100, 35)  // Darker for borders, but still 100% saturated
+			};
+		}
 
-        function createBox(text, username, isSystem = false) {
-            if (isSystem) {
-                const contentWidth = text.length + 2;
-                const topBorder = '┌' + '─'.repeat(contentWidth) + '┐';
-                const messageLine = '│ ' + text + ' │';
-                const bottomBorder = '└' + '─'.repeat(contentWidth) + '┘';
-                return [topBorder, messageLine, bottomBorder].join('\n');
-            }
-            
-            const usernameContent = username.length + 2;
-            const messageContent = text.length + 2;
-            const contentWidth = Math.max(usernameContent, messageContent);
-            
-            const dashesAfterUsername = contentWidth - username.length - 1;
-            const topBorder = '┌─' + username + '─'.repeat(dashesAfterUsername) + '┐';
-            
-            const spacesAfterText = contentWidth - text.length - 1;
-            const messageLine = '│ ' + text + ' '.repeat(spacesAfterText) + '│';
-            
-            const bottomBorder = '└' + '─'.repeat(contentWidth) + '┘';
-            
-            return [topBorder, messageLine, bottomBorder].join('\n');
-        }
+		function createBox(text, username, isSystem = false) {
+			if (isSystem) {
+				const contentWidth = text.length + 2;
+				const topBorder = '┌' + '─'.repeat(contentWidth) + '┐';
+				const messageLine = '│ ' + text + ' │';
+				const bottomBorder = '└' + '─'.repeat(contentWidth) + '┘';
+				return [topBorder, messageLine, bottomBorder].join('\n');
+			}
+			
+			const usernameContent = username.length + 2;
+			const messageContent = text.length + 2;
+			const contentWidth = Math.max(usernameContent, messageContent);
+			
+			const dashesAfterUsername = contentWidth - username.length - 1;
+			const topBorder = '┌─' + username + '─'.repeat(dashesAfterUsername) + '┐';
+			
+			const spacesAfterText = contentWidth - text.length - 1;
+			const messageLine = '│ ' + text + ' '.repeat(spacesAfterText) + '│';
+			
+			const bottomBorder = '└' + '─'.repeat(contentWidth) + '┘';
+			
+			return [topBorder, messageLine, bottomBorder].join('\n');
+		}
 
-        function renderMessages() {
-            const container = document.getElementById('messagesContainer');
-            const layer = document.getElementById('messagesLayer');
-            container.innerHTML = '';
-            
-            const now = Date.now();
-            
-            messages.forEach(msgObj => {
-                const div = document.createElement('div');
-                div.className = 'message';
-                div.style.alignSelf = msgObj.isSystem ? 'flex-start' : 'flex-end';
-                
-                const age = now - (msgObj.timestamp || now);
-                const fadeTime = 25 * 60 * 1000; // 25 minutes to reach minimum
-                const opacity = Math.max(0.5, 1 - (age / fadeTime) * 0.5);
-                div.style.opacity = opacity;
-                
-                if (msgObj.isSystem) {
-                    const userColor = msgObj.color || '#5f9f9f';
-                    const lines = msgObj.text.split('\n');
-                    
-                    if (lines.length === 3 && msgObj.text.includes('JOINED')) {
-                        const topLine = lines[0];
-                        const middleLine = lines[1];
-                        const bottomLine = lines[2];
-                        
-                        const match = middleLine.match(/│ (USER )(\w+)( JOINED) │/);
-                        if (match) {
-                            const colors = getColorVariants(userColor);
-                            const styledMiddle = '│ ' + match[1] + '<span style="color: ' + colors.saturated + '">' + match[2] + '</span>' + match[3] + ' │';
-                            div.style.color = '#5f9f9f';
-                            div.innerHTML = topLine + '\n' + styledMiddle + '\n' + bottomLine;
-                        } else {
-                            div.style.color = '#5f9f9f';
-                            div.textContent = msgObj.text;
-                        }
-                    } else {
-                        div.style.color = '#5f9f9f';
-                        div.textContent = msgObj.text;
-                    }
-                } else {
-                    const userColor = msgObj.color || '#00ffff';
-                    const colors = getColorVariants(userColor);
-                    
-                    const lines = msgObj.text.split('\n');
-                    if (lines.length === 3) {
-                        const topLine = lines[0];
-                        const middleLine = lines[1];
-                        const bottomLine = lines[2];
-                        
-                        const messageMatch = middleLine.match(/│(.*)│/);
-                        if (messageMatch) {
-                            const messageContent = messageMatch[1];
-                            const styledTop = '<span style="color: ' + colors.desaturated + '">' + topLine + '</span>';
-                            const styledMiddle = '<span style="color: ' + colors.desaturated + '">│</span><span style="color: ' + colors.saturated + '">' + messageContent + '</span><span style="color: ' + colors.desaturated + '">│</span>';
-                            const styledBottom = '<span style="color: ' + colors.desaturated + '">' + bottomLine + '</span>';
-                            div.innerHTML = styledTop + '\n' + styledMiddle + '\n' + styledBottom;
-                        } else {
-                            div.style.color = colors.desaturated;
-                            div.textContent = msgObj.text;
-                        }
-                    } else {
-                        div.style.color = colors.desaturated;
-                        div.textContent = msgObj.text;
-                    }
-                }
-                
-                container.appendChild(div);
-            });
-            
-            layer.scrollTop = layer.scrollHeight;
-        }
+		function renderMessages() {
+			const container = document.getElementById('messagesContainer');
+			const layer = document.getElementById('messagesLayer');
+			container.innerHTML = '';
+			
+			const now = Date.now();
+			
+			messages.forEach(msgObj => {
+				const div = document.createElement('div');
+				div.className = 'message';
+				div.style.alignSelf = msgObj.isSystem ? 'flex-start' : 'flex-end';
+				
+				const age = now - (msgObj.timestamp || now);
+				const fadeTime = 25 * 60 * 1000;
+				const opacity = Math.max(0.5, 1 - (age / fadeTime) * 0.5);
+				div.style.opacity = opacity;
+				
+				if (msgObj.isSystem) {
+					const userColor = msgObj.color || '#5f9f9f';
+					const lines = msgObj.text.split('\n');
+					
+					if (lines.length === 3 && msgObj.text.includes('JOINED')) {
+						const topLine = lines[0];
+						const middleLine = lines[1];
+						const bottomLine = lines[2];
+						
+						const match = middleLine.match(/│ (USER )(\w+)( JOINED) │/);
+						if (match) {
+							const colors = getColorVariants(userColor);
+							const styledMiddle = '│ ' + match[1] + '<span style="color: ' + colors.saturated + '">' + match[2] + '</span>' + match[3] + ' │';
+							div.style.color = '#5f9f9f';
+							div.innerHTML = topLine + '\n' + styledMiddle + '\n' + bottomLine;
+						} else {
+							div.style.color = '#5f9f9f';
+							div.textContent = msgObj.text;
+						}
+					} else {
+						div.style.color = '#5f9f9f';
+						div.textContent = msgObj.text;
+					}
+				} else {
+					const userColor = msgObj.color || '#00ffff';
+					const colors = getColorVariants(userColor);
+					
+					const lines = msgObj.text.split('\n');
+					if (lines.length === 3) {
+						const topLine = lines[0];
+						const middleLine = lines[1];
+						const bottomLine = lines[2];
+						
+						const messageMatch = middleLine.match(/│(.*)│/);
+						if (messageMatch) {
+							const messageContent = messageMatch[1];
+							const styledTop = '<span style="color: ' + colors.desaturated + '">' + topLine + '</span>';
+							const styledMiddle = '<span style="color: ' + colors.desaturated + '">│</span><span style="color: ' + colors.saturated + '">' + messageContent + '</span><span style="color: ' + colors.desaturated + '">│</span>';
+							const styledBottom = '<span style="color: ' + colors.desaturated + '">' + bottomLine + '</span>';
+							div.innerHTML = styledTop + '\n' + styledMiddle + '\n' + styledBottom;
+						} else {
+							div.style.color = colors.desaturated;
+							div.textContent = msgObj.text;
+						}
+					} else {
+						div.style.color = colors.desaturated;
+						div.textContent = msgObj.text;
+					}
+				}
+				
+				container.appendChild(div);
+			});
+			
+			layer.scrollTop = layer.scrollHeight;
+		}
 
-        function animateMessage(messageBox, isSystem, color, timestamp) {
-            isTyping = true;
-            document.getElementById('sendBtn').disabled = true;
-            
-            const lines = messageBox.split('\n');
-            const maxLength = Math.max(...lines.map(l => l.length));
-            let columnIndex = 0;
-            
-            messages.push({ 
-                text: '', 
-                isSystem: isSystem, 
-                isAnimating: true, 
-                color: color,
-                timestamp: timestamp || Date.now()
-            });
-            const messageIndex = messages.length - 1;
-            
-            const interval = setInterval(() => {
-                if (columnIndex < maxLength) {
-                    // Play cursor sound during animation
-                    playSound('cursor');
-                    
-                    let partialText = '';
-                    for (let i = 0; i < lines.length; i++) {
-                        partialText += lines[i].substring(0, columnIndex + 1);
-                        if (i < lines.length - 1) partialText += '\n';
-                    }
-                    messages[messageIndex].text = partialText;
-                    renderMessages();
-                    columnIndex++;
-                } else {
-                    clearInterval(interval);
-                    messages[messageIndex].isAnimating = false;
-                    isTyping = false;
-                    if (hasJoined) {
-                        document.getElementById('sendBtn').disabled = false;
-                    }
-                    // Play ping sound when message animation completes
-                    playSound('ping');
-                }
-            }, 80);
-        }
+		function animateMessage(messageBox, isSystem, color, timestamp) {
+			isTyping = true;
+			document.getElementById('sendBtn').disabled = true;
+			
+			const lines = messageBox.split('\n');
+			const maxLength = Math.max(...lines.map(l => l.length));
+			let columnIndex = 0;
+			
+			messages.push({ 
+				text: '', 
+				isSystem: isSystem, 
+				isAnimating: true, 
+				color: color,
+				timestamp: timestamp || Date.now()
+			});
+			const messageIndex = messages.length - 1;
+			
+			const interval = setInterval(() => {
+				if (columnIndex < maxLength) {
+					playSound('cursor');
+					
+					let partialText = '';
+					for (let i = 0; i < lines.length; i++) {
+						partialText += lines[i].substring(0, columnIndex + 1);
+						if (i < lines.length - 1) partialText += '\n';
+					}
+					messages[messageIndex].text = partialText;
+					renderMessages();
+					columnIndex++;
+				} else {
+					clearInterval(interval);
+					messages[messageIndex].isAnimating = false;
+					isTyping = false;
+					if (hasJoined) {
+						document.getElementById('sendBtn').disabled = false;
+					}
+					playSound('ping');
+				}
+			}, 80);
+		}
 
-        function addMessageLocal(type, text, fromFirebase = false, messageUsername = null, isOwnMessage = false, messageColor = null, firebaseTimestamp = null) {
-            let boxText = '';
-            let isSystem = false;
-            let username = messageUsername || currentUsername || 'anon';
-            let color = messageColor || (fromFirebase ? '#5f9f9f' : currentColor);
-            
-            if (type === 'join') {
-                boxText = `USER ${text} JOINED`;
-                isSystem = true;
-            } else if (type === 'system') {
-                boxText = text;
-                isSystem = true;
-            } else {
-                boxText = text;
-                isSystem = false;
-            }
-            
-            const box = createBox(boxText, username, isSystem);
-            const timestamp = firebaseTimestamp || Date.now();
-            
-            // Only animate and play sounds if initial load is complete (new messages only)
-            const shouldAnimate = initialLoadComplete;
-            
-            if (!isSystem) {
-                if (shouldAnimate) {
-                    animateMessage(box, isSystem, color, timestamp);
-                } else {
-                    // Old message - add instantly without animation
-                    messages.push({ 
-                        text: box, 
-                        isSystem: isSystem, 
-                        color: color,
-                        timestamp: timestamp
-                    });
-                    renderMessages();
-                }
-            } else {
-                messages.push({ 
-                    text: box, 
-                    isSystem: isSystem, 
-                    color: color,
-                    timestamp: timestamp
-                });
-                renderMessages();
-                
-                // Play sound for join messages only if it's a new message
-                if (type === 'join' && shouldAnimate) {
-                    playSound('newline');
-                }
-            }
-        }
+		function addMessageLocal(type, text, fromFirebase = false, messageUsername = null, isOwnMessage = false, messageColor = null, firebaseTimestamp = null) {
+			let boxText = '';
+			let isSystem = false;
+			let username = messageUsername || currentUsername || 'anon';
+			let color = messageColor || (fromFirebase ? '#5f9f9f' : currentColor);
+			
+			if (type === 'join') {
+				boxText = `USER ${text} JOINED`;
+				isSystem = true;
+			} else if (type === 'system') {
+				boxText = text;
+				isSystem = true;
+			} else {
+				boxText = text;
+				isSystem = false;
+			}
+			
+			const box = createBox(boxText, username, isSystem);
+			const timestamp = firebaseTimestamp || Date.now();
+			
+			const shouldAnimate = initialLoadComplete;
+			
+			if (!isSystem) {
+				if (shouldAnimate) {
+					animateMessage(box, isSystem, color, timestamp);
+				} else {
+					messages.push({ 
+						text: box, 
+						isSystem: isSystem, 
+						color: color,
+						timestamp: timestamp
+					});
+					renderMessages();
+				}
+			} else {
+				messages.push({ 
+					text: box, 
+					isSystem: isSystem, 
+					color: color,
+					timestamp: timestamp
+				});
+				renderMessages();
+				
+				if (type === 'join' && shouldAnimate) {
+					playSound('newline');
+				}
+			}
+		}
 
-        function joinChat() {
-            const usernameInput = document.getElementById('usernameInput');
-            const username = usernameInput.value.trim();
-            
-            if (!username) return;
-            
-            currentUsername = username;
-            hasJoined = true;
-            
-            // Set up presence tracking
-            const userPresenceRef = database.ref(`presence/${sessionId}`);
-            
-            userPresenceRef.onDisconnect().remove();
-            
-            userPresenceRef.set({
-                username: username,
-                color: currentColor,
-                timestamp: firebase.database.ServerValue.TIMESTAMP
-            });
-            
-            messagesRef.push({
-                type: 'join',
-                username: username,
-                color: currentColor,
-                sessionId: sessionId,
-                timestamp: firebase.database.ServerValue.TIMESTAMP
-            });
-            
-            document.getElementById('joinRow').style.display = 'none';
-            document.getElementById('userInput').disabled = false;
-            document.getElementById('sendBtn').disabled = false;
-            document.getElementById('disconnectBtn').disabled = false;
-            document.getElementById('userInput').focus();
-        }
+		function joinChat() {
+			const usernameInput = document.getElementById('usernameInput');
+			const username = usernameInput.value.trim();
+			
+			if (!username) return;
+			
+			currentUsername = username;
+			hasJoined = true;
+			
+			const userPresenceRef = database.ref(`presence/${sessionId}`);
+			
+			userPresenceRef.onDisconnect().remove();
+			
+			userPresenceRef.set({
+				username: username,
+				color: currentColor,
+				timestamp: firebase.database.ServerValue.TIMESTAMP
+			});
+			
+			messagesRef.push({
+				type: 'join',
+				username: username,
+				color: currentColor,
+				sessionId: sessionId,
+				timestamp: firebase.database.ServerValue.TIMESTAMP
+			});
+			
+			document.getElementById('joinRow').style.display = 'none';
+			document.getElementById('userInput').disabled = false;
+			document.getElementById('sendBtn').disabled = false;
+			document.getElementById('disconnectBtn').disabled = false;
+			document.getElementById('userInput').focus();
+		}
 
-        function disconnectChat() {
-            if (!hasJoined) return;
-            
-            database.ref(`presence/${sessionId}`).remove();
-            hasJoined = false;
-            
-            document.getElementById('joinRow').style.display = 'flex';
-            document.getElementById('usernameInput').value = '';
-            document.getElementById('usernameInput').disabled = false;
-            document.querySelectorAll('.color-btn').forEach(btn => btn.disabled = false);
-            document.getElementById('joinBtn').disabled = false;
-            document.getElementById('userInput').value = '';
-            document.getElementById('userInput').disabled = true;
-            document.getElementById('sendBtn').disabled = true;
-            document.getElementById('disconnectBtn').disabled = true;
-            document.getElementById('usernameInput').focus();
-        }
+		function disconnectChat() {
+			if (!hasJoined) return;
+			
+			database.ref(`presence/${sessionId}`).remove();
+			hasJoined = false;
+			
+			document.getElementById('joinRow').style.display = 'flex';
+			document.getElementById('usernameInput').value = '';
+			document.getElementById('usernameInput').disabled = false;
+			document.querySelectorAll('.color-btn').forEach(btn => btn.disabled = false);
+			document.getElementById('joinBtn').disabled = false;
+			document.getElementById('userInput').value = '';
+			document.getElementById('userInput').disabled = true;
+			document.getElementById('sendBtn').disabled = true;
+			document.getElementById('disconnectBtn').disabled = true;
+			document.getElementById('usernameInput').focus();
+		}
 
-        function sendMessage() {
-            if (isTyping) return;
-            
-            const input = document.getElementById('userInput');
-            const text = input.value.trim();
-            
-            if (text) {
-                messagesRef.push({
-                    type: 'message',
-                    username: currentUsername,
-                    color: currentColor,
-                    text: text,
-                    sessionId: sessionId,
-                    timestamp: firebase.database.ServerValue.TIMESTAMP
-                });
-                input.value = '';
-            }
-        }
+		function sendMessage() {
+			if (isTyping) return;
+			
+			const input = document.getElementById('userInput');
+			const text = input.value.trim();
+			
+			if (text) {
+				messagesRef.push({
+					type: 'message',
+					username: currentUsername,
+					color: currentColor,
+					text: text,
+					sessionId: sessionId,
+					timestamp: firebase.database.ServerValue.TIMESTAMP
+				});
+				input.value = '';
+			}
+		}
 
-        messagesRef.on('child_added', (snapshot) => {
-            const data = snapshot.val();
-            const isOwnMessage = data.sessionId === sessionId;
-            
-            if (data.type === 'join') {
-                const joinColor = data.color || '#5f9f9f';
-                addMessageLocal('join', data.username, true, null, false, joinColor, data.timestamp);
-            } else if (data.type === 'message') {
-                const msgColor = data.color || '#00ffff';
-                addMessageLocal('message', data.text, true, data.username, isOwnMessage, msgColor, data.timestamp);
-            }
-        });
+		messagesRef.on('child_added', (snapshot) => {
+			const data = snapshot.val();
+			const isOwnMessage = data.sessionId === sessionId;
+			
+			if (data.type === 'join') {
+				const joinColor = data.color || '#5f9f9f';
+				addMessageLocal('join', data.username, true, null, false, joinColor, data.timestamp);
+			} else if (data.type === 'message') {
+				const msgColor = data.color || '#00ffff';
+				addMessageLocal('message', data.text, true, data.username, isOwnMessage, msgColor, data.timestamp);
+			}
+		});
 
-        document.getElementById('usernameInput').addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') joinChat();
-        });
+		document.getElementById('usernameInput').addEventListener('keydown', (e) => {
+			if (e.key === 'Enter') joinChat();
+		});
 
-        document.getElementById('userInput').addEventListener('keydown', (e) => {
-            // Play cursor sound on each keypress (except control keys)
-            if (e.key.length === 1 || e.key === 'Backspace' || e.key === 'Delete') {
-                playSound('cursor');
-            }
-            
-            if (e.key === 'Enter') {
-                sendMessage();
-            } else if (e.key === 'Escape') {
-                messages.length = 0;
-                renderMessages();
-            }
-        });
-    </script>
+		document.getElementById('userInput').addEventListener('keydown', (e) => {
+			if (e.key.length === 1 || e.key === 'Backspace' || e.key === 'Delete') {
+				playSound('cursor');
+			}
+			
+			if (e.key === 'Enter') {
+				sendMessage();
+			} else if (e.key === 'Escape') {
+				messages.length = 0;
+				renderMessages();
+			}
+		});
+	</script>
 </body>
 </html>
