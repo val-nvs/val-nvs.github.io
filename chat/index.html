@@ -250,6 +250,7 @@
 		<div class="input-row">
 			<input type="text" id="userInput" placeholder="type a message..." maxlength="40" style="width: 18.75rem;" disabled>
 			<button onclick="sendMessage()" id="sendBtn" disabled>SEND</button>
+			<button onclick="toggleTimestamps()" id="timeBtn">SHOW TIME</button>
 			<button onclick="disconnectChat()" id="disconnectBtn" disabled>DISCONNECT</button>
 		</div>
 	</div>
@@ -278,6 +279,7 @@
 		let initialLoadComplete = false;
 		let onlineCount = 0;
 		let pageLoadTime = Date.now();
+		let showTimestamps = false;
 
 		const sounds = {
 			ping: new Audio('./R_Terminal_ping.wav'),
@@ -418,18 +420,54 @@
 			};
 		}
 
-		function createBox(text, username, isSystem = false) {
+		function createBox(text, username, isSystem = false, timestamp = null) {
 			if (isSystem) {
 				const contentWidth = text.length + 2;
-				const topBorder = '┌' + '─'.repeat(contentWidth) + '┐';
-				const messageLine = '│ ' + text + ' │';
-				const bottomBorder = '└' + '─'.repeat(contentWidth) + '┘';
+				
+				// Format timestamp if enabled
+				let timeStr = '';
+				let adjustedWidth = contentWidth;
+				if (showTimestamps && timestamp) {
+					const date = new Date(timestamp);
+					const hours = String(date.getHours()).padStart(2, '0');
+					const minutes = String(date.getMinutes()).padStart(2, '0');
+					timeStr = hours + ':' + minutes;
+					const timeSpace = timeStr.length;
+					adjustedWidth = Math.max(contentWidth, timeSpace + 1);
+				}
+				
+				const topBorder = '┌' + '─'.repeat(adjustedWidth) + '┐';
+				
+				const spacesAfter = adjustedWidth - text.length - 1;
+				const messageLine = '│ ' + text + ' '.repeat(spacesAfter) + '│';
+				
+				// Bottom border with optional timestamp
+				let bottomBorder;
+				if (showTimestamps && timestamp && timeStr) {
+					const dashesBeforeTime = adjustedWidth - timeStr.length;
+					bottomBorder = '└' + '─'.repeat(dashesBeforeTime) + timeStr + '┘';
+				} else {
+					bottomBorder = '└' + '─'.repeat(adjustedWidth) + '┘';
+				}
+				
 				return [topBorder, messageLine, bottomBorder].join('\n');
 			}
 			
 			const usernameContent = username.length + 2;
 			const messageContent = text.length + 2;
-			const contentWidth = Math.max(usernameContent, messageContent);
+			let contentWidth = Math.max(usernameContent, messageContent);
+			
+			// Format timestamp if enabled
+			let timeStr = '';
+			if (showTimestamps && timestamp) {
+				const date = new Date(timestamp);
+				const hours = String(date.getHours()).padStart(2, '0');
+				const minutes = String(date.getMinutes()).padStart(2, '0');
+				timeStr = hours + ':' + minutes;
+				// Adjust content width to accommodate timestamp
+				const timeSpace = timeStr.length + 1; // +1 for dash before time
+				contentWidth = Math.max(contentWidth, timeSpace + 1);
+			}
 			
 			const dashesAfterUsername = contentWidth - username.length - 1;
 			const topBorder = '┌─' + username + '─'.repeat(dashesAfterUsername) + '┐';
@@ -437,7 +475,14 @@
 			const spacesAfterText = contentWidth - text.length - 1;
 			const messageLine = '│ ' + text + ' '.repeat(spacesAfterText) + '│';
 			
-			const bottomBorder = '└' + '─'.repeat(contentWidth) + '┘';
+			// Bottom border with optional timestamp
+			let bottomBorder;
+			if (showTimestamps && timestamp && timeStr) {
+				const dashesBeforeTime = contentWidth - timeStr.length;
+				bottomBorder = '└' + '─'.repeat(dashesBeforeTime) + timeStr + '┘';
+			} else {
+				bottomBorder = '└' + '─'.repeat(contentWidth) + '┘';
+			}
 			
 			return [topBorder, messageLine, bottomBorder].join('\n');
 		}
@@ -459,11 +504,20 @@
 				const opacity = Math.max(0.5, 1 - (age / fadeTime) * 0.5);
 				div.style.opacity = opacity;
 				
+				// If animating, use the partial text. Otherwise regenerate box
+				let boxText;
+				if (msgObj.isAnimating) {
+					boxText = msgObj.text;
+				} else {
+					// Regenerate box with current timestamp settings
+					boxText = createBox(msgObj.rawText, msgObj.username, msgObj.isSystem, msgObj.timestamp);
+				}
+				
 				if (msgObj.isSystem) {
 					const userColor = msgObj.color || '#5f9f9f';
-					const lines = msgObj.text.split('\n');
+					const lines = boxText.split('\n');
 					
-					if (lines.length === 3 && msgObj.text.includes('JOINED')) {
+					if (lines.length === 3 && boxText.includes('JOINED')) {
 						const topLine = lines[0];
 						const middleLine = lines[1];
 						const bottomLine = lines[2];
@@ -476,17 +530,17 @@
 							div.innerHTML = topLine + '\n' + styledMiddle + '\n' + bottomLine;
 						} else {
 							div.style.color = '#5f9f9f';
-							div.textContent = msgObj.text;
+							div.textContent = boxText;
 						}
 					} else {
 						div.style.color = '#5f9f9f';
-						div.textContent = msgObj.text;
+						div.textContent = boxText;
 					}
 				} else {
 					const userColor = msgObj.color || '#00ffff';
 					const colors = getColorVariants(userColor);
 					
-					const lines = msgObj.text.split('\n');
+					const lines = boxText.split('\n');
 					if (lines.length === 3) {
 						const topLine = lines[0];
 						const middleLine = lines[1];
@@ -501,11 +555,11 @@
 							div.innerHTML = styledTop + '\n' + styledMiddle + '\n' + styledBottom;
 						} else {
 							div.style.color = colors.desaturated;
-							div.textContent = msgObj.text;
+							div.textContent = boxText;
 						}
 					} else {
 						div.style.color = colors.desaturated;
-						div.textContent = msgObj.text;
+						div.textContent = boxText;
 					}
 				}
 				
@@ -515,7 +569,7 @@
 			layer.scrollTop = layer.scrollHeight;
 		}
 
-		function animateMessage(messageBox, isSystem, color, timestamp) {
+		function animateMessage(messageBox, isSystem, color, timestamp, rawText, username) {
 			isTyping = true;
 			document.getElementById('sendBtn').disabled = true;
 			
@@ -524,7 +578,9 @@
 			let columnIndex = 0;
 			
 			messages.push({ 
-				text: '', 
+				text: '',
+				rawText: rawText,
+				username: username,
 				isSystem: isSystem, 
 				isAnimating: true, 
 				color: color,
@@ -573,18 +629,20 @@
 				isSystem = false;
 			}
 			
-			const box = createBox(boxText, username, isSystem);
 			const timestamp = firebaseTimestamp || Date.now();
+			const box = createBox(boxText, username, isSystem, timestamp);
 			
 			// Only animate if initial load is complete AND message is new (timestamp after page load)
 			const shouldAnimate = initialLoadComplete && timestamp > pageLoadTime;
 			
 			if (!isSystem) {
 				if (shouldAnimate) {
-					animateMessage(box, isSystem, color, timestamp);
+					animateMessage(box, isSystem, color, timestamp, boxText, username);
 				} else {
 					messages.push({ 
-						text: box, 
+						text: box,
+						rawText: boxText,
+						username: username,
 						isSystem: isSystem, 
 						color: color,
 						timestamp: timestamp
@@ -593,7 +651,9 @@
 				}
 			} else {
 				messages.push({ 
-					text: box, 
+					text: box,
+					rawText: boxText,
+					username: username,
 					isSystem: isSystem, 
 					color: color,
 					timestamp: timestamp
@@ -656,6 +716,13 @@
 			document.getElementById('sendBtn').disabled = true;
 			document.getElementById('disconnectBtn').disabled = true;
 			document.getElementById('usernameInput').focus();
+		}
+
+		function toggleTimestamps() {
+			showTimestamps = !showTimestamps;
+			const btn = document.getElementById('timeBtn');
+			btn.textContent = showTimestamps ? 'HIDE TIME' : 'SHOW TIME';
+			renderMessages();
 		}
 
 		function sendMessage() {
