@@ -72,14 +72,36 @@
             width: calc(100% - 1.25rem);
             height: calc(100% - 2.875rem);
             overflow-y: auto;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
             display: flex;
             flex-direction: column;
         }
 
+        /* Webkit scrollbar styling (Chrome, Safari, Edge) */
         .messages-layer::-webkit-scrollbar {
+            width: 0.75rem;
+        }
+
+        .messages-layer::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        .messages-layer::-webkit-scrollbar-thumb {
+            background: #00ffff;
+            border-radius: 0;
+        }
+
+        .messages-layer::-webkit-scrollbar-thumb:hover {
+            background: #00cccc;
+        }
+
+        .messages-layer::-webkit-scrollbar-button {
             display: none;
+        }
+
+        /* Firefox scrollbar styling */
+        .messages-layer {
+            scrollbar-width: thin;
+            scrollbar-color: #00ffff #2d4d4d;
         }
 
         .messages-container {
@@ -260,6 +282,7 @@
         let isTyping = false;
         let sessionId = Date.now() + '_' + Math.random().toString(36).substr(2, 9);
         let initialLoadComplete = false;
+        let onlineCount = 0;
 
         // Audio setup
         const sounds = {
@@ -274,6 +297,33 @@
                 sounds[soundName].play().catch(e => console.log('Audio play failed:', e));
             }
         }
+
+        function updateHeader() {
+            const baseText = '┌──guruGROUPS───';
+            const watchingText = onlineCount + '─watching';
+            const totalWidth = 62;
+            const fillerDashes = totalWidth - baseText.length - watchingText.length;
+            const headerText = baseText + watchingText + '─'.repeat(Math.max(0, fillerDashes)) + '┐';
+            
+            const lines = document.querySelector('.background-frame').textContent.split('\n');
+            lines[0] = headerText;
+            document.querySelector('.background-frame').textContent = lines.join('\n');
+        }
+
+        // Listen to presence changes
+        const presenceRef = database.ref('presence');
+        presenceRef.on('value', (snapshot) => {
+            onlineCount = snapshot.numChildren();
+            updateHeader();
+        });
+
+        // Track page view immediately (before joining)
+        const viewerPresenceRef = database.ref(`presence/${sessionId}`);
+        viewerPresenceRef.onDisconnect().remove();
+        viewerPresenceRef.set({
+            viewer: true,
+            timestamp: firebase.database.ServerValue.TIMESTAMP
+        });
 
         // Mark initial load complete after a short delay
         setTimeout(() => {
@@ -529,14 +579,14 @@
             currentUsername = username;
             hasJoined = true;
             
-            const presenceRef = database.ref(`presence/${sessionId}`);
+            // Set up presence tracking
+            const userPresenceRef = database.ref(`presence/${sessionId}`);
             
-            presenceRef.onDisconnect().remove();
+            userPresenceRef.onDisconnect().remove();
             
-            presenceRef.set({
+            userPresenceRef.set({
                 username: username,
                 color: currentColor,
-                status: 'online',
                 timestamp: firebase.database.ServerValue.TIMESTAMP
             });
             
