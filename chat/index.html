@@ -345,8 +345,8 @@
                 div.style.alignSelf = msgObj.isSystem ? 'flex-start' : 'flex-end';
                 
                 const age = now - (msgObj.timestamp || now);
-                const fadeTime = 10 * 60 * 1000;
-                const opacity = Math.max(0.2, 1 - (age / fadeTime));
+                const fadeTime = 25 * 60 * 1000; // 25 minutes to reach minimum
+                const opacity = Math.max(0.5, 1 - (age / fadeTime) * 0.5);
                 div.style.opacity = opacity;
                 
                 if (msgObj.isSystem) {
