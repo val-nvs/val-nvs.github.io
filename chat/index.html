@@ -259,6 +259,26 @@
         let currentColor = '#00ffff';
         let isTyping = false;
         let sessionId = Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        let initialLoadComplete = false;
+
+        // Audio setup
+        const sounds = {
+            ping: new Audio('./R_Terminal_ping.wav'),
+            newline: new Audio('./R_terminal_newline_1.wav'),
+            cursor: new Audio('./terminal_cursor.wav')
+        };
+
+        function playSound(soundName) {
+            if (sounds[soundName]) {
+                sounds[soundName].currentTime = 0;
+                sounds[soundName].play().catch(e => console.log('Audio play failed:', e));
+            }
+        }
+
+        // Mark initial load complete after a short delay
+        setTimeout(() => {
+            initialLoadComplete = true;
+        }, 1000);
 
         setInterval(() => {
             if (messages.length > 0) {
@@ -424,6 +444,9 @@
             
             const interval = setInterval(() => {
                 if (columnIndex < maxLength) {
+                    // Play cursor sound during animation
+                    playSound('cursor');
+                    
                     let partialText = '';
                     for (let i = 0; i < lines.length; i++) {
                         partialText += lines[i].substring(0, columnIndex + 1);
@@ -439,6 +462,8 @@
                     if (hasJoined) {
                         document.getElementById('sendBtn').disabled = false;
                     }
+                    // Play ping sound when message animation completes
+                    playSound('ping');
                 }
             }, 80);
         }
@@ -463,8 +488,22 @@
             const box = createBox(boxText, username, isSystem);
             const timestamp = firebaseTimestamp || Date.now();
             
+            // Only animate and play sounds if initial load is complete (new messages only)
+            const shouldAnimate = initialLoadComplete;
+            
             if (!isSystem) {
-                animateMessage(box, isSystem, color, timestamp);
+                if (shouldAnimate) {
+                    animateMessage(box, isSystem, color, timestamp);
+                } else {
+                    // Old message - add instantly without animation
+                    messages.push({ 
+                        text: box, 
+                        isSystem: isSystem, 
+                        color: color,
+                        timestamp: timestamp
+                    });
+                    renderMessages();
+                }
             } else {
                 messages.push({ 
                     text: box, 
@@ -473,6 +512,11 @@
                     timestamp: timestamp
                 });
                 renderMessages();
+                
+                // Play sound for join messages only if it's a new message
+                if (type === 'join' && shouldAnimate) {
+                    playSound('newline');
+                }
             }
         }
 
@@ -566,6 +610,11 @@
         });
 
         document.getElementById('userInput').addEventListener('keydown', (e) => {
+            // Play cursor sound on each keypress (except control keys)
+            if (e.key.length === 1 || e.key === 'Backspace' || e.key === 'Delete') {
+                playSound('cursor');
+            }
+            
             if (e.key === 'Enter') {
                 sendMessage();
             } else if (e.key === 'Escape') {
