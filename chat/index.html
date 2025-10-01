@@ -102,7 +102,7 @@
 		}
 
 		.btn-inline.active {
-			color: #00ff00;
+			color: #fff;
 		}
 
 		.messages-container {
@@ -115,7 +115,7 @@
 			overflow-y: auto;
 			display: flex;
 			flex-direction: column;
-			background-color: rgba(255, 0, 255, 0.1);
+			background-color: rgba(255, 0, 255, 0);
 		}
 
 		.messages-container::-webkit-scrollbar {
@@ -195,6 +195,8 @@
 		let onlineCount = 0;
 		let pageLoadTime = Date.now();
 		let showTimestamps = false;
+		let fairyCursorEnabled = false;
+		const MAX_MESSAGES = 30;
 
 		const sounds = {
 			ping: new Audio('./R_Terminal_ping.wav'),
@@ -256,7 +258,7 @@ ${header}
 │                                                            │
 │                                                            │
 │                                                            │
-└────────────────────────────────────press─ESC─to─leave─chat─┘
+└──────────────────────────────────────────────────────────:3┘
 ┌────────────┐┌──────────────────────────────────────┐┌──────┐
 │ <input type="text" class="input-inline" id="usernameInput" placeholder="enter name" maxlength="10"> ││ pick a color ${colors.map((c, i) => `<span class="color-block ${i === 0 ? 'selected' : ''}" data-color="${c}" style="color: ${c};">▓</span>`).join(' ')} ││ <button class="btn-inline" id="joinBtn">JOIN</button> │
 └────────────┘└──────────────────────────────────────┘└──────┘
@@ -264,7 +266,7 @@ ${header}
 │       ││                                   ││      ││      │
 └───────┘└───────────────────────────────────┘└──────┘└──────┘`;
 			} else {
-				// Show chat screen - keep y y y lines
+				// Show chat screen
 				html = ` 
  
  
@@ -290,7 +292,7 @@ ${header}
 │                                                            │
 │                                                            │
 │                                                            │
-└────────────────────────────────────press─ESC─to─leave─chat─┘
+└──────────────────────────────────────────────────────────:3┘
 ┌───────┐┌───────────────────────────────────┐┌──────┐┌──────┐
 │ <button class="btn-inline ${showTimestamps ? 'active' : ''}" id="timeBtn">CLOCK</button> ││ <input type="text" class="input-inline input-message" id="userInput" placeholder="type a message" maxlength="33"> ││ <button class="btn-inline" id="sendBtn">SEND</button> ││ <button class="btn-inline" id="disconnectBtn">EXIT</button> │
 └───────┘└───────────────────────────────────┘└──────┘└──────┘`;
@@ -628,58 +630,70 @@ ${header}
 			}, 80);
 		}
 
-		function addMessageLocal(type, text, fromFirebase = false, messageUsername = null, isOwnMessage = false, messageColor = null, firebaseTimestamp = null) {
-			let boxText = '';
-			let isSystem = false;
-			let username = messageUsername || currentUsername || 'anon';
-			let color = messageColor || (fromFirebase ? '#5f9f9f' : currentColor);
-			
-			if (type === 'join') {
-				boxText = `USER ${text} JOINED`;
-				isSystem = true;
-			} else if (type === 'system') {
-				boxText = text;
-				isSystem = true;
-			} else {
-				boxText = text;
-				isSystem = false;
-			}
-			
-			const timestamp = firebaseTimestamp || Date.now();
-			const box = createBox(boxText, username, isSystem, timestamp);
-			
-			const shouldAnimate = initialLoadComplete && timestamp > pageLoadTime;
-			
-			if (!isSystem) {
-				if (shouldAnimate) {
-					animateMessage(box, isSystem, color, timestamp, boxText, username);
-				} else {
-					messages.push({ 
-						text: box,
-						rawText: boxText,
-						username: username,
-						isSystem: isSystem, 
-						color: color,
-						timestamp: timestamp
-					});
-					renderMessages();
-				}
-			} else {
-				messages.push({ 
-					text: box,
-					rawText: boxText,
-					username: username,
-					isSystem: isSystem, 
-					color: color,
-					timestamp: timestamp
-				});
-				renderMessages();
-				
-				if (type === 'join' && shouldAnimate) {
-					playSound('newline');
-				}
-			}
-		}
+function addMessageLocal(type, text, fromFirebase = false, messageUsername = null, isOwnMessage = false, messageColor = null, firebaseTimestamp = null) {
+    let boxText = '';
+    let isSystem = false;
+    const username = messageUsername || currentUsername || 'anon';
+    const color = messageColor || (fromFirebase ? '#5f9f9f' : currentColor);
+    const timestamp = firebaseTimestamp || Date.now();
+
+    // Determine system messages
+    if (type === 'join') {
+        boxText = `USER ${text} JOINED`;
+        isSystem = true;
+    } else if (type === 'system') {
+        boxText = text;
+        isSystem = true;
+    } else {
+        boxText = text;
+        isSystem = false;
+    }
+
+    const box = createBox(boxText, username, isSystem, timestamp);
+    const shouldAnimate = initialLoadComplete && timestamp > pageLoadTime;
+
+    // Function to safely push message into messages array
+    function pushMessage(msg) {
+        messages.push(msg);
+        trimMessages();
+        renderMessages();
+    }
+
+    // Animate message if appropriate
+    if (!isSystem && shouldAnimate) {
+        animateMessage(box, isSystem, color, timestamp, boxText, username);
+    } else {
+        pushMessage({
+            text: box,
+            rawText: boxText,
+            username: username,
+            isSystem: isSystem,
+            color: color,
+            timestamp: timestamp,
+            isAnimating: false
+        });
+
+        if (isSystem && type === 'join' && shouldAnimate) {
+            playSound('newline');
+        }
+    }
+}
+
+// Safe trimming function that avoids removing animating messages
+function trimMessages() {
+    let nonAnimatingCount = messages.filter(m => !m.isAnimating).length;
+    if (nonAnimatingCount <= MAX_MESSAGES) return;
+
+    let removeCount = nonAnimatingCount - MAX_MESSAGES;
+    for (let i = 0; i < messages.length && removeCount > 0;) {
+        if (!messages[i].isAnimating) {
+            messages.splice(i, 1);
+            removeCount--;
+        } else {
+            i++;
+        }
+    }
+}
 
 		function joinChat() {
 			const usernameInput = document.getElementById('usernameInput');
@@ -727,6 +741,16 @@ ${header}
 			const text = input.value.trim();
 			
 			if (text) {
+				// Check for local commands
+				if (text === '/fairy') {
+					fairyCursorEnabled = !fairyCursorEnabled;
+					window.fairyCursorEnabled = fairyCursorEnabled;
+					const statusText = fairyCursorEnabled ? 'FAIRY CURSOR ON' : 'FAIRY CURSOR OFF';
+					addMessageLocal('system', statusText, false, null, false, currentColor);
+					input.value = '';
+					return;
+				}
+				
 				messagesRef.push({
 					type: 'message',
 					username: currentUsername,
@@ -784,6 +808,7 @@ ${header}
 		// Initialize
 		renderFrame();
 		updateSparkleColor(currentColor);
+		window.fairyCursorEnabled = fairyCursorEnabled;
 	</script>
 	
 	<!-- Cursor trail effect -->
@@ -813,16 +838,18 @@ ${header}
 				targetX = e.clientX;
 				targetY = e.clientY;
 
-				for (let i = 0; i < 3; i++) {
-					sparkles.push({
-						x: e.clientX + (Math.random() - 0.5) * 20,
-						y: e.clientY + (Math.random() - 0.5) * 20,
-						alpha: 1,
-						size: Math.random() * 1.5 + 0.5,
-						vx: (Math.random() - 0.5) * 0.5,
-						vy: (Math.random() - 0.5) * 0.5,
-						color: { ...window.sparkleColor }
-					});
+				if (window.fairyCursorEnabled) {
+					for (let i = 0; i < 3; i++) {
+						sparkles.push({
+							x: e.clientX + (Math.random() - 0.5) * 20,
+							y: e.clientY + (Math.random() - 0.5) * 20,
+							alpha: 1,
+							size: Math.random() * 1.5 + 0.5,
+							vx: (Math.random() - 0.5) * 0.5,
+							vy: (Math.random() - 0.5) * 0.5,
+							color: { ...window.sparkleColor }
+						});
+					}
 				}
 			});
 
