@@ -77,8 +77,8 @@
 		}
 
 		.input-inline::placeholder {
-			color: #5f9f9f;
-			opacity: 0.5;
+			color: #fff;
+			opacity: .5;
 		}
 
 		.input-message {
@@ -220,8 +220,8 @@
 
 		function renderFrame() {
 			const frame = document.getElementById('chatFrame');
-			const headerBase = '┌──guruGROUPS───';
-			const onlineText = onlineCount + '─online';
+			const headerBase = '┌──';
+			const onlineText = onlineCount + '─ONLINE';
 			const totalWidth = 61;
 			const fillerDashes = totalWidth - headerBase.length - onlineText.length;
 			const header = headerBase + onlineText + '─'.repeat(Math.max(0, fillerDashes)) + '┐';
@@ -233,9 +233,9 @@
 				html = ` 
  
  
- 
- 
- 
+                       ┌─────────────┐                       
+                       │ <a href="https://val-nvs.com" target="_blank" style="color:#0ff; text-decoration:underline;">val-nvs.com</a> │
+                       └─────────────┘                       
 ${header}
 │                                                            │
 │                                                            │
@@ -267,9 +267,9 @@ ${header}
 └───────┘└───────────────────────────────────┘└──────┘└──────┘`;
 			} else {
 				// Show chat screen
-				html = ` 
- 
- 
+				html = `                       ┌─────────────┐                       
+                       │ <a href="https://val-nvs.com" target="_blank" style="color:#0ff; text-decoration:underline;">val-nvs.com</a> │
+                       └─────────────┘                       
 ${header}
 │                                                            │
 │                                                            │
