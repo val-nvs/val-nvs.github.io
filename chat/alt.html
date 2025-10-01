@@ -21,7 +21,7 @@
 
 		@media (max-width: 600px) {
 			html {
-				font-size: calc(100vw / 40);
+				font-size: calc(100vw / 34.375);
 			}
 		}
 
@@ -37,110 +37,62 @@
 			min-height: 100vh;
 			overflow-x: hidden;
 			text-shadow: 0 0 8px currentColor, 0 0 12px currentColor;
-			display: flex;
-			align-items: center;
-			justify-content: center;
 		}
 
-		.chat-frame {
+		.chat-wrapper {
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+		}
+
+		.background-frame {
 			font-size: 0.875rem;
 			line-height: 1;
 			white-space: pre;
-			text-align: left;
-		}
-
-		.color-block {
-			cursor: pointer;
-			transition: transform 0.1s, text-shadow 0.1s;
-			display: inline-block;
-		}
-
-		.color-block:hover {
-			transform: scale(1.2);
-		}
-
-		.color-block.selected {
-			text-shadow: 0 0 0.5rem currentColor, 0 0 0.8rem currentColor;
-			transform: scale(1.3);
-		}
-
-		.input-inline {
-			background: transparent;
-			border: none;
 			color: #5f9f9f;
-			font-family: 'PerfectDOSVGA', 'Courier New', monospace;
-			font-size: 0.875rem;
-			outline: none;
-			padding: 0;
-			width: 10ch;
-			text-shadow: 0 0 8px currentColor, 0 0 12px currentColor;
+			position: relative;
 		}
 
-		.input-inline::placeholder {
-			color: #5f9f9f;
-			opacity: 0.5;
-		}
-
-		.input-message {
-			width: 33ch;
-		}
-
-		.btn-inline {
-			background: transparent;
-			border: none;
-			color: #5f9f9f;
-			font-family: 'PerfectDOSVGA', 'Courier New', monospace;
-			font-size: 0.875rem;
-			cursor: pointer;
-			padding: 0;
-			text-shadow: 0 0 8px currentColor, 0 0 12px currentColor;
-			transition: color 0.2s;
-		}
-
-		.btn-inline:hover {
-			color: #00ffff;
-		}
-
-		.btn-inline.active {
-			color: #00ff00;
-		}
-
-		.messages-container {
-			position: fixed;
-			left: 50%;
+		.messages-layer {
+			position: absolute;
 			top: 50%;
+			left: 50%;
 			transform: translate(-50%, -50%);
-			width: 52ch;
-			height: 18.375em;
+			width: calc(100% - 1.25rem);
+			height: calc(100% - 2.875rem);
 			overflow-y: auto;
 			display: flex;
 			flex-direction: column;
-			background-color: rgba(255, 0, 255, 0);
 		}
 
-		.messages-container::-webkit-scrollbar {
-			width: 1ch;
+		.messages-layer::-webkit-scrollbar {
+			width: 0.75rem;
 		}
 
-		.messages-container::-webkit-scrollbar-track {
-			background: #022;
+		.messages-layer::-webkit-scrollbar-track {
+			background: #1a1a1a;
+		}
+
+		.messages-layer::-webkit-scrollbar-thumb {
+			background: #00ffff;
 			border-radius: 0;
 		}
 
-		.messages-container::-webkit-scrollbar-thumb {
-			background: #055;
-			border-radius: 0;
+		.messages-layer::-webkit-scrollbar-thumb:hover {
+			background: #00cccc;
 		}
 
-		.messages-container::-webkit-scrollbar-thumb:hover {
-			background: #0ff;
-		}
-
-		.messages-container::-webkit-scrollbar-button {
+		.messages-layer::-webkit-scrollbar-button {
 			display: none;
 		}
 
-		.messages-inner {
+		.messages-layer {
+			scrollbar-width: thin;
+			scrollbar-color: #00ffff #1a1a1a;
+		}
+
+		.messages-container {
 			margin-top: auto;
 			display: flex;
 			flex-direction: column;
@@ -153,20 +105,153 @@
 			font-size: 0.875rem;
 		}
 
-		.chat-wrapper {
-			position: relative;
+		.input-area {
+			position: fixed;
+			bottom: 1.25rem;
+			left: 50%;
+			transform: translateX(-50%);
+			text-align: center;
+			border: 0.125rem solid #5f9f9f;
+			padding: 0.9375rem;
+			background-color: #000;
+			max-width: 95vw;
 		}
 
-		.hidden {
-			display: none;
+		.color-selector {
+			display: flex;
+			gap: 0.15rem;
+			align-items: center;
+		}
+
+		.color-btn {
+			width: 1rem;
+			height: 1.5rem;
+			border: 0.0625rem solid #5f9f9f;
+			cursor: pointer;
+			transition: transform 0.1s;
+			padding: 0;
+		}
+
+		.color-btn:hover {
+			transform: scale(1.1);
+		}
+
+		.color-btn.selected {
+			border: 0.125rem solid #fff;
+			box-shadow: 0 0 0.3rem rgba(255,255,255,0.5);
+		}
+
+		.input-row {
+			display: flex;
+			gap: 0.625rem;
+			align-items: center;
+			justify-content: center;
+			margin-bottom: 0.625rem;
+		}
+
+		.input-row:last-child {
+			margin-bottom: 0;
+		}
+
+		input {
+			background-color: #000;
+			color: #5f9f9f;
+			border: 0.0625rem solid #5f9f9f;
+			padding: 0.5rem 0.75rem;
+			font-family: 'PerfectDOSVGA', 'Courier New', monospace;
+			font-size: 0.875rem;
+		}
+
+		input:focus {
+			outline: none;
+			border-color: #0ff;
+		}
+
+		input::placeholder {
+			color: #5f9f9f;
+		}
+
+		button {
+			background-color: #000;
+			color: #5f9f9f;
+			border: 0.0625rem solid #5f9f9f;
+			padding: 0.5rem 1rem;
+			font-family: 'PerfectDOSVGA', 'Courier New', monospace;
+			font-size: 0.875rem;
+			cursor: pointer;
+		}
+
+		button:hover {
+			background-color: #5f9f9f;
+			color: #000;
+		}
+
+		@media (max-width: 550px) {
+			.input-row {
+				flex-wrap: wrap;
+			}
+			
+			input[type="text"]#userInput {
+				width: 100%;
+			}
 		}
 	</style>
 </head>
 <body>
 	<div class="chat-wrapper">
-		<div class="chat-frame" id="chatFrame"></div>
-		<div class="messages-container" id="messagesContainer">
-			<div class="messages-inner" id="messagesInner"></div>
+		<div class="background-frame">┌──guruGROUPS────────────────────────────────────────────┐
+│                                                             │
+│                                                             │
+│                                                             │
+│                                                             │
+│                                                             │
+│                                                             │
+│                                                             │
+│                                                             │
+│                                                             │
+│                                                             │
+│                                                             │
+│                                                             │
+│                                                             │
+│                                                             │
+│                                                             │
+│                                                             │
+│                                                             │
+│                                                             │
+│                                                             │
+│                                                             │
+│                                                             │
+└────────────────────────────────────press─ESC─to─leave─chat──┘</div>
+		
+		<div class="messages-layer" id="messagesLayer">
+			<div class="messages-container" id="messagesContainer"></div>
+		</div>
+	</div>
+	
+	<div class="input-area">
+		<div class="input-row" id="joinRow">
+			<input type="text" id="usernameInput" placeholder="enter name" maxlength="6" style="width: 9.375rem;">
+			<div class="color-selector">
+				<button class="color-btn selected" data-color="hsl(180, 100%, 50%)" style="background: hsl(180, 100%, 50%);" onclick="selectColor('hsl(180, 100%, 50%)', this)"></button>
+				<button class="color-btn" data-color="hsl(210, 100%, 50%)" style="background: hsl(210, 100%, 50%);" onclick="selectColor('hsl(210, 100%, 50%)', this)"></button>
+				<button class="color-btn" data-color="hsl(240, 100%, 50%)" style="background: hsl(240, 100%, 50%);" onclick="selectColor('hsl(240, 100%, 50%)', this)"></button>
+				<button class="color-btn" data-color="hsl(270, 100%, 50%)" style="background: hsl(270, 100%, 50%);" onclick="selectColor('hsl(270, 100%, 50%)', this)"></button>
+				<button class="color-btn" data-color="hsl(300, 100%, 50%)" style="background: hsl(300, 100%, 50%);" onclick="selectColor('hsl(300, 100%, 50%)', this)"></button>
+				<button class="color-btn" data-color="hsl(330, 100%, 50%)" style="background: hsl(330, 100%, 50%);" onclick="selectColor('hsl(330, 100%, 50%)', this)"></button>
+				<button class="color-btn" data-color="hsl(0, 100%, 50%)" style="background: hsl(0, 100%, 50%);" onclick="selectColor('hsl(0, 100%, 50%)', this)"></button>
+				<button class="color-btn" data-color="hsl(30, 100%, 50%)" style="background: hsl(30, 100%, 50%);" onclick="selectColor('hsl(30, 100%, 50%)', this)"></button>
+				<button class="color-btn" data-color="hsl(60, 100%, 50%)" style="background: hsl(60, 100%, 50%);" onclick="selectColor('hsl(60, 100%, 50%)', this)"></button>
+				<button class="color-btn" data-color="hsl(90, 100%, 50%)" style="background: hsl(90, 100%, 50%);" onclick="selectColor('hsl(90, 100%, 50%)', this)"></button>
+				<button class="color-btn" data-color="hsl(120, 100%, 50%)" style="background: hsl(120, 100%, 50%);" onclick="selectColor('hsl(120, 100%, 50%)', this)"></button>
+				<button class="color-btn" data-color="hsl(150, 100%, 50%)" style="background: hsl(150, 100%, 50%);" onclick="selectColor('hsl(150, 100%, 50%)', this)"></button>
+			</div>
+			<button onclick="joinChat()" id="joinBtn">JOIN</button>
+		</div>
+		<div class="input-row">
+			<input type="text" id="userInput" placeholder="type a message..." maxlength="40" style="width: 18.75rem;" disabled>
+			<button onclick="sendMessage()" id="sendBtn" disabled>SEND</button>
+			<button onclick="toggleTimestamps()" id="timeBtn">SHOW TIME</button>
+			<button onclick="disconnectChat()" id="disconnectBtn" disabled>DISCONNECT</button>
 		</div>
 	</div>
 
@@ -188,7 +273,7 @@
 		const messages = [];
 		let hasJoined = false;
 		let currentUsername = '';
-		let currentColor = 'hsl(180, 100%, 50%)';
+		let currentColor = 'hsl(0, 100%, 50%)';
 		let isTyping = false;
 		let sessionId = Date.now() + '_' + Math.random().toString(36).substr(2, 9);
 		let initialLoadComplete = false;
@@ -209,166 +294,54 @@
 			}
 		}
 
-		const colors = [
-			'hsl(180, 100%, 50%)', 'hsl(210, 100%, 50%)', 'hsl(240, 100%, 50%)',
-			'hsl(270, 100%, 50%)', 'hsl(300, 100%, 50%)', 'hsl(330, 100%, 50%)',
-			'hsl(0, 100%, 50%)', 'hsl(30, 100%, 50%)', 'hsl(60, 100%, 50%)',
-			'hsl(90, 100%, 50%)', 'hsl(120, 100%, 50%)', 'hsl(150, 100%, 50%)'
-		];
-
-		function renderFrame() {
-			const frame = document.getElementById('chatFrame');
-			const headerBase = '┌──guruGROUPS───';
-			const onlineText = onlineCount + '─online';
-			const totalWidth = 61;
-			const fillerDashes = totalWidth - headerBase.length - onlineText.length;
-			const header = headerBase + onlineText + '─'.repeat(Math.max(0, fillerDashes)) + '┐';
-
-			let html = '';
-
-			if (!hasJoined) {
-				// Show join screen
-				html = ` 
- 
- 
- 
- 
- 
-${header}
-│                                                            │
-│                                                            │
-│                                                            │
-│                                                            │
-│                                                            │
-│                                                            │
-│                                                            │
-│                                                            │
-│                                                            │
-│                                                            │
-│                                                            │
-│                                                            │
-│                                                            │
-│                                                            │
-│                                                            │
-│                                                            │
-│                                                            │
-│                                                            │
-│                                                            │
-│                                                            │
-│                                                            │
-└────────────────────────────────────press─ESC─to─leave─chat─┘
-┌────────────┐┌──────────────────────────────────────┐┌──────┐
-│ <input type="text" class="input-inline" id="usernameInput" placeholder="enter name" maxlength="10"> ││ pick a color ${colors.map((c, i) => `<span class="color-block ${i === 0 ? 'selected' : ''}" data-color="${c}" style="color: ${c};">▓</span>`).join(' ')} ││ <button class="btn-inline" id="joinBtn">JOIN</button> │
-└────────────┘└──────────────────────────────────────┘└──────┘
-┌───────┐┌───────────────────────────────────┐┌──────┐┌──────┐
-│       ││                                   ││      ││      │
-└───────┘└───────────────────────────────────┘└──────┘└──────┘`;
-			} else {
-				// Show chat screen - keep y y y lines
-				html = ` 
- 
- 
-${header}
-│                                                            │
-│                                                            │
-│                                                            │
-│                                                            │
-│                                                            │
-│                                                            │
-│                                                            │
-│                                                            │
-│                                                            │
-│                                                            │
-│                                                            │
-│                                                            │
-│                                                            │
-│                                                            │
-│                                                            │
-│                                                            │
-│                                                            │
-│                                                            │
-│                                                            │
-│                                                            │
-│                                                            │
-└────────────────────────────────────press─ESC─to─leave─chat─┘
-┌───────┐┌───────────────────────────────────┐┌──────┐┌──────┐
-│ <button class="btn-inline ${showTimestamps ? 'active' : ''}" id="timeBtn">CLOCK</button> ││ <input type="text" class="input-inline input-message" id="userInput" placeholder="type a message" maxlength="33"> ││ <button class="btn-inline" id="sendBtn">SEND</button> ││ <button class="btn-inline" id="disconnectBtn">EXIT</button> │
-└───────┘└───────────────────────────────────┘└──────┘└──────┘`;
-			}
-
-			frame.innerHTML = html;
-			attachEventListeners();
+		function updateHeader() {
+			const baseText = '┌──guruGROUPS───';
+			const watchingText = onlineCount + '─online';
+			const totalWidth = 62;
+			const fillerDashes = totalWidth - baseText.length - watchingText.length;
+			const headerText = baseText + watchingText + '─'.repeat(Math.max(0, fillerDashes)) + '┐';
+			
+			const lines = document.querySelector('.background-frame').textContent.split('\n');
+			lines[0] = headerText;
+			document.querySelector('.background-frame').textContent = lines.join('\n');
 		}
 
-		function attachEventListeners() {
-			// Color blocks
-			document.querySelectorAll('.color-block').forEach(block => {
-				block.onclick = () => {
-					currentColor = block.dataset.color;
-					document.querySelectorAll('.color-block').forEach(b => b.classList.remove('selected'));
-					block.classList.add('selected');
-					updateSparkleColor(currentColor);
-				};
-			});
+		const presenceRef = database.ref('presence');
+		presenceRef.on('value', (snapshot) => {
+			onlineCount = snapshot.numChildren();
+			updateHeader();
+		});
 
-			// Join button
-			const joinBtn = document.getElementById('joinBtn');
-			if (joinBtn) {
-				joinBtn.onclick = joinChat;
+		const viewerPresenceRef = database.ref(`presence/${sessionId}`);
+		viewerPresenceRef.onDisconnect().remove();
+		viewerPresenceRef.set({
+			viewer: true,
+			timestamp: firebase.database.ServerValue.TIMESTAMP
+		});
+
+		setTimeout(() => {
+			initialLoadComplete = true;
+		}, 1000);
+
+		setInterval(() => {
+			if (messages.length > 0) {
+				renderMessages();
 			}
+		}, 10000);
 
-			// Username input
-			const usernameInput = document.getElementById('usernameInput');
-			if (usernameInput) {
-				usernameInput.onkeydown = (e) => {
-					if (e.key === 'Enter') joinChat();
-				};
-				usernameInput.focus();
-			}
-
-			// Time button
-			const timeBtn = document.getElementById('timeBtn');
-			if (timeBtn) {
-				timeBtn.onclick = toggleTimestamps;
-			}
-
-			// Send button
-			const sendBtn = document.getElementById('sendBtn');
-			if (sendBtn) {
-				sendBtn.onclick = sendMessage;
-			}
-
-			// Disconnect button
-			const disconnectBtn = document.getElementById('disconnectBtn');
-			if (disconnectBtn) {
-				disconnectBtn.onclick = disconnectChat;
-			}
-
-			// User input
-			const userInput = document.getElementById('userInput');
-			if (userInput) {
-				userInput.onkeydown = (e) => {
-					if (e.key.length === 1 || e.key === 'Backspace' || e.key === 'Delete') {
-						playSound('cursor');
-					}
-					if (e.key === 'Enter') {
-						sendMessage();
-					} else if (e.key === 'Escape') {
-						messages.length = 0;
-						renderMessages();
-					}
-				};
-				userInput.focus();
-			}
-		}
-
-		function updateSparkleColor(color) {
+		function selectColor(color, element) {
+			currentColor = color;
+			document.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('selected'));
+			element.classList.add('selected');
+			
+			// Update cursor trail color
 			const hsl = color.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
 			if (hsl) {
 				const h = parseInt(hsl[1]) / 360;
 				const s = parseInt(hsl[2]) / 100;
 				const l = parseInt(hsl[3]) / 100;
 				
+				// Convert HSL to RGB
 				let r, g, b;
 				if (s === 0) {
 					r = g = b = l;
@@ -451,6 +424,7 @@ ${header}
 			if (isSystem) {
 				const contentWidth = text.length + 2;
 				
+				// Format timestamp if enabled
 				let timeStr = '';
 				let adjustedWidth = contentWidth;
 				if (showTimestamps && timestamp) {
@@ -467,6 +441,7 @@ ${header}
 				const spacesAfter = adjustedWidth - text.length - 1;
 				const messageLine = '│ ' + text + ' '.repeat(spacesAfter) + '│';
 				
+				// Bottom border with optional timestamp
 				let bottomBorder;
 				if (showTimestamps && timestamp && timeStr) {
 					const dashesBeforeTime = adjustedWidth - timeStr.length;
@@ -482,13 +457,15 @@ ${header}
 			const messageContent = text.length + 2;
 			let contentWidth = Math.max(usernameContent, messageContent);
 			
+			// Format timestamp if enabled
 			let timeStr = '';
 			if (showTimestamps && timestamp) {
 				const date = new Date(timestamp);
 				const hours = String(date.getHours()).padStart(2, '0');
 				const minutes = String(date.getMinutes()).padStart(2, '0');
 				timeStr = hours + ':' + minutes;
-				const timeSpace = timeStr.length + 1;
+				// Adjust content width to accommodate timestamp
+				const timeSpace = timeStr.length + 1; // +1 for dash before time
 				contentWidth = Math.max(contentWidth, timeSpace + 1);
 			}
 			
@@ -498,6 +475,7 @@ ${header}
 			const spacesAfterText = contentWidth - text.length - 1;
 			const messageLine = '│ ' + text + ' '.repeat(spacesAfterText) + '│';
 			
+			// Bottom border with optional timestamp
 			let bottomBorder;
 			if (showTimestamps && timestamp && timeStr) {
 				const dashesBeforeTime = contentWidth - timeStr.length;
@@ -510,8 +488,8 @@ ${header}
 		}
 
 		function renderMessages() {
-			const container = document.getElementById('messagesInner');
-			const layer = document.getElementById('messagesContainer');
+			const container = document.getElementById('messagesContainer');
+			const layer = document.getElementById('messagesLayer');
 			container.innerHTML = '';
 			
 			const now = Date.now();
@@ -526,10 +504,12 @@ ${header}
 				const opacity = Math.max(0.5, 1 - (age / fadeTime) * 0.5);
 				div.style.opacity = opacity;
 				
+				// If animating, use the partial text. Otherwise regenerate box
 				let boxText;
 				if (msgObj.isAnimating) {
 					boxText = msgObj.text;
 				} else {
+					// Regenerate box with current timestamp settings
 					boxText = createBox(msgObj.rawText, msgObj.username, msgObj.isSystem, msgObj.timestamp);
 				}
 				
@@ -591,6 +571,7 @@ ${header}
 
 		function animateMessage(messageBox, isSystem, color, timestamp, rawText, username) {
 			isTyping = true;
+			document.getElementById('sendBtn').disabled = true;
 			
 			const lines = messageBox.split('\n');
 			const maxLength = Math.max(...lines.map(l => l.length));
@@ -623,6 +604,9 @@ ${header}
 					clearInterval(interval);
 					messages[messageIndex].isAnimating = false;
 					isTyping = false;
+					if (hasJoined) {
+						document.getElementById('sendBtn').disabled = false;
+					}
 					playSound('ping');
 				}
 			}, 80);
@@ -648,6 +632,7 @@ ${header}
 			const timestamp = firebaseTimestamp || Date.now();
 			const box = createBox(boxText, username, isSystem, timestamp);
 			
+			// Only animate if initial load is complete AND message is new (timestamp after page load)
 			const shouldAnimate = initialLoadComplete && timestamp > pageLoadTime;
 			
 			if (!isSystem) {
@@ -708,7 +693,11 @@ ${header}
 				timestamp: firebase.database.ServerValue.TIMESTAMP
 			});
 			
-			renderFrame();
+			document.getElementById('joinRow').style.display = 'none';
+			document.getElementById('userInput').disabled = false;
+			document.getElementById('sendBtn').disabled = false;
+			document.getElementById('disconnectBtn').disabled = false;
+			document.getElementById('userInput').focus();
 		}
 
 		function disconnectChat() {
@@ -717,7 +706,23 @@ ${header}
 			database.ref(`presence/${sessionId}`).remove();
 			hasJoined = false;
 			
-			renderFrame();
+			document.getElementById('joinRow').style.display = 'flex';
+			document.getElementById('usernameInput').value = '';
+			document.getElementById('usernameInput').disabled = false;
+			document.querySelectorAll('.color-btn').forEach(btn => btn.disabled = false);
+			document.getElementById('joinBtn').disabled = false;
+			document.getElementById('userInput').value = '';
+			document.getElementById('userInput').disabled = true;
+			document.getElementById('sendBtn').disabled = true;
+			document.getElementById('disconnectBtn').disabled = true;
+			document.getElementById('usernameInput').focus();
+		}
+
+		function toggleTimestamps() {
+			showTimestamps = !showTimestamps;
+			const btn = document.getElementById('timeBtn');
+			btn.textContent = showTimestamps ? 'HIDE TIME' : 'SHOW TIME';
+			renderMessages();
 		}
 
 		function sendMessage() {
@@ -739,25 +744,6 @@ ${header}
 			}
 		}
 
-		function toggleTimestamps() {
-			showTimestamps = !showTimestamps;
-			renderFrame();
-			renderMessages();
-		}
-
-		const presenceRef = database.ref('presence');
-		presenceRef.on('value', (snapshot) => {
-			onlineCount = snapshot.numChildren();
-			renderFrame();
-		});
-
-		const viewerPresenceRef = database.ref(`presence/${sessionId}`);
-		viewerPresenceRef.onDisconnect().remove();
-		viewerPresenceRef.set({
-			viewer: true,
-			timestamp: firebase.database.ServerValue.TIMESTAMP
-		});
-
 		messagesRef.on('child_added', (snapshot) => {
 			const data = snapshot.val();
 			const isOwnMessage = data.sessionId === sessionId;
@@ -771,19 +757,22 @@ ${header}
 			}
 		});
 
-		setTimeout(() => {
-			initialLoadComplete = true;
-		}, 1000);
+		document.getElementById('usernameInput').addEventListener('keydown', (e) => {
+			if (e.key === 'Enter') joinChat();
+		});
 
-		setInterval(() => {
-			if (messages.length > 0) {
+		document.getElementById('userInput').addEventListener('keydown', (e) => {
+			if (e.key.length === 1 || e.key === 'Backspace' || e.key === 'Delete') {
+				playSound('cursor');
+			}
+			
+			if (e.key === 'Enter') {
+				sendMessage();
+			} else if (e.key === 'Escape') {
+				messages.length = 0;
 				renderMessages();
 			}
-		}, 10000);
-
-		// Initialize
-		renderFrame();
-		updateSparkleColor(currentColor);
+		});
 	</script>
 	
 	<!-- Cursor trail effect -->
@@ -807,6 +796,7 @@ ${header}
 			let targetY = height / 2;
 			const sparkles = [];
 			
+			// Default sparkle color (cyan)
 			window.sparkleColor = { r: 0, g: 255, b: 255 };
 
 			window.addEventListener("mousemove", (e) => {
