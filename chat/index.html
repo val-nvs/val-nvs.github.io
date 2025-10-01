@@ -37,6 +37,7 @@
             font-family: 'PerfectDOSVGA', 'Courier New', monospace;
             min-height: 100vh;
             overflow-x: hidden;
+            text-shadow: 0 0 8px currentColor, 0 0 12px currentColor;
         }
 
         .chat-wrapper {
@@ -238,10 +239,16 @@
         </div>
     </div>
 
-  <script src="firebase-config.js"></script>
-
     <script>
-
+        const firebaseConfig = {
+            apiKey: "AIzaSyCxC1qidadTm5uLacKtD9d_6Zw1uq0Mnf0",
+            authDomain: "chat-8a799.firebaseapp.com",
+            databaseURL: "https://chat-8a799-default-rtdb.firebaseio.com",
+            projectId: "chat-8a799",
+            storageBucket: "chat-8a799.firebasestorage.app",
+            messagingSenderId: "359690574077",
+            appId: "1:359690574077:web:65ed1801a082314a8a8694"
+        };
 
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
@@ -572,9 +579,9 @@
             const isOwnMessage = data.sessionId === sessionId;
             
             if (data.type === 'join') {
-                addMessageLocal('join', data.username, true, null, false, null, data.timestamp);
+                addMessageLocal('join', data.username, true, null, false, data.color, data.timestamp);
             } else if (data.type === 'leave') {
-                addMessageLocal('leave', data.username, true, null, false, null, data.timestamp);
+                addMessageLocal('leave', data.username, true, null, false, data.color, data.timestamp);
             } else if (data.type === 'message') {
                 addMessageLocal('message', data.text, true, data.username, isOwnMessage, data.color, data.timestamp);
             }
