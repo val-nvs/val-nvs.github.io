@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>guruGROUPS Chat</title>
     
-    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     
@@ -261,12 +260,11 @@
         let isTyping = false;
         let sessionId = Date.now() + '_' + Math.random().toString(36).substr(2, 9);
 
-        // Update message colors periodically based on age
         setInterval(() => {
             if (messages.length > 0) {
                 renderMessages();
             }
-        }, 10000); // Update every 10 seconds
+        }, 10000);
 
         function selectColor(color, element) {
             currentColor = color;
@@ -306,7 +304,7 @@
             const hsl = hexToHSL(hexColor);
             return {
                 saturated: hslToString(hsl.h, 100, 60),
-                desaturated: hslToString(hsl.h, 50, 35)  // Darker borders
+                desaturated: hslToString(hsl.h, 50, 35)
             };
         }
 
@@ -346,24 +344,21 @@
                 div.className = 'message';
                 div.style.alignSelf = msgObj.isSystem ? 'flex-start' : 'flex-end';
                 
-                // Calculate age-based opacity (fade over 10 minutes)
                 const age = now - (msgObj.timestamp || now);
-                const fadeTime = 10 * 60 * 1000; // 10 minutes in ms
+                const fadeTime = 10 * 60 * 1000;
                 const opacity = Math.max(0.2, 1 - (age / fadeTime));
                 div.style.opacity = opacity;
                 
                 if (msgObj.isSystem) {
-                    // Apply color to join/leave username during render
                     const userColor = msgObj.color || '#5f9f9f';
                     const lines = msgObj.text.split('\n');
                     
-                    if (lines.length === 3 && (msgObj.text.includes('JOINED') || msgObj.text.includes('LEFT'))) {
+                    if (lines.length === 3 && msgObj.text.includes('JOINED')) {
                         const topLine = lines[0];
                         const middleLine = lines[1];
                         const bottomLine = lines[2];
                         
-                        // Extract and color the username
-                        const match = middleLine.match(/│ (USER )(\w+)( JOINED| LEFT) │/);
+                        const match = middleLine.match(/│ (USER )(\w+)( JOINED) │/);
                         if (match) {
                             const colors = getColorVariants(userColor);
                             const styledMiddle = '│ ' + match[1] + '<span style="color: ' + colors.saturated + '">' + match[2] + '</span>' + match[3] + ' │';
@@ -378,7 +373,6 @@
                         div.textContent = msgObj.text;
                     }
                 } else {
-                    // Apply color immediately, even during animation
                     const userColor = msgObj.color || '#00ffff';
                     const colors = getColorVariants(userColor);
                     
@@ -391,19 +385,15 @@
                         const messageMatch = middleLine.match(/│(.*)│/);
                         if (messageMatch) {
                             const messageContent = messageMatch[1];
-                            
                             const styledTop = '<span style="color: ' + colors.desaturated + '">' + topLine + '</span>';
                             const styledMiddle = '<span style="color: ' + colors.desaturated + '">│</span><span style="color: ' + colors.saturated + '">' + messageContent + '</span><span style="color: ' + colors.desaturated + '">│</span>';
                             const styledBottom = '<span style="color: ' + colors.desaturated + '">' + bottomLine + '</span>';
-                            
                             div.innerHTML = styledTop + '\n' + styledMiddle + '\n' + styledBottom;
                         } else {
-                            // During animation before pattern matches, apply desaturated color
                             div.style.color = colors.desaturated;
                             div.textContent = msgObj.text;
                         }
                     } else {
-                        // Incomplete message during animation - apply desaturated color
                         div.style.color = colors.desaturated;
                         div.textContent = msgObj.text;
                     }
@@ -457,13 +447,10 @@
             let boxText = '';
             let isSystem = false;
             let username = messageUsername || currentUsername || 'anon';
-            let color = messageColor || currentColor || '#00ffff';
+            let color = messageColor || (fromFirebase ? '#5f9f9f' : currentColor);
             
             if (type === 'join') {
                 boxText = `USER ${text} JOINED`;
-                isSystem = true;
-            } else if (type === 'leave') {
-                boxText = `USER ${text} LEFT`;
                 isSystem = true;
             } else if (type === 'system') {
                 boxText = text;
@@ -474,18 +461,15 @@
             }
             
             const box = createBox(boxText, username, isSystem);
-            
-            // Use Firebase timestamp if available, otherwise use current time
             const timestamp = firebaseTimestamp || Date.now();
             
             if (!isSystem) {
-                // For user messages during animation, timestamp will be set in animateMessage
                 animateMessage(box, isSystem, color, timestamp);
             } else {
                 messages.push({ 
                     text: box, 
                     isSystem: isSystem, 
-                    color: color,  // Store color separately
+                    color: color,
                     timestamp: timestamp
                 });
                 renderMessages();
@@ -502,14 +486,6 @@
             hasJoined = true;
             
             const presenceRef = database.ref(`presence/${sessionId}`);
-            const leaveMessageRef = messagesRef.push();
-            
-            leaveMessageRef.onDisconnect().set({
-                type: 'leave',
-                username: username,
-                sessionId: sessionId,
-                timestamp: firebase.database.ServerValue.TIMESTAMP
-            });
             
             presenceRef.onDisconnect().remove();
             
@@ -522,8 +498,8 @@
             
             messagesRef.push({
                 type: 'join',
-                color: currentColor,
                 username: username,
+                color: currentColor,
                 sessionId: sessionId,
                 timestamp: firebase.database.ServerValue.TIMESTAMP
             });
@@ -538,15 +514,7 @@
         function disconnectChat() {
             if (!hasJoined) return;
             
-            messagesRef.push({
-                type: 'leave',
-                username: currentUsername,
-                sessionId: sessionId,
-                timestamp: firebase.database.ServerValue.TIMESTAMP
-            });
-            
             database.ref(`presence/${sessionId}`).remove();
-            
             hasJoined = false;
             
             document.getElementById('joinRow').style.display = 'flex';
@@ -584,12 +552,11 @@
             const data = snapshot.val();
             const isOwnMessage = data.sessionId === sessionId;
             
-            // Explicitly extract and pass the color from Firebase
             if (data.type === 'join') {
-                const joinColor = data.color || '#5f9f9f'; // Use stored color or default to gray
+                const joinColor = data.color || '#5f9f9f';
                 addMessageLocal('join', data.username, true, null, false, joinColor, data.timestamp);
             } else if (data.type === 'message') {
-                const msgColor = data.color || '#00ffff'; // Use stored color or default to cyan
+                const msgColor = data.color || '#00ffff';
                 addMessageLocal('message', data.text, true, data.username, isOwnMessage, msgColor, data.timestamp);
             }
         });
