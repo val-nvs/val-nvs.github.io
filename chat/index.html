@@ -199,7 +199,7 @@
 </head>
 <body>
 	<div class="chat-wrapper">
-		<div class="background-frame">┌──guruGROUPS─────────────────────────────────────────────────┐
+		<div class="background-frame">┌──guruGROUPS────────────────────────────────────────────┐
 │                                                             │
 │                                                             │
 │                                                             │
@@ -277,6 +277,7 @@
 		let sessionId = Date.now() + '_' + Math.random().toString(36).substr(2, 9);
 		let initialLoadComplete = false;
 		let onlineCount = 0;
+		let pageLoadTime = Date.now();
 
 		const sounds = {
 			ping: new Audio('./R_Terminal_ping.wav'),
@@ -575,7 +576,8 @@
 			const box = createBox(boxText, username, isSystem);
 			const timestamp = firebaseTimestamp || Date.now();
 			
-			const shouldAnimate = initialLoadComplete;
+			// Only animate if initial load is complete AND message is new (timestamp after page load)
+			const shouldAnimate = initialLoadComplete && timestamp > pageLoadTime;
 			
 			if (!isSystem) {
 				if (shouldAnimate) {
