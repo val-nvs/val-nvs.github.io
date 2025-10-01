@@ -310,22 +310,11 @@
             };
         }
 
-        function createBox(text, username, isSystem = false, userColor = null) {
+        function createBox(text, username, isSystem = false) {
             if (isSystem) {
                 const contentWidth = text.length + 2;
                 const topBorder = '┌' + '─'.repeat(contentWidth) + '┐';
-                
-                // Check if it's a join/leave message and color the username
-                let messageLine = '│ ' + text + ' │';
-                if (userColor && (text.includes('JOINED') || text.includes('LEFT'))) {
-                    const colors = getColorVariants(userColor);
-                    const match = text.match(/(USER )(\w+)( JOINED| LEFT)/);
-                    if (match) {
-                        const styledText = match[1] + '<span style="color: ' + colors.saturated + '">' + match[2] + '</span>' + match[3];
-                        messageLine = '│ ' + styledText + ' │';
-                    }
-                }
-                
+                const messageLine = '│ ' + text + ' │';
                 const bottomBorder = '└' + '─'.repeat(contentWidth) + '┘';
                 return [topBorder, messageLine, bottomBorder].join('\n');
             }
@@ -364,12 +353,28 @@
                 div.style.opacity = opacity;
                 
                 if (msgObj.isSystem) {
-                    div.style.color = '#5f9f9f';
+                    // Apply color to join/leave username during render
+                    const userColor = msgObj.color || '#5f9f9f';
+                    const lines = msgObj.text.split('\n');
                     
-                    // Check if it contains HTML (colored username)
-                    if (msgObj.text.includes('<span')) {
-                        div.innerHTML = msgObj.text.replace(/\n/g, '<br>');
+                    if (lines.length === 3 && (msgObj.text.includes('JOINED') || msgObj.text.includes('LEFT'))) {
+                        const topLine = lines[0];
+                        const middleLine = lines[1];
+                        const bottomLine = lines[2];
+                        
+                        // Extract and color the username
+                        const match = middleLine.match(/│ (USER )(\w+)( JOINED| LEFT) │/);
+                        if (match) {
+                            const colors = getColorVariants(userColor);
+                            const styledMiddle = '│ ' + match[1] + '<span style="color: ' + colors.saturated + '">' + match[2] + '</span>' + match[3] + ' │';
+                            div.style.color = '#5f9f9f';
+                            div.innerHTML = topLine + '\n' + styledMiddle + '\n' + bottomLine;
+                        } else {
+                            div.style.color = '#5f9f9f';
+                            div.textContent = msgObj.text;
+                        }
                     } else {
+                        div.style.color = '#5f9f9f';
                         div.textContent = msgObj.text;
                     }
                 } else {
@@ -468,7 +473,7 @@
                 isSystem = false;
             }
             
-            const box = createBox(boxText, username, isSystem, isSystem ? color : null);
+            const box = createBox(boxText, username, isSystem);
             
             // Use Firebase timestamp if available, otherwise use current time
             const timestamp = firebaseTimestamp || Date.now();
@@ -480,7 +485,7 @@
                 messages.push({ 
                     text: box, 
                     isSystem: isSystem, 
-                    color: color,
+                    color: color,  // Store color separately
                     timestamp: timestamp
                 });
                 renderMessages();
@@ -517,6 +522,7 @@
             
             messagesRef.push({
                 type: 'join',
+                color: currentColor,
                 username: username,
                 sessionId: sessionId,
                 timestamp: firebase.database.ServerValue.TIMESTAMP
@@ -578,12 +584,13 @@
             const data = snapshot.val();
             const isOwnMessage = data.sessionId === sessionId;
             
+            // Explicitly extract and pass the color from Firebase
             if (data.type === 'join') {
-                addMessageLocal('join', data.username, true, null, false, data.color, data.timestamp);
-            } else if (data.type === 'leave') {
-                addMessageLocal('leave', data.username, true, null, false, data.color, data.timestamp);
+                const joinColor = data.color || '#5f9f9f'; // Use stored color or default to gray
+                addMessageLocal('join', data.username, true, null, false, joinColor, data.timestamp);
             } else if (data.type === 'message') {
-                addMessageLocal('message', data.text, true, data.username, isOwnMessage, data.color, data.timestamp);
+                const msgColor = data.color || '#00ffff'; // Use stored color or default to cyan
+                addMessageLocal('message', data.text, true, data.username, isOwnMessage, msgColor, data.timestamp);
             }
         });
 
