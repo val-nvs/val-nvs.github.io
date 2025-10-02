@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>emojos</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Noto+Emoji:wght@300..700&display=swap" rel="stylesheet">
+
+	<style>
+			@font-face {
+			font-family: 'PerfectDOSVGA';
+			src: url('./PerfectDosVga.ttf') format('truetype');
+		}
+		* {
+			font-family: 'Noto Emoji', 'PerfectDOSVGA', monospace;
+			font-weight: ;
+			line-height: 1;
+			font-size: 2.8vw;
+			background: #000;
+			color: #888;
+			text-shadow: 0px 0 0px currentColor, -0px 0 0px currentColor;
+
+		}
+		@media (orientation: landscape) {
+			* {
+				font-size: 1.5rem; /* fixed size in rem when landscape */
+			}
+		}
+		html {
+			height: 100%;
+		}
+		body {
+			margin: 0;
+			padding: 0;
+			height: 100%;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+		span {
+			white-space: pre;
+		}
+		.emoji {
+			display: inline-block;
+			font-weight: 700;
+			width: .88ch;
+			text-align: center;
+			scale: .9 1;
+			transform: translateX(-0.1ch);
+		}
+
+		.time {
+			font-family: 'PerfectDOSVGA';
+			display: inline-block;
+			transform: scaleY(0.5);
+		}
+	</style>
+</head>
+<body>
+
+<span>x
+┌─────────────────┐┌─────────────────────────┐┌──────┐┌──────┐
+│ enter username  ││ ▓ ▓ ▓ ▓ ▓ ▓ ▓ ▓ ▓ ▓ ▓ ▓ ││ JOIN ││ EXIT │
+└─────────────────┘└─────────────────────────┘└──────┘└──────┘
+┌──2─online──────────────────────────────────────────────────┐
+│                                                            │
+│                                                            │
+│                                                            │
+│              🗨︎                                            │
+│                                                            │
+│                                                            │
+│                           ▓                                │
+│                          ▓▓▓▓▓                             │
+│                         ▓ ▓<span class="emoji">🗨︎</span>▓                             │
+│                          ▓▓▓▓▓                             │
+│                           ▓                                │
+│                                                            │
+│                                                            │
+│                                                            │
+│                                                            │
+│                                               ┌─John──────┐│
+│                                               │ Hey..guys ││
+│                                               └──────<span class="time">09:41</span>┘│
+│                                               ┌─John──────┐│
+│                                               │ Hey<span class="emoji">💕</span>guys ││
+│                                               └──────<span class="time">09:41</span>┘│
+└────────────────────────────────────<span class="time">press─ESC─to─leave─chat</span>─┘
+┌───────┐┌───────────────────────────────────        ┐┌──────┐
+│ EMOJI ││ type a message                            ││ SEND │
+└───────┘└───────────────────────────────────        ┘└──────┘
+x
+</span>
+</body>
+</html>
