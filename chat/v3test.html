@@ -118,14 +118,13 @@
 			left: 50%;
 			top: 50%;
 			transform: translate(-50%, -50%);
-			width: 52ch;
-			height: 13em;
+			width: 59ch;
+			height: 38rem;
 			overflow-y: auto;
 			display: flex;
 			flex-direction: column;
-			margin-top: -2em;
 			z-index: 10;
-			pointer-events: none;
+			pointer-events: auto;
 		}
 		.messages-container.hidden {
 			display: none !important;
@@ -150,7 +149,7 @@
 		.message {
 			white-space: pre;
 			line-height: 1;
-			font-size: 0.875em;
+			font-size: 1em;
 			margin-bottom: 0.2em;
 			pointer-events: auto;
 			color: #5f9f9f;
@@ -167,17 +166,17 @@
 			display: none !important;
 		}
 		.input-message {
-			width: 35ch;
+			width: 40ch;
 		}
 	</style>
 </head>
 <body>
 	<div class="chat-wrapper">
 		<span id="loginScreen">*                                                           *
-┌───────────────────────────────────────────────────────┐
-│                                                           │
-│                                                           │
-│                                                           │
+┌───────────────────────────────────────────────────────────┐
+│                                           ┌─────────────┐ │
+│                                           │ <a href="https://val-nvs.com" style="text-decoration:underline;">val-nvs.com</a> │ │
+│                                           └─────────────┘ │
 │                                                           │
 │                                                           │
 │                                                           │
@@ -206,14 +205,14 @@
 │                                                           │
 │                                                           │
 │                                                           │
-└───────────────────────────────────────────────────────┘
+└───────────────────────────────────────────────────────────┘
 *                                                           *</span>
 
 		<span id="chatScreen" class="hidden">*                                                           *
-┌───────────┐               ┌───────────────────────────────┐
-│ <span id="onlineCount">01</span> ONLINE │               │ <a href="https://val-nvs.com" style="text-decoration:none;">Visit my website: <span style="text-decoration:underline;">val-nvs.com</span></a> │
-└───────────┘               └───────────────────────────────┘
-┌───────────────────────────────────────────────────────┐
+┌───────────┐ ┌──────┐      ┌───────────────────────────────┐
+│ <span id="onlineCount">01</span> ONLINE │ │ EXIT │      │ <a href="https://val-nvs.com" style="text-decoration:none;">Visit my website: <span style="text-decoration:underline;">val-nvs.com</span></a> │
+└───────────┘ └──────┘      └───────────────────────────────┘
+┌───────────────────────────────────────────────────────────┐
 │                                                           │
 │                                                           │
 │                                                           │
@@ -227,10 +226,22 @@
 │                                                           │
 │                                                           │
 │                                                           │
-└───────────────────────────────────────────────────────┘
-┌───────┐┌──────────────────────────────────────┐┌──────┐
-│ <button class="btn-inline" id="emojiBtn">EMOJI</button> ││ <input type="text" class="input-inline input-message" id="userInput" placeholder="type a message" maxlength="33"> ││ <button class="btn-inline" id="sendBtn">SEND</button> │
-└───────┘└──────────────────────────────────────┘└──────┘
+│                                                           │
+│                                                           │
+│                                                           │
+│                                                           │
+│                                                           │
+│                                                           │
+│                                                           │
+│                                                           │
+│                                                           │
+│                                                           │
+│                                                           │
+│                                                           │
+└───────────────────────────────────────────────────────────┘
+┌───────┐┌──────────────────────────────────────────┐┌──────┐
+│ <button class="btn-inline" id="emojiBtn">EMOJI</button> ││ <input type="text" class="input-inline input-message" id="userInput" placeholder="type a message" maxlength="40"> ││ <button class="btn-inline" id="sendBtn">SEND</button> │
+└───────┘└──────────────────────────────────────────┘└──────┘
 *                                                           *</span>
 
 		<div class="messages-container hidden" id="messagesContainer">
@@ -266,7 +277,7 @@ under development dont use for now
 		let initialLoadComplete = false;
 		let onlineCount = 0;
 		let pageLoadTime = Date.now();
-		const MAX_MESSAGES = 9;
+		const MAX_MESSAGES = 20;
 
 		const sounds = {
 			ping: new Audio('data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA='),
@@ -293,7 +304,14 @@ under development dont use for now
 			return { saturated: color, desaturated: color };
 		}
 
-		function createBox(text, username, isSystem = false) {
+		function formatTime(timestamp) {
+			const date = new Date(timestamp);
+			const hours = String(date.getHours()).padStart(2, '0');
+			const minutes = String(date.getMinutes()).padStart(2, '0');
+			return `${hours}:${minutes}`;
+		}
+
+		function createBox(text, username, isSystem = false, timestamp = null) {
 			if (isSystem) {
 				const contentWidth = text.length + 2;
 				const topBorder = '┌' + '─'.repeat(contentWidth) + '┐';
@@ -304,7 +322,9 @@ under development dont use for now
 			
 			const usernameContent = username.length + 2;
 			const messageContent = text.length + 2;
-			const contentWidth = Math.max(usernameContent, messageContent);
+			const timeStr = timestamp ? formatTime(timestamp) : '';
+			const timeLength = timeStr.length;
+			const contentWidth = Math.max(usernameContent, messageContent, timeLength + 3);
 			
 			const dashesAfterUsername = contentWidth - username.length - 1;
 			const topBorder = '┌─' + username + '─'.repeat(dashesAfterUsername) + '┐';
@@ -312,7 +332,8 @@ under development dont use for now
 			const spacesAfterText = contentWidth - text.length - 1;
 			const messageLine = '│ ' + text + ' '.repeat(spacesAfterText) + '│';
 			
-			const bottomBorder = '└' + '─'.repeat(contentWidth) + '┘';
+			const dashesBeforeTime = contentWidth - timeLength - 1;
+			const bottomBorder = '└' + '─'.repeat(dashesBeforeTime) + '<span class="time">' + timeStr + '</span>' + '┘';
 			
 			return [topBorder, messageLine, bottomBorder].join('\n');
 		}
@@ -326,7 +347,7 @@ under development dont use for now
 				div.className = 'message';
 				div.style.alignSelf = msgObj.isSystem ? 'flex-start' : 'flex-end';
 				
-				const boxText = msgObj.isAnimating ? msgObj.text : createBox(msgObj.rawText, msgObj.username, msgObj.isSystem);
+				const boxText = msgObj.isAnimating ? msgObj.text : createBox(msgObj.rawText, msgObj.username, msgObj.isSystem, msgObj.timestamp);
 				
 				if (msgObj.isSystem) {
 					const userColor = msgObj.color || '#5f9f9f';
@@ -356,13 +377,25 @@ under development dont use for now
 							const messageContent = messageMatch[1];
 							const styledTop = '<span style="color: ' + colors.desaturated + '">' + lines[0] + '</span>';
 							const styledMiddle = '<span style="color: ' + colors.desaturated + '">│</span><span style="color: ' + colors.saturated + '">' + messageContent + '</span><span style="color: ' + colors.desaturated + '">│</span>';
-							const styledBottom = '<span style="color: ' + colors.desaturated + '">' + lines[2] + '</span>';
+							
+							// Handle bottom line with time
+							let styledBottom = lines[2];
+							if (lines[2].includes('<span class="time">')) {
+								// Extract the parts before and after the time span
+								const bottomMatch = lines[2].match(/^(└─*)(<span class="time">.*?<\/span>)(┘)$/);
+								if (bottomMatch) {
+									styledBottom = '<span style="color: ' + colors.desaturated + '">' + bottomMatch[1] + '</span>' + bottomMatch[2] + '<span style="color: ' + colors.desaturated + '">' + bottomMatch[3] + '</span>';
+								}
+							} else {
+								styledBottom = '<span style="color: ' + colors.desaturated + '">' + lines[2] + '</span>';
+							}
+							
 							div.innerHTML = styledTop + '\n' + styledMiddle + '\n' + styledBottom;
 						} else {
-							div.textContent = boxText;
+							div.innerHTML = boxText;
 						}
 					} else {
-						div.textContent = boxText;
+						div.innerHTML = boxText;
 					}
 				}
 				
@@ -373,11 +406,11 @@ under development dont use for now
 			layer.scrollTop = layer.scrollHeight;
 		}
 
-		function animateMessage(messageBox, isSystem, color, rawText, username) {
+		function animateMessage(messageBox, isSystem, color, rawText, username, timestamp) {
 			isTyping = true;
 			
 			const lines = messageBox.split('\n');
-			const maxLength = Math.max(...lines.map(l => l.length));
+			const maxLength = Math.max(...lines.map(l => l.replace(/<[^>]*>/g, '').length));
 			let columnIndex = 0;
 			
 			messages.push({ 
@@ -386,7 +419,8 @@ under development dont use for now
 				username: username,
 				isSystem: isSystem, 
 				isAnimating: true, 
-				color: color
+				color: color,
+				timestamp: timestamp
 			});
 			const messageIndex = messages.length - 1;
 			
@@ -396,7 +430,8 @@ under development dont use for now
 					
 					let partialText = '';
 					for (let i = 0; i < lines.length; i++) {
-						partialText += lines[i].substring(0, columnIndex + 1);
+						const cleanLine = lines[i].replace(/<[^>]*>/g, '');
+						partialText += cleanLine.substring(0, columnIndex + 1);
 						if (i < lines.length - 1) partialText += '\n';
 					}
 					messages[messageIndex].text = partialText;
@@ -429,7 +464,7 @@ under development dont use for now
 				isSystem = false;
 			}
 
-			const box = createBox(boxText, username, isSystem);
+			const box = createBox(boxText, username, isSystem, timestamp);
 			const shouldAnimate = initialLoadComplete && timestamp > pageLoadTime;
 
 			function pushMessage(msg) {
@@ -439,7 +474,7 @@ under development dont use for now
 			}
 
 			if (!isSystem && shouldAnimate) {
-				animateMessage(box, isSystem, color, boxText, username);
+				animateMessage(box, isSystem, color, boxText, username, timestamp);
 			} else {
 				pushMessage({
 					text: box,
@@ -447,7 +482,8 @@ under development dont use for now
 					username: username,
 					isSystem: isSystem,
 					color: color,
-					isAnimating: false
+					isAnimating: false,
+					timestamp: timestamp
 				});
 
 				if (isSystem && type === 'join' && shouldAnimate) {
@@ -549,17 +585,10 @@ under development dont use for now
 			const usernameInput = document.getElementById('usernameInput');
 			if (usernameInput) {
 				usernameInput.onkeydown = (e) => {
-					if (e.key === ' ' || e.key === 'Spacebar') {
-						e.preventDefault();
-						return false;
-					}
 					if (e.key === 'Enter') {
 						e.preventDefault();
 						joinChat();
 					}
-				};
-				usernameInput.oninput = (e) => {
-					e.target.value = e.target.value.replace(/\s/g, '');
 				};
 				usernameInput.focus();
 			}
@@ -569,26 +598,6 @@ under development dont use for now
 			const sendBtn = document.getElementById('sendBtn');
 			if (sendBtn) {
 				sendBtn.onclick = sendMessage;
-			}
-
-			const exitBtn = document.getElementById('exitBtn');
-			if (exitBtn) {
-				exitBtn.onclick = () => {
-					// Remove user from presence
-					database.ref(`presence/${sessionId}`).remove();
-					
-					// Clear messages and reset state
-					messages.length = 0;
-					hasJoined = false;
-					
-					// Hide chat, show login
-					document.getElementById('chatScreen').classList.add('hidden');
-					document.getElementById('messagesContainer').classList.add('hidden');
-					document.getElementById('loginScreen').classList.remove('hidden');
-					
-					// Reattach login listeners
-					attachLoginListeners();
-				};
 			}
 
 			const emojiBtn = document.getElementById('emojiBtn');
