@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Emoji Wall + Copyable HTML</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Emoji:wght@300..700&display=swap" rel="stylesheet">
+<style>
+  body {
+    font-family: 'Noto Emoji', sans-serif;
+    font-size: 24px;
+    white-space: pre;
+  }
+  .emoji span {
+    display: inline-block;
+  }
+  .code-box {
+    background: #f5f5f5;
+    border: 1px solid #ccc;
+    padding: 1em;
+    font-family: monospace;
+    margin-top: 2em;
+    white-space: pre-wrap;
+  }
+</style>
+</head>
+<body>
+
+<!-- Original Emoji Wall -->
+<div id="emoji-wall"></div>
+
+<!-- Copyable wrapped HTML -->
+<div id="wrapped-html" class="code-box"></div>
+
+<script>
+const emojis = "😀😃😄😁😆😅😂🤣😍🥰😘😗😙😚😋😛😝😜🤪🤩🥳🙂🙃🫠😎🧐🤓🫡😏😌😔😪😴🥱🫥😷🤕🤒🤧🤮🤢🥵🥶🥴😵😵‍💫🤯😱😨😰😟😢😭😤😡🤬🫣😳🫤🫢🤫🤭🤡👻💩👽🤖🎃😈👹👺🫶👋🤚✋🖖👌🤌🤏✌🤞🤟🤘👊✊🤛🤜🤝🙌👐🤲💃🏃🧗🏋🧘🏄🏇🏌🤸🏊🚴🕵🤵👰🤰👶🙈🙉🙊🐶🐱🐭🐼🐨🦁🐷🐸🦄🐍🐢🦎🦖🐙🐚🦀🐝🐞🦋🐛🦗🐌🐜🐠🐡🐬🐳🐊🐆🦍🦧🦣🐘🦛🦒🐪🐎🐑🐐🐕🐩🐈🐓🦜🦢🕊🦩🦚🌹🥀🌺🌷🏵🌻🌱🌿🍀🌾🌵🌴🌳🌲🌊🌬⛰🏖🌋🌌🌠☀⭐🌞🌛🪐💫✨🔥💧☔🌈🌪🌀⚡🎃🎄🎁🎊🎉🎂🧁🍰🍩🍪🍫🍬🍭🍯🥛☕🍵🥂🥗🍕🍔🌮🌯🍝🥘🍜🥟🍣🍱🍤🥩🍗🥓🥚🧀🍞🥖🥐🥨🥯🧇🥬🥦🥑🍆🥕🌶🧄🫘🥜🪴🪑🛋🛏🚪🪞🪟💡🕯🔦📱💻🖥🖨🖱🖲🎮🕹🪄🎨🔊🎼🎵🎶🌐🎹🥁🎸🎷🎺🎻🎤🎧🪘📷📸🎥📹📽🎬🎞📺📻🎚🎛🪐💛🤍💔💖💘💝💞💌❣💟⚔︎🔥☢︎☣︎⚠︎🔞♀︎♂︎⚧︎♈♉♊♋♌♍♎♏♐♑♒♓";
+const perLine = 20;
+const separator = "├──┼──┼──┼──┼──┼──┼──┼──┼──┼──┼──┼──┼──┼──┼──┼──┼──┼──┼──┼──┤";
+const container = document.getElementById("emoji-wall");
+
+// --- Use Intl.Segmenter to split emojis properly ---
+const segmenter = new Intl.Segmenter(undefined, { granularity: "grapheme" });
+const emojiArray = Array.from(segmenter.segment(emojis), s => s.segment);
+
+// --- Original emoji wall ---
+for(let i = 0; i < emojiArray.length; i += perLine){
+  const line = emojiArray.slice(i, i + perLine)
+                     .map(e => `<span class="emoji"><span>${e}</span></span>`)
+                     .join('│');
+  
+  const div = document.createElement('div');
+  div.innerHTML = '│' + line + '│';
+  container.appendChild(div);
+  
+  const sepDiv = document.createElement('div');
+  sepDiv.textContent = separator;
+  container.appendChild(sepDiv);
+}
+
+// --- Copyable wrapped HTML with │ separators ---
+const wrappedDiv = document.getElementById('wrapped-html');
+let wrappedHTML = '';
+for(let i = 0; i < emojiArray.length; i += perLine){
+  const line = emojiArray.slice(i, i + perLine)
+                     .map(e => `<span class="emoji"><span>${e}</span></span>`)
+                     .join('│');
+  wrappedHTML += '│' + line + '│\n' + separator + '\n';
+}
+wrappedDiv.textContent = wrappedHTML;
+</script>
+
+</body>
+</html>
