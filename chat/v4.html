@@ -408,7 +408,7 @@ under development dont use for now
 				}
 				
 				if (msgObj.isSystem) {
-					const userColor = msgObj.color || '#5f9f9f';
+					const userColor = msgObj.color || getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
 					const lines = boxText.split('\n');
 					
 					if (lines.length === 3 && boxText.includes('JOINED')) {
@@ -517,7 +517,7 @@ under development dont use for now
 			let boxText = '';
 			let isSystem = false;
 			const username = messageUsername || currentUsername || 'anon';
-			const color = messageColor || (fromFirebase ? '#5f9f9f' : currentColor);
+			const color = messageColor || (fromFirebase ? getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim() : currentColor);
 			const timestamp = firebaseTimestamp || Date.now();
 
 			if (type === 'join') {
@@ -767,7 +767,7 @@ under development dont use for now
 			const isOwnMessage = data.sessionId === sessionId;
 			
 			if (data.type === 'join') {
-				const joinColor = data.color || '#5f9f9f';
+				const joinColor = data.color || getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
 				addMessageLocal('join', data.username, true, null, joinColor, data.timestamp);
 			} else if (data.type === 'message') {
 				const msgColor = data.color || '#00ffff';
