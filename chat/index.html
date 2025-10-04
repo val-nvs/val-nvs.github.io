@@ -63,19 +63,27 @@
 			white-space: pre;
 			color: var(--primary-color);
 		}
-		.emoji {
+		.emj {
 			display: inline-block;
 			width: 2ch;
-			height: 1rem;
+			height: 1em;
 			text-align: center;
+			position: relative;
 			overflow: visible;
+			cursor: pointer;
+			transition: transform 0.1s;
 		}
-		.emoji span {
+		.emj:hover {
+			transform: scale(3);
+		}
+		.emj span {
 			font-family: 'Noto Emoji';
-			font-size: 1.5rem;
-			line-height: 1rem;
-			display: inline-block;
-			transform: scale(1) translate(-.1ch, .1rem);
+			font-size: 1em;
+			line-height: 1;
+			position: absolute;
+			top: 0;
+			left: 50%;
+			transform: translateX(-50%) scale(.5) translate(-0.1ch, 0.1em); /* combine your adjustments */
 			transform-origin: center;
 		}
 		.time {
@@ -296,7 +304,12 @@
 		</div>
 
 		<span id="emojiScreen" class="hidden">
-under development dont use for now
+┌──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┐
+│<span class="emj"><span>😀</span></span>│<span class="emj"><span>😃</span></span>│<span class="emj"><span>😄</span></span>│<span class="emj"><span>😁</span></span>│<span class="emj"><span>😆</span></span>│<span class="emj"><span>😅</span></span>│<span class="emj"><span>😂</span></span>│<span class="emj"><span>🤣</span></span>│<span class="emj"><span>😍</span></span>│<span class="emj"><span>🥰</span></span>│<span class="emj"><span>😘</span></span>│<span class="emj"><span>😗</span></span>│<span class="emj"><span>😙</span></span>│<span class="emj"><span>😚</span></span>│<span class="emj"><span>😋</span></span>│<span class="emj"><span>😛</span></span>│<span class="emj"><span>😝</span></span>│<span class="emj"><span>😜</span></span>│<span class="emj"><span>🤪</span></span>│<span class="emj"><span>🤩</span></span>│
+└──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┘
+┌───────────────┐
+│ <button class="btn-inline" id="closeEmojiBtn">CLOSE</button> │
+└───────────────┘
  </span>
 	</div>
 
@@ -827,7 +840,7 @@ under development dont use for now
 			const emojiBtn = document.getElementById('emojiBtn');
 			if (emojiBtn) {
 				emojiBtn.onclick = () => {
-					alert('Emoji picker under development!');
+					openEmojiPicker();
 				};
 			}
 
@@ -885,6 +898,52 @@ under development dont use for now
 				usernameInput.value = '';
 				usernameInput.focus();
 			}
+		}
+
+		function openEmojiPicker() {
+			// Hide chat screen
+			document.getElementById('chatScreen').classList.add('hidden');
+			document.getElementById('messagesContainer').classList.add('hidden');
+			
+			// Show emoji screen
+			document.getElementById('emojiScreen').classList.remove('hidden');
+			
+			// Attach emoji click handlers
+			document.querySelectorAll('.emj').forEach(emj => {
+				emj.onclick = () => {
+					const emoji = emj.querySelector('span').textContent;
+					selectEmoji(emoji);
+				};
+			});
+			
+			// Attach close button
+			const closeBtn = document.getElementById('closeEmojiBtn');
+			if (closeBtn) {
+				closeBtn.onclick = closeEmojiPicker;
+			}
+		}
+
+		function closeEmojiPicker() {
+			// Hide emoji screen
+			document.getElementById('emojiScreen').classList.add('hidden');
+			
+			// Show chat screen
+			document.getElementById('chatScreen').classList.remove('hidden');
+			document.getElementById('messagesContainer').classList.remove('hidden');
+			
+			// Refocus input
+			const userInput = document.getElementById('userInput');
+			if (userInput) {
+				userInput.focus();
+			}
+		}
+
+		function selectEmoji(emoji) {
+			const userInput = document.getElementById('userInput');
+			if (userInput) {
+				userInput.value += emoji;
+			}
+			closeEmojiPicker();
 		}
 
 		function updateClock() {
