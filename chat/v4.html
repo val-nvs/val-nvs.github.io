@@ -13,6 +13,16 @@
 	<link href="https://fonts.googleapis.com/css2?family=Noto+Emoji:wght@300..700&display=swap" rel="stylesheet">
 
 	<style>
+		:root {
+			--bg-color: #000;
+			--primary-color: hsl(50, 100%, 25%);
+			--input-color: #0ff;
+			--text-color: #aaa;
+			--scrollbar-track: #022;
+			--scrollbar-thumb: #055;
+			--placeholder-color: #555;
+		}
+		
 		@font-face {
 			font-family: 'PerfectDOSVGA';
 			src: url('./PerfectDosVga.ttf') format('truetype');
@@ -21,29 +31,31 @@
 			font-family: 'PerfectDOSVGA', monospace;
 			font-weight: normal;
 			line-height: 1;
-			font-size: 2.8vw;
-			color: #aaa;
+			color: var(--text-color);
 			text-shadow: 0px 0 0px currentColor, -0px 0 0px currentColor;
 			margin: 0;
 			padding: 0;
 			box-sizing: border-box;
 		}
-		@media (orientation: landscape) {
-			* {
-				font-size: 1.5rem;
-			}
-		}
 		html {
 			height: 100%;
+			touch-action: pan-x pan-y;
 		}
 		body {
 			background: #000;
 			margin: 0;
 			padding: 0;
-			height: 100%;
+			height: 100vh;
+			width: 100vw;
 			display: flex;
 			justify-content: center;
 			align-items: center;
+			overflow: hidden;
+			touch-action: pan-x pan-y;
+		}
+		.chat-wrapper {
+			position: relative;
+			font-size: min(calc(100vh / 35), calc(100vw / 61 / 0.6));
 		}
 		span {
 			white-space: pre;
@@ -86,28 +98,35 @@
 			transform: scale(1.1);
 		}
 		.input-inline {
-			background: #000;
+			background: var(--bg-color);
 			border: none;
-			color: #0ff;
+			color: var(--input-color);
 			font-family: 'PerfectDOSVGA', monospace;
 			font-size: inherit;
 			outline: none;
 			padding: 0;
 			width: 12ch;
-			text-shadow: 0 0 8px currentColor;
+			text-shadow: none;
+			box-shadow: none;
+			transition: color 0.2s;
 		}
 		.input-inline::placeholder {
-			color: #555;
+			color: var(--placeholder-color);
+			transition: color 0.2s;
+		}
+		.input-inline.loading::placeholder {
+			color: #f00;
 		}
 		.btn-inline {
-			background: #000;
+			background: var(--bg-color);
 			border: none;
-			color: #0ff;
+			color: var(--input-color);
 			font-family: 'PerfectDOSVGA', monospace;
 			font-size: inherit;
 			cursor: pointer;
 			padding: 0;
-			text-shadow: 0 0 8px currentColor;
+			text-shadow: none;
+			box-shadow: none;
 			transition: color 0.2s;
 		}
 		.btn-inline:hover {
@@ -119,30 +138,31 @@
 			top: 50%;
 			transform: translate(-50%, -50%);
 			width: 59ch;
-			height: 38rem;
+			height: 25em;
 			overflow-y: auto;
 			display: flex;
 			flex-direction: column;
 			z-index: 10;
 			pointer-events: auto;
+			font-size: 1em;
 		}
 		.messages-container.hidden {
 			display: none !important;
 		}
 		.messages-container.login-blur {
-			filter: blur(3px);
-			opacity: 0.3;
-			pointer-events: none;
-			user-select: none;
+			filter: blur(5px);
+			opacity: 0.5;
+			z-index: 0;
 		}
 		.messages-container::-webkit-scrollbar {
 			width: 1ch;
+			font-size: 1em;
 		}
 		.messages-container::-webkit-scrollbar-track {
-			background: #022;
+			background: var(--scrollbar-track);
 		}
 		.messages-container::-webkit-scrollbar-thumb {
-			background: #055;
+			background: var(--scrollbar-thumb);
 		}
 		.messages-inner {
 			margin-top: auto;
@@ -158,15 +178,19 @@
 			font-size: 1em;
 			margin-bottom: 0.2em;
 			pointer-events: auto;
-			color: #5f9f9f;
+			color: var(--primary-color);
 		}
 		.chat-wrapper {
 			position: relative;
+			font-size: min(calc(100vh / 35), calc(100vw / 61 / 0.6));
 		}
 		#loginScreen, #chatScreen, #emojiScreen {
 			display: block;
 			position: relative;
 			z-index: 1;
+		}
+		#loginScreen {
+			z-index: 5;
 		}
 		#loginScreen.hidden, #chatScreen.hidden, #emojiScreen.hidden {
 			display: none !important;
@@ -177,12 +201,27 @@
 	</style>
 </head>
 <body>
+	<script>
+		// Prevent ctrl+scroll zoom
+		document.addEventListener('wheel', function(e) {
+			if (e.ctrlKey) {
+				e.preventDefault();
+			}
+		}, { passive: false });
+		
+		// Prevent keyboard zoom
+		document.addEventListener('keydown', function(e) {
+			if ((e.ctrlKey || e.metaKey) && (e.key === '+' || e.key === '-' || e.key === '=')) {
+				e.preventDefault();
+			}
+		});
+	</script>
 	<div class="chat-wrapper">
 		<span id="loginScreen">*                                                           *
-┌───────────────────────────────────────────────────────────┐
-│                                           ┌─────────────┐ │
-│                                           │ <a href="https://val-nvs.com" style="text-decoration:underline;">val-nvs.com</a> │ │
-│                                           └─────────────┘ │
+┌───────────────────────────────────────────────────────┐
+│ ┌──────────────────────────┐              ┌─────────────┐ │
+│ │ Last message: <span id="loadingStatus">LOADING...</span> │              │ <a href="https://val-nvs.com" style="text-decoration:underline;">val-nvs.com</a> │ │
+│ └──────────────────────────┘              └─────────────┘ │
 │                                                           │
 │                                                           │
 │                                                           │
@@ -192,7 +231,7 @@
 │                                                           │
 │                                                           │
 │                    ┌─────────────────┐                    │
-│                    │ <input type="text" class="input-inline" id="usernameInput" placeholder="enter user name" maxlength="10" style="width: 15ch;"> │                    │
+│                    │ <input type="text" class="input-inline loading" id="usernameInput" placeholder="LOADING... WAIT" maxlength="10" style="width: 15ch; box-shadow: none; color: #f00;" disabled> │                    │
 │                    └─────────────────┘                    │
 │          ┌─────────────────────────────────────┐          │
 │          │ <span class="color-block selected" data-color="hsl(180, 100%, 50%)" style="color: hsl(180, 100%, 50%);">██</span> <span class="color-block" data-color="hsl(210, 100%, 50%)" style="color: hsl(210, 100%, 50%);">██</span> <span class="color-block" data-color="hsl(240, 100%, 50%)" style="color: hsl(240, 100%, 50%);">██</span> <span class="color-block" data-color="hsl(270, 100%, 50%)" style="color: hsl(270, 100%, 50%);">██</span> <span class="color-block" data-color="hsl(300, 100%, 50%)" style="color: hsl(300, 100%, 50%);">██</span> <span class="color-block" data-color="hsl(330, 100%, 50%)" style="color: hsl(330, 100%, 50%);">██</span> <span class="color-block" data-color="hsl(0, 100%, 50%)" style="color: hsl(0, 100%, 50%);">██</span> <span class="color-block" data-color="hsl(30, 100%, 50%)" style="color: hsl(30, 100%, 50%);">██</span> <span class="color-block" data-color="hsl(60, 100%, 50%)" style="color: hsl(60, 100%, 50%);">██</span> <span class="color-block" data-color="hsl(90, 100%, 50%)" style="color: hsl(90, 100%, 50%);">██</span> <span class="color-block" data-color="hsl(120, 100%, 50%)" style="color: hsl(120, 100%, 50%);">██</span> <span class="color-block" data-color="hsl(150, 100%, 50%)" style="color: hsl(150, 100%, 50%);">██</span> │          │
@@ -215,9 +254,9 @@
 *                                                           *</span>
 
 		<span id="chatScreen" class="hidden">*                                                           *
-┌───────────┐ ┌──────┐      ┌───────────────────────────────┐
-│ <span id="onlineCount">01</span> ONLINE │ │ EXIT │      │ <a href="https://val-nvs.com" style="text-decoration:none;">Visit my website: <span style="text-decoration:underline;">val-nvs.com</span></a> │
-└───────────┘ └──────┘      └───────────────────────────────┘
+┌───────────┐ ┌──────┐               ┌──────────────────────┐
+│ <span id="onlineCount">01</span> ONLINE │ │ EXIT │               │ <a href="https://val-nvs.com" style="text-decoration:none;">Made by: <span style="text-decoration:underline;">val-nvs.com</span></a> │
+└───────────┘ └──────┘               └──────────────────────┘
 ┌───────────────────────────────────────────────────────────┐
 │                                                           │
 │                                                           │
@@ -246,7 +285,7 @@
 │                                                           │
 └───────────────────────────────────────────────────────────┘
 ┌───────┐┌──────────────────────────────────────────┐┌──────┐
-│ <button class="btn-inline" id="emojiBtn">EMOJI</button> ││ <input type="text" class="input-inline input-message" id="userInput" placeholder="type a message" maxlength="40"> ││ <button class="btn-inline" id="sendBtn">SEND</button> │
+│ <button class="btn-inline" id="emojiBtn">EMOJI</button> ││ <input type="text" class="input-inline input-message" id="userInput" placeholder="type a message" maxlength="40" style="box-shadow: none;"> ││ <button class="btn-inline" id="sendBtn">SEND</button> │
 └───────┘└──────────────────────────────────────────┘└──────┘
 *                                                           *</span>
 
@@ -286,9 +325,12 @@ under development dont use for now
 		const MAX_MESSAGES = 20;
 
 		const sounds = {
-			ping: new Audio('data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA='),
-			newline: new Audio('data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA='),
-			cursor: new Audio('data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=')
+			ping: new Audio('./R_Terminal_ping.wav'),
+			newline: new Audio('./R_terminal_newline_1.wav'),
+			cursor: new Audio('./terminal_cursor.wav'),
+			hover: new Audio('./R_Terminal_redtick.wav'),
+			select: new Audio('./R_Terminal_downloading.wav'),
+			enter: new Audio('./R_TerminalLoad.wav')
 		};
 
 		function playSound(soundName) {
@@ -303,8 +345,8 @@ under development dont use for now
 			if (match) {
 				const hue = parseInt(match[1]);
 				return {
-					saturated: `hsl(${hue}, 100%, 60%)`,
-					desaturated: `hsl(${hue}, 100%, 35%)`
+					saturated: `hsl(${hue}, 100%, 50%)`,
+					desaturated: `hsl(${hue}, 100%, 25%)`
 				};
 			}
 			return { saturated: color, desaturated: color };
@@ -321,11 +363,11 @@ under development dont use for now
 			if (isSystem) {
 				const timeStr = timestamp ? formatTime(timestamp) : '';
 				const timeLength = timeStr.length;
-				const contentWidth = Math.max(text.length + 2, timeLength + 4);
+				const contentWidth = Math.max(text.length + 2, timeLength);
 				const topBorder = '┌' + '─'.repeat(contentWidth) + '┐';
-				const messageLine = '│ ' + text + ' '.repeat(contentWidth - text.length) + '│';
-				const dashesBeforeTime = contentWidth - timeLength - 2;
-				const bottomBorder = '└' + '─'.repeat(dashesBeforeTime) + '─<span class="time">' + timeStr + '</span>' + '┘';
+				const messageLine = '│ ' + text + ' '.repeat(contentWidth - text.length -1) + '│';
+				const dashesBeforeTime = Math.max(0, contentWidth - timeLength);
+				const bottomBorder = '└' + '─'.repeat(dashesBeforeTime) + '<span class="time">' + timeStr + '</span>' + '┘';
 				return [topBorder, messageLine, bottomBorder].join('\n');
 			}
 			
@@ -333,7 +375,7 @@ under development dont use for now
 			const messageContent = text.length + 2;
 			const timeStr = timestamp ? formatTime(timestamp) : '';
 			const timeLength = timeStr.length;
-			const contentWidth = Math.max(usernameContent, messageContent, timeLength + 4);
+			const contentWidth = Math.max(usernameContent, messageContent, timeLength);
 			
 			const dashesAfterUsername = contentWidth - username.length - 1;
 			const topBorder = '┌─' + username + '─'.repeat(dashesAfterUsername) + '┐';
@@ -341,8 +383,8 @@ under development dont use for now
 			const spacesAfterText = contentWidth - text.length - 1;
 			const messageLine = '│ ' + text + ' '.repeat(spacesAfterText) + '│';
 			
-			const dashesBeforeTime = contentWidth - timeLength - 2;
-			const bottomBorder = '└' + '─'.repeat(dashesBeforeTime) + '─<span class="time">' + timeStr + '</span>' + '┘';
+			const dashesBeforeTime = Math.max(0, contentWidth - timeLength);
+			const bottomBorder = '└' + '─'.repeat(dashesBeforeTime) + '<span class="time">' + timeStr + '</span>' + '┘';
 			
 			return [topBorder, messageLine, bottomBorder].join('\n');
 		}
@@ -357,6 +399,13 @@ under development dont use for now
 				div.style.alignSelf = msgObj.isSystem ? 'flex-start' : 'flex-end';
 				
 				const boxText = msgObj.isAnimating ? msgObj.text : createBox(msgObj.rawText, msgObj.username, msgObj.isSystem, msgObj.timestamp);
+				
+				// Apply color even during animation
+				if (msgObj.isAnimating && !msgObj.isSystem) {
+					const userColor = msgObj.color || '#00ffff';
+					const colors = getColorVariants(userColor);
+					div.style.color = colors.saturated;
+				}
 				
 				if (msgObj.isSystem) {
 					const userColor = msgObj.color || '#5f9f9f';
@@ -532,6 +581,7 @@ under development dont use for now
 			const username = usernameInput.value.trim().replace(/\s/g, '');
 			
 			if (!username || username.length === 0) {
+				playSound('enter');
 				usernameInput.focus();
 				return;
 			}
@@ -541,7 +591,9 @@ under development dont use for now
 			
 			document.getElementById('loginScreen').classList.add('hidden');
 			document.getElementById('chatScreen').classList.remove('hidden');
-			document.getElementById('messagesContainer').classList.remove('login-blur');
+			const messagesContainer = document.getElementById('messagesContainer');
+			messagesContainer.classList.remove('login-blur');
+			messagesContainer.style.zIndex = '10';
 			
 			const userPresenceRef = database.ref(`presence/${sessionId}`);
 			userPresenceRef.onDisconnect().remove();
@@ -582,6 +634,9 @@ under development dont use for now
 		}
 
 		function attachLoginListeners() {
+			const usernameInput = document.getElementById('usernameInput');
+			const joinBtn = document.getElementById('joinBtn');
+			
 			document.querySelectorAll('.color-block').forEach(block => {
 				block.onclick = (e) => {
 					e.preventDefault();
@@ -589,25 +644,73 @@ under development dont use for now
 					currentColor = block.dataset.color;
 					document.querySelectorAll('.color-block').forEach(b => b.classList.remove('selected'));
 					block.classList.add('selected');
+					
+					// Play select sound
+					playSound('select');
+					
+					// Update input and button colors
+					if (usernameInput) {
+						usernameInput.style.color = currentColor;
+						usernameInput.style.textShadow = 'none';
+					}
+					if (joinBtn) {
+						joinBtn.style.color = currentColor;
+						joinBtn.style.textShadow = 'none';
+					}
+				};
+				
+				// Also update on hover
+				block.onmouseenter = () => {
+					playSound('hover');
+					const hoverColor = block.dataset.color;
+					if (usernameInput) {
+						usernameInput.style.color = hoverColor;
+						usernameInput.style.textShadow = 'none';
+						const placeholder = usernameInput.getAttribute('placeholder');
+						usernameInput.setAttribute('data-placeholder', placeholder);
+					}
+					if (joinBtn) {
+						joinBtn.style.color = hoverColor;
+						joinBtn.style.textShadow = 'none';
+					}
+				};
+				
+				block.onmouseleave = () => {
+					if (usernameInput) {
+						usernameInput.style.color = currentColor;
+						usernameInput.style.textShadow = 'none';
+					}
+					if (joinBtn) {
+						joinBtn.style.color = currentColor;
+						joinBtn.style.textShadow = 'none';
+					}
 				};
 			});
 
-			const joinBtn = document.getElementById('joinBtn');
 			if (joinBtn) {
 				joinBtn.onclick = (e) => {
 					e.preventDefault();
 					joinChat();
 				};
+				// Set initial color
+				joinBtn.style.color = currentColor;
+				joinBtn.style.textShadow = 'none';
 			}
 
-			const usernameInput = document.getElementById('usernameInput');
 			if (usernameInput) {
 				usernameInput.onkeydown = (e) => {
+					if (e.key === ' ' || e.key === 'Spacebar') {
+						e.preventDefault();
+						return;
+					}
 					if (e.key === 'Enter') {
 						e.preventDefault();
 						joinChat();
 					}
 				};
+				// Set initial color
+				usernameInput.style.color = currentColor;
+				usernameInput.style.textShadow = 'none';
 				usernameInput.focus();
 			}
 		}
@@ -616,6 +719,8 @@ under development dont use for now
 			const sendBtn = document.getElementById('sendBtn');
 			if (sendBtn) {
 				sendBtn.onclick = sendMessage;
+				sendBtn.style.color = currentColor;
+				sendBtn.style.textShadow = 'none';
 			}
 
 			const emojiBtn = document.getElementById('emojiBtn');
@@ -635,6 +740,8 @@ under development dont use for now
 						sendMessage();
 					}
 				};
+				userInput.style.color = currentColor;
+				userInput.style.textShadow = 'none';
 				userInput.focus();
 			}
 		}
@@ -670,9 +777,59 @@ under development dont use for now
 
 		setTimeout(() => {
 			initialLoadComplete = true;
+			
+			// Update username input placeholder when loaded
+			const usernameInput = document.getElementById('usernameInput');
+			if (usernameInput && !hasJoined) {
+				usernameInput.placeholder = 'enter user name';
+				usernameInput.classList.remove('loading');
+				usernameInput.style.color = currentColor;
+				usernameInput.disabled = false;
+			}
 		}, 1000);
 
 		attachLoginListeners();
+	</script>
+
+	<script>
+		const loadingEl = document.getElementById("loadingStatus");
+
+		// Timestamp of the last Firebase message
+		let lastMessageTime = Date.now(); // fallback in case no messages yet
+
+		// Make it red initially
+		loadingEl.style.color = "red";
+
+		// Update the "time ago" display
+		function updateTimeAgo() {
+			const diff = Date.now() - lastMessageTime;
+			const seconds = Math.floor(diff / 1000);
+			const minutes = Math.floor(seconds / 60);
+			const hours = Math.floor(minutes / 60);
+
+			if (seconds < 60) {
+				loadingEl.textContent = seconds.toString().padStart(2, '0') + " sec ago";
+			} else if (minutes < 60) {
+				loadingEl.textContent = minutes.toString().padStart(2, '0') + " min ago";
+			} else {
+				loadingEl.textContent = hours.toString().padStart(2, '0') + " hrs ago";
+			}
+
+			loadingEl.style.color = ""; // remove red after first update
+		}
+
+		// Run the update every second for smooth countdown
+		setInterval(updateTimeAgo, 1000);
+
+		// Hook into Firebase message events to reset the timer
+		messagesRef.on('child_added', (snapshot) => {
+			const data = snapshot.val();
+			if (data.type === 'message' || data.type === 'join') {
+				// Update last message time
+				lastMessageTime = data.timestamp || Date.now();
+				updateTimeAgo(); // update immediately
+			}
+		});
 	</script>
 </body>
 </html>
