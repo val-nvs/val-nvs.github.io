@@ -34,6 +34,10 @@
 			margin: 0;
 			padding: 0;
 			box-sizing: border-box;
+			transition: text-shadow 0.3s ease;
+		}
+		body.fog-enabled * {
+			text-shadow: 0 0 8px currentColor, 0 0 12px currentColor;
 		}
 		html {
 			height: 100%;
@@ -322,6 +326,7 @@ under development dont use for now
 		let onlineCount = 0;
 		let pageLoadTime = Date.now();
 		const MAX_MESSAGES = 20;
+		let fogEnabled = false;
 
 		const sounds = {
 			ping: new Audio('./R_Terminal_ping.wav'),
@@ -638,6 +643,41 @@ under development dont use for now
 			const text = input.value.trim();
 			
 			if (text) {
+				// Check for /help command
+				if (text === '/help') {
+					addMessageLocal('system', 'USAGE: /help (color/fog)');
+					input.value = '';
+					return;
+				}
+				
+				// Check for /help color command
+				if (text === '/help color') {
+					addMessageLocal('system', 'USAGE: /color (hue 0-360)');
+					input.value = '';
+					return;
+				}
+
+				// Check for /help color command
+				if (text === '/help fog') {
+					addMessageLocal('system', 'USAGE: /fog');
+					input.value = '';
+					return;
+				}
+				
+				// Check for /fog command
+				if (text === '/fog') {
+					fogEnabled = !fogEnabled;
+					if (fogEnabled) {
+						document.body.classList.add('fog-enabled');
+						addMessageLocal('system', 'FOG EFFECT ENABLED');
+					} else {
+						document.body.classList.remove('fog-enabled');
+						addMessageLocal('system', 'FOG EFFECT DISABLED');
+					}
+					input.value = '';
+					return;
+				}
+				
 				// Check for /color command
 				const colorMatch = text.match(/^\/color\s+(\d+)$/);
 				if (colorMatch) {
@@ -662,7 +702,18 @@ under development dont use for now
 						
 						input.value = '';
 						return;
+					} else {
+						addMessageLocal('system', 'ERROR: Hue must be 0-360\nTry /help color for usage');
+						input.value = '';
+						return;
 					}
+				}
+				
+				// Check for invalid /color usage
+				if (text.startsWith('/color')) {
+					addMessageLocal('system', 'ERROR: Invalid syntax\nTry /help color for usage');
+					input.value = '';
+					return;
 				}
 				
 				// Regular message
