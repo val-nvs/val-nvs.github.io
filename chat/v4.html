@@ -15,9 +15,10 @@
 
 	<style>
 		:root {
-			--primary-color: hsl(0, 50%, 30%);
-			--bright-color: hsl(0, 100%, 50%);
-			--dark-color: hsl(0, 50%, 10%);
+			--primary-hue: 180;
+			--primary-color: hsl(var(--primary-hue), 50%, 30%);
+			--bright-color: hsl(var(--primary-hue), 100%, 50%);
+			--dark-color: hsl(var(--primary-hue), 50%, 10%);
 		}
 		
 		@font-face {
@@ -309,6 +310,7 @@ under development dont use for now
 		firebase.initializeApp(firebaseConfig);
 		const database = firebase.database();
 		const messagesRef = database.ref('messages');
+		const themeRef = database.ref('theme');
 
 		const messages = [];
 		let hasJoined = false;
@@ -408,11 +410,24 @@ under development dont use for now
 					const userColor = msgObj.color || getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
 					const lines = boxText.split('\n');
 					
-					if (lines.length === 3 && boxText.includes('JOINED')) {
+					if (lines.length === 3 && (boxText.includes('JOINED') || boxText.includes('SET NEW THEME'))) {
 						const middleLine = lines[1];
-						const match = middleLine.match(/│ (USER )(\w+)( JOINED) │/);
+						const joinMatch = middleLine.match(/│ (USER )(\w+)( JOINED) │/);
+						const themeMatch = middleLine.match(/│ (USER )(\w+)( SET NEW THEME) │/);
+						const match = joinMatch || themeMatch;
+						
 						if (match) {
-							const colors = getColorVariants(userColor);
+							// For theme messages, use the stored user color from when they joined
+							let highlightColor = userColor;
+							if (themeMatch && msgObj.username) {
+								// Find the user's join message to get their original color
+								const joinMsg = messages.find(m => m.username === msgObj.username && m.rawText && m.rawText.includes('JOINED'));
+								if (joinMsg && joinMsg.color) {
+									highlightColor = joinMsg.color;
+								}
+							}
+							
+							const colors = getColorVariants(highlightColor);
 							const styledMiddle = '│ ' + match[1] + '<span style="color: ' + colors.saturated + '">' + match[2] + '</span>' + match[3] + ' │';
 							
 							// Handle bottom line with time for system messages - use primary color
@@ -505,6 +520,7 @@ under development dont use for now
 				} else {
 					clearInterval(interval);
 					messages[messageIndex].isAnimating = false;
+					renderMessages(); // Re-render to apply proper formatting
 					isTyping = false;
 					playSound('ping');
 				}
@@ -520,6 +536,9 @@ under development dont use for now
 
 			if (type === 'join') {
 				boxText = `USER ${text} JOINED`;
+				isSystem = true;
+			} else if (type === 'theme') {
+				boxText = `USER ${username} SET NEW THEME`;
 				isSystem = true;
 			} else if (type === 'system') {
 				boxText = text;
@@ -551,7 +570,7 @@ under development dont use for now
 					timestamp: timestamp
 				});
 
-				if (isSystem && type === 'join' && shouldAnimate) {
+				if (isSystem && (type === 'join' || type === 'theme') && shouldAnimate) {
 					playSound('newline');
 				}
 			}
@@ -619,6 +638,34 @@ under development dont use for now
 			const text = input.value.trim();
 			
 			if (text) {
+				// Check for /color command
+				const colorMatch = text.match(/^\/color\s+(\d+)$/);
+				if (colorMatch) {
+					const hue = parseInt(colorMatch[1]);
+					if (hue >= 0 && hue <= 360) {
+						// Send theme change message with the user's CURRENT color (not affected by theme)
+						messagesRef.push({
+							type: 'theme',
+							username: currentUsername,
+							color: currentColor,
+							hue: hue,
+							sessionId: sessionId,
+							timestamp: firebase.database.ServerValue.TIMESTAMP
+						});
+						
+						// Update Firebase theme value
+						themeRef.set({
+							hue: hue,
+							setBy: currentUsername,
+							timestamp: firebase.database.ServerValue.TIMESTAMP
+						});
+						
+						input.value = '';
+						return;
+					}
+				}
+				
+				// Regular message
 				messagesRef.push({
 					type: 'message',
 					username: currentUsername,
@@ -812,11 +859,29 @@ under development dont use for now
 			if (data.type === 'join') {
 				const joinColor = data.color || getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
 				addMessageLocal('join', data.username, true, null, joinColor, data.timestamp);
+			} else if (data.type === 'theme') {
+				// Pass the user's original color from when they set the theme
+				const themeUserColor = data.color || getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
+				addMessageLocal('theme', '', true, data.username, themeUserColor, data.timestamp);
 			} else if (data.type === 'message') {
 				const msgColor = data.color || '#00ffff';
 				addMessageLocal('message', data.text, true, data.username, msgColor, data.timestamp);
 			}
 		});
+
+		// Listen for theme changes
+		themeRef.on('value', (snapshot) => {
+			const themeData = snapshot.val();
+			if (themeData && themeData.hue !== undefined) {
+				setThemeHue(themeData.hue);
+				// Re-render messages to update colors
+				renderMessages();
+			}
+		});
+
+		function setThemeHue(hue) {
+			document.documentElement.style.setProperty('--primary-hue', hue);
+		}
 
 		setTimeout(() => {
 			initialLoadComplete = true;
