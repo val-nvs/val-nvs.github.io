@@ -3,8 +3,9 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>emojos</title>
-	
+	<title>chatroom</title>
+	<link rel="icon" type="image/png" href="favicon.png">
+
 	<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 	<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 	
@@ -14,13 +15,14 @@
 
 	<style>
 		:root {
-			--bg-color: #000;
-			--primary-color: hsl(50, 100%, 25%);
-			--input-color: #0ff;
-			--text-color: #aaa;
-			--scrollbar-track: #022;
-			--scrollbar-thumb: #055;
-			--placeholder-color: #555;
+			--bg-color: transparent;
+			--primary-color: hsl(180, 80%, 30%);
+			--input-color: hsl(180, 100%, 50%);
+			--text-color: hsl(180, 80%, 30%);
+			--scrollbar-track: hsl(180, 80%, 10%);
+			--scrollbar-thumb: hsl(180, 80%, 20%);
+			--scrollbar-thumb-hover: hsl(180, 80%, 30%);
+			--placeholder-color: hsl(180, 80%, 25%);
 		}
 		
 		@font-face {
@@ -59,7 +61,7 @@
 		}
 		span {
 			white-space: pre;
-			color: #5f9f9f;
+			color: var(--primary-color);
 		}
 		.emoji {
 			display: inline-block;
@@ -150,8 +152,8 @@
 			display: none !important;
 		}
 		.messages-container.login-blur {
-			filter: blur(5px);
-			opacity: 0.5;
+			filter: blur(.5rem);
+			opacity: 1;
 			z-index: 0;
 		}
 		.messages-container::-webkit-scrollbar {
@@ -217,11 +219,11 @@
 		});
 	</script>
 	<div class="chat-wrapper">
-		<span id="loginScreen">*                                                           *
-┌───────────────────────────────────────────────────────┐
-│ ┌──────────────────────────┐              ┌─────────────┐ │
-│ │ Last message: <span id="loadingStatus">LOADING...</span> │              │ <a href="https://val-nvs.com" style="text-decoration:underline;">val-nvs.com</a> │ │
-│ └──────────────────────────┘              └─────────────┘ │
+		<span id="loginScreen">
+┌──────────────────────────┐              ┌─────────────────┐
+│ Last message: <span id="loadingStatus">LOADING...</span> │              │ By: <button class="btn-inline" onclick="window.open('https://val-nvs.com', '_blank')">val-nvs.com</button> │
+└──────────────────────────┘              └─────────────────┘
+┌───────────────────────────────────────────────────────────┐
 │                                                           │
 │                                                           │
 │                                                           │
@@ -234,7 +236,7 @@
 │                    │ <input type="text" class="input-inline loading" id="usernameInput" placeholder="LOADING... WAIT" maxlength="10" style="width: 15ch; box-shadow: none; color: #f00;" disabled> │                    │
 │                    └─────────────────┘                    │
 │          ┌─────────────────────────────────────┐          │
-│          │ <span class="color-block selected" data-color="hsl(180, 100%, 50%)" style="color: hsl(180, 100%, 50%);">██</span> <span class="color-block" data-color="hsl(210, 100%, 50%)" style="color: hsl(210, 100%, 50%);">██</span> <span class="color-block" data-color="hsl(240, 100%, 50%)" style="color: hsl(240, 100%, 50%);">██</span> <span class="color-block" data-color="hsl(270, 100%, 50%)" style="color: hsl(270, 100%, 50%);">██</span> <span class="color-block" data-color="hsl(300, 100%, 50%)" style="color: hsl(300, 100%, 50%);">██</span> <span class="color-block" data-color="hsl(330, 100%, 50%)" style="color: hsl(330, 100%, 50%);">██</span> <span class="color-block" data-color="hsl(0, 100%, 50%)" style="color: hsl(0, 100%, 50%);">██</span> <span class="color-block" data-color="hsl(30, 100%, 50%)" style="color: hsl(30, 100%, 50%);">██</span> <span class="color-block" data-color="hsl(60, 100%, 50%)" style="color: hsl(60, 100%, 50%);">██</span> <span class="color-block" data-color="hsl(90, 100%, 50%)" style="color: hsl(90, 100%, 50%);">██</span> <span class="color-block" data-color="hsl(120, 100%, 50%)" style="color: hsl(120, 100%, 50%);">██</span> <span class="color-block" data-color="hsl(150, 100%, 50%)" style="color: hsl(150, 100%, 50%);">██</span> │          │
+│          │ <span class="color-block selected" data-color="hsl(180, 100%, 50%)" style="color: hsl(180, 100%, 50%);">▒▒</span> <span class="color-block" data-color="hsl(210, 100%, 50%)" style="color: hsl(210, 100%, 50%);">▒▒</span> <span class="color-block" data-color="hsl(240, 100%, 50%)" style="color: hsl(240, 100%, 50%);">▒▒</span> <span class="color-block" data-color="hsl(270, 100%, 50%)" style="color: hsl(270, 100%, 50%);">▒▒</span> <span class="color-block" data-color="hsl(300, 100%, 50%)" style="color: hsl(300, 100%, 50%);">▒▒</span> <span class="color-block" data-color="hsl(330, 100%, 50%)" style="color: hsl(330, 100%, 50%);">▒▒</span> <span class="color-block" data-color="hsl(0, 100%, 50%)" style="color: hsl(0, 100%, 50%);">▒▒</span> <span class="color-block" data-color="hsl(30, 100%, 50%)" style="color: hsl(30, 100%, 50%);">▒▒</span> <span class="color-block" data-color="hsl(60, 100%, 50%)" style="color: hsl(60, 100%, 50%);">▒▒</span> <span class="color-block" data-color="hsl(90, 100%, 50%)" style="color: hsl(90, 100%, 50%);">▒▒</span> <span class="color-block" data-color="hsl(120, 100%, 50%)" style="color: hsl(120, 100%, 50%);">▒▒</span> <span class="color-block" data-color="hsl(150, 100%, 50%)" style="color: hsl(150, 100%, 50%);">▒▒</span> │          │
 │          └─────────────────────────────────────┘          │
 │                         ┌───────┐                         │
 │                         │ <button class="btn-inline" id="joinBtn">ENTER</button> │                         │
@@ -247,16 +249,16 @@
 │                                                           │
 │                                                           │
 │                                                           │
-│                                                           │
-│                                                           │
-│                                                           │
 └───────────────────────────────────────────────────────────┘
-*                                                           *</span>
+ 
+ 
+ 
+ </span>
 
-		<span id="chatScreen" class="hidden">*                                                           *
-┌───────────┐ ┌──────┐               ┌──────────────────────┐
-│ <span id="onlineCount">01</span> ONLINE │ │ EXIT │               │ <a href="https://val-nvs.com" style="text-decoration:none;">Made by: <span style="text-decoration:underline;">val-nvs.com</span></a> │
-└───────────┘ └──────┘               └──────────────────────┘
+		<span id="chatScreen" class="hidden">
+┌───────────┐ ┌──────┐                    ┌─────────────────┐
+│ <span id="onlineCount">01</span> ONLINE │ │ <button class="btn-inline" id="exitBtn">EXIT</button> │                    │ By: <button class="btn-inline" onclick="window.open('https://val-nvs.com', '_blank')">val-nvs.com</button> │
+└───────────┘ └──────┘                    └─────────────────┘
 ┌───────────────────────────────────────────────────────────┐
 │                                                           │
 │                                                           │
@@ -287,15 +289,15 @@
 ┌───────┐┌──────────────────────────────────────────┐┌──────┐
 │ <button class="btn-inline" id="emojiBtn">EMOJI</button> ││ <input type="text" class="input-inline input-message" id="userInput" placeholder="type a message" maxlength="40" style="box-shadow: none;"> ││ <button class="btn-inline" id="sendBtn">SEND</button> │
 └───────┘└──────────────────────────────────────────┘└──────┘
-*                                                           *</span>
+ </span>
 
 		<div class="messages-container login-blur" id="messagesContainer">
 			<div class="messages-inner" id="messagesInner"></div>
 		</div>
 
-		<span id="emojiScreen" class="hidden">*                                                           *
+		<span id="emojiScreen" class="hidden">
 under development dont use for now
-*                                                           *</span>
+ </span>
 	</div>
 
 	<script>
@@ -423,7 +425,7 @@ under development dont use for now
 							if (lines[2].includes('<span class="time">')) {
 								const bottomMatch = lines[2].match(/^(└─*)(<span class="time">(.*?)<\/span>)(┘)$/);
 								if (bottomMatch) {
-									styledBottom = bottomMatch[1] + '<span class="time" style="color: #5f9f9f">' + bottomMatch[3] + '</span>' + bottomMatch[4];
+									styledBottom = bottomMatch[1] + '<span class="time" style="color: #333333">' + bottomMatch[3] + '</span>' + bottomMatch[4];
 								}
 							}
 							
