@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Chat room</title>
+	
+	<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Noto+Emoji:wght@300..700&display=swap" rel="stylesheet">
+	
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		html {
+			font-size: 16px;
+		}
+
+		@media (max-width: 600px) {
+			html {
+				font-size: calc(100vw / 40);
+			}
+		}
+
+		@font-face {
+			font-family: 'PerfectDOSVGA';
+			src: url('./PerfectDosVga.ttf') format('truetype');
+		}
+
+		body {
+			background-color: #000;
+			color: #5f9f9f;
+			font-family: 'PerfectDOSVGA', 'Noto Emoji', 'Courier New', monospace;
+			min-height: 100vh;
+			overflow-x: hidden;
+			text-shadow: 0 0 8px currentColor, 0 0 12px currentColor;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.chat-frame {
+			font-size: 0.875rem;
+			line-height: 1;
+			white-space: pre;
+			text-align: left;
+		}
+
+		.color-block {
+			cursor: pointer;
+			transition: transform 0.1s, text-shadow 0.1s;
+			display: inline-block;
+		}
+
+		.color-block:hover {
+			transform: scale(1.2);
+		}
+
+		.color-block.selected {
+			text-shadow: 0 0 0.5rem currentColor, 0 0 0.8rem currentColor;
+			transform: scale(1.3);
+		}
+
+		.input-inline {
+			background: transparent;
+			border: none;
+			color: #5f9f9f;
+			font-family: 'PerfectDOSVGA', 'Courier New', monospace;
+			font-size: 0.875rem;
+			outline: none;
+			padding: 0;
+			width: 10ch;
+			text-shadow: 0 0 8px currentColor, 0 0 12px currentColor;
+		}
+
+		.input-inline::placeholder {
+			color: #fff;
+			opacity: .5;
+		}
+
+		.input-message {
+			width: 33ch;
+		}
+
+		.btn-inline {
+			background: transparent;
+			border: none;
+			color: #5f9f9f;
+			font-family: 'PerfectDOSVGA', 'Courier New', monospace;
+			font-size: 0.875rem;
+			cursor: pointer;
+			padding: 0;
+			text-shadow: 0 0 8px currentColor, 0 0 12px currentColor;
+			transition: color 0.2s;
+		}
+
+		.btn-inline:hover {
+			color: #00ffff;
+		}
+
+		.btn-inline.active {
+			color: #fff;
+		}
+
+		.messages-container {
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			transform: translate(-50%, -50%);
+			width: 52ch;
+			height: 18.375em;
+			overflow-y: auto;
+			display: flex;
+			flex-direction: column;
+			background-color: rgba(255, 0, 255, 0);
+		}
+
+		.messages-container::-webkit-scrollbar {
+			width: 1ch;
+		}
+
+		.messages-container::-webkit-scrollbar-track {
+			background: #022;
+			border-radius: 0;
+		}
+
+		.messages-container::-webkit-scrollbar-thumb {
+			background: #055;
+			border-radius: 0;
+		}
+
+		.messages-container::-webkit-scrollbar-thumb:hover {
+			background: #0ff;
+		}
+
+		.messages-container::-webkit-scrollbar-button {
+			display: none;
+		}
+
+		.messages-inner {
+			margin-top: auto;
+			display: flex;
+			flex-direction: column;
+			align-items: flex-end;
+		}
+
+		.message {
+			white-space: pre;
+			line-height: 1;
+			font-size: 0.875rem;
+		}
+
+		.chat-wrapper {
+			position: relative;
+		}
+
+		.hidden {
+			display: none;
+		}
+	</style>
+</head>
+<body>
+	<div class="chat-wrapper">
+		<div class="chat-frame" id="chatFrame"></div>
+		<div class="messages-container" id="messagesContainer">
+			<div class="messages-inner" id="messagesInner"></div>
+		</div>
+	</div>
+
+	<script>
+		const firebaseConfig = {
+			apiKey: "AIzaSyCxC1qidadTm5uLacKtD9d_6Zw1uq0Mnf0",
+			authDomain: "chat-8a799.firebaseapp.com",
+			databaseURL: "https://chat-8a799-default-rtdb.firebaseio.com",
+			projectId: "chat-8a799",
+			storageBucket: "chat-8a799.firebasestorage.app",
+			messagingSenderId: "359690574077",
+			appId: "1:359690574077:web:65ed1801a082314a8a8694"
+		};
+
+		firebase.initializeApp(firebaseConfig);
+		const database = firebase.database();
+		const messagesRef = database.ref('messages');
+
+		const messages = [];
+		let hasJoined = false;
+		let currentUsername = '';
+		let currentColor = 'hsl(180, 100%, 50%)';
+		let isTyping = false;
+		let sessionId = Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+		let initialLoadComplete = false;
+		let onlineCount = 0;
+		let pageLoadTime = Date.now();
+		let showTimestamps = false;
+		let fairyCursorEnabled = false;
+		const MAX_MESSAGES = 30;
+
+		const sounds = {
+			ping: new Audio('./R_Terminal_ping.wav'),
+			newline: new Audio('./R_terminal_newline_1.wav'),
+			cursor: new Audio('./terminal_cursor.wav')
+		};
+
+		function playSound(soundName) {
+			if (sounds[soundName]) {
+				sounds[soundName].currentTime = 0;
+				sounds[soundName].play().catch(e => console.log('Audio play failed:', e));
+			}
+		}
+
+		const colors = [
+			'hsl(180, 100%, 50%)', 'hsl(210, 100%, 50%)', 'hsl(240, 100%, 50%)',
+			'hsl(270, 100%, 50%)', 'hsl(300, 100%, 50%)', 'hsl(330, 100%, 50%)',
+			'hsl(0, 100%, 50%)', 'hsl(30, 100%, 50%)', 'hsl(60, 100%, 50%)',
+			'hsl(90, 100%, 50%)', 'hsl(120, 100%, 50%)', 'hsl(150, 100%, 50%)'
+		];
+
+		function renderFrame() {
+			const frame = document.getElementById('chatFrame');
+			const headerBase = '┌──';
+			const onlineText = onlineCount + '─ONLINE';
+			const totalWidth = 61;
+			const fillerDashes = totalWidth - headerBase.length - onlineText.length;
+			const header = headerBase + onlineText + '─'.repeat(Math.max(0, fillerDashes)) + '┐';
+
+			let html = '';
+
+			if (!hasJoined) {
+				// Show join screen
+				html = ` 
+ 
+ 
+                       ┌─────────────┐                       
+                       │ <a href="https://val-nvs.com" target="_blank" style="color:#0ff; text-decoration:underline;">val-nvs.com</a> │
+                       └─────────────┘                       
+${header}
+│                                                            │
+│                                                            │
+│                                                            │
+│                                                            │
+│                                                            │
+│                                                            │
+│                                                            │
+│                                                            │
+│                                                            │
+│                                                            │
+│                                                            │
+│                                                            │
+│                                                            │
+│                                                            │
+│                                                            │
+│                                                            │
+│                                                            │
+│                                                            │
+│                                                            │
+│                                                            │
+│                                                            │
+└──────────────────────────────────────────────────────────:3┘
+┌────────────┐┌──────────────────────────────────────┐┌──────┐
+│ <input type="text" class="input-inline" id="usernameInput" placeholder="enter name" maxlength="10"> ││ pick a color ${colors.map((c, i) => `<span class="color-block ${i === 0 ? 'selected' : ''}" data-color="${c}" style="color: ${c};">▓</span>`).join(' ')} ││ <button class="btn-inline" id="joinBtn">JOIN</button> │
+└────────────┘└──────────────────────────────────────┘└──────┘
+┌───────┐┌───────────────────────────────────┐┌──────┐┌──────┐
+│       ││                                   ││      ││      │
+└───────┘└───────────────────────────────────┘└──────┘└──────┘`;
+			} else {
+				// Show chat screen
+				html = `                       ┌─────────────┐                       
+                       │ <a href="https://val-nvs.com" target="_blank" style="color:#0ff; text-decoration:underline;">val-nvs.com</a> │
+                       └─────────────┘                       
+${header}
+│                                                            │
+│                                                            │
+│                                                            │
+│                                                            │
+│                                                            │
+│                                                            │
+│                                                            │
+│                                                            │
+│                                                            │
+│                                                            │
+│                                                            │
+│                                                            │
+│                                                            │
+│                                                            │
+│                                                            │
+│                                                            │
+│                                                            │
+│                                                            │
+│                                                            │
+│                                                            │
+│                                                            │
+└──────────────────────────────────────────────────────────:3┘
+┌───────┐┌───────────────────────────────────┐┌──────┐┌──────┐
+│ <button class="btn-inline ${showTimestamps ? 'active' : ''}" id="timeBtn">CLOCK</button> ││ <input type="text" class="input-inline input-message" id="userInput" placeholder="type a message" maxlength="33"> ││ <button class="btn-inline" id="sendBtn">SEND</button> ││ <button class="btn-inline" id="disconnectBtn">EXIT</button> │
+└───────┘└───────────────────────────────────┘└──────┘└──────┘`;
+			}
+
+			frame.innerHTML = html;
+			attachEventListeners();
+		}
+
+		function attachEventListeners() {
+			// Color blocks
+			document.querySelectorAll('.color-block').forEach(block => {
+				block.onclick = () => {
+					currentColor = block.dataset.color;
+					document.querySelectorAll('.color-block').forEach(b => b.classList.remove('selected'));
+					block.classList.add('selected');
+					updateSparkleColor(currentColor);
+				};
+			});
+
+			// Join button
+			const joinBtn = document.getElementById('joinBtn');
+			if (joinBtn) {
+				joinBtn.onclick = joinChat;
+			}
+
+			// Username input
+			const usernameInput = document.getElementById('usernameInput');
+			if (usernameInput) {
+				usernameInput.onkeydown = (e) => {
+					if (e.key === 'Enter') joinChat();
+				};
+				usernameInput.focus();
+			}
+
+			// Time button
+			const timeBtn = document.getElementById('timeBtn');
+			if (timeBtn) {
+				timeBtn.onclick = toggleTimestamps;
+			}
+
+			// Send button
+			const sendBtn = document.getElementById('sendBtn');
+			if (sendBtn) {
+				sendBtn.onclick = sendMessage;
+			}
+
+			// Disconnect button
+			const disconnectBtn = document.getElementById('disconnectBtn');
+			if (disconnectBtn) {
+				disconnectBtn.onclick = disconnectChat;
+			}
+
+			// User input
+			const userInput = document.getElementById('userInput');
+			if (userInput) {
+				userInput.onkeydown = (e) => {
+					if (e.key.length === 1 || e.key === 'Backspace' || e.key === 'Delete') {
+						playSound('cursor');
+					}
+					if (e.key === 'Enter') {
+						sendMessage();
+					} else if (e.key === 'Escape') {
+						messages.length = 0;
+						renderMessages();
+					}
+				};
+				userInput.focus();
+			}
+		}
+
+		function updateSparkleColor(color) {
+			const hsl = color.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
+			if (hsl) {
+				const h = parseInt(hsl[1]) / 360;
+				const s = parseInt(hsl[2]) / 100;
+				const l = parseInt(hsl[3]) / 100;
+				
+				let r, g, b;
+				if (s === 0) {
+					r = g = b = l;
+				} else {
+					const hue2rgb = (p, q, t) => {
+						if (t < 0) t += 1;
+						if (t > 1) t -= 1;
+						if (t < 1/6) return p + (q - p) * 6 * t;
+						if (t < 1/2) return q;
+						if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+						return p;
+					};
+					const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+					const p = 2 * l - q;
+					r = hue2rgb(p, q, h + 1/3);
+					g = hue2rgb(p, q, h);
+					b = hue2rgb(p, q, h - 1/3);
+				}
+				
+				window.sparkleColor = {
+					r: Math.round(r * 255),
+					g: Math.round(g * 255),
+					b: Math.round(b * 255)
+				};
+			}
+		}
+
+		function hexToHSL(hex) {
+			const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+			let r = parseInt(result[1], 16) / 255;
+			let g = parseInt(result[2], 16) / 255;
+			let b = parseInt(result[3], 16) / 255;
+
+			const max = Math.max(r, g, b), min = Math.min(r, g, b);
+			let h, s, l = (max + min) / 2;
+
+			if (max === min) {
+				h = s = 0;
+			} else {
+				const d = max - min;
+				s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+				switch (max) {
+					case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+					case g: h = ((b - r) / d + 2) / 6; break;
+					case b: h = ((r - g) / d + 4) / 6; break;
+				}
+			}
+
+			return { h: h * 360, s: s * 100, l: l * 100 };
+		}
+
+		function hslToString(h, s, l) {
+			return `hsl(${h}, ${s}%, ${l}%)`;
+		}
+
+		function getColorVariants(color) {
+			let hue, sat, light;
+			
+			if (color.startsWith('hsl')) {
+				const match = color.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
+				if (match) {
+					hue = parseInt(match[1]);
+					sat = parseInt(match[2]);
+					light = parseInt(match[3]);
+				}
+			} else {
+				const hsl = hexToHSL(color);
+				hue = hsl.h;
+				sat = hsl.s;
+				light = hsl.l;
+			}
+			
+			return {
+				saturated: hslToString(hue, 100, 60),
+				desaturated: hslToString(hue, 100, 35)
+			};
+		}
+
+		function createBox(text, username, isSystem = false, timestamp = null) {
+			if (isSystem) {
+				const contentWidth = text.length + 2;
+				
+				let timeStr = '';
+				let adjustedWidth = contentWidth;
+				if (showTimestamps && timestamp) {
+					const date = new Date(timestamp);
+					const hours = String(date.getHours()).padStart(2, '0');
+					const minutes = String(date.getMinutes()).padStart(2, '0');
+					timeStr = hours + ':' + minutes;
+					const timeSpace = timeStr.length;
+					adjustedWidth = Math.max(contentWidth, timeSpace + 1);
+				}
+				
+				const topBorder = '┌' + '─'.repeat(adjustedWidth) + '┐';
+				
+				const spacesAfter = adjustedWidth - text.length - 1;
+				const messageLine = '│ ' + text + ' '.repeat(spacesAfter) + '│';
+				
+				let bottomBorder;
+				if (showTimestamps && timestamp && timeStr) {
+					const dashesBeforeTime = adjustedWidth - timeStr.length;
+					bottomBorder = '└' + '─'.repeat(dashesBeforeTime) + timeStr + '┘';
+				} else {
+					bottomBorder = '└' + '─'.repeat(adjustedWidth) + '┘';
+				}
+				
+				return [topBorder, messageLine, bottomBorder].join('\n');
+			}
+			
+			const usernameContent = username.length + 2;
+			const messageContent = text.length + 2;
+			let contentWidth = Math.max(usernameContent, messageContent);
+			
+			let timeStr = '';
+			if (showTimestamps && timestamp) {
+				const date = new Date(timestamp);
+				const hours = String(date.getHours()).padStart(2, '0');
+				const minutes = String(date.getMinutes()).padStart(2, '0');
+				timeStr = hours + ':' + minutes;
+				const timeSpace = timeStr.length + 1;
+				contentWidth = Math.max(contentWidth, timeSpace + 1);
+			}
+			
+			const dashesAfterUsername = contentWidth - username.length - 1;
+			const topBorder = '┌─' + username + '─'.repeat(dashesAfterUsername) + '┐';
+			
+			const spacesAfterText = contentWidth - text.length - 1;
+			const messageLine = '│ ' + text + ' '.repeat(spacesAfterText) + '│';
+			
+			let bottomBorder;
+			if (showTimestamps && timestamp && timeStr) {
+				const dashesBeforeTime = contentWidth - timeStr.length;
+				bottomBorder = '└' + '─'.repeat(dashesBeforeTime) + timeStr + '┘';
+			} else {
+				bottomBorder = '└' + '─'.repeat(contentWidth) + '┘';
+			}
+			
+			return [topBorder, messageLine, bottomBorder].join('\n');
+		}
+
+		function renderMessages() {
+			const container = document.getElementById('messagesInner');
+			const layer = document.getElementById('messagesContainer');
+			container.innerHTML = '';
+			
+			const now = Date.now();
+			
+			messages.forEach(msgObj => {
+				const div = document.createElement('div');
+				div.className = 'message';
+				div.style.alignSelf = msgObj.isSystem ? 'flex-start' : 'flex-end';
+				
+				const age = now - (msgObj.timestamp || now);
+				const fadeTime = 25 * 60 * 1000;
+				const opacity = Math.max(0.5, 1 - (age / fadeTime) * 0.5);
+				div.style.opacity = opacity;
+				
+				let boxText;
+				if (msgObj.isAnimating) {
+					boxText = msgObj.text;
+				} else {
+					boxText = createBox(msgObj.rawText, msgObj.username, msgObj.isSystem, msgObj.timestamp);
+				}
+				
+				if (msgObj.isSystem) {
+					const userColor = msgObj.color || '#5f9f9f';
+					const lines = boxText.split('\n');
+					
+					if (lines.length === 3 && boxText.includes('JOINED')) {
+						const topLine = lines[0];
+						const middleLine = lines[1];
+						const bottomLine = lines[2];
+						
+						const match = middleLine.match(/│ (USER )(\w+)( JOINED) │/);
+						if (match) {
+							const colors = getColorVariants(userColor);
+							const styledMiddle = '│ ' + match[1] + '<span style="color: ' + colors.saturated + '">' + match[2] + '</span>' + match[3] + ' │';
+							div.style.color = '#5f9f9f';
+							div.innerHTML = topLine + '\n' + styledMiddle + '\n' + bottomLine;
+						} else {
+							div.style.color = '#5f9f9f';
+							div.textContent = boxText;
+						}
+					} else {
+						div.style.color = '#5f9f9f';
+						div.textContent = boxText;
+					}
+				} else {
+					const userColor = msgObj.color || '#00ffff';
+					const colors = getColorVariants(userColor);
+					
+					const lines = boxText.split('\n');
+					if (lines.length === 3) {
+						const topLine = lines[0];
+						const middleLine = lines[1];
+						const bottomLine = lines[2];
+						
+						const messageMatch = middleLine.match(/│(.*)│/);
+						if (messageMatch) {
+							const messageContent = messageMatch[1];
+							const styledTop = '<span style="color: ' + colors.desaturated + '">' + topLine + '</span>';
+							const styledMiddle = '<span style="color: ' + colors.desaturated + '">│</span><span style="color: ' + colors.saturated + '">' + messageContent + '</span><span style="color: ' + colors.desaturated + '">│</span>';
+							const styledBottom = '<span style="color: ' + colors.desaturated + '">' + bottomLine + '</span>';
+							div.innerHTML = styledTop + '\n' + styledMiddle + '\n' + styledBottom;
+						} else {
+							div.style.color = colors.desaturated;
+							div.textContent = boxText;
+						}
+					} else {
+						div.style.color = colors.desaturated;
+						div.textContent = boxText;
+					}
+				}
+				
+				container.appendChild(div);
+			});
+			
+			layer.scrollTop = layer.scrollHeight;
+		}
+
+		function animateMessage(messageBox, isSystem, color, timestamp, rawText, username) {
+			isTyping = true;
+			
+			const lines = messageBox.split('\n');
+			const maxLength = Math.max(...lines.map(l => l.length));
+			let columnIndex = 0;
+			
+			messages.push({ 
+				text: '',
+				rawText: rawText,
+				username: username,
+				isSystem: isSystem, 
+				isAnimating: true, 
+				color: color,
+				timestamp: timestamp || Date.now()
+			});
+			const messageIndex = messages.length - 1;
+			
+			const interval = setInterval(() => {
+				if (columnIndex < maxLength) {
+					playSound('cursor');
+					
+					let partialText = '';
+					for (let i = 0; i < lines.length; i++) {
+						partialText += lines[i].substring(0, columnIndex + 1);
+						if (i < lines.length - 1) partialText += '\n';
+					}
+					messages[messageIndex].text = partialText;
+					renderMessages();
+					columnIndex++;
+				} else {
+					clearInterval(interval);
+					messages[messageIndex].isAnimating = false;
+					isTyping = false;
+					playSound('ping');
+				}
+			}, 80);
+		}
+
+function addMessageLocal(type, text, fromFirebase = false, messageUsername = null, isOwnMessage = false, messageColor = null, firebaseTimestamp = null) {
+    let boxText = '';
+    let isSystem = false;
+    const username = messageUsername || currentUsername || 'anon';
+    const color = messageColor || (fromFirebase ? '#5f9f9f' : currentColor);
+    const timestamp = firebaseTimestamp || Date.now();
+
+    // Determine system messages
+    if (type === 'join') {
+        boxText = `USER ${text} JOINED`;
+        isSystem = true;
+    } else if (type === 'system') {
+        boxText = text;
+        isSystem = true;
+    } else {
+        boxText = text;
+        isSystem = false;
+    }
+
+    const box = createBox(boxText, username, isSystem, timestamp);
+    const shouldAnimate = initialLoadComplete && timestamp > pageLoadTime;
+
+    // Function to safely push message into messages array
+    function pushMessage(msg) {
+        messages.push(msg);
+        trimMessages();
+        renderMessages();
+    }
+
+    // Animate message if appropriate
+    if (!isSystem && shouldAnimate) {
+        animateMessage(box, isSystem, color, timestamp, boxText, username);
+    } else {
+        pushMessage({
+            text: box,
+            rawText: boxText,
+            username: username,
+            isSystem: isSystem,
+            color: color,
+            timestamp: timestamp,
+            isAnimating: false
+        });
+
+        if (isSystem && type === 'join' && shouldAnimate) {
+            playSound('newline');
+        }
+    }
+}
+
+// Safe trimming function that avoids removing animating messages
+function trimMessages() {
+    let nonAnimatingCount = messages.filter(m => !m.isAnimating).length;
+    if (nonAnimatingCount <= MAX_MESSAGES) return;
+
+    let removeCount = nonAnimatingCount - MAX_MESSAGES;
+    for (let i = 0; i < messages.length && removeCount > 0;) {
+        if (!messages[i].isAnimating) {
+            messages.splice(i, 1);
+            removeCount--;
+        } else {
+            i++;
+        }
+    }
+}
+
+		function joinChat() {
+			const usernameInput = document.getElementById('usernameInput');
+			const username = usernameInput.value.trim();
+			
+			if (!username) return;
+			
+			currentUsername = username;
+			hasJoined = true;
+			
+			const userPresenceRef = database.ref(`presence/${sessionId}`);
+			
+			userPresenceRef.onDisconnect().remove();
+			
+			userPresenceRef.set({
+				username: username,
+				color: currentColor,
+				timestamp: firebase.database.ServerValue.TIMESTAMP
+			});
+			
+			messagesRef.push({
+				type: 'join',
+				username: username,
+				color: currentColor,
+				sessionId: sessionId,
+				timestamp: firebase.database.ServerValue.TIMESTAMP
+			});
+			
+			renderFrame();
+		}
+
+		function disconnectChat() {
+			if (!hasJoined) return;
+			
+			database.ref(`presence/${sessionId}`).remove();
+			hasJoined = false;
+			
+			renderFrame();
+		}
+
+		function sendMessage() {
+			if (isTyping) return;
+			
+			const input = document.getElementById('userInput');
+			const text = input.value.trim();
+			
+			if (text) {
+				// Check for local commands
+				if (text === '/fairy') {
+					fairyCursorEnabled = !fairyCursorEnabled;
+					window.fairyCursorEnabled = fairyCursorEnabled;
+					const statusText = fairyCursorEnabled ? 'FAIRY CURSOR ON' : 'FAIRY CURSOR OFF';
+					addMessageLocal('system', statusText, false, null, false, currentColor);
+					input.value = '';
+					return;
+				}
+				
+				messagesRef.push({
+					type: 'message',
+					username: currentUsername,
+					color: currentColor,
+					text: text,
+					sessionId: sessionId,
+					timestamp: firebase.database.ServerValue.TIMESTAMP
+				});
+				input.value = '';
+			}
+		}
+
+		function toggleTimestamps() {
+			showTimestamps = !showTimestamps;
+			renderFrame();
+			renderMessages();
+		}
+
+		const presenceRef = database.ref('presence');
+		presenceRef.on('value', (snapshot) => {
+			onlineCount = snapshot.numChildren();
+			renderFrame();
+		});
+
+		const viewerPresenceRef = database.ref(`presence/${sessionId}`);
+		viewerPresenceRef.onDisconnect().remove();
+		viewerPresenceRef.set({
+			viewer: true,
+			timestamp: firebase.database.ServerValue.TIMESTAMP
+		});
+
+		messagesRef.on('child_added', (snapshot) => {
+			const data = snapshot.val();
+			const isOwnMessage = data.sessionId === sessionId;
+			
+			if (data.type === 'join') {
+				const joinColor = data.color || '#5f9f9f';
+				addMessageLocal('join', data.username, true, null, false, joinColor, data.timestamp);
+			} else if (data.type === 'message') {
+				const msgColor = data.color || '#00ffff';
+				addMessageLocal('message', data.text, true, data.username, isOwnMessage, msgColor, data.timestamp);
+			}
+		});
+
+		setTimeout(() => {
+			initialLoadComplete = true;
+		}, 1000);
+
+		setInterval(() => {
+			if (messages.length > 0) {
+				renderMessages();
+			}
+		}, 10000);
+
+		// Initialize
+		renderFrame();
+		updateSparkleColor(currentColor);
+		window.fairyCursorEnabled = fairyCursorEnabled;
+	</script>
+	
+	<!-- Cursor trail effect -->
+	<script>
+		(function() {
+			const canvas = document.createElement("canvas");
+			canvas.id = "trail";
+			canvas.style.position = "fixed";
+			canvas.style.top = "0";
+			canvas.style.left = "0";
+			canvas.style.pointerEvents = "none";
+			document.body.appendChild(canvas);
+
+			const ctx = canvas.getContext("2d");
+			let width = window.innerWidth;
+			let height = window.innerHeight;
+			canvas.width = width;
+			canvas.height = height;
+
+			let targetX = width / 2;
+			let targetY = height / 2;
+			const sparkles = [];
+			
+			window.sparkleColor = { r: 0, g: 255, b: 255 };
+
+			window.addEventListener("mousemove", (e) => {
+				targetX = e.clientX;
+				targetY = e.clientY;
+
+				if (window.fairyCursorEnabled) {
+					for (let i = 0; i < 3; i++) {
+						sparkles.push({
+							x: e.clientX + (Math.random() - 0.5) * 20,
+							y: e.clientY + (Math.random() - 0.5) * 20,
+							alpha: 1,
+							size: Math.random() * 1.5 + 0.5,
+							vx: (Math.random() - 0.5) * 0.5,
+							vy: (Math.random() - 0.5) * 0.5,
+							color: { ...window.sparkleColor }
+						});
+					}
+				}
+			});
+
+			function animate() {
+				ctx.clearRect(0, 0, width, height);
+
+				for (let i = 0; i < sparkles.length; i++) {
+					const s = sparkles[i];
+					s.x += s.vx;
+					s.y += s.vy;
+					s.alpha -= 0.025;
+					ctx.fillStyle = `rgba(${s.color.r},${s.color.g},${s.color.b},${s.alpha})`;
+					ctx.beginPath();
+					ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+					ctx.fill();
+
+					if (s.alpha <= 0) {
+						sparkles.splice(i, 1);
+						i--;
+					}
+				}
+
+				requestAnimationFrame(animate);
+			}
+
+			window.addEventListener("resize", () => {
+				width = window.innerWidth;
+				height = window.innerHeight;
+				canvas.width = width;
+				canvas.height = height;
+			});
+
+			animate();
+		})();
+	</script>
+</body>
+</html>
