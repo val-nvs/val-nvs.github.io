@@ -22,8 +22,8 @@
 			font-weight: normal;
 			line-height: 1;
 			font-size: 2.8vw;
-			background: #000;
 			color: #aaa;
+			text-shadow: 0px 0 0px currentColor, -0px 0 0px currentColor;
 			margin: 0;
 			padding: 0;
 			box-sizing: border-box;
@@ -37,7 +37,7 @@
 			height: 100%;
 		}
 		body {
-			text-shadow: 0 0 0px currentColor, 0 0 0px currentColor;
+			background: #000;
 			margin: 0;
 			padding: 0;
 			height: 100%;
@@ -129,6 +129,11 @@
 		.messages-container.hidden {
 			display: none !important;
 		}
+		.messages-container.login-blur {
+			filter: blur(5px);
+			opacity: 0.5;
+			z-index: 0;
+		}
 		.messages-container::-webkit-scrollbar {
 			width: 1ch;
 		}
@@ -162,6 +167,9 @@
 			position: relative;
 			z-index: 1;
 		}
+		#loginScreen {
+			z-index: 5;
+		}
 		#loginScreen.hidden, #chatScreen.hidden, #emojiScreen.hidden {
 			display: none !important;
 		}
@@ -174,9 +182,9 @@
 	<div class="chat-wrapper">
 		<span id="loginScreen">*                                                           *
 ┌───────────────────────────────────────────────────────────┐
-│                                           ┌─────────────┐ │
-│                                           │ <a href="https://val-nvs.com" style="text-decoration:underline;">val-nvs.com</a> │ │
-│                                           └─────────────┘ │
+│ ┌──────────────────────────┐              ┌─────────────┐ │
+│ │ Last message: <span id="loadingStatus">LOADING...</span> │              │ <a href="https://val-nvs.com" style="text-decoration:underline;">val-nvs.com</a> │ │
+│ └──────────────────────────┘              └─────────────┘ │
 │                                                           │
 │                                                           │
 │                                                           │
@@ -209,9 +217,9 @@
 *                                                           *</span>
 
 		<span id="chatScreen" class="hidden">*                                                           *
-┌───────────┐ ┌──────┐      ┌───────────────────────────────┐
-│ <span id="onlineCount">01</span> ONLINE │ │ EXIT │      │ <a href="https://val-nvs.com" style="text-decoration:none;">Visit my website: <span style="text-decoration:underline;">val-nvs.com</span></a> │
-└───────────┘ └──────┘      └───────────────────────────────┘
+┌───────────┐ ┌──────┐               ┌──────────────────────┐
+│ <span id="onlineCount">01</span> ONLINE │ │ EXIT │               │ <a href="https://val-nvs.com" style="text-decoration:none;">Made by: <span style="text-decoration:underline;">val-nvs.com</span></a> │
+└───────────┘ └──────┘               └──────────────────────┘
 ┌───────────────────────────────────────────────────────────┐
 │                                                           │
 │                                                           │
@@ -244,7 +252,7 @@
 └───────┘└──────────────────────────────────────────┘└──────┘
 *                                                           *</span>
 
-		<div class="messages-container hidden" id="messagesContainer">
+		<div class="messages-container login-blur" id="messagesContainer">
 			<div class="messages-inner" id="messagesInner"></div>
 		</div>
 
@@ -297,25 +305,37 @@ under development dont use for now
 			if (match) {
 				const hue = parseInt(match[1]);
 				return {
-					saturated: `hsl(${hue}, 100%, 60%)`,
-					desaturated: `hsl(${hue}, 100%, 35%)`
+					saturated: `hsl(${hue}, 100%, 50%)`,
+					desaturated: `hsl(${hue}, 100%, 25%)`
 				};
 			}
 			return { saturated: color, desaturated: color };
 		}
 
-		function createBox(text, username, isSystem = false) {
+		function formatTime(timestamp) {
+			const date = new Date(timestamp);
+			const hours = String(date.getHours()).padStart(2, '0');
+			const minutes = String(date.getMinutes()).padStart(2, '0');
+			return `${hours}:${minutes}`;
+		}
+
+		function createBox(text, username, isSystem = false, timestamp = null) {
 			if (isSystem) {
-				const contentWidth = text.length + 2;
+				const timeStr = timestamp ? formatTime(timestamp) : '';
+				const timeLength = timeStr.length;
+				const contentWidth = Math.max(text.length + 2, timeLength + 4);
 				const topBorder = '┌' + '─'.repeat(contentWidth) + '┐';
-				const messageLine = '│ ' + text + ' │';
-				const bottomBorder = '└' + '─'.repeat(contentWidth) + '┘';
+				const messageLine = '│ ' + text + ' '.repeat(contentWidth - text.length -1) + '│';
+				const dashesBeforeTime = contentWidth - timeLength;
+				const bottomBorder = '└' + '─'.repeat(dashesBeforeTime) + '<span class="time">' + timeStr + '</span>' + '┘';
 				return [topBorder, messageLine, bottomBorder].join('\n');
 			}
 			
 			const usernameContent = username.length + 2;
 			const messageContent = text.length + 2;
-			const contentWidth = Math.max(usernameContent, messageContent);
+			const timeStr = timestamp ? formatTime(timestamp) : '';
+			const timeLength = timeStr.length;
+			const contentWidth = Math.max(usernameContent, messageContent, timeLength + 4);
 			
 			const dashesAfterUsername = contentWidth - username.length - 1;
 			const topBorder = '┌─' + username + '─'.repeat(dashesAfterUsername) + '┐';
@@ -323,7 +343,8 @@ under development dont use for now
 			const spacesAfterText = contentWidth - text.length - 1;
 			const messageLine = '│ ' + text + ' '.repeat(spacesAfterText) + '│';
 			
-			const bottomBorder = '└' + '─'.repeat(contentWidth) + '┘';
+			const dashesBeforeTime = contentWidth - timeLength;
+			const bottomBorder = '└' + '─'.repeat(dashesBeforeTime) + '<span class="time">' + timeStr + '</span>' + '┘';
 			
 			return [topBorder, messageLine, bottomBorder].join('\n');
 		}
@@ -337,7 +358,7 @@ under development dont use for now
 				div.className = 'message';
 				div.style.alignSelf = msgObj.isSystem ? 'flex-start' : 'flex-end';
 				
-				const boxText = msgObj.isAnimating ? msgObj.text : createBox(msgObj.rawText, msgObj.username, msgObj.isSystem);
+				const boxText = msgObj.isAnimating ? msgObj.text : createBox(msgObj.rawText, msgObj.username, msgObj.isSystem, msgObj.timestamp);
 				
 				if (msgObj.isSystem) {
 					const userColor = msgObj.color || '#5f9f9f';
@@ -349,12 +370,22 @@ under development dont use for now
 						if (match) {
 							const colors = getColorVariants(userColor);
 							const styledMiddle = '│ ' + match[1] + '<span style="color: ' + colors.saturated + '">' + match[2] + '</span>' + match[3] + ' │';
-							div.innerHTML = lines[0] + '\n' + styledMiddle + '\n' + lines[2];
+							
+							// Handle bottom line with time for system messages
+							let styledBottom = lines[2];
+							if (lines[2].includes('<span class="time">')) {
+								const bottomMatch = lines[2].match(/^(└─*)(<span class="time">(.*?)<\/span>)(┘)$/);
+								if (bottomMatch) {
+									styledBottom = bottomMatch[1] + '<span class="time" style="color: #5f9f9f">' + bottomMatch[3] + '</span>' + bottomMatch[4];
+								}
+							}
+							
+							div.innerHTML = lines[0] + '\n' + styledMiddle + '\n' + styledBottom;
 						} else {
-							div.textContent = boxText;
+							div.innerHTML = boxText;
 						}
 					} else {
-						div.textContent = boxText;
+						div.innerHTML = boxText;
 					}
 				} else {
 					const userColor = msgObj.color || '#00ffff';
@@ -367,13 +398,24 @@ under development dont use for now
 							const messageContent = messageMatch[1];
 							const styledTop = '<span style="color: ' + colors.desaturated + '">' + lines[0] + '</span>';
 							const styledMiddle = '<span style="color: ' + colors.desaturated + '">│</span><span style="color: ' + colors.saturated + '">' + messageContent + '</span><span style="color: ' + colors.desaturated + '">│</span>';
-							const styledBottom = '<span style="color: ' + colors.desaturated + '">' + lines[2] + '</span>';
+							
+							// Handle bottom line with time - color matches user color
+							let styledBottom = lines[2];
+							if (lines[2].includes('<span class="time">')) {
+								const bottomMatch = lines[2].match(/^(└─*)(<span class="time">(.*?)<\/span>)(┘)$/);
+								if (bottomMatch) {
+									styledBottom = '<span style="color: ' + colors.desaturated + '">' + bottomMatch[1] + '</span><span class="time" style="color: ' + colors.desaturated + '">' + bottomMatch[3] + '</span><span style="color: ' + colors.desaturated + '">' + bottomMatch[4] + '</span>';
+								}
+							} else {
+								styledBottom = '<span style="color: ' + colors.desaturated + '">' + lines[2] + '</span>';
+							}
+							
 							div.innerHTML = styledTop + '\n' + styledMiddle + '\n' + styledBottom;
 						} else {
-							div.textContent = boxText;
+							div.innerHTML = boxText;
 						}
 					} else {
-						div.textContent = boxText;
+						div.innerHTML = boxText;
 					}
 				}
 				
@@ -384,11 +426,11 @@ under development dont use for now
 			layer.scrollTop = layer.scrollHeight;
 		}
 
-		function animateMessage(messageBox, isSystem, color, rawText, username) {
+		function animateMessage(messageBox, isSystem, color, rawText, username, timestamp) {
 			isTyping = true;
 			
 			const lines = messageBox.split('\n');
-			const maxLength = Math.max(...lines.map(l => l.length));
+			const maxLength = Math.max(...lines.map(l => l.replace(/<[^>]*>/g, '').length));
 			let columnIndex = 0;
 			
 			messages.push({ 
@@ -397,7 +439,8 @@ under development dont use for now
 				username: username,
 				isSystem: isSystem, 
 				isAnimating: true, 
-				color: color
+				color: color,
+				timestamp: timestamp
 			});
 			const messageIndex = messages.length - 1;
 			
@@ -407,7 +450,8 @@ under development dont use for now
 					
 					let partialText = '';
 					for (let i = 0; i < lines.length; i++) {
-						partialText += lines[i].substring(0, columnIndex + 1);
+						const cleanLine = lines[i].replace(/<[^>]*>/g, '');
+						partialText += cleanLine.substring(0, columnIndex + 1);
 						if (i < lines.length - 1) partialText += '\n';
 					}
 					messages[messageIndex].text = partialText;
@@ -440,7 +484,7 @@ under development dont use for now
 				isSystem = false;
 			}
 
-			const box = createBox(boxText, username, isSystem);
+			const box = createBox(boxText, username, isSystem, timestamp);
 			const shouldAnimate = initialLoadComplete && timestamp > pageLoadTime;
 
 			function pushMessage(msg) {
@@ -450,7 +494,7 @@ under development dont use for now
 			}
 
 			if (!isSystem && shouldAnimate) {
-				animateMessage(box, isSystem, color, boxText, username);
+				animateMessage(box, isSystem, color, boxText, username, timestamp);
 			} else {
 				pushMessage({
 					text: box,
@@ -458,7 +502,8 @@ under development dont use for now
 					username: username,
 					isSystem: isSystem,
 					color: color,
-					isAnimating: false
+					isAnimating: false,
+					timestamp: timestamp
 				});
 
 				if (isSystem && type === 'join' && shouldAnimate) {
@@ -498,7 +543,9 @@ under development dont use for now
 			
 			document.getElementById('loginScreen').classList.add('hidden');
 			document.getElementById('chatScreen').classList.remove('hidden');
-			document.getElementById('messagesContainer').classList.remove('hidden');
+			const messagesContainer = document.getElementById('messagesContainer');
+			messagesContainer.classList.remove('login-blur');
+			messagesContainer.style.zIndex = '10';
 			
 			const userPresenceRef = database.ref(`presence/${sessionId}`);
 			userPresenceRef.onDisconnect().remove();
@@ -630,6 +677,57 @@ under development dont use for now
 		}, 1000);
 
 		attachLoginListeners();
-	</script>
+
+
+
+
+
+
+</script>
+
+
+
+
+<script>
+const loadingEl = document.getElementById("loadingStatus");
+
+// Timestamp of the last Firebase message
+let lastMessageTime = Date.now(); // fallback in case no messages yet
+
+// Make it red initially
+loadingEl.style.color = "red";
+
+// Update the "time ago" display
+function updateTimeAgo() {
+  const diff = Date.now() - lastMessageTime;
+  const seconds = Math.floor(diff / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+
+  if (seconds < 60) {
+    loadingEl.textContent = seconds.toString().padStart(2, '0') + " sec ago";
+  } else if (minutes < 60) {
+    loadingEl.textContent = minutes.toString().padStart(2, '0') + " min ago";
+  } else {
+    loadingEl.textContent = hours.toString().padStart(2, '0') + " hrs ago";
+  }
+
+  loadingEl.style.color = ""; // remove red after first update
+}
+
+// Run the update every second for smooth countdown
+setInterval(updateTimeAgo, 1000);
+
+// Hook into Firebase message events to reset the timer
+messagesRef.on('child_added', (snapshot) => {
+  const data = snapshot.val();
+  if (data.type === 'message' || data.type === 'join') {
+    // Update last message time
+    lastMessageTime = data.timestamp || Date.now();
+    updateTimeAgo(); // update immediately
+  }
+});
+</script>
+
 </body>
 </html>

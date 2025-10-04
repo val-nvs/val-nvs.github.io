@@ -22,7 +22,6 @@
 			font-weight: normal;
 			line-height: 1;
 			font-size: 2.8vw;
-			background: #000;
 			color: #aaa;
 			text-shadow: 0px 0 0px currentColor, -0px 0 0px currentColor;
 			margin: 0;
@@ -38,6 +37,7 @@
 			height: 100%;
 		}
 		body {
+			background: #000;
 			margin: 0;
 			padding: 0;
 			height: 100%;
@@ -128,6 +128,12 @@
 		}
 		.messages-container.hidden {
 			display: none !important;
+		}
+		.messages-container.login-blur {
+			filter: blur(3px);
+			opacity: 0.3;
+			pointer-events: none;
+			user-select: none;
 		}
 		.messages-container::-webkit-scrollbar {
 			width: 1ch;
@@ -244,7 +250,7 @@
 └───────┘└──────────────────────────────────────────┘└──────┘
 *                                                           *</span>
 
-		<div class="messages-container hidden" id="messagesContainer">
+		<div class="messages-container login-blur" id="messagesContainer">
 			<div class="messages-inner" id="messagesInner"></div>
 		</div>
 
@@ -313,10 +319,13 @@ under development dont use for now
 
 		function createBox(text, username, isSystem = false, timestamp = null) {
 			if (isSystem) {
-				const contentWidth = text.length + 2;
+				const timeStr = timestamp ? formatTime(timestamp) : '';
+				const timeLength = timeStr.length;
+				const contentWidth = Math.max(text.length + 2, timeLength + 4);
 				const topBorder = '┌' + '─'.repeat(contentWidth) + '┐';
-				const messageLine = '│ ' + text + ' │';
-				const bottomBorder = '└' + '─'.repeat(contentWidth) + '┘';
+				const messageLine = '│ ' + text + ' '.repeat(contentWidth - text.length) + '│';
+				const dashesBeforeTime = contentWidth - timeLength - 2;
+				const bottomBorder = '└' + '─'.repeat(dashesBeforeTime) + '─<span class="time">' + timeStr + '</span>' + '┘';
 				return [topBorder, messageLine, bottomBorder].join('\n');
 			}
 			
@@ -324,7 +333,7 @@ under development dont use for now
 			const messageContent = text.length + 2;
 			const timeStr = timestamp ? formatTime(timestamp) : '';
 			const timeLength = timeStr.length;
-			const contentWidth = Math.max(usernameContent, messageContent, timeLength + 3);
+			const contentWidth = Math.max(usernameContent, messageContent, timeLength + 4);
 			
 			const dashesAfterUsername = contentWidth - username.length - 1;
 			const topBorder = '┌─' + username + '─'.repeat(dashesAfterUsername) + '┐';
@@ -332,8 +341,8 @@ under development dont use for now
 			const spacesAfterText = contentWidth - text.length - 1;
 			const messageLine = '│ ' + text + ' '.repeat(spacesAfterText) + '│';
 			
-			const dashesBeforeTime = contentWidth - timeLength - 1;
-			const bottomBorder = '└' + '─'.repeat(dashesBeforeTime) + '<span class="time">' + timeStr + '</span>' + '┘';
+			const dashesBeforeTime = contentWidth - timeLength - 2;
+			const bottomBorder = '└' + '─'.repeat(dashesBeforeTime) + '─<span class="time">' + timeStr + '</span>' + '┘';
 			
 			return [topBorder, messageLine, bottomBorder].join('\n');
 		}
@@ -359,12 +368,22 @@ under development dont use for now
 						if (match) {
 							const colors = getColorVariants(userColor);
 							const styledMiddle = '│ ' + match[1] + '<span style="color: ' + colors.saturated + '">' + match[2] + '</span>' + match[3] + ' │';
-							div.innerHTML = lines[0] + '\n' + styledMiddle + '\n' + lines[2];
+							
+							// Handle bottom line with time for system messages
+							let styledBottom = lines[2];
+							if (lines[2].includes('<span class="time">')) {
+								const bottomMatch = lines[2].match(/^(└─*)(<span class="time">(.*?)<\/span>)(┘)$/);
+								if (bottomMatch) {
+									styledBottom = bottomMatch[1] + '<span class="time" style="color: #5f9f9f">' + bottomMatch[3] + '</span>' + bottomMatch[4];
+								}
+							}
+							
+							div.innerHTML = lines[0] + '\n' + styledMiddle + '\n' + styledBottom;
 						} else {
-							div.textContent = boxText;
+							div.innerHTML = boxText;
 						}
 					} else {
-						div.textContent = boxText;
+						div.innerHTML = boxText;
 					}
 				} else {
 					const userColor = msgObj.color || '#00ffff';
@@ -378,13 +397,12 @@ under development dont use for now
 							const styledTop = '<span style="color: ' + colors.desaturated + '">' + lines[0] + '</span>';
 							const styledMiddle = '<span style="color: ' + colors.desaturated + '">│</span><span style="color: ' + colors.saturated + '">' + messageContent + '</span><span style="color: ' + colors.desaturated + '">│</span>';
 							
-							// Handle bottom line with time
+							// Handle bottom line with time - color matches user color
 							let styledBottom = lines[2];
 							if (lines[2].includes('<span class="time">')) {
-								// Extract the parts before and after the time span
-								const bottomMatch = lines[2].match(/^(└─*)(<span class="time">.*?<\/span>)(┘)$/);
+								const bottomMatch = lines[2].match(/^(└─*)(<span class="time">(.*?)<\/span>)(┘)$/);
 								if (bottomMatch) {
-									styledBottom = '<span style="color: ' + colors.desaturated + '">' + bottomMatch[1] + '</span>' + bottomMatch[2] + '<span style="color: ' + colors.desaturated + '">' + bottomMatch[3] + '</span>';
+									styledBottom = '<span style="color: ' + colors.desaturated + '">' + bottomMatch[1] + '</span><span class="time" style="color: ' + colors.desaturated + '">' + bottomMatch[3] + '</span><span style="color: ' + colors.desaturated + '">' + bottomMatch[4] + '</span>';
 								}
 							} else {
 								styledBottom = '<span style="color: ' + colors.desaturated + '">' + lines[2] + '</span>';
@@ -523,7 +541,7 @@ under development dont use for now
 			
 			document.getElementById('loginScreen').classList.add('hidden');
 			document.getElementById('chatScreen').classList.remove('hidden');
-			document.getElementById('messagesContainer').classList.remove('hidden');
+			document.getElementById('messagesContainer').classList.remove('login-blur');
 			
 			const userPresenceRef = database.ref(`presence/${sessionId}`);
 			userPresenceRef.onDisconnect().remove();
