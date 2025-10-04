@@ -15,15 +15,9 @@
 
 	<style>
 		:root {
-			--bg-color: transparent;
-			--primary-color: hsl(180, 80%, 30%);
-			--input-color: hsl(180, 100%, 50%);
-			--text-color: var(--primary-color);
-			--scrollbar-track: hsl(180, 80%, 10%);
-			--scrollbar-thumb: var(--primary-color);
-			--scrollbar-thumb-hover: var(--input-color);
-			--placeholder-color: var(--primary-color);
-			--btn-inline-hover: #fff;
+			--primary-color: hsl(44, 80%, 30%);
+			--bright-color: hsl(44, 100%, 50%);
+			--dark-color: hsl(44, 80%, 10%);
 		}
 		
 		@font-face {
@@ -34,7 +28,7 @@
 			font-family: 'PerfectDOSVGA', monospace;
 			font-weight: normal;
 			line-height: 1;
-			color: var(--text-color);
+			color: var(--primary-color);
 			text-shadow: 0px 0 0px currentColor, -0px 0 0px currentColor;
 			margin: 0;
 			padding: 0;
@@ -101,9 +95,9 @@
 			transform: scale(1.1);
 		}
 		.input-inline {
-			background: var(--bg-color);
+			background: transparent;
 			border: none;
-			color: var(--input-color);
+			color: var(--bright-color);
 			font-family: 'PerfectDOSVGA', monospace;
 			font-size: inherit;
 			outline: none;
@@ -114,16 +108,16 @@
 			transition: color 0.2s;
 		}
 		.input-inline::placeholder {
-			color: var(--placeholder-color);
+			color: var(--primary-color);
 			transition: color 0.2s;
 		}
 		.input-inline.loading::placeholder {
 			color: #f00;
 		}
 		.btn-inline {
-			background: var(--bg-color);
+			background: transparent;
 			border: none;
-			color: var(--input-color);
+			color: var(--bright-color);
 			font-family: 'PerfectDOSVGA', monospace;
 			font-size: inherit;
 			cursor: pointer;
@@ -133,7 +127,7 @@
 			transition: color 0.2s;
 		}
 		.btn-inline:hover {
-			color: var(--btn-inline-hover);
+			color: #fff;
 		}
 		.messages-container {
 			position: absolute;
@@ -162,10 +156,10 @@
 			font-size: 1em;
 		}
 		.messages-container::-webkit-scrollbar-track {
-			background: var(--scrollbar-track);
+			background: var(--dark-color);
 		}
 		.messages-container::-webkit-scrollbar-thumb {
-			background: var(--scrollbar-thumb);
+			background: var(--primary-color);
 		}
 		.messages-inner {
 			margin-top: auto;
@@ -421,12 +415,13 @@ under development dont use for now
 							const colors = getColorVariants(userColor);
 							const styledMiddle = '│ ' + match[1] + '<span style="color: ' + colors.saturated + '">' + match[2] + '</span>' + match[3] + ' │';
 							
-							// Handle bottom line with time for system messages
+							// Handle bottom line with time for system messages - use primary color
 							let styledBottom = lines[2];
 							if (lines[2].includes('<span class="time">')) {
 								const bottomMatch = lines[2].match(/^(└─*)(<span class="time">(.*?)<\/span>)(┘)$/);
 								if (bottomMatch) {
-									styledBottom = bottomMatch[1] + '<span class="time" style="color: #ff00ff">' + bottomMatch[3] + '</span>' + bottomMatch[4];
+									const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
+									styledBottom = bottomMatch[1] + '<span class="time" style="color: ' + primaryColor + '">' + bottomMatch[3] + '</span>' + bottomMatch[4];
 								}
 							}
 							
