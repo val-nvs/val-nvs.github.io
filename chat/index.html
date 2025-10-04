@@ -325,7 +325,7 @@ under development dont use for now
 		let initialLoadComplete = false;
 		let onlineCount = 0;
 		let pageLoadTime = Date.now();
-		const MAX_MESSAGES = 99;
+		const MAX_MESSAGES = 30;
 		let fogEnabled = false;
 
 		const sounds = {
@@ -367,9 +367,11 @@ under development dont use for now
 			if (isSystem) {
 				const timeStr = timestamp ? formatTime(timestamp) : '';
 				const timeLength = timeStr.length;
-				const contentWidth = Math.max(text.length + 2, timeLength);
+				// For system messages, keep text on single line (no wrapping)
+				const singleLineText = text.replace(/\n/g, ' ');
+				const contentWidth = Math.max(singleLineText.length + 2, timeLength);
 				const topBorder = '┌' + '─'.repeat(contentWidth) + '┐';
-				const messageLine = '│ ' + text + ' '.repeat(contentWidth - text.length -1) + '│';
+				const messageLine = '│ ' + singleLineText + ' '.repeat(contentWidth - singleLineText.length - 1) + '│';
 				const dashesBeforeTime = Math.max(0, contentWidth - timeLength);
 				const bottomBorder = '└' + '─'.repeat(dashesBeforeTime) + '<span class="time">' + timeStr + '</span>' + '┘';
 				return [topBorder, messageLine, bottomBorder].join('\n');
@@ -415,16 +417,17 @@ under development dont use for now
 					const userColor = msgObj.color || getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
 					const lines = boxText.split('\n');
 					
-					if (lines.length === 3 && (boxText.includes('JOINED') || boxText.includes('SET NEW THEME'))) {
+					if (lines.length === 3 && (boxText.includes('JOINED') || boxText.includes('SET NEW THEME') || boxText.includes('EXITED'))) {
 						const middleLine = lines[1];
 						const joinMatch = middleLine.match(/│ (USER )(\w+)( JOINED) │/);
 						const themeMatch = middleLine.match(/│ (USER )(\w+)( SET NEW THEME) │/);
-						const match = joinMatch || themeMatch;
+						const exitMatch = middleLine.match(/│ (USER )(\w+)( EXITED) │/);
+						const match = joinMatch || themeMatch || exitMatch;
 						
 						if (match) {
 							// For theme messages, use the stored user color from when they joined
 							let highlightColor = userColor;
-							if (themeMatch && msgObj.username) {
+							if ((themeMatch || exitMatch) && msgObj.username) {
 								// Find the user's join message to get their original color
 								const joinMsg = messages.find(m => m.username === msgObj.username && m.rawText && m.rawText.includes('JOINED'));
 								if (joinMsg && joinMsg.color) {
@@ -542,6 +545,9 @@ under development dont use for now
 			if (type === 'join') {
 				boxText = `USER ${text} JOINED`;
 				isSystem = true;
+			} else if (type === 'exit') {
+				boxText = `USER ${username} EXITED`;
+				isSystem = true;
 			} else if (type === 'theme') {
 				boxText = `USER ${username} SET NEW THEME`;
 				isSystem = true;
@@ -575,7 +581,7 @@ under development dont use for now
 					timestamp: timestamp
 				});
 
-				if (isSystem && (type === 'join' || type === 'theme') && shouldAnimate) {
+				if (isSystem && (type === 'join' || type === 'theme' || type === 'exit') && shouldAnimate) {
 					playSound('newline');
 				}
 			}
@@ -643,46 +649,51 @@ under development dont use for now
 			const text = input.value.trim();
 			
 			if (text) {
-				// Check for /help command
-				if (text === '/help') {
-					addMessageLocal('system', 'USAGE: /help (color/fog)');
-					input.value = '';
-					return;
-				}
-				
-				// Check for /help color command
-				if (text === '/help color') {
-					addMessageLocal('system', 'USAGE: /color (hue 0-360)');
-					input.value = '';
-					return;
-				}
-
-				// Check for /help color command
-				if (text === '/help fog') {
-					addMessageLocal('system', 'USAGE: /fog');
-					input.value = '';
-					return;
-				}
-				
-				// Check for /fog command
-				if (text === '/fog') {
-					fogEnabled = !fogEnabled;
-					if (fogEnabled) {
-						document.body.classList.add('fog-enabled');
-						addMessageLocal('system', 'FOG EFFECT ENABLED');
-					} else {
-						document.body.classList.remove('fog-enabled');
-						addMessageLocal('system', 'FOG EFFECT DISABLED');
+				// Check if it's a command (starts with /)
+				if (text.startsWith('/')) {
+					// Check for /help command
+					if (text === '/help') {
+						addMessageLocal('system', 'COMMANDS: /help /color [0-360] /fog');
+						input.value = '';
+						return;
 					}
-					input.value = '';
-					return;
-				}
-				
-				// Check for /color command
-				const colorMatch = text.match(/^\/color\s+(\d+)$/);
-				if (colorMatch) {
-					const hue = parseInt(colorMatch[1]);
-					if (hue >= 0 && hue <= 360) {
+					
+					// Check for /help color command
+					if (text === '/help color') {
+						addMessageLocal('system', 'USAGE: /color [hue] - hue 0-360 or random');
+						input.value = '';
+						return;
+					}
+					
+					// Check for /fog command
+					if (text === '/fog') {
+						fogEnabled = !fogEnabled;
+						if (fogEnabled) {
+							document.body.classList.add('fog-enabled');
+							addMessageLocal('system', 'FOG EFFECT ENABLED');
+						} else {
+							document.body.classList.remove('fog-enabled');
+							addMessageLocal('system', 'FOG EFFECT DISABLED');
+						}
+						input.value = '';
+						return;
+					}
+					
+					// Check for /color command with optional hue
+					const colorMatch = text.match(/^\/color(?:\s+(\d+))?$/);
+					if (colorMatch) {
+						let hue;
+						if (colorMatch[1]) {
+							hue = parseInt(colorMatch[1]);
+							if (hue < 0 || hue > 360) {
+								addMessageLocal('system', 'ERROR: Hue must be 0-360');
+								input.value = '';
+								return;
+							}
+						} else {
+							hue = Math.floor(Math.random() * 361);
+						}
+						
 						// Send theme change message with the user's CURRENT color (not affected by theme)
 						messagesRef.push({
 							type: 'theme',
@@ -702,16 +713,10 @@ under development dont use for now
 						
 						input.value = '';
 						return;
-					} else {
-						addMessageLocal('system', 'ERROR: Hue must be 0-360 Try /help color');
-						input.value = '';
-						return;
 					}
-				}
-				
-				// Check for invalid /color usage
-				if (text.startsWith('/color')) {
-					addMessageLocal('system', 'ERROR: Try /help color for usage');
+					
+					// Unknown command
+					addMessageLocal('system', 'ERROR: Unknown command. Type /help');
 					input.value = '';
 					return;
 				}
@@ -850,6 +855,15 @@ under development dont use for now
 		}
 
 		function exitChat() {
+			// Send exit message to Firebase
+			messagesRef.push({
+				type: 'exit',
+				username: currentUsername,
+				color: currentColor,
+				sessionId: sessionId,
+				timestamp: firebase.database.ServerValue.TIMESTAMP
+			});
+			
 			// Remove user presence from database
 			const userPresenceRef = database.ref(`presence/${sessionId}`);
 			userPresenceRef.remove();
@@ -910,6 +924,9 @@ under development dont use for now
 			if (data.type === 'join') {
 				const joinColor = data.color || getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
 				addMessageLocal('join', data.username, true, null, joinColor, data.timestamp);
+			} else if (data.type === 'exit') {
+				const exitColor = data.color || getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
+				addMessageLocal('exit', '', true, data.username, exitColor, data.timestamp);
 			} else if (data.type === 'theme') {
 				// Pass the user's original color from when they set the theme
 				const themeUserColor = data.color || getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
