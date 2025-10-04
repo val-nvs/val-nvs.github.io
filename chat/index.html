@@ -325,7 +325,7 @@ under development dont use for now
 		let initialLoadComplete = false;
 		let onlineCount = 0;
 		let pageLoadTime = Date.now();
-		const MAX_MESSAGES = 35;
+		const MAX_MESSAGES = 99;
 		let fogEnabled = false;
 
 		const sounds = {
@@ -703,7 +703,7 @@ under development dont use for now
 						input.value = '';
 						return;
 					} else {
-						addMessageLocal('system', 'ERROR: Hue must be 0-360\nTry /help color for usage');
+						addMessageLocal('system', 'ERROR: Hue must be 0-360 Try /help color');
 						input.value = '';
 						return;
 					}
@@ -711,7 +711,7 @@ under development dont use for now
 				
 				// Check for invalid /color usage
 				if (text.startsWith('/color')) {
-					addMessageLocal('system', 'ERROR: Invalid syntax\nTry /help color for usage');
+					addMessageLocal('system', 'ERROR: Try /help color for usage');
 					input.value = '';
 					return;
 				}
