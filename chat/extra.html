@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>chatroom</title>
+	<link rel="icon" type="image/png" href="favicon.png">
+
+	<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+	
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Noto+Emoji:wght@300..700&display=swap" rel="stylesheet">
+
+	<style>
+		:root {
+			--primary-hue: 180;
+			--primary-color: hsl(var(--primary-hue), 50%, 30%);
+			--bright-color: hsl(var(--primary-hue), 100%, 50%);
+			--dark-color: hsl(var(--primary-hue), 50%, 10%);
+		}
+		
+		@font-face {
+			font-family: 'PerfectDOSVGA';
+			src: url('./PerfectDosVga.ttf') format('truetype');
+		}
+		* {
+			font-family: 'PerfectDOSVGA', monospace;
+			font-weight: normal;
+			line-height: 1;
+			color: var(--primary-color);
+			text-shadow: 0px 0 0px currentColor, -0px 0 0px currentColor;
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+			transition: text-shadow 0.3s ease;
+		}
+		body.fog-enabled * {
+			text-shadow: 0 0 8px currentColor, 0 0 12px currentColor;
+		}
+		html {
+			height: 100%;
+			touch-action: pan-x pan-y;
+		}
+		body {
+			background: #000;
+			margin: 0;
+			padding: 0;
+			height: 100vh;
+			width: 100vw;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			overflow: hidden;
+			touch-action: pan-x pan-y;
+		}
+		.chat-wrapper {
+			position: relative;
+			font-size: min(calc(100vh / 35), calc(100vw / 61 / 0.6));
+		}
+		span {
+			white-space: pre;
+			color: var(--primary-color);
+		}
+		.emj {
+			display: inline-block;
+			width: 2ch;
+			height: 1em;
+			text-align: center;
+			position: relative;
+			overflow: visible;
+			cursor: pointer;
+			transition: transform 0.1s;
+		}
+		.emj:hover {
+			transform: scale(3);
+		}
+		.emj span {
+			font-family: 'Noto Emoji';
+			font-size: 1em;
+			line-height: 1;
+			position: absolute;
+			top: 0;
+			left: 50%;
+			transform: translateX(-50%) scale(.5) translate(-0.1ch, 0.1em); /* combine your adjustments */
+			transform-origin: center;
+		}
+		.time {
+			display: inline-block;
+			transform: scaleY(0.5);
+		}
+		.hidden {
+			display: none !important;
+			visibility: hidden;
+			pointer-events: none;
+		}
+		.color-block {
+			cursor: pointer;
+			transition: transform 0.1s, text-shadow 0.1s;
+			display: inline;
+		}
+		.color-block:hover {
+			transform: scale(1.2);
+		}
+		.color-block.selected {
+			text-shadow: 0 0 0.5rem currentColor, 0 0 0.8rem currentColor;
+			transform: scale(1.1);
+		}
+		.input-inline {
+			background: transparent;
+			border: none;
+			color: var(--bright-color);
+			font-family: 'PerfectDOSVGA', monospace;
+			font-size: inherit;
+			outline: none;
+			padding: 0;
+			width: 12ch;
+			text-shadow: none;
+			box-shadow: none;
+			transition: color 0.2s;
+		}
+		.input-inline::placeholder {
+			color: var(--primary-color);
+			transition: color 0.2s;
+		}
+		.input-inline.loading::placeholder {
+			color: #f00;
+		}
+		.btn-inline {
+			background: transparent;
+			border: none;
+			color: var(--bright-color);
+			font-family: 'PerfectDOSVGA', monospace;
+			font-size: inherit;
+			cursor: pointer;
+			padding: 0;
+			text-shadow: none;
+			box-shadow: none;
+			transition: color 0.2s;
+		}
+		.btn-inline:hover {
+			color: #fff;
+		}
+		.messages-container {
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			transform: translate(-50%, -50%);
+			width: 59ch;
+			height: 25em;
+			overflow-y: auto;
+			display: flex;
+			flex-direction: column;
+			z-index: 10;
+			pointer-events: auto;
+			font-size: 1em;
+		}
+		.messages-container.hidden {
+			display: none !important;
+		}
+		.messages-container.login-blur {
+			filter: blur(.5rem);
+			opacity: 1;
+			z-index: 0;
+		}
+		.messages-container::-webkit-scrollbar {
+			width: 1ch;
+			font-size: 1em;
+		}
+		.messages-container::-webkit-scrollbar-track {
+			background: var(--dark-color);
+		}
+		.messages-container::-webkit-scrollbar-thumb {
+			background: var(--primary-color);
+		}
+		.messages-inner {
+			margin-top: auto;
+			display: flex;
+			flex-direction: column;
+			align-items: flex-end;
+			width: 100%;
+			pointer-events: auto;
+		}
+		.message {
+			white-space: pre;
+			line-height: 1;
+			font-size: 1em;
+			margin-bottom: 0.2em;
+			pointer-events: auto;
+			color: var(--primary-color);
+		}
+		.chat-wrapper {
+			position: relative;
+			font-size: min(calc(100vh / 35), calc(100vw / 61 / 0.6));
+		}
+		#loginScreen, #chatScreen, #emojiScreen {
+			display: block;
+			position: relative;
+			z-index: 1;
+		}
+		#loginScreen {
+			z-index: 5;
+		}
+		#loginScreen.hidden, #chatScreen.hidden, #emojiScreen.hidden {
+			display: none !important;
+		}
+		.input-message {
+			width: 40ch;
+		}
+	</style>
+</head>
+<body>
+	<script>
+		// Prevent ctrl+scroll zoom
+		document.addEventListener('wheel', function(e) {
+			if (e.ctrlKey) {
+				e.preventDefault();
+			}
+		}, { passive: false });
+		
+		// Prevent keyboard zoom
+		document.addEventListener('keydown', function(e) {
+			if ((e.ctrlKey || e.metaKey) && (e.key === '+' || e.key === '-' || e.key === '=')) {
+				e.preventDefault();
+			}
+		});
+	</script>
+	<div class="chat-wrapper">
+		<span id="loginScreen">
+┌──────────────────────────┐              ┌─────────────────┐
+│ Last message: <span id="loadingStatus">LOADING...</span> │              │ By: <button class="btn-inline" onclick="window.open('https://val-nvs.com', '_blank')">val-nvs.com</button> │
+└──────────────────────────┘              └─────────────────┘
+┌───────────────────────────────────────────────────────────┐
+│                                                           │
+│                                                           │
+│                                                           │
+│                                                           │
+│                                                           │
+│                                                           │
+│                                                           │
+│                                                           │
+│                    ┌─────────────────┐                    │
+│                    │ <input type="text" class="input-inline loading" id="usernameInput" placeholder="LOADING... WAIT" maxlength="10" style="width: 15ch; box-shadow: none; color: #f00;" disabled> │                    │
+│                    └─────────────────┘                    │
+│          ┌─────────────────────────────────────┐          │
+│          │ <span class="color-block selected" data-color="hsl(180, 100%, 50%)" style="color: hsl(180, 100%, 50%);">▒▒</span> <span class="color-block" data-color="hsl(210, 100%, 50%)" style="color: hsl(210, 100%, 50%);">▒▒</span> <span class="color-block" data-color="hsl(240, 100%, 50%)" style="color: hsl(240, 100%, 50%);">▒▒</span> <span class="color-block" data-color="hsl(270, 100%, 50%)" style="color: hsl(270, 100%, 50%);">▒▒</span> <span class="color-block" data-color="hsl(300, 100%, 50%)" style="color: hsl(300, 100%, 50%);">▒▒</span> <span class="color-block" data-color="hsl(330, 100%, 50%)" style="color: hsl(330, 100%, 50%);">▒▒</span> <span class="color-block" data-color="hsl(0, 100%, 50%)" style="color: hsl(0, 100%, 50%);">▒▒</span> <span class="color-block" data-color="hsl(30, 100%, 50%)" style="color: hsl(30, 100%, 50%);">▒▒</span> <span class="color-block" data-color="hsl(60, 100%, 50%)" style="color: hsl(60, 100%, 50%);">▒▒</span> <span class="color-block" data-color="hsl(90, 100%, 50%)" style="color: hsl(90, 100%, 50%);">▒▒</span> <span class="color-block" data-color="hsl(120, 100%, 50%)" style="color: hsl(120, 100%, 50%);">▒▒</span> <span class="color-block" data-color="hsl(150, 100%, 50%)" style="color: hsl(150, 100%, 50%);">▒▒</span> │          │
+│          └─────────────────────────────────────┘          │
+│                         ┌───────┐                         │
+│                         │ <button class="btn-inline" id="joinBtn">ENTER</button> │                         │
+│                         └───────┘                         │
+│                                                           │
+│                                                           │
+│                                                           │
+│                                                           │
+│                                                           │
+│                                                           │
+│                                                           │
+│                                                           │
+└───────────────────────────────────────────────────────────┘
+ 
+ 
+ 
+ </span>
+
+		<span id="chatScreen" class="hidden">
+┌───────────┐ ┌───────┐ ┌──────┐          ┌─────────────────┐
+│ <span id="onlineCount">01</span> ONLINE │ │ <span id="currentTime">88:88</span> │ │ <button class="btn-inline" id="exitBtn">EXIT</button> │          │ By: <button class="btn-inline" onclick="window.open('https://val-nvs.com', '_blank')">val-nvs.com</button> │
+└───────────┘ └───────┘ └──────┘          └─────────────────┘
+┌───────────────────────────────────────────────────────────┐
+│                                                           │
+│                                                           │
+│                                                           │
+│                                                           │
+│                                                           │
+│                                                           │
+│                                                           │
+│                                                           │
+│                                                           │
+│                                                           │
+│                                                           │
+│                                                           │
+│                                                           │
+│                                                           │
+│                                                           │
+│                                                           │
+│                                                           │
+│                                                           │
+│                                                           │
+│                                                           │
+│                                                           │
+│                                                           │
+│                                                           │
+│                                                           │
+│                                                           │
+└───────────────────────────────────────────────────────────┘
+┌───────┐┌──────────────────────────────────────────┐┌──────┐
+│ <button class="btn-inline" id="emojiBtn">EMOJI</button> ││ <input type="text" class="input-inline input-message" id="userInput" placeholder="type a message" maxlength="40" style="box-shadow: none;"> ││ <button class="btn-inline" id="sendBtn">SEND</button> │
+└───────┘└──────────────────────────────────────────┘└──────┘
+ </span>
+
+		<div class="messages-container login-blur" id="messagesContainer">
+			<div class="messages-inner" id="messagesInner"></div>
+		</div>
+
+		<span id="emojiScreen" class="hidden">
+┌──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┐
+│<span class="emj"><span>😀</span></span>│<span class="emj"><span>😃</span></span>│<span class="emj"><span>😄</span></span>│<span class="emj"><span>😁</span></span>│<span class="emj"><span>😆</span></span>│<span class="emj"><span>😅</span></span>│<span class="emj"><span>😂</span></span>│<span class="emj"><span>🤣</span></span>│<span class="emj"><span>😍</span></span>│<span class="emj"><span>🥰</span></span>│<span class="emj"><span>😘</span></span>│<span class="emj"><span>😗</span></span>│<span class="emj"><span>😙</span></span>│<span class="emj"><span>😚</span></span>│<span class="emj"><span>😋</span></span>│<span class="emj"><span>😛</span></span>│<span class="emj"><span>😝</span></span>│<span class="emj"><span>😜</span></span>│<span class="emj"><span>🤪</span></span>│<span class="emj"><span>🤩</span></span>│
+└──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┘
+┌───────────────┐
+│ <button class="btn-inline" id="closeEmojiBtn">CLOSE</button> │
+└───────────────┘
+ </span>
+	</div>
+
+	<script>
+		const firebaseConfig = {
+			apiKey: "AIzaSyCxC1qidadTm5uLacKtD9d_6Zw1uq0Mnf0",
+			authDomain: "chat-8a799.firebaseapp.com",
+			databaseURL: "https://chat-8a799-default-rtdb.firebaseio.com",
+			projectId: "chat-8a799",
+			storageBucket: "chat-8a799.firebasestorage.app",
+			messagingSenderId: "359690574077",
+			appId: "1:359690574077:web:65ed1801a082314a8a8694"
+		};
+
+		firebase.initializeApp(firebaseConfig);
+		const database = firebase.database();
+		const messagesRef = database.ref('messages');
+		const themeRef = database.ref('theme');
+
+		const messages = [];
+		let hasJoined = false;
+		let currentUsername = '';
+		let currentColor = 'hsl(180, 100%, 50%)';
+		let isTyping = false;
+		let sessionId = Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+		let initialLoadComplete = false;
+		let onlineCount = 0;
+		let pageLoadTime = Date.now();
+		const MAX_MESSAGES = 200;
+		let fogEnabled = false;
+
+		const sounds = {
+			ping: new Audio('./R_Terminal_ping.wav'),
+			newline: new Audio('./R_terminal_newline_1.wav'),
+			cursor: new Audio('./terminal_cursor.wav'),
+			hover: new Audio('./R_Terminal_redtick.wav'),
+			select: new Audio('./R_Terminal_downloading.wav'),
+			enter: new Audio('./R_TerminalLoad.wav')
+		};
+
+		function playSound(soundName) {
+			if (sounds[soundName]) {
+				sounds[soundName].currentTime = 0;
+				sounds[soundName].play().catch(e => {});
+			}
+		}
+
+		function getColorVariants(color) {
+			const match = color.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
+			if (match) {
+				const hue = parseInt(match[1]);
+				return {
+					saturated: `hsl(${hue}, 100%, 50%)`,
+					desaturated: `hsl(${hue}, 100%, 25%)`
+				};
+			}
+			return { saturated: color, desaturated: color };
+		}
+
+		function formatTime(timestamp) {
+			const date = new Date(timestamp);
+			const hours = String(date.getHours()).padStart(2, '0');
+			const minutes = String(date.getMinutes()).padStart(2, '0');
+			return `${hours}:${minutes}`;
+		}
+
+		function createBox(text, username, isSystem = false, timestamp = null) {
+			if (isSystem) {
+				const timeStr = timestamp ? formatTime(timestamp) : '';
+				const timeLength = timeStr.length;
+				// For system messages, keep text on single line (no wrapping)
+				const singleLineText = text.replace(/\n/g, ' ');
+				const contentWidth = Math.max(singleLineText.length + 2, timeLength);
+				const topBorder = '┌' + '─'.repeat(contentWidth) + '┐';
+				const messageLine = '│ ' + singleLineText + ' '.repeat(contentWidth - singleLineText.length - 1) + '│';
+				const dashesBeforeTime = Math.max(0, contentWidth - timeLength);
+				const bottomBorder = '└' + '─'.repeat(dashesBeforeTime) + '<span class="time">' + timeStr + '</span>' + '┘';
+				return [topBorder, messageLine, bottomBorder].join('\n');
+			}
+			
+			const usernameContent = username.length + 2;
+			const messageContent = text.length + 2;
+			const timeStr = timestamp ? formatTime(timestamp) : '';
+			const timeLength = timeStr.length;
+			const contentWidth = Math.max(usernameContent, messageContent, timeLength);
+			
+			const dashesAfterUsername = contentWidth - username.length - 1;
+			const topBorder = '┌─' + username + '─'.repeat(dashesAfterUsername) + '┐';
+			
+			const spacesAfterText = contentWidth - text.length - 1;
+			const messageLine = '│ ' + text + ' '.repeat(spacesAfterText) + '│';
+			
+			const dashesBeforeTime = Math.max(0, contentWidth - timeLength);
+			const bottomBorder = '└' + '─'.repeat(dashesBeforeTime) + '<span class="time">' + timeStr + '</span>' + '┘';
+			
+			return [topBorder, messageLine, bottomBorder].join('\n');
+		}
+
+		function renderMessages() {
+			const container = document.getElementById('messagesInner');
+			container.innerHTML = '';
+			
+			messages.forEach(msgObj => {
+				const div = document.createElement('div');
+				div.className = 'message';
+				div.style.alignSelf = msgObj.isSystem ? 'flex-start' : 'flex-end';
+				
+				const boxText = msgObj.isAnimating ? msgObj.text : createBox(msgObj.rawText, msgObj.username, msgObj.isSystem, msgObj.timestamp);
+				
+				// Apply color even during animation
+				if (msgObj.isAnimating && !msgObj.isSystem) {
+					const userColor = msgObj.color || '#00ffff';
+					const colors = getColorVariants(userColor);
+					div.style.color = colors.saturated;
+				}
+				
+				if (msgObj.isSystem) {
+					const userColor = msgObj.color || getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
+					const lines = boxText.split('\n');
+					
+					if (lines.length === 3 && (boxText.includes('JOINED') || boxText.includes('SET NEW THEME') || boxText.includes('EXITED'))) {
+						const middleLine = lines[1];
+						const joinMatch = middleLine.match(/│ (USER )(\w+)( JOINED) │/);
+						const themeMatch = middleLine.match(/│ (USER )(\w+)( SET NEW THEME) │/);
+						const exitMatch = middleLine.match(/│ (USER )(\w+)( EXITED) │/);
+						const match = joinMatch || themeMatch || exitMatch;
+						
+						if (match) {
+							// For theme messages, use the stored user color from when they joined
+							let highlightColor = userColor;
+							if ((themeMatch || exitMatch) && msgObj.username) {
+								// Find the user's join message to get their original color
+								const joinMsg = messages.find(m => m.username === msgObj.username && m.rawText && m.rawText.includes('JOINED'));
+								if (joinMsg && joinMsg.color) {
+									highlightColor = joinMsg.color;
+								}
+							}
+							
+							const colors = getColorVariants(highlightColor);
+							const styledMiddle = '│ ' + match[1] + '<span style="color: ' + colors.saturated + '">' + match[2] + '</span>' + match[3] + ' │';
+							
+							// Handle bottom line with time for system messages - use primary color
+							let styledBottom = lines[2];
+							if (lines[2].includes('<span class="time">')) {
+								const bottomMatch = lines[2].match(/^(└─*)(<span class="time">(.*?)<\/span>)(┘)$/);
+								if (bottomMatch) {
+									const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
+									styledBottom = bottomMatch[1] + '<span class="time" style="color: ' + primaryColor + '">' + bottomMatch[3] + '</span>' + bottomMatch[4];
+								}
+							}
+							
+							div.innerHTML = lines[0] + '\n' + styledMiddle + '\n' + styledBottom;
+						} else {
+							div.innerHTML = boxText;
+						}
+					} else {
+						div.innerHTML = boxText;
+					}
+				} else {
+					const userColor = msgObj.color || '#00ffff';
+					const colors = getColorVariants(userColor);
+					
+					const lines = boxText.split('\n');
+					if (lines.length === 3) {
+						const messageMatch = lines[1].match(/│(.*)│/);
+						if (messageMatch) {
+							const messageContent = messageMatch[1];
+							const styledTop = '<span style="color: ' + colors.desaturated + '">' + lines[0] + '</span>';
+							const styledMiddle = '<span style="color: ' + colors.desaturated + '">│</span><span style="color: ' + colors.saturated + '">' + messageContent + '</span><span style="color: ' + colors.desaturated + '">│</span>';
+							
+							// Handle bottom line with time - color matches user color
+							let styledBottom = lines[2];
+							if (lines[2].includes('<span class="time">')) {
+								const bottomMatch = lines[2].match(/^(└─*)(<span class="time">(.*?)<\/span>)(┘)$/);
+								if (bottomMatch) {
+									styledBottom = '<span style="color: ' + colors.desaturated + '">' + bottomMatch[1] + '</span><span class="time" style="color: ' + colors.desaturated + '">' + bottomMatch[3] + '</span><span style="color: ' + colors.desaturated + '">' + bottomMatch[4] + '</span>';
+								}
+							} else {
+								styledBottom = '<span style="color: ' + colors.desaturated + '">' + lines[2] + '</span>';
+							}
+							
+							div.innerHTML = styledTop + '\n' + styledMiddle + '\n' + styledBottom;
+						} else {
+							div.innerHTML = boxText;
+						}
+					} else {
+						div.innerHTML = boxText;
+					}
+				}
+				
+				container.appendChild(div);
+			});
+			
+			const layer = document.getElementById('messagesContainer');
+			layer.scrollTop = layer.scrollHeight;
+		}
+
+		function animateMessage(messageBox, isSystem, color, rawText, username, timestamp) {
+			isTyping = true;
+			
+			const lines = messageBox.split('\n');
+			const maxLength = Math.max(...lines.map(l => l.replace(/<[^>]*>/g, '').length));
+			let columnIndex = 0;
+			
+			messages.push({ 
+				text: '',
+				rawText: rawText,
+				username: username,
+				isSystem: isSystem, 
+				isAnimating: true, 
+				color: color,
+				timestamp: timestamp
+			});
+			const messageIndex = messages.length - 1;
+			
+			const interval = setInterval(() => {
+				if (columnIndex < maxLength) {
+					playSound('cursor');
+					
+					let partialText = '';
+					for (let i = 0; i < lines.length; i++) {
+						const cleanLine = lines[i].replace(/<[^>]*>/g, '');
+						partialText += cleanLine.substring(0, columnIndex + 1);
+						if (i < lines.length - 1) partialText += '\n';
+					}
+					messages[messageIndex].text = partialText;
+					renderMessages();
+					columnIndex++;
+				} else {
+					clearInterval(interval);
+					messages[messageIndex].isAnimating = false;
+					renderMessages(); // Re-render to apply proper formatting
+					isTyping = false;
+					playSound('ping');
+				}
+			}, 80);
+		}
+
+		function addMessageLocal(type, text, fromFirebase = false, messageUsername = null, messageColor = null, firebaseTimestamp = null) {
+			let boxText = '';
+			let isSystem = false;
+			const username = messageUsername || currentUsername || 'anon';
+			const color = messageColor || (fromFirebase ? getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim() : currentColor);
+			const timestamp = firebaseTimestamp || Date.now();
+
+			if (type === 'join') {
+				boxText = `USER ${text} JOINED`;
+				isSystem = true;
+			} else if (type === 'exit') {
+				boxText = `USER ${username} EXITED`;
+				isSystem = true;
+			} else if (type === 'theme') {
+				boxText = `USER ${username} SET NEW THEME`;
+				isSystem = true;
+			} else if (type === 'system') {
+				boxText = text;
+				isSystem = true;
+			} else {
+				boxText = text;
+				isSystem = false;
+			}
+
+			const box = createBox(boxText, username, isSystem, timestamp);
+			const shouldAnimate = initialLoadComplete && timestamp > pageLoadTime;
+
+			function pushMessage(msg) {
+				messages.push(msg);
+				trimMessages();
+				renderMessages();
+			}
+
+			if (!isSystem && shouldAnimate) {
+				animateMessage(box, isSystem, color, boxText, username, timestamp);
+			} else {
+				pushMessage({
+					text: box,
+					rawText: boxText,
+					username: username,
+					isSystem: isSystem,
+					color: color,
+					isAnimating: false,
+					timestamp: timestamp
+				});
+
+				if (isSystem && (type === 'join' || type === 'theme' || type === 'exit') && shouldAnimate) {
+					playSound('newline');
+				}
+			}
+		}
+
+		function trimMessages() {
+			const nonAnimatingCount = messages.filter(m => !m.isAnimating).length;
+			if (nonAnimatingCount <= MAX_MESSAGES) return;
+
+			let removeCount = nonAnimatingCount - MAX_MESSAGES;
+			for (let i = 0; i < messages.length && removeCount > 0;) {
+				if (!messages[i].isAnimating) {
+					messages.splice(i, 1);
+					removeCount--;
+				} else {
+					i++;
+				}
+			}
+		}
+
+		function joinChat() {
+			const usernameInput = document.getElementById('usernameInput');
+			if (!usernameInput) return;
+			
+			const username = usernameInput.value.trim().replace(/\s/g, '');
+			
+			if (!username || username.length === 0) {
+				playSound('enter');
+				usernameInput.focus();
+				return;
+			}
+			
+			currentUsername = username;
+			hasJoined = true;
+			
+			document.getElementById('loginScreen').classList.add('hidden');
+			document.getElementById('chatScreen').classList.remove('hidden');
+			const messagesContainer = document.getElementById('messagesContainer');
+			messagesContainer.classList.remove('login-blur');
+			messagesContainer.style.zIndex = '10';
+			
+			const userPresenceRef = database.ref(`presence/${sessionId}`);
+			userPresenceRef.onDisconnect().remove();
+			userPresenceRef.set({
+				username: username,
+				color: currentColor,
+				timestamp: firebase.database.ServerValue.TIMESTAMP
+			});
+			
+			messagesRef.push({
+				type: 'join',
+				username: username,
+				color: currentColor,
+				sessionId: sessionId,
+				timestamp: firebase.database.ServerValue.TIMESTAMP
+			});
+			
+			attachChatListeners();
+		}
+
+		function sendMessage() {
+			if (isTyping) return;
+			
+			const input = document.getElementById('userInput');
+			const text = input.value.trim();
+			
+			if (text) {
+				// Check if it's a command (starts with /)
+				if (text.startsWith('/')) {
+					// Check for /help command
+					if (text === '/help') {
+						addMessageLocal('system', 'COMMANDS: /help /color [0-360] /fog');
+						input.value = '';
+						return;
+					}
+					
+					// Check for /help color command
+					if (text === '/help color') {
+						addMessageLocal('system', 'USAGE: /color [hue] - hue 0-360 or random');
+						input.value = '';
+						return;
+					}
+					
+					// Check for /fog command
+					if (text === '/fog') {
+						fogEnabled = !fogEnabled;
+						if (fogEnabled) {
+							document.body.classList.add('fog-enabled');
+							addMessageLocal('system', 'FOG EFFECT ENABLED');
+						} else {
+							document.body.classList.remove('fog-enabled');
+							addMessageLocal('system', 'FOG EFFECT DISABLED');
+						}
+						input.value = '';
+						return;
+					}
+					
+					// Check for /color command with optional hue
+					const colorMatch = text.match(/^\/color(?:\s+(\d+))?$/);
+					if (colorMatch) {
+						let hue;
+						if (colorMatch[1]) {
+							hue = parseInt(colorMatch[1]);
+							if (hue < 0 || hue > 360) {
+								addMessageLocal('system', 'ERROR: Hue must be 0-360');
+								input.value = '';
+								return;
+							}
+						} else {
+							hue = Math.floor(Math.random() * 361);
+						}
+						
+						// Send theme change message with the user's CURRENT color (not affected by theme)
+						messagesRef.push({
+							type: 'theme',
+							username: currentUsername,
+							color: currentColor,
+							hue: hue,
+							sessionId: sessionId,
+							timestamp: firebase.database.ServerValue.TIMESTAMP
+						});
+						
+						// Update Firebase theme value
+						themeRef.set({
+							hue: hue,
+							setBy: currentUsername,
+							timestamp: firebase.database.ServerValue.TIMESTAMP
+						});
+						
+						input.value = '';
+						return;
+					}
+					
+					// Unknown command
+					addMessageLocal('system', 'ERROR: Unknown command. Type /help');
+					input.value = '';
+					return;
+				}
+				
+				// Regular message
+				messagesRef.push({
+					type: 'message',
+					username: currentUsername,
+					color: currentColor,
+					text: text,
+					sessionId: sessionId,
+					timestamp: firebase.database.ServerValue.TIMESTAMP
+				});
+				input.value = '';
+			}
+		}
+
+		function attachLoginListeners() {
+			const usernameInput = document.getElementById('usernameInput');
+			const joinBtn = document.getElementById('joinBtn');
+			
+			document.querySelectorAll('.color-block').forEach(block => {
+				block.onclick = (e) => {
+					e.preventDefault();
+					e.stopPropagation();
+					currentColor = block.dataset.color;
+					document.querySelectorAll('.color-block').forEach(b => b.classList.remove('selected'));
+					block.classList.add('selected');
+					
+					// Play select sound
+					playSound('select');
+					
+					// Update input and button colors
+					if (usernameInput) {
+						usernameInput.style.color = currentColor;
+						usernameInput.style.textShadow = 'none';
+					}
+					if (joinBtn) {
+						joinBtn.style.color = currentColor;
+						joinBtn.style.textShadow = 'none';
+					}
+				};
+				
+				// Also update on hover
+				block.onmouseenter = () => {
+					playSound('hover');
+					const hoverColor = block.dataset.color;
+					if (usernameInput) {
+						usernameInput.style.color = hoverColor;
+						usernameInput.style.textShadow = 'none';
+						const placeholder = usernameInput.getAttribute('placeholder');
+						usernameInput.setAttribute('data-placeholder', placeholder);
+					}
+					if (joinBtn) {
+						joinBtn.style.color = hoverColor;
+						joinBtn.style.textShadow = 'none';
+					}
+				};
+				
+				block.onmouseleave = () => {
+					if (usernameInput) {
+						usernameInput.style.color = currentColor;
+						usernameInput.style.textShadow = 'none';
+					}
+					if (joinBtn) {
+						joinBtn.style.color = currentColor;
+						joinBtn.style.textShadow = 'none';
+					}
+				};
+			});
+
+			if (joinBtn) {
+				joinBtn.onclick = (e) => {
+					e.preventDefault();
+					joinChat();
+				};
+				// Set initial color
+				joinBtn.style.color = currentColor;
+				joinBtn.style.textShadow = 'none';
+			}
+
+			if (usernameInput) {
+				usernameInput.onkeydown = (e) => {
+					if (e.key === ' ' || e.key === 'Spacebar') {
+						e.preventDefault();
+						return;
+					}
+					if (e.key === 'Enter') {
+						e.preventDefault();
+						joinChat();
+					}
+				};
+				// Set initial color
+				usernameInput.style.color = currentColor;
+				usernameInput.style.textShadow = 'none';
+				usernameInput.focus();
+			}
+		}
+
+		function attachChatListeners() {
+			const sendBtn = document.getElementById('sendBtn');
+			if (sendBtn) {
+				sendBtn.onclick = sendMessage;
+				sendBtn.style.color = currentColor;
+				sendBtn.style.textShadow = 'none';
+			}
+
+			const emojiBtn = document.getElementById('emojiBtn');
+			if (emojiBtn) {
+				emojiBtn.onclick = () => {
+					openEmojiPicker();
+				};
+			}
+
+			const exitBtn = document.getElementById('exitBtn');
+			if (exitBtn) {
+				exitBtn.onclick = () => {
+					exitChat();
+				};
+			}
+
+			const userInput = document.getElementById('userInput');
+			if (userInput) {
+				userInput.onkeydown = (e) => {
+					if (e.key.length === 1 || e.key === 'Backspace' || e.key === 'Delete') {
+						playSound('cursor');
+					}
+					if (e.key === 'Enter') {
+						sendMessage();
+					}
+				};
+				userInput.style.color = currentColor;
+				userInput.style.textShadow = 'none';
+				userInput.focus();
+			}
+		}
+
+		function exitChat() {
+			// Send exit message to Firebase
+			messagesRef.push({
+				type: 'exit',
+				username: currentUsername,
+				color: currentColor,
+				sessionId: sessionId,
+				timestamp: firebase.database.ServerValue.TIMESTAMP
+			});
+			
+			// Remove user presence from database
+			const userPresenceRef = database.ref(`presence/${sessionId}`);
+			userPresenceRef.remove();
+			
+			// Reset state
+			hasJoined = false;
+			currentUsername = '';
+			
+			// Switch screens
+			document.getElementById('chatScreen').classList.add('hidden');
+			document.getElementById('loginScreen').classList.remove('hidden');
+			const messagesContainer = document.getElementById('messagesContainer');
+			messagesContainer.classList.add('login-blur');
+			messagesContainer.style.zIndex = '0';
+			
+			// Reset username input
+			const usernameInput = document.getElementById('usernameInput');
+			if (usernameInput) {
+				usernameInput.value = '';
+				usernameInput.focus();
+			}
+		}
+
+		function openEmojiPicker() {
+			// Hide chat screen
+			document.getElementById('chatScreen').classList.add('hidden');
+			document.getElementById('messagesContainer').classList.add('hidden');
+			
+			// Show emoji screen
+			document.getElementById('emojiScreen').classList.remove('hidden');
+			
+			// Attach emoji click handlers
+			document.querySelectorAll('.emj').forEach(emj => {
+				emj.onclick = () => {
+					const emoji = emj.querySelector('span').textContent;
+					selectEmoji(emoji);
+				};
+			});
+			
+			// Attach close button
+			const closeBtn = document.getElementById('closeEmojiBtn');
+			if (closeBtn) {
+				closeBtn.onclick = closeEmojiPicker;
+			}
+		}
+
+		function closeEmojiPicker() {
+			// Hide emoji screen
+			document.getElementById('emojiScreen').classList.add('hidden');
+			
+			// Show chat screen
+			document.getElementById('chatScreen').classList.remove('hidden');
+			document.getElementById('messagesContainer').classList.remove('hidden');
+			
+			// Refocus input
+			const userInput = document.getElementById('userInput');
+			if (userInput) {
+				userInput.focus();
+			}
+		}
+
+		function selectEmoji(emoji) {
+			const userInput = document.getElementById('userInput');
+			if (userInput) {
+				userInput.value += emoji;
+			}
+			closeEmojiPicker();
+		}
+
+		function updateClock() {
+			const now = new Date();
+			const hours = String(now.getHours()).padStart(2, '0');
+			const minutes = String(now.getMinutes()).padStart(2, '0');
+			const timeEl = document.getElementById('currentTime');
+			if (timeEl) {
+				timeEl.textContent = `${hours}:${minutes}`;
+			}
+		}
+
+		// Update clock immediately and then every second
+		updateClock();
+		setInterval(updateClock, 1000);
+
+		const presenceRef = database.ref('presence');
+		presenceRef.on('value', (snapshot) => {
+			onlineCount = snapshot.numChildren();
+			const countEl = document.getElementById('onlineCount');
+			if (countEl) {
+				countEl.textContent = String(onlineCount).padStart(2, '0');
+			}
+		});
+
+		const viewerPresenceRef = database.ref(`presence/${sessionId}`);
+		viewerPresenceRef.onDisconnect().remove();
+		viewerPresenceRef.set({
+			viewer: true,
+			timestamp: firebase.database.ServerValue.TIMESTAMP
+		});
+
+		messagesRef.on('child_added', (snapshot) => {
+			const data = snapshot.val();
+			const isOwnMessage = data.sessionId === sessionId;
+			
+			if (data.type === 'join') {
+				const joinColor = data.color || getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
+				addMessageLocal('join', data.username, true, null, joinColor, data.timestamp);
+			} else if (data.type === 'exit') {
+				const exitColor = data.color || getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
+				addMessageLocal('exit', '', true, data.username, exitColor, data.timestamp);
+			} else if (data.type === 'theme') {
+				// Pass the user's original color from when they set the theme
+				const themeUserColor = data.color || getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
+				addMessageLocal('theme', '', true, data.username, themeUserColor, data.timestamp);
+			} else if (data.type === 'message') {
+				const msgColor = data.color || '#00ffff';
+				addMessageLocal('message', data.text, true, data.username, msgColor, data.timestamp);
+			}
+		});
+
+		// Listen for theme changes
+		themeRef.on('value', (snapshot) => {
+			const themeData = snapshot.val();
+			if (themeData && themeData.hue !== undefined) {
+				setThemeHue(themeData.hue);
+				// Re-render messages to update colors
+				renderMessages();
+			}
+		});
+
+		function setThemeHue(hue) {
+			document.documentElement.style.setProperty('--primary-hue', hue);
+		}
+
+		setTimeout(() => {
+			initialLoadComplete = true;
+			
+			// Update username input placeholder when loaded
+			const usernameInput = document.getElementById('usernameInput');
+			if (usernameInput && !hasJoined) {
+				usernameInput.placeholder = 'enter user name';
+				usernameInput.classList.remove('loading');
+				usernameInput.style.color = currentColor;
+				usernameInput.disabled = false;
+			}
+		}, 1000);
+
+		attachLoginListeners();
+	</script>
+
+	<script>
+		const loadingEl = document.getElementById("loadingStatus");
+
+		// Timestamp of the last Firebase message
+		let lastMessageTime = Date.now(); // fallback in case no messages yet
+
+		// Make it red initially
+		loadingEl.style.color = "red";
+
+		// Update the "time ago" display
+		function updateTimeAgo() {
+			const diff = Date.now() - lastMessageTime;
+			const seconds = Math.floor(diff / 1000);
+			const minutes = Math.floor(seconds / 60);
+			const hours = Math.floor(minutes / 60);
+
+			if (seconds < 60) {
+				loadingEl.textContent = seconds.toString().padStart(2, '0') + " sec ago";
+			} else if (minutes < 60) {
+				loadingEl.textContent = minutes.toString().padStart(2, '0') + " min ago";
+			} else {
+				loadingEl.textContent = hours.toString().padStart(2, '0') + " hrs ago";
+			}
+
+			loadingEl.style.color = ""; // remove red after first update
+		}
+
+		// Run the update every second for smooth countdown
+		setInterval(updateTimeAgo, 1000);
+
+		// Hook into Firebase message events to reset the timer
+		messagesRef.on('child_added', (snapshot) => {
+			const data = snapshot.val();
+			if (data.type === 'message' || data.type === 'join') {
+				// Update last message time
+				lastMessageTime = data.timestamp || Date.now();
+				updateTimeAgo(); // update immediately
+			}
+		});
+	</script>
+</body>
+</html>
