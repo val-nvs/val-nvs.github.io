@@ -8,10 +8,6 @@
 
 	<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 	<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-	
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Noto+Emoji:wght@300..700&display=swap" rel="stylesheet">
 
 	<style>
 		:root {
@@ -67,24 +63,9 @@
 			display: inline-block;
 			width: 2ch;
 			height: 1em;
-			text-align: center;
-			position: relative;
-			overflow: visible;
-			cursor: pointer;
-			transition: transform 0.1s;
-		}
-		.emj:hover {
-			transform: scale(3);
-		}
-		.emj span {
-			font-family: 'Noto Emoji';
-			font-size: 1em;
-			line-height: 1;
-			position: absolute;
-			top: 0;
-			left: 50%;
-			transform: translateX(-50%) scale(.5) translate(-0.1ch, 0.1em); /* combine your adjustments */
-			transform-origin: center;
+			vertical-align: middle;
+			image-rendering: pixelated;
+			object-fit: contain;
 		}
 		.time {
 			display: inline-block;
@@ -212,14 +193,12 @@
 </head>
 <body>
 	<script>
-		// Prevent ctrl+scroll zoom
 		document.addEventListener('wheel', function(e) {
 			if (e.ctrlKey) {
 				e.preventDefault();
 			}
 		}, { passive: false });
 		
-		// Prevent keyboard zoom
 		document.addEventListener('keydown', function(e) {
 			if ((e.ctrlKey || e.metaKey) && (e.key === '+' || e.key === '-' || e.key === '=')) {
 				e.preventDefault();
@@ -228,7 +207,7 @@
 	</script>
 	<div class="chat-wrapper">
 		<span id="loginScreen">
-┌──────────────────────────┐              ┌─────────────────┐
+┌──────────────────────────               ┌─────────────────┐
 │ Last message: <span id="loadingStatus">LOADING...</span> │              │ By: <button class="btn-inline" onclick="window.open('https://val-nvs.com', '_blank')">val-nvs.com</button> │
 └──────────────────────────┘              └─────────────────┘
 ┌───────────────────────────────────────────────────────────┐
@@ -304,12 +283,12 @@
 		</div>
 
 		<span id="emojiScreen" class="hidden">
-┌──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┐
-│<span class="emj"><span>😀</span></span>│<span class="emj"><span>😃</span></span>│<span class="emj"><span>😄</span></span>│<span class="emj"><span>😁</span></span>│<span class="emj"><span>😆</span></span>│<span class="emj"><span>😅</span></span>│<span class="emj"><span>😂</span></span>│<span class="emj"><span>🤣</span></span>│<span class="emj"><span>😍</span></span>│<span class="emj"><span>🥰</span></span>│<span class="emj"><span>😘</span></span>│<span class="emj"><span>😗</span></span>│<span class="emj"><span>😙</span></span>│<span class="emj"><span>😚</span></span>│<span class="emj"><span>😋</span></span>│<span class="emj"><span>😛</span></span>│<span class="emj"><span>😝</span></span>│<span class="emj"><span>😜</span></span>│<span class="emj"><span>🤪</span></span>│<span class="emj"><span>🤩</span></span>│
-└──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┘
-┌───────────────┐
+┌───────────────────────────────────────────────────────────┐
+│ PASTE EMOJIS DIRECTLY INTO CHAT                           │
+└───────────────────────────────────────────────────────────┘
+┌───────┐
 │ <button class="btn-inline" id="closeEmojiBtn">CLOSE</button> │
-└───────────────┘
+└───────┘
  </span>
 	</div>
 
@@ -347,7 +326,10 @@
 			cursor: new Audio('./terminal_cursor.wav'),
 			hover: new Audio('./R_Terminal_redtick.wav'),
 			select: new Audio('./R_Terminal_downloading.wav'),
-			enter: new Audio('./R_TerminalLoad.wav')
+			enter: new Audio('./R_TerminalLoad.wav'),
+			fog: new Audio('./HackerDigitalBrainDisappear.wav'),
+			theme: new Audio('./HackerBrainDisappear.wav'),
+			exit: new Audio('./Phone_busy.wav')
 		};
 
 		function playSound(soundName) {
@@ -355,6 +337,44 @@
 				sounds[soundName].currentTime = 0;
 				sounds[soundName].play().catch(e => {});
 			}
+		}
+
+		function getDisplayWidth(text) {
+			// Calculate display width: each emoji becomes 2 characters wide
+			const emojiRegex = /[\u2600-\u27BF\uE000-\uF8FF\uD83C-\uDBFF\uDC00-\uDFFF][\uFE0E\uFE0F]?[\u200D\uFE0F\u20E3\u{E0020}-\u{E007F}\p{Emoji_Modifier}]*([\u2600-\u27BF\uE000-\uF8FF\uD83C-\uDBFF\uDC00-\uDFFF][\uFE0E\uFE0F]?)*/gu;
+			const withoutEmojis = text.replace(emojiRegex, 'XX');
+			return withoutEmojis.length;
+		}
+
+		function processEmojis(text, color) {
+			const emojiRegex = /[\u2600-\u27BF\uE000-\uF8FF\uD83C-\uDBFF\uDC00-\uDFFF][\uFE0E\uFE0F]?[\u200D\uFE0F\u20E3\u{E0020}-\u{E007F}\p{Emoji_Modifier}]*([\u2600-\u27BF\uE000-\uF8FF\uD83C-\uDBFF\uDC00-\uDFFF][\uFE0E\uFE0F]?)*/gu;
+			
+			return text.replace(emojiRegex, function(match) {
+				const codepoints = [];
+				for (let i = 0; i < match.length; i++) {
+					const code = match.charCodeAt(i);
+					if (code >= 0xD800 && code <= 0xDBFF && i + 1 < match.length) {
+						const low = match.charCodeAt(i + 1);
+						if (low >= 0xDC00 && low <= 0xDFFF) {
+							const codePoint = ((code - 0xD800) * 0x400) + (low - 0xDC00) + 0x10000;
+							codepoints.push(codePoint.toString(16));
+							i++;
+							continue;
+						}
+					}
+					codepoints.push(code.toString(16));
+				}
+				const filename = codepoints.join('-');
+				let hueRotate = 0;
+				if (color) {
+					const hslMatch = color.match(/hsl\((\d+)/);
+					if (hslMatch) {
+						hueRotate = parseInt(hslMatch[1]) - 38;
+					}
+				}
+				const colorStyle = color ? `filter: sepia(90%) saturate(500%) hue-rotate(${hueRotate}deg);` : '';
+				return `<img class="emj" src="emojis/${filename}.png" alt="${match}" style="${colorStyle}" onerror="this.style.display='none'">`;
+			});
 		}
 
 		function getColorVariants(color) {
@@ -376,11 +396,10 @@
 			return `${hours}:${minutes}`;
 		}
 
-		function createBox(text, username, isSystem = false, timestamp = null) {
+		function createBox(text, username, isSystem = false, timestamp = null, userColor = null) {
 			if (isSystem) {
 				const timeStr = timestamp ? formatTime(timestamp) : '';
 				const timeLength = timeStr.length;
-				// For system messages, keep text on single line (no wrapping)
 				const singleLineText = text.replace(/\n/g, ' ');
 				const contentWidth = Math.max(singleLineText.length + 2, timeLength);
 				const topBorder = '┌' + '─'.repeat(contentWidth) + '┐';
@@ -390,8 +409,11 @@
 				return [topBorder, messageLine, bottomBorder].join('\n');
 			}
 			
+			const colors = getColorVariants(userColor || '#00ffff');
+			const processedText = processEmojis(text, colors.saturated);
+			
 			const usernameContent = username.length + 2;
-			const messageContent = text.length + 2;
+			const messageContent = getDisplayWidth(text) + 2;
 			const timeStr = timestamp ? formatTime(timestamp) : '';
 			const timeLength = timeStr.length;
 			const contentWidth = Math.max(usernameContent, messageContent, timeLength);
@@ -399,8 +421,8 @@
 			const dashesAfterUsername = contentWidth - username.length - 1;
 			const topBorder = '┌─' + username + '─'.repeat(dashesAfterUsername) + '┐';
 			
-			const spacesAfterText = contentWidth - text.length - 1;
-			const messageLine = '│ ' + text + ' '.repeat(spacesAfterText) + '│';
+			const spacesAfterText = contentWidth - getDisplayWidth(text) - 1;
+			const messageLine = '│ ' + processedText + ' '.repeat(spacesAfterText) + '│';
 			
 			const dashesBeforeTime = Math.max(0, contentWidth - timeLength);
 			const bottomBorder = '└' + '─'.repeat(dashesBeforeTime) + '<span class="time">' + timeStr + '</span>' + '┘';
@@ -417,9 +439,8 @@
 				div.className = 'message';
 				div.style.alignSelf = msgObj.isSystem ? 'flex-start' : 'flex-end';
 				
-				const boxText = msgObj.isAnimating ? msgObj.text : createBox(msgObj.rawText, msgObj.username, msgObj.isSystem, msgObj.timestamp);
+				const boxText = msgObj.isAnimating ? msgObj.text : createBox(msgObj.rawText, msgObj.username, msgObj.isSystem, msgObj.timestamp, msgObj.color);
 				
-				// Apply color even during animation
 				if (msgObj.isAnimating && !msgObj.isSystem) {
 					const userColor = msgObj.color || '#00ffff';
 					const colors = getColorVariants(userColor);
@@ -430,18 +451,17 @@
 					const userColor = msgObj.color || getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
 					const lines = boxText.split('\n');
 					
-					if (lines.length === 3 && (boxText.includes('JOINED') || boxText.includes('SET NEW THEME') || boxText.includes('EXITED'))) {
+					if (lines.length === 3 && (boxText.includes('JOINED') || boxText.includes('SET NEW THEME') || boxText.includes('LEFT') || boxText.includes('FOG'))) {
 						const middleLine = lines[1];
 						const joinMatch = middleLine.match(/│ (USER )(\w+)( JOINED) │/);
 						const themeMatch = middleLine.match(/│ (USER )(\w+)( SET NEW THEME) │/);
-						const exitMatch = middleLine.match(/│ (USER )(\w+)( EXITED) │/);
-						const match = joinMatch || themeMatch || exitMatch;
+						const exitMatch = middleLine.match(/│ (USER )(\w+)( LEFT) │/);
+						const fogMatch = middleLine.match(/│ (USER )(\w+)( (?:ENABLED|DISABLED) FOG) │/);
+						const match = joinMatch || themeMatch || exitMatch || fogMatch;
 						
 						if (match) {
-							// For theme messages, use the stored user color from when they joined
 							let highlightColor = userColor;
-							if ((themeMatch || exitMatch) && msgObj.username) {
-								// Find the user's join message to get their original color
+							if ((themeMatch || exitMatch || fogMatch) && msgObj.username) {
 								const joinMsg = messages.find(m => m.username === msgObj.username && m.rawText && m.rawText.includes('JOINED'));
 								if (joinMsg && joinMsg.color) {
 									highlightColor = joinMsg.color;
@@ -451,7 +471,6 @@
 							const colors = getColorVariants(highlightColor);
 							const styledMiddle = '│ ' + match[1] + '<span style="color: ' + colors.saturated + '">' + match[2] + '</span>' + match[3] + ' │';
 							
-							// Handle bottom line with time for system messages - use primary color
 							let styledBottom = lines[2];
 							if (lines[2].includes('<span class="time">')) {
 								const bottomMatch = lines[2].match(/^(└─*)(<span class="time">(.*?)<\/span>)(┘)$/);
@@ -480,7 +499,6 @@
 							const styledTop = '<span style="color: ' + colors.desaturated + '">' + lines[0] + '</span>';
 							const styledMiddle = '<span style="color: ' + colors.desaturated + '">│</span><span style="color: ' + colors.saturated + '">' + messageContent + '</span><span style="color: ' + colors.desaturated + '">│</span>';
 							
-							// Handle bottom line with time - color matches user color
 							let styledBottom = lines[2];
 							if (lines[2].includes('<span class="time">')) {
 								const bottomMatch = lines[2].match(/^(└─*)(<span class="time">(.*?)<\/span>)(┘)$/);
@@ -541,14 +559,14 @@
 				} else {
 					clearInterval(interval);
 					messages[messageIndex].isAnimating = false;
-					renderMessages(); // Re-render to apply proper formatting
+					renderMessages();
 					isTyping = false;
 					playSound('ping');
 				}
 			}, 80);
 		}
 
-		function addMessageLocal(type, text, fromFirebase = false, messageUsername = null, messageColor = null, firebaseTimestamp = null) {
+		function addMessageLocal(type, text, fromFirebase = false, messageUsername = null, messageColor = null, firebaseTimestamp = null, fogEnabledState = null) {
 			let boxText = '';
 			let isSystem = false;
 			const username = messageUsername || currentUsername || 'anon';
@@ -559,10 +577,13 @@
 				boxText = `USER ${text} JOINED`;
 				isSystem = true;
 			} else if (type === 'exit') {
-				boxText = `USER ${username} EXITED`;
+				boxText = `USER ${username} LEFT`;
 				isSystem = true;
 			} else if (type === 'theme') {
 				boxText = `USER ${username} SET NEW THEME`;
+				isSystem = true;
+			} else if (type === 'fog') {
+				boxText = `USER ${username} ${fogEnabledState ? 'ENABLED' : 'DISABLED'} FOG`;
 				isSystem = true;
 			} else if (type === 'system') {
 				boxText = text;
@@ -572,7 +593,7 @@
 				isSystem = false;
 			}
 
-			const box = createBox(boxText, username, isSystem, timestamp);
+			const box = createBox(boxText, username, isSystem, timestamp, color);
 			const shouldAnimate = initialLoadComplete && timestamp > pageLoadTime;
 
 			function pushMessage(msg) {
@@ -594,8 +615,14 @@
 					timestamp: timestamp
 				});
 
-				if (isSystem && (type === 'join' || type === 'theme' || type === 'exit') && shouldAnimate) {
+				if (isSystem && type === 'join' && shouldAnimate) {
 					playSound('newline');
+				} else if (isSystem && type === 'exit' && shouldAnimate) {
+					playSound('exit');
+				} else if (isSystem && type === 'theme' && shouldAnimate) {
+					playSound('theme');
+				} else if (isSystem && type === 'fog' && shouldAnimate) {
+					playSound('fog');
 				}
 			}
 		}
@@ -662,37 +689,41 @@
 			const text = input.value.trim();
 			
 			if (text) {
-				// Check if it's a command (starts with /)
 				if (text.startsWith('/')) {
-					// Check for /help command
 					if (text === '/help') {
 						addMessageLocal('system', 'COMMANDS: /help /color [0-360] /fog');
 						input.value = '';
 						return;
 					}
 					
-					// Check for /help color command
 					if (text === '/help color') {
 						addMessageLocal('system', 'USAGE: /color [hue] - hue 0-360 or random');
 						input.value = '';
 						return;
 					}
 					
-					// Check for /fog command
 					if (text === '/fog') {
 						fogEnabled = !fogEnabled;
-						if (fogEnabled) {
-							document.body.classList.add('fog-enabled');
-							addMessageLocal('system', 'FOG EFFECT ENABLED');
-						} else {
-							document.body.classList.remove('fog-enabled');
-							addMessageLocal('system', 'FOG EFFECT DISABLED');
-						}
+						
+						messagesRef.push({
+							type: 'fog',
+							username: currentUsername,
+							color: currentColor,
+							enabled: fogEnabled,
+							sessionId: sessionId,
+							timestamp: firebase.database.ServerValue.TIMESTAMP
+						});
+						
+						themeRef.update({
+							fog: fogEnabled,
+							fogSetBy: currentUsername,
+							fogTimestamp: firebase.database.ServerValue.TIMESTAMP
+						});
+						
 						input.value = '';
 						return;
 					}
 					
-					// Check for /color command with optional hue
 					const colorMatch = text.match(/^\/color(?:\s+(\d+))?$/);
 					if (colorMatch) {
 						let hue;
@@ -704,10 +735,11 @@
 								return;
 							}
 						} else {
-							hue = Math.floor(Math.random() * 361);
+							// Get current hue and add 120 degrees
+							const currentHue = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--primary-hue'));
+							hue = (currentHue + 120) % 360;
 						}
 						
-						// Send theme change message with the user's CURRENT color (not affected by theme)
 						messagesRef.push({
 							type: 'theme',
 							username: currentUsername,
@@ -717,8 +749,7 @@
 							timestamp: firebase.database.ServerValue.TIMESTAMP
 						});
 						
-						// Update Firebase theme value
-						themeRef.set({
+						themeRef.update({
 							hue: hue,
 							setBy: currentUsername,
 							timestamp: firebase.database.ServerValue.TIMESTAMP
@@ -728,13 +759,11 @@
 						return;
 					}
 					
-					// Unknown command
 					addMessageLocal('system', 'ERROR: Unknown command. Type /help');
 					input.value = '';
 					return;
 				}
 				
-				// Regular message
 				messagesRef.push({
 					type: 'message',
 					username: currentUsername,
@@ -759,10 +788,8 @@
 					document.querySelectorAll('.color-block').forEach(b => b.classList.remove('selected'));
 					block.classList.add('selected');
 					
-					// Play select sound
 					playSound('select');
 					
-					// Update input and button colors
 					if (usernameInput) {
 						usernameInput.style.color = currentColor;
 						usernameInput.style.textShadow = 'none';
@@ -773,7 +800,6 @@
 					}
 				};
 				
-				// Also update on hover
 				block.onmouseenter = () => {
 					playSound('hover');
 					const hoverColor = block.dataset.color;
@@ -806,7 +832,6 @@
 					e.preventDefault();
 					joinChat();
 				};
-				// Set initial color
 				joinBtn.style.color = currentColor;
 				joinBtn.style.textShadow = 'none';
 			}
@@ -822,7 +847,6 @@
 						joinChat();
 					}
 				};
-				// Set initial color
 				usernameInput.style.color = currentColor;
 				usernameInput.style.textShadow = 'none';
 				usernameInput.focus();
@@ -868,7 +892,6 @@
 		}
 
 		function exitChat() {
-			// Send exit message to Firebase
 			messagesRef.push({
 				type: 'exit',
 				username: currentUsername,
@@ -877,22 +900,18 @@
 				timestamp: firebase.database.ServerValue.TIMESTAMP
 			});
 			
-			// Remove user presence from database
 			const userPresenceRef = database.ref(`presence/${sessionId}`);
 			userPresenceRef.remove();
 			
-			// Reset state
 			hasJoined = false;
 			currentUsername = '';
 			
-			// Switch screens
 			document.getElementById('chatScreen').classList.add('hidden');
 			document.getElementById('loginScreen').classList.remove('hidden');
 			const messagesContainer = document.getElementById('messagesContainer');
 			messagesContainer.classList.add('login-blur');
 			messagesContainer.style.zIndex = '0';
 			
-			// Reset username input
 			const usernameInput = document.getElementById('usernameInput');
 			if (usernameInput) {
 				usernameInput.value = '';
@@ -901,22 +920,11 @@
 		}
 
 		function openEmojiPicker() {
-			// Hide chat screen
 			document.getElementById('chatScreen').classList.add('hidden');
 			document.getElementById('messagesContainer').classList.add('hidden');
 			
-			// Show emoji screen
 			document.getElementById('emojiScreen').classList.remove('hidden');
 			
-			// Attach emoji click handlers
-			document.querySelectorAll('.emj').forEach(emj => {
-				emj.onclick = () => {
-					const emoji = emj.querySelector('span').textContent;
-					selectEmoji(emoji);
-				};
-			});
-			
-			// Attach close button
 			const closeBtn = document.getElementById('closeEmojiBtn');
 			if (closeBtn) {
 				closeBtn.onclick = closeEmojiPicker;
@@ -924,26 +932,15 @@
 		}
 
 		function closeEmojiPicker() {
-			// Hide emoji screen
 			document.getElementById('emojiScreen').classList.add('hidden');
 			
-			// Show chat screen
 			document.getElementById('chatScreen').classList.remove('hidden');
 			document.getElementById('messagesContainer').classList.remove('hidden');
 			
-			// Refocus input
 			const userInput = document.getElementById('userInput');
 			if (userInput) {
 				userInput.focus();
 			}
-		}
-
-		function selectEmoji(emoji) {
-			const userInput = document.getElementById('userInput');
-			if (userInput) {
-				userInput.value += emoji;
-			}
-			closeEmojiPicker();
 		}
 
 		function updateClock() {
@@ -956,7 +953,6 @@
 			}
 		}
 
-		// Update clock immediately and then every second
 		updateClock();
 		setInterval(updateClock, 1000);
 
@@ -987,22 +983,32 @@
 				const exitColor = data.color || getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
 				addMessageLocal('exit', '', true, data.username, exitColor, data.timestamp);
 			} else if (data.type === 'theme') {
-				// Pass the user's original color from when they set the theme
 				const themeUserColor = data.color || getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
 				addMessageLocal('theme', '', true, data.username, themeUserColor, data.timestamp);
+			} else if (data.type === 'fog') {
+				const fogUserColor = data.color || getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
+				addMessageLocal('fog', '', true, data.username, fogUserColor, data.timestamp, data.enabled);
 			} else if (data.type === 'message') {
 				const msgColor = data.color || '#00ffff';
 				addMessageLocal('message', data.text, true, data.username, msgColor, data.timestamp);
 			}
 		});
 
-		// Listen for theme changes
 		themeRef.on('value', (snapshot) => {
 			const themeData = snapshot.val();
-			if (themeData && themeData.hue !== undefined) {
-				setThemeHue(themeData.hue);
-				// Re-render messages to update colors
-				renderMessages();
+			if (themeData) {
+				if (themeData.hue !== undefined) {
+					setThemeHue(themeData.hue);
+					renderMessages();
+				}
+				if (themeData.fog !== undefined) {
+					fogEnabled = themeData.fog;
+					if (fogEnabled) {
+						document.body.classList.add('fog-enabled');
+					} else {
+						document.body.classList.remove('fog-enabled');
+					}
+				}
 			}
 		});
 
@@ -1013,7 +1019,6 @@
 		setTimeout(() => {
 			initialLoadComplete = true;
 			
-			// Update username input placeholder when loaded
 			const usernameInput = document.getElementById('usernameInput');
 			if (usernameInput && !hasJoined) {
 				usernameInput.placeholder = 'enter user name';
@@ -1029,13 +1034,10 @@
 	<script>
 		const loadingEl = document.getElementById("loadingStatus");
 
-		// Timestamp of the last Firebase message
-		let lastMessageTime = Date.now(); // fallback in case no messages yet
+		let lastMessageTime = Date.now();
 
-		// Make it red initially
 		loadingEl.style.color = "red";
 
-		// Update the "time ago" display
 		function updateTimeAgo() {
 			const diff = Date.now() - lastMessageTime;
 			const seconds = Math.floor(diff / 1000);
@@ -1050,19 +1052,16 @@
 				loadingEl.textContent = hours.toString().padStart(2, '0') + " hrs ago";
 			}
 
-			loadingEl.style.color = ""; // remove red after first update
+			loadingEl.style.color = "";
 		}
 
-		// Run the update every second for smooth countdown
 		setInterval(updateTimeAgo, 1000);
 
-		// Hook into Firebase message events to reset the timer
 		messagesRef.on('child_added', (snapshot) => {
 			const data = snapshot.val();
 			if (data.type === 'message' || data.type === 'join') {
-				// Update last message time
 				lastMessageTime = data.timestamp || Date.now();
-				updateTimeAgo(); // update immediately
+				updateTimeAgo();
 			}
 		});
 	</script>
