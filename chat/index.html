@@ -286,9 +286,9 @@
 ┌───────────────────────────────────────────────────────────┐
 │ PASTE EMOJIS DIRECTLY INTO CHAT                           │
 └───────────────────────────────────────────────────────────┘
-┌───────┐
+┌───────────────┐
 │ <button class="btn-inline" id="closeEmojiBtn">CLOSE</button> │
-└───────┘
+└───────────────┘
  </span>
 	</div>
 
@@ -307,6 +307,7 @@
 		const database = firebase.database();
 		const messagesRef = database.ref('messages');
 		const themeRef = database.ref('theme');
+		const musicRef = database.ref('music');
 
 		const messages = [];
 		let hasJoined = false;
@@ -319,6 +320,9 @@
 		let pageLoadTime = Date.now();
 		const MAX_MESSAGES = 20;
 		let fogEnabled = false;
+		let musicPlaying = false;
+		const musicAudio = new Audio('./debussy.mp3');
+		musicAudio.loop = true;
 
 		const sounds = {
 			ping: new Audio('./R_Terminal_ping.wav'),
@@ -451,17 +455,18 @@
 					const userColor = msgObj.color || getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
 					const lines = boxText.split('\n');
 					
-					if (lines.length === 3 && (boxText.includes('JOINED') || boxText.includes('SET NEW THEME') || boxText.includes('LEFT') || boxText.includes('FOG'))) {
+					if (lines.length === 3 && (boxText.includes('JOINED') || boxText.includes('SET NEW THEME') || boxText.includes('LEFT') || boxText.includes('FOG') || boxText.includes('MUSIC'))) {
 						const middleLine = lines[1];
 						const joinMatch = middleLine.match(/│ (USER )(\w+)( JOINED) │/);
 						const themeMatch = middleLine.match(/│ (USER )(\w+)( SET NEW THEME) │/);
 						const exitMatch = middleLine.match(/│ (USER )(\w+)( LEFT) │/);
 						const fogMatch = middleLine.match(/│ (USER )(\w+)( (?:ENABLED|DISABLED) FOG) │/);
-						const match = joinMatch || themeMatch || exitMatch || fogMatch;
+						const musicMatch = middleLine.match(/│ (USER )(\w+)( (?:STARTED|STOPPED) MUSIC) │/);
+						const match = joinMatch || themeMatch || exitMatch || fogMatch || musicMatch;
 						
 						if (match) {
 							let highlightColor = userColor;
-							if ((themeMatch || exitMatch || fogMatch) && msgObj.username) {
+							if ((themeMatch || exitMatch || fogMatch || musicMatch) && msgObj.username) {
 								const joinMsg = messages.find(m => m.username === msgObj.username && m.rawText && m.rawText.includes('JOINED'));
 								if (joinMsg && joinMsg.color) {
 									highlightColor = joinMsg.color;
@@ -585,6 +590,9 @@
 			} else if (type === 'fog') {
 				boxText = `USER ${username} ${fogEnabledState ? 'ENABLED' : 'DISABLED'} FOG`;
 				isSystem = true;
+			} else if (type === 'music') {
+				boxText = `USER ${username} ${fogEnabledState ? 'STARTED' : 'STOPPED'} MUSIC`;
+				isSystem = true;
 			} else if (type === 'system') {
 				boxText = text;
 				isSystem = true;
@@ -691,7 +699,7 @@
 			if (text) {
 				if (text.startsWith('/')) {
 					if (text === '/help') {
-						addMessageLocal('system', 'COMMANDS: /help /color [0-360] /fog');
+						addMessageLocal('system', 'COMMANDS: /help /color [0-360] /fog /play /stop');
 						input.value = '';
 						return;
 					}
@@ -718,6 +726,50 @@
 							fog: fogEnabled,
 							fogSetBy: currentUsername,
 							fogTimestamp: firebase.database.ServerValue.TIMESTAMP
+						});
+						
+						input.value = '';
+						return;
+					}
+					
+					if (text === '/play') {
+						musicPlaying = true;
+						
+						messagesRef.push({
+							type: 'music',
+							username: currentUsername,
+							color: currentColor,
+							playing: true,
+							sessionId: sessionId,
+							timestamp: firebase.database.ServerValue.TIMESTAMP
+						});
+						
+						musicRef.set({
+							playing: true,
+							setBy: currentUsername,
+							timestamp: firebase.database.ServerValue.TIMESTAMP
+						});
+						
+						input.value = '';
+						return;
+					}
+					
+					if (text === '/stop') {
+						musicPlaying = false;
+						
+						messagesRef.push({
+							type: 'music',
+							username: currentUsername,
+							color: currentColor,
+							playing: false,
+							sessionId: sessionId,
+							timestamp: firebase.database.ServerValue.TIMESTAMP
+						});
+						
+						musicRef.set({
+							playing: false,
+							setBy: currentUsername,
+							timestamp: firebase.database.ServerValue.TIMESTAMP
 						});
 						
 						input.value = '';
@@ -988,6 +1040,9 @@
 			} else if (data.type === 'fog') {
 				const fogUserColor = data.color || getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
 				addMessageLocal('fog', '', true, data.username, fogUserColor, data.timestamp, data.enabled);
+			} else if (data.type === 'music') {
+				const musicUserColor = data.color || getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
+				addMessageLocal('music', '', true, data.username, musicUserColor, data.timestamp, data.playing);
 			} else if (data.type === 'message') {
 				const msgColor = data.color || '#00ffff';
 				addMessageLocal('message', data.text, true, data.username, msgColor, data.timestamp);
@@ -1008,6 +1063,20 @@
 					} else {
 						document.body.classList.remove('fog-enabled');
 					}
+				}
+			}
+		});
+
+		musicRef.on('value', (snapshot) => {
+			const musicData = snapshot.val();
+			if (musicData && musicData.playing !== undefined) {
+				musicPlaying = musicData.playing;
+				if (musicPlaying) {
+					musicAudio.currentTime = 0;
+					musicAudio.play().catch(e => {});
+				} else {
+					musicAudio.pause();
+					musicAudio.currentTime = 0;
 				}
 			}
 		});
