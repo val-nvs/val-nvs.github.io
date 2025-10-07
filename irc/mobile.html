@@ -5,14 +5,19 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Dark Chat</title>
 	<style>
+		@font-face {
+			font-family: 'Perfect DOS VGA 437';
+			src: url('https://cdn.jsdelivr.net/gh/rewtnull/dosgateway@master/fonts/PerfectDOSVGA437.ttf') format('truetype');
+		}
+
 		* {
 			margin: 0;
 			padding: 0;
 			box-sizing: border-box;
+			font-family: 'Perfect DOS VGA 437', 'Courier New', monospace;
 		}
 
 		body {
-			font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 			background: #0a0a0f;
 			height: 100dvh;
 			overflow: hidden;
@@ -29,53 +34,19 @@
 		.chat-header {
 			background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
 			padding: 16px 20px;
-			display: flex;
-			align-items: center;
-			gap: 12px;
 			border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 			box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 		}
 
-		.avatar {
-			width: 40px;
-			height: 40px;
-			border-radius: 50%;
-			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-			display: flex;
-			align-items: center;
-			justify-content: center;
+		.header-title {
 			font-weight: 600;
-			font-size: 16px;
+			font-size: 18px;
 		}
 
-		.header-info {
-			flex: 1;
-		}
-
-		.header-name {
-			font-weight: 600;
-			font-size: 16px;
-		}
-
-		.header-status {
+		.header-subtitle {
 			font-size: 12px;
 			color: #71717a;
 			margin-top: 2px;
-		}
-
-		.online-dot {
-			width: 8px;
-			height: 8px;
-			background: #10b981;
-			border-radius: 50%;
-			display: inline-block;
-			margin-right: 4px;
-			animation: pulse 2s infinite;
-		}
-
-		@keyframes pulse {
-			0%, 100% { opacity: 1; }
-			50% { opacity: 0.5; }
 		}
 
 		.messages {
@@ -90,8 +61,12 @@
 
 		.message {
 			display: flex;
-			gap: 10px;
+			flex-direction: column;
+			gap: 0;
 			animation: slideIn 0.3s ease;
+			align-items: flex-end;
+			font-size: 14px;
+			line-height: 1.4;
 		}
 
 		@keyframes slideIn {
@@ -105,49 +80,54 @@
 			}
 		}
 
-		.message.sent {
-			flex-direction: row-reverse;
-		}
-
-		.message-avatar {
-			width: 32px;
-			height: 32px;
-			border-radius: 50%;
-			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			font-size: 14px;
-			font-weight: 600;
-			flex-shrink: 0;
-		}
-
-		.message.sent .message-avatar {
-			background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-		}
-
-		.message-content {
+		.message-box {
+			display: inline-block;
 			max-width: 75%;
 		}
 
-		.message-bubble {
-			background: rgba(39, 39, 57, 0.8);
-			padding: 12px 16px;
-			border-radius: 18px;
-			font-size: 16px;
-			line-height: 1.4;
+		.message-top {
+			color: #a1a1aa;
+			white-space: nowrap;
+		}
+
+		.message-content {
+			color: #e4e4e7;
+			border-left: 1px solid #a1a1aa;
+			border-right: 1px solid #a1a1aa;
+			padding: 0 1ch;
+			white-space: pre-wrap;
 			word-wrap: break-word;
 		}
 
-		.message.sent .message-bubble {
-			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+		.message-bottom {
+			color: #a1a1aa;
+			white-space: nowrap;
 		}
 
-		.message-time {
-			font-size: 11px;
-			color: #71717a;
-			margin-top: 4px;
-			padding: 0 8px;
+		.message-author-text {
+			color: var(--author-color);
+		}
+
+		.command-message {
+			align-self: flex-start;
+			width: auto;
+			max-width: 80%;
+			font-size: 14px;
+		}
+
+		.command-message .message-box {
+			max-width: 100%;
+		}
+
+		.command-message .message-top,
+		.command-message .message-bottom {
+			color: #667eea;
+		}
+
+		.command-message .message-content {
+			border-left-color: #667eea;
+			border-right-color: #667eea;
+			color: #a5b4fc;
 		}
 
 		.input-area {
@@ -173,7 +153,6 @@
 			border-radius: 24px;
 			color: #e4e4e7;
 			resize: none;
-			font-family: inherit;
 			max-height: 100px;
 			overflow-y: auto;
 		}
@@ -230,44 +209,47 @@
 <body>
 	<div class="chat-container">
 		<div class="chat-header">
-			<div class="avatar">AJ</div>
-			<div class="header-info">
-				<div class="header-name">Alex Johnson</div>
-				<div class="header-status">
-					<span class="online-dot"></span>Active now
-				</div>
-			</div>
+			<div class="header-title">General Chat</div>
+			<div class="header-subtitle">4 members online</div>
 		</div>
 
 		<div class="messages" id="messages">
-			<div class="message">
-				<div class="message-avatar">AJ</div>
-				<div class="message-content">
-					<div class="message-bubble">Hey! How's it going?</div>
-					<div class="message-time">10:32 AM</div>
+			<div class="message" style="--author-color: #f87171">
+				<div class="message-box">
+					<div class="message-top">┌─<span class="message-author-text">Sarah</span>────┐</div>
+					<div class="message-content">Hey everyone! 👋</div>
+					<div class="message-bottom">└────10:32┘</div>
 				</div>
 			</div>
 
-			<div class="message sent">
-				<div class="message-avatar">ME</div>
-				<div class="message-content">
-					<div class="message-bubble">Pretty good! Just working on some projects</div>
-					<div class="message-time">10:33 AM</div>
+			<div class="message" style="--author-color: #60a5fa">
+				<div class="message-box">
+					<div class="message-top">┌─<span class="message-author-text">Mike</span>─────┐</div>
+					<div class="message-content">What's up?</div>
+					<div class="message-bottom">└────10:33┘</div>
 				</div>
 			</div>
 
-			<div class="message">
-				<div class="message-avatar">AJ</div>
-				<div class="message-content">
-					<div class="message-bubble">Nice! What are you building?</div>
-					<div class="message-time">10:34 AM</div>
+			<div class="message" style="--author-color: #a78bfa">
+				<div class="message-box">
+					<div class="message-top">┌─<span class="message-author-text">Alex</span>─────────────────┐</div>
+					<div class="message-content">Just testing out the chat</div>
+					<div class="message-bottom">└───────────────────10:34┘</div>
+				</div>
+			</div>
+
+			<div class="message command-message">
+				<div class="message-box">
+					<div class="message-top">┌─system──────────────────────┐</div>
+					<div class="message-content">💡 Try commands like /theme, /clear, /help</div>
+					<div class="message-bottom">└─────────────────────────────┘</div>
 				</div>
 			</div>
 		</div>
 
 		<div class="input-area">
 			<div class="input-wrapper">
-				<textarea id="messageInput" placeholder="Type a message..." rows="1"></textarea>
+				<textarea id="messageInput" placeholder="Type a message or /command..." rows="1"></textarea>
 			</div>
 			<button class="send-button" id="sendButton">➤</button>
 		</div>
@@ -278,6 +260,42 @@
 		const messageInput = document.getElementById('messageInput');
 		const sendButton = document.getElementById('sendButton');
 
+		const userColors = [
+			'#f87171', '#fb923c', '#fbbf24', '#facc15', 
+			'#a3e635', '#4ade80', '#34d399', '#2dd4bf',
+			'#22d3ee', '#38bdf8', '#60a5fa', '#818cf8',
+			'#a78bfa', '#c084fc', '#e879f9', '#f472b6'
+		];
+
+		const users = new Map();
+		let userColorIndex = 0;
+
+		function getUserColor(username) {
+			if (!users.has(username)) {
+				users.set(username, userColors[userColorIndex % userColors.length]);
+				userColorIndex++;
+			}
+			return users.get(username);
+		}
+
+		function createMessageBox(author, message, time, authorColor) {
+			const lines = message.split('\n');
+			const maxLineLength = Math.max(...lines.map(line => line.length), author.length + 2);
+			
+			const topPadding = '─'.repeat(Math.max(0, maxLineLength - author.length - 1));
+			const top = `┌─<span class="message-author-text">${author}</span>${topPadding}┐`;
+			
+			const content = lines.map(line => {
+				const padding = ' '.repeat(Math.max(0, maxLineLength - line.length));
+				return line + padding;
+			}).join('\n');
+			
+			const bottomPadding = '─'.repeat(Math.max(0, maxLineLength - time.length));
+			const bottom = `└${bottomPadding}${time}┘`;
+			
+			return { top, content, bottom, authorColor };
+		}
+
 		function scrollToBottom() {
 			messagesContainer.scrollTop = messagesContainer.scrollHeight;
 		}
@@ -287,17 +305,60 @@
 			return now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
 		}
 
+		function handleCommand(command) {
+			const cmd = command.toLowerCase();
+			let response = '';
+
+			if (cmd === '/theme') {
+				response = '🎨 Theme changed successfully!';
+			} else if (cmd === '/clear') {
+				messagesContainer.innerHTML = '';
+				response = '🗑️ Chat cleared';
+			} else if (cmd === '/help') {
+				response = '💡 Available commands: /theme, /clear, /help';
+			} else {
+				response = `❌ Unknown command: ${command}`;
+			}
+
+			const box = createMessageBox('system', response, '', '#667eea');
+			const commandDiv = document.createElement('div');
+			commandDiv.className = 'message command-message';
+			commandDiv.innerHTML = `
+				<div class="message-box">
+					<div class="message-top">${box.top}</div>
+					<div class="message-content">${box.content}</div>
+					<div class="message-bottom">${box.bottom}</div>
+				</div>
+			`;
+			messagesContainer.appendChild(commandDiv);
+			scrollToBottom();
+		}
+
 		function sendMessage() {
 			const text = messageInput.value.trim();
 			if (!text) return;
 
+			// Check if it's a command
+			if (text.startsWith('/')) {
+				handleCommand(text);
+				messageInput.value = '';
+				messageInput.style.height = 'auto';
+				return;
+			}
+
+			// Regular message
+			const userColor = getUserColor('You');
+			const time = getCurrentTime().replace(' ', '');
+			const box = createMessageBox('You', text, time, userColor);
+			
 			const messageDiv = document.createElement('div');
-			messageDiv.className = 'message sent';
+			messageDiv.className = 'message';
+			messageDiv.style.setProperty('--author-color', userColor);
 			messageDiv.innerHTML = `
-				<div class="message-avatar">ME</div>
-				<div class="message-content">
-					<div class="message-bubble">${text}</div>
-					<div class="message-time">${getCurrentTime()}</div>
+				<div class="message-box">
+					<div class="message-top">${box.top}</div>
+					<div class="message-content">${box.content}</div>
+					<div class="message-bottom">${box.bottom}</div>
 				</div>
 			`;
 
@@ -306,24 +367,31 @@
 			messageInput.style.height = 'auto';
 			scrollToBottom();
 
-			// Simulate response after 1-2 seconds
+			// Simulate another user responding
 			setTimeout(() => {
+				const otherUsers = ['Sarah', 'Mike', 'Alex', 'Jordan'];
+				const randomUser = otherUsers[Math.floor(Math.random() * otherUsers.length)];
 				const responses = [
-					"That's awesome!",
-					"Tell me more!",
-					"Sounds interesting 👀",
-					"I see what you mean",
-					"Haha yeah for sure"
+					"That's cool!",
+					"I agree 👍",
+					"Interesting point",
+					"Makes sense",
+					"Haha yeah"
 				];
 				const responseText = responses[Math.floor(Math.random() * responses.length)];
 				
+				const userColor = getUserColor(randomUser);
+				const time = getCurrentTime().replace(' ', '');
+				const box = createMessageBox(randomUser, responseText, time, userColor);
+				
 				const responseDiv = document.createElement('div');
 				responseDiv.className = 'message';
+				responseDiv.style.setProperty('--author-color', userColor);
 				responseDiv.innerHTML = `
-					<div class="message-avatar">AJ</div>
-					<div class="message-content">
-						<div class="message-bubble">${responseText}</div>
-						<div class="message-time">${getCurrentTime()}</div>
+					<div class="message-box">
+						<div class="message-top">${box.top}</div>
+						<div class="message-content">${box.content}</div>
+						<div class="message-bottom">${box.bottom}</div>
 					</div>
 				`;
 				messagesContainer.appendChild(responseDiv);
