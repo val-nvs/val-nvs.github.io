@@ -14,10 +14,10 @@
 			margin: 0;
 			padding: 0;
 			box-sizing: border-box;
-			font-family: 'Perfect DOS VGA 437', 'Courier New', monospace;
 		}
 
 		body {
+			font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 			background: #0a0a0f;
 			height: 100dvh;
 			overflow: hidden;
@@ -65,8 +65,7 @@
 			gap: 0;
 			animation: slideIn 0.3s ease;
 			align-items: flex-end;
-			font-size: 14px;
-			line-height: 1.4;
+			position: relative;
 		}
 
 		@keyframes slideIn {
@@ -83,25 +82,29 @@
 		.message-box {
 			display: inline-block;
 			max-width: 75%;
+			position: relative;
 		}
 
-		.message-top {
+		.message-ascii {
+			font-family: 'Perfect DOS VGA 437', 'Courier New', monospace;
+			font-size: 14px;
+			line-height: 1.4;
 			color: #a1a1aa;
-			white-space: nowrap;
+			white-space: pre;
 		}
 
-		.message-content {
+		.message-text {
+			position: absolute;
+			top: 1.4em;
+			left: 1ch;
+			right: 1ch;
+			font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+			font-size: 16px;
+			line-height: 1.4;
 			color: #e4e4e7;
-			border-left: 1px solid #a1a1aa;
-			border-right: 1px solid #a1a1aa;
-			padding: 0 1ch;
 			white-space: pre-wrap;
 			word-wrap: break-word;
-		}
-
-		.message-bottom {
-			color: #a1a1aa;
-			white-space: nowrap;
+			pointer-events: none;
 		}
 
 		.message-author-text {
@@ -112,21 +115,13 @@
 			align-self: flex-start;
 			width: auto;
 			max-width: 80%;
-			font-size: 14px;
 		}
 
-		.command-message .message-box {
-			max-width: 100%;
-		}
-
-		.command-message .message-top,
-		.command-message .message-bottom {
+		.command-message .message-ascii {
 			color: #667eea;
 		}
 
-		.command-message .message-content {
-			border-left-color: #667eea;
-			border-right-color: #667eea;
+		.command-message .message-text {
 			color: #a5b4fc;
 		}
 
@@ -216,33 +211,37 @@
 		<div class="messages" id="messages">
 			<div class="message" style="--author-color: #f87171">
 				<div class="message-box">
-					<div class="message-top">┌─<span class="message-author-text">Sarah</span>────┐</div>
-					<div class="message-content">Hey everyone! 👋</div>
-					<div class="message-bottom">└────10:32┘</div>
+					<div class="message-ascii">┌─<span class="message-author-text">Sarah</span>──────────────┐
+│                │
+└──────────10:32┘</div>
+					<div class="message-text">Hey everyone! 👋</div>
 				</div>
 			</div>
 
 			<div class="message" style="--author-color: #60a5fa">
 				<div class="message-box">
-					<div class="message-top">┌─<span class="message-author-text">Mike</span>─────┐</div>
-					<div class="message-content">What's up?</div>
-					<div class="message-bottom">└────10:33┘</div>
+					<div class="message-ascii">┌─<span class="message-author-text">Mike</span>───────────┐
+│             │
+└───────10:33┘</div>
+					<div class="message-text">What's up?</div>
 				</div>
 			</div>
 
 			<div class="message" style="--author-color: #a78bfa">
 				<div class="message-box">
-					<div class="message-top">┌─<span class="message-author-text">Alex</span>─────────────────┐</div>
-					<div class="message-content">Just testing out the chat</div>
-					<div class="message-bottom">└───────────────────10:34┘</div>
+					<div class="message-ascii">┌─<span class="message-author-text">Alex</span>───────────────────────┐
+│                         │
+└───────────────────10:34┘</div>
+					<div class="message-text">Just testing out the chat</div>
 				</div>
 			</div>
 
 			<div class="message command-message">
 				<div class="message-box">
-					<div class="message-top">┌─system──────────────────────┐</div>
-					<div class="message-content">💡 Try commands like /theme, /clear, /help</div>
-					<div class="message-bottom">└─────────────────────────────┘</div>
+					<div class="message-ascii">┌─<span class="message-author-text">system</span>─────────────────────────────────┐
+│                                      │
+└──────────────────────────────────────┘</div>
+					<div class="message-text">💡 Try commands like /theme, /clear, /help</div>
 				</div>
 			</div>
 		</div>
@@ -285,15 +284,18 @@
 			const topPadding = '─'.repeat(Math.max(0, maxLineLength - author.length - 1));
 			const top = `┌─<span class="message-author-text">${author}</span>${topPadding}┐`;
 			
-			const content = lines.map(line => {
-				const padding = ' '.repeat(Math.max(0, maxLineLength - line.length));
-				return line + padding;
-			}).join('\n');
+			let middleLines = '';
+			for (let i = 0; i < lines.length; i++) {
+				const padding = ' '.repeat(Math.max(0, maxLineLength));
+				middleLines += `│${padding}│\n`;
+			}
 			
 			const bottomPadding = '─'.repeat(Math.max(0, maxLineLength - time.length));
 			const bottom = `└${bottomPadding}${time}┘`;
 			
-			return { top, content, bottom, authorColor };
+			const ascii = top + '\n' + middleLines + bottom;
+			
+			return { ascii, message, authorColor };
 		}
 
 		function scrollToBottom() {
@@ -325,9 +327,8 @@
 			commandDiv.className = 'message command-message';
 			commandDiv.innerHTML = `
 				<div class="message-box">
-					<div class="message-top">${box.top}</div>
-					<div class="message-content">${box.content}</div>
-					<div class="message-bottom">${box.bottom}</div>
+					<div class="message-ascii">${box.ascii}</div>
+					<div class="message-text">${box.message}</div>
 				</div>
 			`;
 			messagesContainer.appendChild(commandDiv);
@@ -356,9 +357,8 @@
 			messageDiv.style.setProperty('--author-color', userColor);
 			messageDiv.innerHTML = `
 				<div class="message-box">
-					<div class="message-top">${box.top}</div>
-					<div class="message-content">${box.content}</div>
-					<div class="message-bottom">${box.bottom}</div>
+					<div class="message-ascii">${box.ascii}</div>
+					<div class="message-text">${box.message}</div>
 				</div>
 			`;
 
@@ -389,9 +389,8 @@
 				responseDiv.style.setProperty('--author-color', userColor);
 				responseDiv.innerHTML = `
 					<div class="message-box">
-						<div class="message-top">${box.top}</div>
-						<div class="message-content">${box.content}</div>
-						<div class="message-bottom">${box.bottom}</div>
+						<div class="message-ascii">${box.ascii}</div>
+						<div class="message-text">${box.message}</div>
 					</div>
 				`;
 				messagesContainer.appendChild(responseDiv);
