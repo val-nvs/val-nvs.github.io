@@ -7,7 +7,7 @@
 	<style>
 		@font-face {
 			font-family: 'Perfect DOS VGA 437';
-			src: url('https://cdn.jsdelivr.net/gh/rewtnull/dosgateway@master/fonts/PerfectDOSVGA437.ttf') format('truetype');
+			src: url('/PerfectDosVga.ttf') format('truetype');
 		}
 
 		* {
@@ -302,7 +302,7 @@
 
 		function getCurrentTime() {
 			const now = new Date();
-			return now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+			return now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
 		}
 
 		function handleCommand(command) {
