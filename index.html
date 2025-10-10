@@ -6,6 +6,7 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
 	<title>Valdir Neves</title>
 	<link rel="icon" href="media/favicon.png" type="image/png">
 	<style>
@@ -48,10 +49,56 @@
 			flex-direction: column;
 		}
 
+		/* URL Header */
+		.url-header {
+			background: #000;
+			padding: 0.5rem var(--content-padding);
+			text-align: center;
+			font-size: 1.75rem;
+			line-height: 1;
+			color: var(--text-primary);
+			font-family: "Atkinson Hyperlegible Mono", monospace;
+			font-optical-sizing: auto;
+			font-weight: 200;
+			font-style: normal;
+		}
+
+		.url-header span {
+			display: inline-block;
+			font-weight: 200;
+			color: #808080;
+			transition: font-weight 0.3s ease, color 0.3s ease;
+			animation: charWave 3s ease-in-out infinite;
+		}
+
+		@keyframes charWave {
+			0% {
+				font-weight: 200;
+				color: #808080;
+			}
+			25% {
+				font-weight: 500;
+				color: #00A03D;
+			}
+			50% {
+				font-weight: 800;
+				color: #00E054;
+			}
+			75% {
+				font-weight: 500;
+				color: #00A03D;
+			}
+			100% {
+				font-weight: 200;
+				color: #808080;
+			}
+		}
+
 		/* Navigation */
 		nav {
 			background: var(--bg-secondary);
 			padding: 0.5rem var(--content-padding);
+			padding-top: 0;
 		}
 
 		nav ul {
@@ -66,7 +113,7 @@
 
 		nav ul li {
 			text-align: center;
-			padding: 0.5rem 0.25rem;
+			padding: 0.25rem 0.25rem;
 			border-radius: 0.3125rem;
 			font-weight: bold;
 			cursor: pointer;
@@ -223,15 +270,17 @@
 		/* Ensure proper touch targets on mobile */
 		@media (hover: none) and (pointer: coarse) {
 			nav ul li {
-				min-height: 44px;
+				min-height: 40px;
 				display: flex;
 				align-items: center;
 				justify-content: center;
+				padding: 0.125rem 0.25rem;
 			}
 		}
 
 		/* Print styles */
 		@media print {
+			.url-header,
 			nav {
 				display: none;
 			}
@@ -245,10 +294,11 @@
 <body>
 
 <div class="container">
+	<div class="url-header" id="urlDisplay"></div>
 	<nav>
 		<ul>
 			<li class="nav-btn active" data-page="home">Home</li>
-			<li class="nav-btn" data-page="coding">Coding</li>
+			<li class="nav-btn" data-page="coding">Coding Projects</li>
 			<li class="nav-btn" data-page="about">About</li>
 		</ul>
 	</nav>
@@ -266,9 +316,6 @@
 
 			<section>
 				<div class="title">CONTACT</div>
-				<h1>Email: valdir.nvs@outlook.com</h1>
-				<h1>Phone: (+351) 930 946 697</h1><br>
-
 				<div class="grid" style="grid-template-columns: repeat(2, 1fr);">
 					<button class="movie" onclick="window.open('https://www.linkedin.com/in/valdir-neves/', '_blank')">
 						<img src="media/linkedin.jpg" alt="LinkedIn Profile">
@@ -277,6 +324,9 @@
 						<img src="media/instagram.jpg" alt="Instagram Profile">
 					</button>
 				</div>
+				<br>
+				<h1>Email: valdir.nvs@outlook.com</h1>
+				<h1>Phone: (+351) 930 946 697</h1>
 			</section>
 
 
@@ -284,14 +334,7 @@
 		</div>
 
 		<div class="page" id="coding" style="display: none;">
-			<section>
-				<div class="title">GITHUB PROFILE</div>
-				<div class="grid" style="grid-template-columns: repeat(1, 1fr);">
-					<button class="movie" onclick="window.open('https://github.com/val-nvs', '_blank')">
-						<img loading="lazy" src="media/github.png" alt="GitHub Profile">
-					</button>
-				</div>
-			</section>
+
 
 			<section>
 				<div class="title">CHAT ROOM</div>
@@ -395,6 +438,14 @@
 				</div>
 			</section>
 
+			<section>
+				<div class="title">GITHUB PROFILE</div>
+				<div class="grid" style="grid-template-columns: repeat(1, 1fr);">
+					<button class="movie" onclick="window.open('https://github.com/val-nvs', '_blank')">
+						<img loading="lazy" src="media/github.png" alt="GitHub Profile">
+					</button>
+				</div>
+			</section>
 
 		</div>
 
@@ -442,19 +493,67 @@
 
 			<section>
 				<div class="title">SOME SONGS I LIKE</div>
+				<iframe style="border: 0; width: 100%; height: 42px;" src="https://bandcamp.com/EmbeddedPlayer/album=856107294/size=small/bgcol=333333/linkcol=e99708/artwork=none/track=2181998010/transparent=true/" seamless><a href="https://boardsofcanada.bandcamp.com/album/geogaddi">Geogaddi by Boards of Canada</a></iframe>
 				<iframe style="border: 0; width: 100%; height: 42px;" src="https://bandcamp.com/EmbeddedPlayer/album=385726686/size=small/bgcol=333333/linkcol=2ebd35/artwork=none/transparent=true/" seamless><a href="https://aphextwin.bandcamp.com/album/syro">Syro by Aphex Twin</a></iframe>
 				<iframe style="border: 0; width: 100%; height: 42px;" src="https://bandcamp.com/EmbeddedPlayer/album=2359851761/size=small/bgcol=333333/linkcol=0f91ff/artwork=none/track=4138687533/transparent=true/" seamless><a href="https://bugyourparents.bandcamp.com/album/spaceship-earth">Spaceship Earth by Whitewoods</a></iframe>
 				<iframe style="border: 0; width: 100%; height: 42px;" src="https://bandcamp.com/EmbeddedPlayer/album=1115961286/size=small/bgcol=333333/linkcol=e32c14/artwork=none/track=1024023728/transparent=true/" seamless><a href="https://menitrust.bandcamp.com/album/oncle-jazz">Oncle Jazz by Men I Trust</a></iframe>
 				<iframe style="border: 0; width: 100%; height: 42px;" src="https://bandcamp.com/EmbeddedPlayer/album=1728212010/size=small/bgcol=333333/linkcol=ffffff/artwork=none/track=3494315798/transparent=true/" seamless><a href="https://midwestcollective.bandcamp.com/album/before-the-night">Before The Night by HOME</a></iframe>
 				<iframe style="border: 0; width: 100%; height: 42px;" src="https://bandcamp.com/EmbeddedPlayer/album=856850876/size=small/bgcol=333333/linkcol=ffffff/artwork=none/track=3156959105/transparent=true/" seamless><a href="https://burial.bandcamp.com/album/untrue">Untrue by Burial</a></iframe>
 				<iframe style="border: 0; width: 100%; height: 42px;" src="https://bandcamp.com/EmbeddedPlayer/album=1083983989/size=small/bgcol=333333/linkcol=e99708/artwork=none/track=1893697882/transparent=true/" seamless><a href="https://c418.bandcamp.com/album/life-changing-moments-seem-minor-in-pictures">life changing moments seem minor in pictures by C418</a></iframe>
-				<iframe style="border: 0; width: 100%; height: 42px;" src="https://bandcamp.com/EmbeddedPlayer/album=856107294/size=small/bgcol=333333/linkcol=e99708/artwork=none/track=2181998010/transparent=true/" seamless><a href="https://boardsofcanada.bandcamp.com/album/geogaddi">Geogaddi by Boards of Canada</a></iframe>
 			</section>
 		</div>
 	</main>
 </div>
 
 <script>
+// Display brand URL name with wave animation
+const urlText = 'val-nvs.com';
+const urlDisplay = document.getElementById('urlDisplay');
+const chars = urlText.split('').map((char, index) => {
+	const span = document.createElement('span');
+	span.textContent = char;
+	span.dataset.index = index;
+	span.style.animationDelay = `${index * 0.15}s`;
+	return span;
+});
+chars.forEach(span => urlDisplay.appendChild(span));
+
+// Mouse control (works alongside animation)
+document.addEventListener('mousemove', (e) => {
+	const mouseX = e.clientX;
+	const mouseY = e.clientY;
+	
+	chars.forEach((span) => {
+		const rect = span.getBoundingClientRect();
+		const charX = rect.left + rect.width / 2;
+		const charY = rect.top + rect.height / 2;
+		
+		// Calculate distance from mouse to character
+		const dx = mouseX - charX;
+		const dy = mouseY - charY;
+		const distance = Math.sqrt(dx * dx + dy * dy);
+		const maxDistance = 300;
+		
+		if (distance < maxDistance) {
+			const intensity = 1 - (distance / maxDistance);
+			const weight = 200 + Math.round(intensity * 600);
+			
+			// Color transition to green accent
+			const gray = 128;
+			const green = Math.round(intensity * 224); // 0 to 224 (0x00 to 0xE0)
+			const greenMid = Math.round(intensity * 80); // 0 to 80 (0x00 to 0x54)
+			
+			span.style.fontWeight = weight;
+			span.style.color = `rgb(${Math.round(gray * (1 - intensity))}, ${gray + green}, ${gray * (1 - intensity) + greenMid})`;
+			// Pause animation when mouse is near
+			span.style.animation = 'none';
+		} else {
+			// Resume animation when mouse is far
+			span.style.animation = '';
+		}
+	});
+});
+
 // Get all navigation buttons
 const buttons = document.querySelectorAll('.nav-btn');
 
