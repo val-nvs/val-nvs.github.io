@@ -143,25 +143,61 @@
     img.classList.remove('dragging');
   });
 
+  let touchDistance = 0;
+
   img.addEventListener('touchstart', e => {
-    isDragging = true;
-    startX = e.touches[0].clientX;
-    startY = e.touches[0].clientY;
-    lastX = translateX;
-    lastY = translateY;
+    if (e.touches.length === 2) {
+      touchDistance = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+    } else if (e.touches.length === 1) {
+      isDragging = true;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      lastX = translateX;
+      lastY = translateY;
+    }
   });
 
   window.addEventListener('touchmove', e => {
-    if (!isDragging) return;
-    e.preventDefault();
-    translateX = lastX + (e.touches[0].clientX - startX);
-    translateY = lastY + (e.touches[0].clientY - startY);
-    constrainBounds();
-    updateTransform();
+    if (e.touches.length === 2) {
+      e.preventDefault();
+      const newDistance = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      
+      const centerX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+      const centerY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+      
+      const rect = container.getBoundingClientRect();
+      const offsetX = centerX - rect.left - rect.width / 2;
+      const offsetY = centerY - rect.top - rect.height / 2;
+      
+      const oldScale = scale;
+      const scaleChange = newDistance / touchDistance;
+      scale = Math.min(Math.max(minScale, scale * scaleChange), 5);
+      
+      const actualScaleChange = scale / oldScale;
+      translateX = translateX * actualScaleChange + offsetX * (1 - actualScaleChange);
+      translateY = translateY * actualScaleChange + offsetY * (1 - actualScaleChange);
+      
+      touchDistance = newDistance;
+      constrainBounds();
+      updateTransform();
+    } else if (isDragging && e.touches.length === 1) {
+      e.preventDefault();
+      translateX = lastX + (e.touches[0].clientX - startX);
+      translateY = lastY + (e.touches[0].clientY - startY);
+      constrainBounds();
+      updateTransform();
+    }
   }, { passive: false });
 
   window.addEventListener('touchend', () => {
     isDragging = false;
+    touchDistance = 0;
   });
 </script>
 </body>
