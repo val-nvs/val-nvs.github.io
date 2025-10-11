@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  body, html { 
+    margin: 0; 
+    overflow: hidden; 
+    background: #000; 
+    width: 100%;
+    height: 100%;
+  }
+  #container {
+    width: 100%;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+  }
+  img { 
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform-origin: center center;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+  img.dragging {
+    cursor: grabbing;
+  }
+</style>
+</head>
+<body>
+<div id="container">
+  <img id="map" src="your-map.jpg" />
+</div>
+<script>
+  let scale = 1;
+  let translateX = 0;
+  let translateY = 0;
+  let isDragging = false;
+  let startX = 0;
+  let startY = 0;
+  let lastX = 0;
+  let lastY = 0;
+
+  const img = document.getElementById('map');
+  const container = document.getElementById('container');
+
+  function updateTransform() {
+    img.style.transform = `translate(calc(-50% + ${translateX}px), calc(-50% + ${translateY}px)) scale(${scale})`;
+  }
+
+  function constrainBounds() {
+    const imgRect = img.getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
+
+    const scaledWidth = img.naturalWidth * scale;
+    const scaledHeight = img.naturalHeight * scale;
+
+    if (scaledWidth > containerRect.width) {
+      const maxX = (scaledWidth - containerRect.width) / 2;
+      translateX = Math.max(-maxX, Math.min(maxX, translateX));
+    } else {
+      translateX = 0;
+    }
+
+    if (scaledHeight > containerRect.height) {
+      const maxY = (scaledHeight - containerRect.height) / 2;
+      translateY = Math.max(-maxY, Math.min(maxY, translateY));
+    } else {
+      translateY = 0;
+    }
+  }
+
+  let minScale = 1;
+
+  function calculateMinScale() {
+    const containerRect = container.getBoundingClientRect();
+    const scaleX = containerRect.width / img.naturalWidth;
+    const scaleY = containerRect.height / img.naturalHeight;
+    minScale = Math.min(scaleX, scaleY);
+    scale = Math.max(scale, minScale);
+  }
+
+  img.onload = () => {
+    calculateMinScale();
+    updateTransform();
+  };
+
+  window.addEventListener('resize', () => {
+    calculateMinScale();
+    constrainBounds();
+    updateTransform();
+  });
+
+  window.addEventListener('wheel', e => {
+    e.preventDefault();
+    
+    const rect = container.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    
+    const offsetX = mouseX - centerX;
+    const offsetY = mouseY - centerY;
+    
+    const oldScale = scale;
+    scale += e.deltaY * -0.001;
+    scale = Math.min(Math.max(minScale, scale), 5);
+
+    if (scale !== oldScale) {
+      const scaleChange = scale / oldScale;
+      translateX = translateX * scaleChange + offsetX * (1 - scaleChange);
+      translateY = translateY * scaleChange + offsetY * (1 - scaleChange);
+      
+      constrainBounds();
+      updateTransform();
+    }
+  }, { passive: false });
+
+  img.addEventListener('mousedown', e => {
+    isDragging = true;
+    startX = e.clientX;
+    startY = e.clientY;
+    lastX = translateX;
+    lastY = translateY;
+    img.classList.add('dragging');
+  });
+
+  window.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    translateX = lastX + (e.clientX - startX);
+    translateY = lastY + (e.clientY - startY);
+    constrainBounds();
+    updateTransform();
+  });
+
+  window.addEventListener('mouseup', () => {
+    isDragging = false;
+    img.classList.remove('dragging');
+  });
+
+  img.addEventListener('touchstart', e => {
+    isDragging = true;
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    lastX = translateX;
+    lastY = translateY;
+  });
+
+  window.addEventListener('touchmove', e => {
+    if (!isDragging) return;
+    e.preventDefault();
+    translateX = lastX + (e.touches[0].clientX - startX);
+    translateY = lastY + (e.touches[0].clientY - startY);
+    constrainBounds();
+    updateTransform();
+  }, { passive: false });
+
+  window.addEventListener('touchend', () => {
+    isDragging = false;
+  });
+</script>
+</body>
+</html>
