@@ -65,6 +65,10 @@
 		}
 
 		.url-header span {
+			cursor: pointer;
+		}
+
+		.url-header span {
 			display: inline-block;
 			font-weight: 200;
 			color: #808080;
@@ -229,11 +233,12 @@
 		}
 
 		footer {
-			background: var(--bg-secondary);
+			background: #000;
 			border-top: 1px solid var(--border-color);
-			padding: var(--content-padding);
+			padding: 0.5rem var(--content-padding);
 			position: sticky;
 			bottom: 0;
+			z-index: 10;
 		}
 
 		@media (min-width: 481px) {
@@ -541,7 +546,7 @@
 	</main>
 
 	<footer>
-		<iframe style="border: 0; width: 100%; height: 42px;" src="https://bandcamp.com/EmbeddedPlayer/album=856107294/size=small/bgcol=333333/linkcol=e99708/artwork=none/track=2181998010/transparent=true/" seamless><a href="https://boardsofcanada.bandcamp.com/album/geogaddi">Geogaddi by Boards of Canada</a></iframe>
+		<iframe style="border: 0; width: 100%; height: 42px;" src="https://bandcamp.com/EmbeddedPlayer/album=1083983989/size=small/bgcol=333333/linkcol=e99708/artwork=none/track=1224853952/transparent=true/" seamless><a href="https://c418.bandcamp.com/album/life-changing-moments-seem-minor-in-pictures">life changing moments seem minor in pictures by C418</a></iframe>
 	</footer>
 </div>
 
@@ -556,6 +561,32 @@ const chars = urlText.split('').map((char, index) => {
 	return span;
 });
 chars.forEach(span => urlDisplay.appendChild(span));
+
+// Scroll to top when header is clicked
+urlDisplay.addEventListener('click', () => {
+	// Nav button glow animation function
+	const glowNavButtons = () => {
+		const navButtons = document.querySelectorAll('.nav-btn');
+		navButtons.forEach((btn, index) => {
+			setTimeout(() => {
+				btn.style.transition = 'box-shadow 0.3s ease';
+				btn.style.boxShadow = '0 0 20px var(--accent-color)';
+				setTimeout(() => {
+					btn.style.boxShadow = '';
+				}, 300);
+			}, index * 100);
+		});
+	};
+	
+	// Check if already at the top (within 10px tolerance)
+	if (window.scrollY <= 10) {
+		glowNavButtons();
+	} else {
+		window.scrollTo({ top: 0, behavior: 'smooth' });
+		// Wait for scroll to finish (estimated time based on distance)
+		setTimeout(glowNavButtons, 500);
+	}
+});
 
 document.addEventListener('mousemove', (e) => {
 	const mouseX = e.clientX;
