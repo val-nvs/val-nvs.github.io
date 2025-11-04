@@ -43,10 +43,10 @@ map.getPane('subwayEntrances').style.zIndex = 650;
 
 // Metro line colors
 const lineColors = {
-	'red': '#EE2B73',
-	'blue': '#5488C5',
-	'yellow': '#FDB713',
-	'green': '#00A8A5'
+	'red': 'rgba(238, 43, 115, 0.2)',
+	'blue': 'rgba(84, 136, 197, 0.2)',
+	'yellow': 'rgba(253, 183, 19, 0.2)',
+	'green': 'rgba(0, 168, 165, 0.2)'
 };
 
 // Overpass query
@@ -86,7 +86,7 @@ fetch('https://overpass-api.de/api/interpreter', {
 	
 	magentas.forEach(el => {
 		L.circleMarker([el.lat, el.lon], {
-			radius: 6,
+			radius: 10,
 			fillColor: '#ff00ff',
 			color: '#000',
 			weight: 1,
@@ -100,9 +100,9 @@ fetch('https://overpass-api.de/api/interpreter', {
 	// SECOND PASS: Load everything else after magenta dots are done
 	setTimeout(() => {
 		data.elements.forEach(el => {
-			// Blue dots (subway stations)
+			// dots (subway stations)
 			if(el.type === "node" && el.lat && el.lon && el.tags?.station === "subway") {
-				let fillColor = '#0099ff';
+				let fillColor = '#000000';
 				if(el.tags?.line) {
 					fillColor = lineColors[el.tags.line] || fillColor;
 				}
@@ -123,12 +123,12 @@ fetch('https://overpass-api.de/api/interpreter', {
 		// Ways (station shapes)
 		data.elements.forEach(el => {
 			if(el.type === "way" && el.geometry) {
-				let color = 'rgba(0,85,0,0.8)';
+				let color = 'rgba(255,255,255,0.5)';
 				let weight = 3;
 				let opacity = 0.5;
 
 				if(el.tags?.station === "subway") {
-					color = '#0099ff';
+					color = 'rgba(255,255,255,0.5)';
 					weight = 4;
 					opacity = 0.7;
 				} else if(el.tags?.line) {
@@ -150,7 +150,7 @@ fetch('https://overpass-api.de/api/interpreter', {
 			if(el.type === "relation" && el.members) {
 				el.members.forEach(m => {
 					if(m.type === "way" && m.geometry) {
-						let color = 'rgba(0,85,0,0.8)';
+						let color = 'rgba(255,255,255,0.5)';
 						let weight = 2;
 						let opacity = 0.7;
 
@@ -159,7 +159,7 @@ fetch('https://overpass-api.de/api/interpreter', {
 							weight = 3;
 							opacity = 0.8;
 						} else if(el.tags?.station === "subway") {
-							color = '#0099ff';
+							color = '#ffffff';
 							weight = 3;
 							opacity = 0.8;
 						} else if(el.tags?.line) {
