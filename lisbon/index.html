@@ -112,8 +112,11 @@ const query = `
   way(695510929);    // Restauradores
 )->.ways;
 
-// --- Step 4: combine everything for output
-(.relMembers; .nodes; .ways;);
+// --- Step 4: fetch ALL subway entrances in Lisbon area (bounding box)
+node["railway"="subway_entrance"](38.6,-9.3,38.9,-9.0)->.entrances;
+
+// --- Step 5: combine everything for output
+(.relMembers; .nodes; .ways; .entrances;);
 out geom qt;
 `;
 
