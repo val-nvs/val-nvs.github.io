@@ -39,7 +39,7 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
 
 // Create a dedicated pane for subway entrances
 map.createPane('subwayEntrances');
-map.getPane('subwayEntrances').style.zIndex = 650; // above default markers
+map.getPane('subwayEntrances').style.zIndex = 650;
 
 // Metro line colors
 const lineColors = {
@@ -49,75 +49,28 @@ const lineColors = {
 	'green': '#00A8A5'
 };
 
-// Overpass query: nodes, ways, relations
+// Overpass query
 const query = `
 [out:json][timeout:60];
 
-// --- Step 1: fetch relations and recurse all their members
-(
-  relation(7683266);   // Alameda
-  relation(7644188);   // Anjos
-  relation(7715711);   // Baixa-Chiado
-  relation(7715707);   // Cais do Sodré
-  relation(10930271);  // Campo Grande
-  relation(7644178);   // Intendente
-  relation(7644182);   // Martim Moniz
-  relation(7644207);   // Rossio
-  relation(7644185);   // Telheiras
-)->.rels;
-
-.rels > ->.relMembers;
-
-// --- Step 2: fetch all individual nodes
-(
-  node(256981321);   // Alfornelos
-  node(256978170);   // Alto dos Moinhos
-  node(256971869);   // Alvalade
-  node(256981325);   // Amadora Este
-  node(245937922);   // Ameixoeira
-  node(1465237705);  // Areeiro
-  node(256675147);   // Arroios
-  node(600134721);   // Avenida
-  node(246763968);   // Campo Pequeno
-  node(256979289);   // Carnide
-  node(256975157);   // Chelas
-  node(246763946);   // Cidade Universitária
-  node(256978583);   // Colégio Militar/Luz
-  node(1831350950);  // Encarnação
-  node(246763964);   // Entre Campos
-  node(256978160);   // Jardim Zoológico
-  node(256978165);   // Laranjeiras
-  node(245937941);   // Lumiar
-  node(1831350952);  // Moscavide
-  node(146311452);   // Odivelas
-  node(256972634);   // Olaias
-  node(256975161);   // Olivais
-  node(256975177);   // Oriente
-  node(256674213);   // Parque
-  node(265896596);   // Picoas
-  node(256981317);   // Pontinha
-  node(256976574);   // Praça de Espanha
-  node(245937950);   // Quinta das Conchas
-  node(247051839);   // Rato
-  node(256976570);   // São Sebastião
-  node(146311461);   // Senhor Roubado
-  node(256673960);   // Terreiro do Paço
-  node(246763972);   // Saldanha
-  node(256971868);   // Roma
-)->.nodes;
-
-// --- Step 3: fetch all individual ways
-(
-  way(760887331);    // Aeroporto
-  way(695510929);    // Restauradores
-)->.ways;
-
-// --- Step 4: fetch ALL subway entrances in Lisbon area (bounding box)
+// --- Step 1: fetch ALL subway entrances in Lisbon area
 node["railway"="subway_entrance"](38.6,-9.3,38.9,-9.0)->.entrances;
 
-// --- Step 5: combine everything for output
-(.relMembers; .nodes; .ways; .entrances;);
-out geom qt;
+// --- Step 2: fetch ALL subway stations with station=subway tag
+(
+  node["railway"="station"]["station"="subway"](38.6,-9.3,38.9,-9.0);
+  way["railway"="station"]["station"="subway"](38.6,-9.3,38.9,-9.0);
+  relation["railway"="station"]["station"="subway"](38.6,-9.3,38.9,-9.0);
+)->.stations;
+
+// --- Step 3: fetch ALL metro line relations
+relation["type"="route"]["route"="subway"](38.6,-9.3,38.9,-9.0)->.lines;
+
+// --- Step 4: combine everything
+(.entrances; .stations; .lines;);
+out geom;
+>;
+out skel qt;
 `;
 
 fetch('https://overpass-api.de/api/interpreter', {
@@ -126,69 +79,105 @@ fetch('https://overpass-api.de/api/interpreter', {
 })
 .then(res => res.json())
 .then(data => {
-	data.elements.forEach(el => {
-
-		// --- Nodes ---
-		if(el.type === "node" && el.lat && el.lon) {
-			let fillColor = 'rgba(0,85,0,0.8)'; // default alpha green
-			let pane = undefined;
-
-			// Magenta subway entrances on top pane
-			if(el.tags?.railway === "subway_entrance") {
-				fillColor = '#ff00ff';
-				pane = 'subwayEntrances';
-			} else if(el.tags?.railway === "tram_level_crossing") {
-				fillColor = 'rgba(0,85,0,0.8)';
-			}
-
-			// Optionally color by line if tag exists
-			if(el.tags?.line) {
-				fillColor = lineColors[el.tags.line] || fillColor;
-			}
-
-			L.circleMarker([el.lat, el.lon], {
-				radius: 6,
-				fillColor,
-				color: '#000',
-				weight: 1,
-				opacity: 1,
-				fillOpacity: 0.6,
-				pane: pane
-			}).addTo(map)
-			.bindPopup(el.tags?.name || el.id);
-
-		}
-
-		// --- Ways ---
-		else if(el.type === "way" && el.geometry) {
-			let color = 'rgba(0,85,0,0.8)'; // default
-			if(el.tags?.line) color = lineColors[el.tags.line] || color;
-
-			const latlngs = el.geometry.map(p => [p.lat, p.lon]);
-			L.polyline(latlngs, {
-				color,
-				weight: 3,
-				opacity: 0.5
-			}).addTo(map)
-			.bindPopup(el.tags?.name || el.id);
-		}
-
-		// --- Relations ---
-		else if(el.type === "relation" && el.members) {
-			el.members.forEach(m => {
-				if(m.type === "way" && m.geometry) {
-					let color = 'rgba(0,85,0,0.8)';
-					if(m.tags?.line) color = lineColors[m.tags.line] || color;
-					const latlngs = m.geometry.map(p => [p.lat, p.lon]);
-					L.polyline(latlngs, {
-						color,
-						weight: 2,
-						opacity: 0.7
-					}).addTo(map);
-				}
-			});
-		}
+	// FIRST PASS: Load only MAGENTA dots (subway entrances)
+	const magentas = data.elements.filter(el => 
+		el.type === "node" && el.lat && el.lon && el.tags?.railway === "subway_entrance"
+	);
+	
+	magentas.forEach(el => {
+		L.circleMarker([el.lat, el.lon], {
+			radius: 6,
+			fillColor: '#ff00ff',
+			color: '#000',
+			weight: 1,
+			opacity: 1,
+			fillOpacity: 0.6,
+			pane: 'subwayEntrances'
+		}).addTo(map)
+		.bindPopup(el.tags?.name || el.id);
 	});
+
+	// SECOND PASS: Load everything else after magenta dots are done
+	setTimeout(() => {
+		data.elements.forEach(el => {
+			// Blue dots (subway stations)
+			if(el.type === "node" && el.lat && el.lon && el.tags?.station === "subway") {
+				let fillColor = '#0099ff';
+				if(el.tags?.line) {
+					fillColor = lineColors[el.tags.line] || fillColor;
+				}
+				
+				L.circleMarker([el.lat, el.lon], {
+					radius: 6,
+					fillColor,
+					color: '#000',
+					weight: 1,
+					opacity: 1,
+					fillOpacity: 0.6,
+					pane: 'subwayEntrances'
+				}).addTo(map)
+				.bindPopup(el.tags?.name || el.id);
+			}
+		});
+
+		// Ways (station shapes)
+		data.elements.forEach(el => {
+			if(el.type === "way" && el.geometry) {
+				let color = 'rgba(0,85,0,0.8)';
+				let weight = 3;
+				let opacity = 0.5;
+
+				if(el.tags?.station === "subway") {
+					color = '#0099ff';
+					weight = 4;
+					opacity = 0.7;
+				} else if(el.tags?.line) {
+					color = lineColors[el.tags.line] || color;
+				}
+
+				const latlngs = el.geometry.map(p => [p.lat, p.lon]);
+				L.polyline(latlngs, {
+					color,
+					weight,
+					opacity
+				}).addTo(map)
+				.bindPopup(el.tags?.name || el.id);
+			}
+		});
+
+		// Relations (metro lines)
+		data.elements.forEach(el => {
+			if(el.type === "relation" && el.members) {
+				el.members.forEach(m => {
+					if(m.type === "way" && m.geometry) {
+						let color = 'rgba(0,85,0,0.8)';
+						let weight = 2;
+						let opacity = 0.7;
+
+						if(el.tags?.colour) {
+							color = el.tags.colour;
+							weight = 3;
+							opacity = 0.8;
+						} else if(el.tags?.station === "subway") {
+							color = '#0099ff';
+							weight = 3;
+							opacity = 0.8;
+						} else if(el.tags?.line) {
+							color = lineColors[el.tags.line] || color;
+						}
+
+						const latlngs = m.geometry.map(p => [p.lat, p.lon]);
+						L.polyline(latlngs, {
+							color,
+							weight,
+							opacity
+						}).addTo(map)
+						.bindPopup(el.tags?.name || el.tags?.ref || el.id);
+					}
+				});
+			}
+		});
+	}, 100);
 });
 </script>
 </body>
