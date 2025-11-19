@@ -10,6 +10,10 @@
 		rel="stylesheet"
 		href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
 	/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playwrite+CU:wght@400&display=swap" rel="stylesheet">
+    
 	<style>
 		html, body {
 			background: #000;
@@ -30,6 +34,33 @@
 		.leaflet-control-locate:hover {
 			background-color: #f4f4f4;
 		}
+        
+        /* Custom CSS for the station labels (Tooltips) */
+        .leaflet-tooltip.station-label {
+            /* Playwrite CU font and properties */
+            font-family: "Playwrite CU", cursive;
+            font-optical-sizing: auto;
+            font-weight: 400; 
+            font-style: normal;
+            
+            background-color: transparent;
+            border: none;
+            box-shadow: none;
+            /* Removed fixed font-size: 12px; to be set dynamically by JS */
+            color: #ffffff;
+            padding: 2px 4px;
+            white-space: nowrap;
+            text-shadow: 1px 1px 2px #000;
+            transition: font-size 0.3s ease-out; /* Optional: smooth transition for font size change */
+        }
+        
+        /* Remove the tooltip arrow/stem */
+        .leaflet-tooltip-bottom.no-arrow::before {
+            border-bottom-color: transparent !important;
+        }
+        .leaflet-tooltip.no-arrow::before {
+            display: none !important;
+        }
 	</style>
 </head>
 
@@ -158,7 +189,7 @@ L.control.locationButton().addTo(map);
 
 
 // ------------------------------------------------------------------
-// 3. EXISTING SUBWAY DATA CODE (UNCHANGED)
+// 3. EXISTING SUBWAY DATA CODE (MODIFIED FOR LABELS)
 // ------------------------------------------------------------------
 
 // Create a dedicated pane for subway entrances
@@ -172,6 +203,27 @@ const lineColors = {
 	'yellow': 'rgba(253, 183, 19, 0.2)',
 	'green': 'rgba(0, 168, 165, 0.2)'
 };
+
+// Function to calculate and apply font size based on zoom level
+// Base zoom is 16 (where we want 12px)
+// Size increases by 2px for every zoom level above 16
+function updateLabelFontSize() {
+    const currentZoom = map.getZoom();
+    const baseZoom = 16;
+    const baseSize = 12; // Starting font size at base zoom
+    
+    // Simple linear scaling: +2px for every zoom level increase
+    const newSize = Math.max(baseSize, baseSize + (currentZoom - baseZoom) * 2);
+    
+    // Select all tooltip elements with the 'station-label' class
+    const labels = document.querySelectorAll('.leaflet-tooltip.station-label');
+    
+    labels.forEach(label => {
+        // Apply the new font size directly as an inline style
+        label.style.fontSize = `${newSize}px`;
+    });
+}
+
 
 // Overpass query
 const query = `
@@ -226,12 +278,14 @@ fetch('https://overpass-api.de/api/interpreter', {
 		data.elements.forEach(el => {
 			// dots (subway stations)
 			if(el.type === "node" && el.lat && el.lon && el.tags?.station === "subway") {
+                const stationName = el.tags?.name; // Get the station name
+                
 				let fillColor = '#000000';
 				if(el.tags?.line) {
 					fillColor = lineColors[el.tags.line] || fillColor;
 				}
 				
-				L.circleMarker([el.lat, el.lon], {
+				const marker = L.circleMarker([el.lat, el.lon], {
 					radius: 6,
 					fillColor,
 					color: '#000',
@@ -240,16 +294,27 @@ fetch('https://overpass-api.de/api/interpreter', {
 					fillOpacity: 0.6,
 					pane: 'subwayEntrances'
 				}).addTo(map)
-				.bindPopup(el.tags?.name || el.id);
+				.bindPopup(stationName || el.id); // Keep the popup functionality
+                
+                // Add permanent tooltip if a name exists
+                if (stationName) {
+                    marker.bindTooltip(stationName, {
+                        permanent: true,
+                        direction: 'bottom',
+                        offset: [0, 8],
+                        className: 'station-label no-arrow' // Custom class for styling and no arrow
+                    });
+                }
 			}
 		});
 
-		// Ways (station shapes)
+		// Ways (station shapes and lines)
 		data.elements.forEach(el => {
 			if(el.type === "way" && el.geometry) {
 				let color = 'rgba(255,255,255,0.5)';
 				let weight = 3;
 				let opacity = 0.5;
+                const stationName = el.tags?.name; // Get name for Way
 
 				if(el.tags?.station === "subway") {
 					color = 'rgba(255,255,255,0.5)';
@@ -260,18 +325,30 @@ fetch('https://overpass-api.de/api/interpreter', {
 				}
 
 				const latlngs = el.geometry.map(p => [p.lat, p.lon]);
-				L.polyline(latlngs, {
+				const polyline = L.polyline(latlngs, {
 					color,
 					weight,
 					opacity
 				}).addTo(map)
-				.bindPopup(el.tags?.name || el.id);
+				.bindPopup(stationName || el.id);
+                
+                // Add permanent tooltip if it's a station and a name exists
+                if (el.tags?.station === "subway" && stationName) {
+                    polyline.bindTooltip(stationName, {
+                        permanent: true,
+                        direction: 'center', // Center the label on the polyline/shape
+                        className: 'station-label no-arrow',
+                        interactive: false
+                    });
+                }
 			}
 		});
 
-		// Relations (metro lines)
+		// Relations (metro lines) - Check members for station names
 		data.elements.forEach(el => {
 			if(el.type === "relation" && el.members) {
+				const relationName = el.tags?.name || el.tags?.ref; // Use relation name
+				
 				el.members.forEach(m => {
 					if(m.type === "way" && m.geometry) {
 						let color = 'rgba(255,255,255,0.5)';
@@ -291,16 +368,34 @@ fetch('https://overpass-api.de/api/interpreter', {
 						}
 
 						const latlngs = m.geometry.map(p => [p.lat, p.lon]);
-						L.polyline(latlngs, {
+						const polyline = L.polyline(latlngs, {
 							color,
 							weight,
 							opacity
 						}).addTo(map)
-						.bindPopup(el.tags?.name || el.tags?.ref || el.id);
+						.bindPopup(relationName || el.id);
+
+						// Add permanent tooltip if a name exists (for the line/relation itself)
+						// We only label the first segment of the relation to avoid clutter
+						if (relationName && m === el.members[0]) {
+							polyline.bindTooltip(relationName, {
+								permanent: true,
+								direction: 'center',
+								className: 'station-label no-arrow',
+								interactive: false
+							});
+						}
 					}
 				});
 			}
 		});
+        
+        // Initial application of the font size
+        updateLabelFontSize();
+        
+        // Add event listener to update font size on zoom
+        map.on('zoomend', updateLabelFontSize);
+
 	}, 100);
 });
 </script>
