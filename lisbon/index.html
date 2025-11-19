@@ -4,7 +4,6 @@
 	<meta charset="utf-8" />
 	<title>lisbon subway entrances</title>
 	
-	<!-- Make page responsive on mobile -->
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	
 	<link
@@ -20,6 +19,17 @@
 			padding: 0;
 		}
 		#map { height: 100%; width: 100%; }
+		/* Custom style for the location button icon */
+		.leaflet-control-locate {
+			background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>');
+			background-size: 20px 20px;
+			background-repeat: no-repeat;
+			background-position: center;
+			cursor: pointer;
+		}
+		.leaflet-control-locate:hover {
+			background-color: #f4f4f4;
+		}
 	</style>
 </head>
 
@@ -30,12 +40,126 @@
 <script>
 const map = L.map('map').setView([38.715, -9.138], 16);
 
-// Dark-pale basemap
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-	attribution: '&copy; <a href="https://www.openstreetmap.org/">OSM</a> contributors &copy; <a href="https://carto.com/">CARTO</a>',
-	subdomains: 'abcd',
-	maxZoom: 20
-}).addTo(map);
+// ------------------------------------------------------------------
+// 1. MAP STYLE SWITCHER (TOP RIGHT)
+// ------------------------------------------------------------------
+
+// Define the tile layers
+const positron = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/">OSM</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    subdomains: 'abcd',
+    maxZoom: 20
+});
+
+const darkMatter = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/">OSM</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    subdomains: 'abcd',
+    maxZoom: 20
+}).addTo(map); // Added by default
+
+const voyager = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/">OSM</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    subdomains: 'abcd',
+    maxZoom: 20
+});
+
+const baseMaps = {
+    "Dark Matter (Dark)": darkMatter,
+    "Positron (Light)": positron,
+    "Voyager (Color)": voyager
+};
+
+// Add the Layer Control to the map (defaults to top right)
+L.control.layers(baseMaps).addTo(map);
+
+
+// ------------------------------------------------------------------
+// 2. USER LOCATION LOGIC & UPDATE BUTTON (BOTTOM LEFT)
+// ------------------------------------------------------------------
+
+// Variables to hold user location visualization elements
+let userMarker = null;
+let userCircle = null;
+
+// Function to run when location is found
+function onLocationFound(e) {
+    const radius = e.accuracy / 2;
+
+    // Clear existing marker and circle if they exist
+    if (userMarker) {
+        map.removeLayer(userMarker);
+    }
+    if (userCircle) {
+        map.removeLayer(userCircle);
+    }
+
+    // Add new marker (pin)
+    userMarker = L.marker(e.latlng).addTo(map)
+        .bindPopup("You are within " + radius.toFixed(0) + " meters of this point");
+
+    // Add new circle (accuracy)
+    userCircle = L.circle(e.latlng, radius, {
+        color: '#1a75ff',
+        fillColor: '#1a75ff',
+        fillOpacity: 0.2,
+        weight: 1
+    }).addTo(map);
+    
+    // Open the popup, but DO NOT call map.setView() to keep the current map center
+    userMarker.openPopup();
+}
+
+// Function to run if location access fails
+function onLocationError(e) {
+    console.error("Location error:", e.message);
+    alert("Could not find your location. Please ensure location services are enabled.");
+}
+
+// Define the function that starts the location process
+function locateUser() {
+    // setView: false ensures the map does not automatically pan/zoom
+    map.locate({setView: false, maxZoom: 16});
+}
+
+// Set up event listeners for location success and failure
+map.on('locationfound', onLocationFound);
+map.on('locationerror', onLocationError);
+
+// Create a custom control for the 'Update Location' button
+L.Control.LocationButton = L.Control.extend({
+    options: {
+        position: 'bottomleft' // Place the button in the bottom left
+    },
+
+    onAdd: function (map) {
+        const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom leaflet-control-locate');
+        container.style.backgroundColor = 'white';
+        container.style.width = '30px';
+        container.style.height = '30px';
+        container.title = 'Update Location';
+
+        container.onclick = locateUser; // Assign the click action
+
+        // Prevent click events from propagating to the map
+        L.DomEvent.disableClickPropagation(container);
+        
+        return container;
+    }
+});
+
+// Add the control to the map
+L.control.locationButton = function(opts) {
+    return new L.Control.LocationButton(opts);
+}
+L.control.locationButton().addTo(map);
+
+// NOTE: The automatic call to locateUser() on page load has been removed.
+// Location fetching now relies only on the user clicking the button.
+
+
+// ------------------------------------------------------------------
+// 3. EXISTING SUBWAY DATA CODE (UNCHANGED)
+// ------------------------------------------------------------------
 
 // Create a dedicated pane for subway entrances
 map.createPane('subwayEntrances');
