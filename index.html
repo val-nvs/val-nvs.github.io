@@ -242,6 +242,86 @@
 			z-index: 10;
 		}
 
+		/* Glass Section Styles */
+		.glass-grid {
+			display: grid;
+			gap: 1rem;
+			margin-top: 0.5rem;
+		}
+
+		.camera-card {
+			background: var(--bg-secondary);
+			border: 1px solid rgba(161, 170, 179, 0.3);
+			border-radius: 0.5rem;
+			padding: 1rem;
+			transition: border-color 0.2s ease;
+		}
+
+		.camera-card:hover {
+			border-color: var(--accent-color);
+		}
+
+		.camera-header {
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+			margin-bottom: 0.75rem;
+			padding-bottom: 0.75rem;
+			border-bottom: 1px solid rgba(161, 170, 179, 0.2);
+		}
+
+		.camera-icon {
+			font-size: 1.5rem;
+			line-height: 1;
+		}
+
+		.camera-name {
+			flex: 1;
+			font-size: 0.95rem;
+			font-weight: 500;
+			color: #fff;
+			line-height: 1.3;
+		}
+
+		.camera-specs {
+			font-size: 0.75rem;
+			color: #808080;
+			font-family: "Atkinson Hyperlegible Mono", monospace;
+		}
+
+		.lens-list {
+			display: flex;
+			flex-direction: column;
+			gap: 0.5rem;
+		}
+
+		.lens-item {
+			display: flex;
+			align-items: flex-start;
+			gap: 0.5rem;
+			font-size: 0.875rem;
+			line-height: 1.4;
+		}
+
+		.lens-bullet {
+			color: var(--accent-color);
+			font-weight: bold;
+			flex-shrink: 0;
+			margin-top: 0.1rem;
+		}
+
+		.lens-type {
+			color: #808080;
+			font-size: 0.75rem;
+			text-transform: uppercase;
+			letter-spacing: 0.05em;
+			margin-right: 0.25rem;
+		}
+
+		.lens-specs {
+			color: var(--text-primary);
+		}
+
 		@media (min-width: 481px) {
 			:root {
 				--content-padding: 1.25rem;
@@ -573,14 +653,78 @@
 			
 			<section>
 				<div class="title">GLASS</div>
-				<h1>📷 APS-C Sony a6400 No-IBIS 18mm⦵</h1>
-				<p>• E Prime 35mm f/0.95 to f/16 7artisans 52ø</p>
-				<p>• E Zoom 16-50mm f/3.5-5.6 Kit Sony OSS 40.5ø</p>
-				<p>• E Zoom 55-210mm f/4.5-6.3 Kit Sony OSS 49ø</p>
-				<h1>📷 8perf Pentax P30T ~45.46⦵</h1>
-				<p>• K Zoom 35-80mm f/4* to f/22 Kit Lens</p>
-				<h1>📷 4perf Olympus Pen-EE S [Fixed 1/40s]</h1>
-				<p>• Prime 30mm f/2.8 to f/22 Fixed Lens 22.5ø</p>
+				<div class="glass-grid">
+					<div class="camera-card">
+						<div class="camera-header">
+							<span class="camera-icon">📷</span>
+							<div>
+								<div class="camera-name">Sony a6400 APS-C</div>
+								<div class="camera-specs">APS-C • No-IBIS • 18mm ғʟᴀɴɢᴇ</div>
+							</div>
+						</div>
+						<div class="lens-list">
+							<div class="lens-item">
+								<span class="lens-bullet">•</span>
+								<div>
+									<span class="lens-type">E Prime</span>
+									<span class="lens-specs">35mm ƒ/0.95-16 • 7artisans • 52ø</span>
+								</div>
+							</div>
+							<div class="lens-item">
+								<span class="lens-bullet">•</span>
+								<div>
+									<span class="lens-type">E Zoom</span>
+									<span class="lens-specs">16-50mm ƒ/3.5-5.6 • Kit Sony OSS • 40.5ø</span>
+								</div>
+							</div>
+							<div class="lens-item">
+								<span class="lens-bullet">•</span>
+								<div>
+									<span class="lens-type">E Zoom</span>
+									<span class="lens-specs">55-210mm ƒ/4.5-6.3 • Kit Sony OSS • 49ø</span>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="camera-card">
+						<div class="camera-header">
+							<span class="camera-icon">📷</span>
+							<div>
+								<div class="camera-name">Pentax P30T</div>
+								<div class="camera-specs">35mm Full Frame 8 perf • 45.46mm ғʟᴀɴɢᴇ</div>
+							</div>
+						</div>
+						<div class="lens-list">
+							<div class="lens-item">
+								<span class="lens-bullet">•</span>
+								<div>
+									<span class="lens-type">K Zoom</span>
+									<span class="lens-specs">35-80mm ƒ/4-? • Kit Lens • 49ø</span>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="camera-card">
+						<div class="camera-header">
+							<span class="camera-icon">📷</span>
+							<div>
+								<div class="camera-name">Olympus Pen-EE S</div>
+								<div class="camera-specs">35mm Half Frame 4 perf • Fixed 1/40s • Fixed Lens</div>
+							</div>
+						</div>
+						<div class="lens-list">
+							<div class="lens-item">
+								<span class="lens-bullet">•</span>
+								<div>
+									<span class="lens-type">Prime</span>
+									<span class="lens-specs">30mm ƒ/2.8 • 22.5ø</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 			</section>
 
 
