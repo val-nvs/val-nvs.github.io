@@ -3,14 +3,18 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+	<meta name="description" content="Valdir Neves - Filmmaker, photographer, and developer based in Lisbon, Portugal. Portfolio featuring videography, photography, and technical projects.">
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,100,0,200&icon_names=open_in_new" />
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,100,0,200&icon_names=language,open_in_new" />
 	<title>Valdir Neves</title>
 	<link rel="icon" href="media/favicon.png" type="image/png">
 	<style>
+		/* ========================================
+		   CSS VARIABLES
+		   ======================================== */
 		:root {
 			--max-content-width: 480px;
 			--content-padding: 1rem;
@@ -21,6 +25,9 @@
 			--accent-color: #00E054;
 		}
 
+		/* ========================================
+		   BASE STYLES
+		   ======================================== */
 		html {
 			color-scheme: dark;
 			font-size: 16px;
@@ -41,6 +48,9 @@
 			min-height: 100dvh;
 		}
 
+		/* ========================================
+		   LAYOUT
+		   ======================================== */
 		.container {
 			width: 100%;
 			max-width: var(--max-content-width);
@@ -50,7 +60,10 @@
 			flex-direction: column;
 		}
 
-		.url-header {
+		/* ========================================
+		   HEADER
+		   ======================================== */
+		.site-header {
 			background: #000;
 			padding: 0.5rem var(--content-padding);
 			text-align: center;
@@ -64,13 +77,86 @@
 			position: sticky;
 			top: 0;
 			z-index: 10;
+			display: grid;
+			grid-template-columns: 1.5rem 1fr 1.5rem;
+			align-items: center;
+			gap: 1rem;
 		}
 
-		.url-header span {
+		.header-spacer {
+			width: 1.5rem;
+		}
+
+		.header-content {
+			text-align: center;
+		}
+
+		.language-selector {
+			position: relative;
+		}
+
+		.language-icon {
 			cursor: pointer;
+			color: var(--text-primary);
+			font-size: 1.5rem;
+			transition: color 0.2s ease;
+			user-select: none;
 		}
 
-		.url-header span {
+		.language-icon:hover {
+			color: var(--accent-color);
+		}
+
+		.language-icon:focus-visible {
+			outline: 2px solid var(--accent-color);
+			outline-offset: 4px;
+			border-radius: 4px;
+		}
+
+		.language-popup {
+			position: absolute;
+			top: calc(100% + 0.5rem);
+			right: 0;
+			background: var(--bg-primary);
+			border: 1px solid var(--border-color);
+			border-radius: 0.375rem;
+			padding: 0.5rem;
+			display: none;
+			min-width: 150px;
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+		}
+
+		.language-popup.active {
+			display: block;
+		}
+
+		.language-option {
+			padding: 0.5rem 0.75rem;
+			cursor: pointer;
+			border-radius: 0.25rem;
+			transition: background 0.2s ease;
+			font-family: 'Roboto', sans-serif;
+			font-size: 0.875rem;
+			color: var(--text-primary);
+		}
+
+		.language-option:hover {
+			background: rgba(161, 170, 179, 0.1);
+			color: var(--accent-color);
+		}
+
+		.language-option.active {
+			background: rgba(0, 224, 84, 0.1);
+			color: var(--accent-color);
+		}
+
+		.language-option:focus-visible {
+			outline: 2px solid var(--accent-color);
+			outline-offset: -2px;
+		}
+
+		.site-header span {
+			cursor: pointer;
 			display: inline-block;
 			font-weight: 200;
 			color: #808080;
@@ -101,13 +187,16 @@
 			}
 		}
 
-		nav {
+		/* ========================================
+		   NAVIGATION
+		   ======================================== */
+		.site-nav {
 			background: var(--bg-secondary);
 			padding: 0.5rem var(--content-padding);
 			padding-top: 0;
 		}
 
-		nav ul {
+		.nav-list {
 			display: grid;
 			grid-template-columns: repeat(3, 1fr);
 			background: #1D1F25;
@@ -117,7 +206,7 @@
 			gap: 0.125rem;
 		}
 
-		nav ul li {
+		.nav-item {
 			text-align: center;
 			padding: 0.3rem 0.25rem;
 			border-radius: 0.3125rem;
@@ -127,12 +216,20 @@
 			font-size: 0.875rem;
 		}
 
-		nav ul li.active {
+		.nav-item.active {
 			background: #728393;
 			color: #fff;
 			cursor: default;
 		}
 
+		.nav-item:focus-visible {
+			outline: 2px solid var(--accent-color);
+			outline-offset: -2px;
+		}
+
+		/* ========================================
+		   MAIN CONTENT
+		   ======================================== */
 		main {
 			background: var(--bg-primary);
 			flex: 1;
@@ -142,16 +239,16 @@
 			width: 100%;
 		}
 
-		section {
+		.section {
 			border-top: 1px solid var(--border-color);
 			padding: var(--content-padding);
 		}
 
-		section:last-child {
+		.section:last-child {
 			border-bottom: 1px solid var(--border-color);
 		}
 
-		.title {
+		.section-title {
 			font-size: 1.125rem;
 			margin-bottom: 1rem;
 			color: var(--text-primary);
@@ -159,12 +256,38 @@
 			font-weight: 500;
 		}
 
-		.grid {
+		.section h1 {
+			font-size: 1rem;
+			font-weight: 400;
+			margin-bottom: 0.5rem;
+		}
+
+		.section p {
+			margin-top: 1rem;
+			line-height: 1.5;
+		}
+
+		.section a {
+			color: var(--accent-color);
+			text-decoration: none;
+		}
+
+		.section a:hover {
+			text-decoration: underline;
+		}
+
+		/* ========================================
+		   GRID LAYOUT
+		   ======================================== */
+		.content-grid {
 			display: grid;
 			width: 100%;
 			gap: 0.375rem;
 		}
 
+		/* ========================================
+		   CARD COMPONENTS
+		   ======================================== */
 		button {
 			background: none;
 			border: none;
@@ -175,7 +298,7 @@
 			-webkit-appearance: none;
 		}
 
-		.movie {
+		.card {
 			background: var(--bg-secondary);
 			border-radius: 0.375rem;
 			position: relative;
@@ -183,7 +306,7 @@
 			display: block;
 		}
 
-		.movie::before {
+		.card::before {
 			content: '';
 			position: absolute;
 			top: 0;
@@ -197,12 +320,17 @@
 			z-index: 1;
 		}
 
-		.movie:hover::before,
-		.movie:focus::before {
+		.card:hover::before,
+		.card:focus::before,
+		.card:focus-visible::before {
 			border: 3px solid var(--accent-color);
 		}
 
-		.movie img {
+		.card:focus-visible {
+			outline: none;
+		}
+
+		.card img {
 			display: block;
 			width: 100%;
 			height: auto;
@@ -210,47 +338,16 @@
 			border-radius: inherit;
 		}
 
-		section h1 {
-			font-size: 1rem;
-			font-weight: 400;
-			margin-bottom: 0.5rem;
-		}
-
-		section p {
-			margin-top: 1rem;
-			line-height: 1.5;
-		}
-
-		section a {
-			color: var(--accent-color);
-			text-decoration: none;
-		}
-
-		section a:hover {
-			text-decoration: underline;
-		}
-
-		iframe {
-			max-width: 100%;
-		}
-
-		footer {
-			background: #000;
-			border-top: 1px solid var(--border-color);
-			padding: 0.5rem var(--content-padding);
-			position: sticky;
-			bottom: 0;
-			z-index: 10;
-		}
-
-		/* Glass Section Styles */
-		.glass-grid {
+		/* ========================================
+		   EQUIPMENT SECTION
+		   ======================================== */
+		.equipment-grid {
 			display: grid;
 			gap: 1rem;
 			margin-top: 0.5rem;
 		}
 
-		.camera-card {
+		.equipment-card {
 			background: var(--bg-secondary);
 			border: 1px solid rgba(161, 170, 179, 0.3);
 			border-radius: 0.5rem;
@@ -258,11 +355,11 @@
 			transition: border-color 0.2s ease;
 		}
 
-		.camera-card:hover {
+		.equipment-card:hover {
 			border-color: var(--accent-color);
 		}
 
-		.camera-header {
+		.equipment-header {
 			display: flex;
 			align-items: center;
 			gap: 0.5rem;
@@ -271,12 +368,12 @@
 			border-bottom: 1px solid rgba(161, 170, 179, 0.2);
 		}
 
-		.camera-icon {
+		.equipment-icon {
 			font-size: 1.5rem;
 			line-height: 1;
 		}
 
-		.camera-name {
+		.equipment-name {
 			flex: 1;
 			font-size: 0.95rem;
 			font-weight: 500;
@@ -284,19 +381,19 @@
 			line-height: 1.3;
 		}
 
-		.camera-specs {
+		.equipment-specs {
 			font-size: 0.75rem;
 			color: #808080;
 			font-family: "Atkinson Hyperlegible Mono", monospace;
 		}
 
-		.lens-list {
+		.item-list {
 			display: flex;
 			flex-direction: column;
 			gap: 0.5rem;
 		}
 
-		.lens-item {
+		.list-item {
 			display: flex;
 			align-items: flex-start;
 			gap: 0.5rem;
@@ -304,14 +401,14 @@
 			line-height: 1.4;
 		}
 
-		.lens-bullet {
+		.item-bullet {
 			color: var(--accent-color);
 			font-weight: bold;
 			flex-shrink: 0;
 			margin-top: 0.1rem;
 		}
 
-		.lens-type {
+		.item-type {
 			color: #808080;
 			font-size: 0.75rem;
 			text-transform: uppercase;
@@ -319,17 +416,137 @@
 			margin-right: 0.25rem;
 		}
 
-		.lens-specs {
+		.item-description {
 			color: var(--text-primary);
 		}
 
+		/* ========================================
+		   HERO SECTION (ABOUT PAGE)
+		   ======================================== */
+		.hero-section {
+			position: relative;
+			width: 100%;
+			padding: 0;
+			border: none;
+			margin-bottom: 0;
+			z-index: 1;
+		}
+
+		.hero-image-container {
+			position: relative;
+			width: 100%;
+			height: 200px;
+			overflow: visible;
+		}
+
+		.hero-image {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			display: block;
+		}
+
+		.hero-image-fade {
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			height: 120px;
+			background: linear-gradient(to bottom, rgba(25, 28, 33, 0) 0%, rgba(25, 28, 33, 0.3) 20%, rgba(25, 28, 33, 0.7) 40%, var(--bg-primary) 60%);
+			pointer-events: none;
+			z-index: 2;
+		}
+
+		.profile-pic-container {
+			position: absolute;
+			bottom: -60px;
+			left: 50%;
+			transform: translateX(-50%);
+			z-index: 10;
+		}
+
+		.profile-pic {
+			width: 120px;
+			height: 120px;
+			border-radius: 50%;
+			border: 4px solid var(--bg-primary);
+			object-fit: cover;
+			display: block;
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+		}
+
+		.about-content {
+			position: relative;
+			padding: 90px var(--content-padding) var(--content-padding);
+			text-align: center;
+			z-index: 1;
+			border-top: none;
+		}
+
+		.about-content h1 {
+			text-align: center;
+		}
+
+		/* ========================================
+		   MEDIA EMBEDS
+		   ======================================== */
+		iframe {
+			max-width: 100%;
+		}
+
+		/* ========================================
+		   FOOTER
+		   ======================================== */
+		footer {
+			background: #000;
+			border-top: 1px solid var(--border-color);
+			padding: 1rem var(--content-padding);
+		}
+
+		footer .section-title {
+			text-align: center;
+		}
+
+		footer iframe {
+			margin-bottom: 0.25rem;
+		}
+
+		footer iframe:last-child {
+			margin-bottom: 0;
+		}
+
+		/* ========================================
+		   RESPONSIVE DESIGN
+		   ======================================== */
 		@media (min-width: 481px) {
 			:root {
 				--content-padding: 1.25rem;
 			}
 			
-			.title {
+			.section-title {
 				font-size: 1.25rem;
+			}
+
+			.hero-image-container {
+				height: 220px;
+			}
+
+			.hero-image-fade {
+				height: 140px;
+				background: linear-gradient(to bottom, rgba(25, 28, 33, 0) 0%, rgba(25, 28, 33, 0.3) 20%, rgba(25, 28, 33, 0.7) 40%, var(--bg-primary) 60%);
+			}
+
+			.profile-pic {
+				width: 140px;
+				height: 140px;
+			}
+
+			.profile-pic-container {
+				bottom: -70px;
+			}
+
+			.about-content {
+				padding-top: 100px;
 			}
 		}
 
@@ -341,6 +558,28 @@
 			html {
 				font-size: 17px;
 			}
+
+			.hero-image-container {
+				height: 250px;
+			}
+
+			.hero-image-fade {
+				height: 160px;
+				background: linear-gradient(to bottom, rgba(25, 28, 33, 0) 0%, rgba(25, 28, 33, 0.3) 20%, rgba(25, 28, 33, 0.7) 40%, var(--bg-primary) 60%);
+			}
+
+			.profile-pic {
+				width: 160px;
+				height: 160px;
+			}
+
+			.profile-pic-container {
+				bottom: -80px;
+			}
+
+			.about-content {
+				padding-top: 110px;
+			}
 		}
 
 		@media (min-width: 1024px) {
@@ -351,10 +590,18 @@
 			html {
 				font-size: 18px;
 			}
+
+			.hero-image-container {
+				height: 280px;
+			}
+
+			.hero-image-fade {
+				height: 160px;
+			}
 		}
 
 		@media (hover: none) and (pointer: coarse) {
-			nav ul li {
+			.nav-item {
 				display: flex;
 				align-items: center;
 				justify-content: center;
@@ -362,8 +609,8 @@
 		}
 
 		@media print {
-			.url-header,
-			nav {
+			.site-header,
+			.site-nav {
 				display: none;
 			}
 			
@@ -376,507 +623,677 @@
 <body>
 
 <div class="container">
-	<div class="url-header" id="urlDisplay"></div>
-	<nav>
-		<ul>
-			<li class="nav-btn active" data-page="home">Home</li>
-			<li class="nav-btn" data-page="coding">Tech Projects</li>
-			<li class="nav-btn" data-page="about">About</li>
+	<!-- Header -->
+	<div class="site-header">
+		<div class="header-spacer"></div>
+		<div class="header-content" id="headerDisplay"></div>
+		<div class="language-selector">
+			<span class="material-symbols-outlined language-icon" id="languageIcon" role="button" aria-label="Select language" aria-expanded="false" aria-haspopup="true" tabindex="0">language</span>
+			<div class="language-popup" id="languagePopup" role="menu" aria-label="Language selection menu">
+				<div class="language-option active" data-lang="en" role="menuitem" tabindex="0">English</div>
+				<div class="language-option" data-lang="pt" role="menuitem" tabindex="0">Português</div>
+				<div class="language-option" data-lang="es" role="menuitem" tabindex="0">Español</div>
+				<div class="language-option" data-lang="fr" role="menuitem" tabindex="0">Français</div>
+				<div class="language-option" data-lang="de" role="menuitem" tabindex="0">Deutsch</div>
+				<div class="language-option" data-lang="zh" role="menuitem" tabindex="0">中文</div>
+				<div class="language-option" data-lang="ja" role="menuitem" tabindex="0">日本語</div>
+				<div class="language-option" data-lang="ar" role="menuitem" tabindex="0">العربية</div>
+			</div>
+		</div>
+	</div>
+	
+	<!-- Navigation -->
+	<nav class="site-nav">
+		<ul class="nav-list">
+			<li class="nav-item active" data-page="home" data-translate="nav.home">Home</li>
+			<li class="nav-item" data-page="projects" data-translate="nav.projects">Tech Projects</li>
+			<li class="nav-item" data-page="about" data-translate="nav.about">About</li>
 		</ul>
 	</nav>
 	
 	<main>
+		<!-- HOME PAGE -->
 		<div class="page" id="home">
-			<section>
-				<div class="title">VIDEOGRAPHY PORTFOLIO <span class="material-symbols-outlined">open_in_new</span></div>
-				<div class="grid" style="grid-template-columns: repeat(1, 1fr);">
-					<button class="movie" onclick="window.open('https://val-nvs.com/portfolio/', '_blank')">
-						<img loading="lazy" src="media/film.gif" alt="Videography Portfolio">
+			<section class="section">
+				<div class="section-title" data-translate="home.videography">VIDEOGRAPHY PORTFOLIO <span class="material-symbols-outlined">open_in_new</span></div>
+				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
+					<button class="card" onclick="window.open('https://val-nvs.com/portfolio/', '_blank')">
+						<img loading="lazy" src="media/film.gif" alt="">
 					</button>
 				</div>
 			</section>
 
-			<section>
-				<div class="title">PHOTOGRAPHY PORTFOLIO</div>
-				<div class="grid" style="grid-template-columns: repeat(1, 1fr);">
-					<button class="movie" onclick="window.open('https://valdirneves.mypixieset.com/', '_blank')">
-						<img loading="lazy" src="media/fotos.jpg" alt="Photography Portfolio">
+			<section class="section">
+				<div class="section-title" data-translate="home.photography">PHOTOGRAPHY PORTFOLIO</div>
+				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
+					<button class="card" onclick="window.open('https://valdirneves.mypixieset.com/', '_blank')">
+						<img loading="lazy" src="media/fotos.jpg" alt="">
 					</button>
 				</div>
 			</section>
 
-			<section>
-				<div class="title">SOCIALS</div>
-				<div class="grid" style="grid-template-columns: repeat(2, 1fr);">
-					<button class="movie" onclick="window.open('https://www.linkedin.com/in/valdir-neves/', '_blank')">
-						<img src="media/linkedin.jpg" alt="LinkedIn Profile">
+			<section class="section">
+				<div class="section-title">SOCIALS</div>
+				<div class="content-grid" style="grid-template-columns: repeat(2, 1fr);">
+					<button class="card" onclick="window.open('https://www.linkedin.com/in/valdir-neves/', '_blank')">
+						<img src="media/linkedin.jpg" alt="LinkedIn">
 					</button>
-					<button class="movie" onclick="window.open('https://www.instagram.com/val.nevs/', '_blank')">
-						<img src="media/instagram.jpg" alt="Instagram Profile">
-					</button>
-				</div>
-
-			</section>
-		</div>
-
-		<div class="page" id="coding" style="display: none;">
-
-			<section>
-				<div class="title">3D PRINTED FILM CAMERA '25/6</div>
-				<div class="grid" style="grid-template-columns: repeat(1, 1fr);">
-					<button class="movie" onclick="window.open('https://cad.onshape.com/documents/5c2b9c47264034ac5c1a5ddc/w/cf712b211e6f3dfb560adac5/e/8d057c5d33a5d1feb3ac213e?renderMode=0&uiState=6925435e636df3628be2911a', '_blank')">
-						<img loading="lazy" src="media/v19.gif" alt="3D Printed Camera">
-					</button>
-					<button class="movie" onclick="window.open('https://github.com/val-nvs/film-camera', '_blank')">
-						<img loading="lazy" src="media/github.png" alt="3D Printed Camera">
-					</button>
-				</div>
-			</section>
-
-			<section>
-				<div class="title">CLUB BENARES WEBSITE '25/8</div>
-				<div class="grid" style="grid-template-columns: repeat(1, 1fr);">
-					<button class="movie" onclick="window.open('https://thebenaresclub.com', '_blank')">
-						<img loading="lazy" src="media/benares.png" alt="Club Benares">
-					</button>
-				</div>
-			</section>
-
-			<section>
-				<div class="title">DUOTONE TECHNICOLOR FILTER '25/5</div>
-				<div class="grid" style="grid-template-columns: repeat(1, 1fr);">
-					<button class="movie" onclick="window.open('https://val-nvs.com/colors/', '_blank')">
-						<img loading="lazy" src="media/mex.jpg" alt="Duotone Filter Project">
-					</button>
-				</div>
-			</section>
-
-			<section>
-				<div class="title">LISBON METRO ENTRANCES '25/11</div>
-				<div class="grid" style="grid-template-columns: repeat(1, 1fr);">
-					<button class="movie" onclick="window.open('https://val-nvs.com/lisbon', '_blank')">
-						<img loading="lazy" src="media/lisboa.jpg" alt="LISBON METRO ENTRANCES">
-					</button>
-				</div>
-			</section>
-
-			<section>
-				<div class="title">CHAT ROOM '25/10</div>
-				<div class="grid" style="grid-template-columns: repeat(1, 1fr);">
-					<button class="movie" onclick="window.open('https://val-nvs.com/chat/', '_blank')">
-						<img loading="lazy" src="media/chat.png" alt="Chat Room Project">
-					</button>
-					<button class="movie" onclick="window.open('https://val-nvs.com/irc/', '_blank')">
-						<img loading="lazy" src="media/irc.png" alt="Chat Room Project">
-					</button>
-				</div>
-			</section>
-
-			<section>
-				<div class="title">BLENDER 3D PRE-VIS & PHOTOGRAMMETRY '24/6</div>
-				<div class="grid" style="grid-template-columns: repeat(1, 1fr);">
-					<button class="movie" onclick="window.open('https://val-nvs.com/portfolio/', '_blank')">
-						<img loading="lazy" src="media/previs.png" alt="3D PRE-VIS">
-					</button>
-					<button class="movie" onclick="window.open('https://www.youtube.com/watch?v=5LlSdajis7g', '_blank')">
-						<img loading="lazy" src="media/ytlogo.png" alt="3D PRE-VIS">
-					</button>
-				</div>
-			</section>
-
-			<section>
-				<div class="title">Development Times '25/11</div>
-				<div class="grid" style="grid-template-columns: repeat(1, 1fr);">
-					<button class="movie" onclick="window.open('https://val-nvs.com/rodinal/', '_blank')">
-						<img loading="lazy" src="media/times.png" alt="Development Times">
-					</button>
-				</div>
-			</section>
-
-			<section>
-				<div class="title">BROADCAST TABLE '25/9</div>
-				<div class="grid" style="grid-template-columns: repeat(1, 1fr);">
-					<button class="movie" onclick="window.open('https://val-nvs.com/tv/', '_blank')">
-						<img loading="lazy" src="media/switcher.gif" alt="Broadcast Table">
-					</button>
-				</div>
-			</section>
-
-			<section>
-				<div class="title">BLENDER GUIDE '25/5</div>
-				<div class="grid" style="grid-template-columns: repeat(1, 1fr);">
-					<button class="movie" onclick="window.open('https://val-nvs.com/blender-guide/', '_blank')">
-						<img loading="lazy" src="media/pan.gif" alt="Blender Guide">
-					</button>
-				</div>
-			</section>
-
-			<section>
-				<div class="title">FAVORITE FILMS '25/9</div>
-				<div class="grid" style="grid-template-columns: repeat(1, 1fr);">
-					<button class="movie" onclick="window.open('https://val-nvs.com/favorites/', '_blank')">
-						<img loading="lazy" src="media/films.jpg" alt="Favorite Films">
-					</button>
-				</div>
-			</section>
-
-			<section>
-				<div class="title">ENGINE '25/8</div>
-				<div class="grid" style="grid-template-columns: repeat(1, 1fr);">
-					<button class="movie" onclick="window.open('https://val-nvs.com/game-engine/', '_blank')">
-						<img loading="lazy" src="media/engine.jpg" alt="Game Engine">
-					</button>
-				</div>
-			</section>
-
-			<section>
-				<div class="title">BLENDER NODES '20</div>
-				<div class="grid" style="grid-template-columns: repeat(1, 1fr);">
-					<button class="movie" style="cursor: not-allowed;">
-						<img loading="lazy" src="media/nodes.png" alt="Nodes">
-					</button>
-				</div>
-			</section>
-
-			<section>
-				<div class="title">STATS '25/11</div>
-				<div class="grid" style="grid-template-columns: repeat(1, 1fr);">
-					<button class="movie" onclick="window.open('https://val-nvs.com/stats/', '_blank')">
-						<img loading="lazy" src="media/stats.png" alt="Stats">
-					</button>
-				</div>
-			</section>
-
-			<section>
-				<div class="title">OLD PORTFOLIO</div>
-				<div class="grid" style="grid-template-columns: repeat(1, 1fr);">
-					<button class="movie" onclick="window.open('https://val-nvs.com/portfolio/old.html', '_blank')">
-						<img loading="lazy" src="media/old.png" alt="Old Portfolio">
-					</button>
-				</div>
-			</section>
-
-			<section>
-				<div class="title">OTHER WEBSITES</div>
-				<div class="grid" style="grid-template-columns: repeat(2, 1fr);">
-					<button class="movie" onclick="window.open('https://val-nvs.com/klotski.html', '_blank')">
-						<img loading="lazy" src="media/klotski.png" alt="Klotski Game">
-					</button>
-					<button class="movie" onclick="window.open('https://val-nvs.com/logic/index.html', '_blank')">
-						<img loading="lazy" src="media/logic.png" alt="Logic Project">
-					</button>
-					<button class="movie" onclick="window.open('https://val-nvs.com/calc.html', '_blank')">
-						<img loading="lazy" src="media/calc.png" alt="Calculator">
-					</button>
-					<button class="movie" onclick="window.open('https://val-nvs.com/404', '_blank')">
-						<img loading="lazy" src="media/404.png" alt="404 Page">
-					</button>
-				</div>
-			</section>
-
-			<section>
-				<div class="title">OLD LANDER</div>
-				<div class="grid" style="grid-template-columns: repeat(1, 1fr);">
-					<button class="movie" onclick="window.open('https://val-nvs.com/OLDindex.html', '_blank')">
-						<img loading="lazy" src="media/pic1.jpg" alt="Old Lander">
-					</button>
-				</div>
-			</section>
-
-			<section>
-				<div class="title">GITHUB PROFILE</div>
-				<div class="grid" style="grid-template-columns: repeat(1, 1fr);">
-					<button class="movie" onclick="window.open('https://github.com/val-nvs', '_blank')">
-						<img loading="lazy" src="media/github.png" alt="GitHub Profile">
+					<button class="card" onclick="window.open('https://www.instagram.com/val.nevs/', '_blank')">
+						<img src="media/instagram.jpg" alt="Instagram">
 					</button>
 				</div>
 			</section>
 		</div>
 
+		<!-- PROJECTS PAGE -->
+		<div class="page" id="projects" style="display: none;">
+			<section class="section">
+				<div class="section-title">3D PRINTED FILM CAMERA '25/6</div>
+				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
+					<button class="card" onclick="window.open('https://cad.onshape.com/documents/5c2b9c47264034ac5c1a5ddc/w/cf712b211e6f3dfb560adac5/e/8d057c5d33a5d1feb3ac213e?renderMode=0&uiState=6925435e636df3628be2911a', '_blank')">
+						<img loading="lazy" src="media/v19.gif" alt="">
+					</button>
+					<button class="card" onclick="window.open('https://github.com/val-nvs/film-camera', '_blank')">
+						<img loading="lazy" src="media/github.png" alt="">
+					</button>
+				</div>
+			</section>
+
+			<section class="section">
+				<div class="section-title">CLUB BENARES WEBSITE '25/8</div>
+				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
+					<button class="card" onclick="window.open('https://thebenaresclub.com', '_blank')">
+						<img loading="lazy" src="media/benares.png" alt="">
+					</button>
+				</div>
+			</section>
+
+			<section class="section">
+				<div class="section-title">DUOTONE TECHNICOLOR FILTER '25/5</div>
+				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
+					<button class="card" onclick="window.open('https://val-nvs.com/colors/', '_blank')">
+						<img loading="lazy" src="media/mex.jpg" alt="">
+					</button>
+				</div>
+			</section>
+
+			<section class="section">
+				<div class="section-title">LISBON METRO ENTRANCES '25/11</div>
+				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
+					<button class="card" onclick="window.open('https://val-nvs.com/lisbon', '_blank')">
+						<img loading="lazy" src="media/lisboa.jpg" alt="">
+					</button>
+				</div>
+			</section>
+
+			<section class="section">
+				<div class="section-title">CHAT ROOM '25/10</div>
+				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
+					<button class="card" onclick="window.open('https://val-nvs.com/chat/', '_blank')">
+						<img loading="lazy" src="media/chat.png" alt="">
+					</button>
+					<button class="card" onclick="window.open('https://val-nvs.com/irc/', '_blank')">
+						<img loading="lazy" src="media/irc.png" alt="">
+					</button>
+				</div>
+			</section>
+
+			<section class="section">
+				<div class="section-title">BLENDER 3D PRE-VIS & PHOTOGRAMMETRY '24/6</div>
+				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
+					<button class="card" onclick="window.open('https://val-nvs.com/portfolio/', '_blank')">
+						<img loading="lazy" src="media/previs.png" alt="">
+					</button>
+					<button class="card" onclick="window.open('https://www.youtube.com/watch?v=5LlSdajis7g', '_blank')">
+						<img loading="lazy" src="media/ytlogo.png" alt="">
+					</button>
+				</div>
+			</section>
+
+			<section class="section">
+				<div class="section-title">DEVELOPMENT TIMES '25/11</div>
+				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
+					<button class="card" onclick="window.open('https://val-nvs.com/rodinal/', '_blank')">
+						<img loading="lazy" src="media/times.png" alt="">
+					</button>
+				</div>
+			</section>
+
+			<section class="section">
+				<div class="section-title">BROADCAST TABLE '25/9</div>
+				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
+					<button class="card" onclick="window.open('https://val-nvs.com/tv/', '_blank')">
+						<img loading="lazy" src="media/switcher.gif" alt="">
+					</button>
+				</div>
+			</section>
+
+			<section class="section">
+				<div class="section-title">BLENDER GUIDE '25/5</div>
+				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
+					<button class="card" onclick="window.open('https://val-nvs.com/blender-guide/', '_blank')">
+						<img loading="lazy" src="media/pan.gif" alt="">
+					</button>
+				</div>
+			</section>
+
+			<section class="section">
+				<div class="section-title">FAVORITE FILMS '25/9</div>
+				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
+					<button class="card" onclick="window.open('https://val-nvs.com/favorites/', '_blank')">
+						<img loading="lazy" src="media/films.jpg" alt="">
+					</button>
+				</div>
+			</section>
+
+			<section class="section">
+				<div class="section-title">ENGINE '25/8</div>
+				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
+					<button class="card" onclick="window.open('https://val-nvs.com/game-engine/', '_blank')">
+						<img loading="lazy" src="media/engine.jpg" alt="">
+					</button>
+				</div>
+			</section>
+
+			<section class="section">
+				<div class="section-title">BLENDER NODES '20</div>
+				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
+					<button class="card" style="cursor: not-allowed;" aria-disabled="true">
+						<img loading="lazy" src="media/nodes.png" alt="">
+					</button>
+				</div>
+			</section>
+
+			<section class="section">
+				<div class="section-title">STATS '25/11</div>
+				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
+					<button class="card" onclick="window.open('https://val-nvs.com/stats/', '_blank')">
+						<img loading="lazy" src="media/stats.png" alt="">
+					</button>
+				</div>
+			</section>
+
+			<section class="section">
+				<div class="section-title">OLD PORTFOLIO</div>
+				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
+					<button class="card" onclick="window.open('https://val-nvs.com/portfolio/old.html', '_blank')">
+						<img loading="lazy" src="media/old.png" alt="">
+					</button>
+				</div>
+			</section>
+
+			<section class="section">
+				<div class="section-title">OTHER WEBSITES</div>
+				<div class="content-grid" style="grid-template-columns: repeat(2, 1fr);">
+					<button class="card" onclick="window.open('https://val-nvs.com/klotski.html', '_blank')">
+						<img loading="lazy" src="media/klotski.png" alt="Klotski puzzle game">
+					</button>
+					<button class="card" onclick="window.open('https://val-nvs.com/logic/index.html', '_blank')">
+						<img loading="lazy" src="media/logic.png" alt="">
+					</button>
+					<button class="card" onclick="window.open('https://val-nvs.com/calc.html', '_blank')">
+						<img loading="lazy" src="media/calc.png" alt="Custom calculator">
+					</button>
+					<button class="card" onclick="window.open('https://val-nvs.com/404', '_blank')">
+						<img loading="lazy" src="media/404.png" alt="404 error page">
+					</button>
+				</div>
+			</section>
+
+			<section class="section">
+				<div class="section-title">OLD LANDER</div>
+				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
+					<button class="card" onclick="window.open('https://val-nvs.com/OLDindex.html', '_blank')">
+						<img loading="lazy" src="media/pic1.jpg" alt="Original landing page">
+					</button>
+				</div>
+			</section>
+
+			<section class="section">
+				<div class="section-title">GITHUB PROFILE</div>
+				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
+					<button class="card" onclick="window.open('https://github.com/val-nvs', '_blank')">
+						<img loading="lazy" src="media/github.png" alt="GitHub profile">
+					</button>
+				</div>
+			</section>
+		</div>
+
+		<!-- ABOUT PAGE -->
 		<div class="page" id="about" style="display: none;">
-			<section>
-				<div class="title">ABOUT ME</div>
-					<div class="grid" style="grid-template-columns: 1fr 2fr;">
-						<button class="movie" style="cursor: crosshair;">
-							<img loading="lazy" src="media/profile.jpg" alt="LinkedIn">
-						</button>
-						<button class="movie" style="cursor: crosshair;">
-							<img loading="lazy" src="media/circle.jpg" alt="Instagram">
-						</button>
+			<section class="hero-section">
+				<div class="hero-image-container">
+					<img class="hero-image" src="media/cctv.jpg" alt="" loading="eager">
+					<div class="hero-image-fade"></div>
+					<div class="profile-pic-container">
+						<img class="profile-pic" src="media/profile.jpg" alt="" loading="eager">
 					</div>
-				<br>
-				<h1>Brazilian living in Lisbon, Portugal.</h1><br>
-				<h1>Passionate about filmmaking, photography, optics, architecture and engineering.</h1><br>
-				<h1>Fluent in English & Portuguese.</h1><br>
+				</div>
 			</section>
 
-			<section>
-				<div class="title">CONTACT</div>
-								<p>Looking to collaborate or share ideas?<br>Drop me a message- I'd love to connect.</p>
+			<section class="section about-content">
+				<div class="section-title" data-translate="about.title">ABOUT ME</div>
+				<h1>Brazilian living in Lisbon, Portugal.</h1>
+				<h1>Passionate about filmmaking, photography, optics, architecture and engineering.</h1>
+				<h1>Fluent in English & Portuguese.</h1>
+			</section>
+
+			<section class="section">
+				<div class="section-title">CONTACT</div>
+				<p data-translate="about.collaborate">Looking to collaborate or share ideas?<br>Drop me a message- I'd love to connect.</p><br>
 				<h1>Email: valdir.nvs@outlook.com</h1>
 				<h1>Phone: (+351) 930 946 697</h1>
 				<h1>Instagram: <a href="https://www.instagram.com/val.nevs" target="_blank">@val.nevs</a></h1>
 				<h1>LinkedIn: <a href="https://www.linkedin.com/in/valdir-neves/" target="_blank">/valdir-neves/</a></h1>
 
-				
-								<div class="grid" style="grid-template-columns: repeat(4, 1fr);">
-					<button class="movie" onclick="window.open('https://www.linkedin.com/in/valdir-neves/', '_blank')">
+				<div class="content-grid" style="grid-template-columns: repeat(4, 1fr);">
+					<button class="card" onclick="window.open('https://www.linkedin.com/in/valdir-neves/', '_blank')">
 						<img loading="lazy" src="media/linkedin.jpg" alt="LinkedIn">
 					</button>
-					<button class="movie" onclick="window.open('https://www.instagram.com/val.nevs/', '_blank')">
+					<button class="card" onclick="window.open('https://www.instagram.com/val.nevs/', '_blank')">
 						<img loading="lazy" src="media/instagram.jpg" alt="Instagram">
 					</button>
-					<button class="movie" onclick="window.open('https://github.com/val-nvs', '_blank')">
+					<button class="card" onclick="window.open('https://github.com/val-nvs', '_blank')">
 						<img loading="lazy" src="media/github.png" alt="GitHub">
 					</button>
-					<button class="movie" onclick="window.open('https://letterboxd.com/eerom/', '_blank')">
+					<button class="card" onclick="window.open('https://letterboxd.com/eerom/', '_blank')">
 						<img loading="lazy" src="media/letterboxd.png" alt="Letterboxd">
 					</button>
 				</div>
-				
 			</section>
 
-			<section>
-				<div class="title">EDUCATION</div>
-				<div class="grid" style="grid-template-columns: repeat(3, 1fr);">
-					<button class="movie" onclick="window.open('https://www.artecapital.net/entrevista-314-pedro-senna-nune', '_blank')">
-						<img loading="lazy" src="media/cctv.jpg" alt="img">
+			<section class="section">
+				<div class="section-title">EDUCATION</div>
+				<div class="content-grid" style="grid-template-columns: repeat(3, 1fr);">
+					<button class="card" onclick="window.open('https://www.artecapital.net/entrevista-314-pedro-senna-nune', '_blank')">
+						<img loading="lazy" src="media/switch.jpg" alt="">
 					</button>
-					<button class="movie" onclick="window.open('https://www.artecapital.net/entrevista-314-pedro-senna-nune', '_blank')">
-						<img loading="lazy" src="media/cctv.jpg" alt="img">
+					<button class="card" onclick="window.open('https://www.artecapital.net/entrevista-314-pedro-senna-nune', '_blank')">
+						<img loading="lazy" src="media/hall.jpg" alt="">
 					</button>
-					<button class="movie" onclick="window.open('https://atelierdelisboa.pt/bruno-pelletier-sequeira', '_blank')">
-						<img loading="lazy" src="media/404.jpg" alt="img">
+					<button class="card" onclick="window.open('https://atelierdelisboa.pt/bruno-pelletier-sequeira', '_blank')">
+						<img loading="lazy" src="media/negatives.jpg" alt="Atelier de Lisboa">
 					</button>
-				<h1>2023 — 2025:&nbsp;&nbsp;<a href="https://www.artecapital.net/entrevista-314-pedro-senna-nune" target="_blank">ETIC — Pedro Senna Nunes</a></h1>
-				<h1>2025 — 2026:&nbsp;&nbsp;<a href="https://atelierdelisboa.pt/bruno-pelletier-sequeira" target="_blank">Atelier de Lisboa — Bruno Pelletier Sequeira</a></h1>
+				</div>
+				<br>
+				<h1>2023 — 2025:&nbsp;&nbsp;<a href="https://www.artecapital.net/entrevista-314-pedro-senna-nune" target="_blank">ETIC — Coord. Pedro Senna Nunes</a></h1>
+				<h1>2025 — 2026:&nbsp;&nbsp;<a href="https://atelierdelisboa.pt/bruno-pelletier-sequeira" target="_blank">Atelier de Lisboa — Coord. Bruno Pelletier Sequeira</a></h1>
+			</section>
+
+			<section class="section">
+				<div class="section-title">FAVORITE FILMS</div>
+				<div class="content-grid" style="grid-template-columns: repeat(4, 1fr);">
+					<button class="card" onclick="window.open('https://letterboxd.com/film/everything-everywhere-all-at-once/', '_blank')">
+						<img loading="lazy" src="media/everything.jpg" alt="Everything Everywhere All at Once (2022)">
+					</button>
+					<button class="card" onclick="window.open('https://letterboxd.com/film/amelie/', '_blank')">
+						<img loading="lazy" src="media/amelie.jpg" alt="Amélie (2001)">
+					</button>
+					<button class="card" onclick="window.open('https://letterboxd.com/film/the-secret-life-of-walter-mitty-2013/', '_blank')">
+						<img loading="lazy" src="media/mitty.jpg" alt="The Secret Life of Walter Mitty (2013)">
+					</button>
+					<button class="card" onclick="window.open('https://letterboxd.com/film/all-about-lily-chou-chou/', '_blank')">
+						<img loading="lazy" src="media/lily.jpg" alt="All About Lily Chou-Chou (2001)">
+					</button>
+					<button class="card" onclick="window.open('https://boxd.it/hiVs', '_blank')">
+						<img loading="lazy" src="media/lazzaro.jpg" alt="Happy as Lazzaro (2018)">
+					</button>
+					<button class="card" onclick="window.open('https://boxd.it/1UkW', '_blank')">
+						<img loading="lazy" src="media/angels.jpg" alt="Fallen Angels (1995)">
+					</button>
+					<button class="card" onclick="window.open('https://boxd.it/5hII', '_blank')">
+						<img loading="lazy" src="media/frank.jpg" alt="Frank (2014)">
+					</button>
+					<button class="card" onclick="window.open('https://boxd.it/1pDe', '_blank')">
+						<img loading="lazy" src="media/love.jpg" alt="Love Exposure (2008)">
+					</button>
 				</div>
 			</section>
 
-		
-
-			<section>
-				<div class="title">FAVORITE FILMS</div>
-				<div class="grid" style="grid-template-columns: repeat(4, 1fr);">
-					<button class="movie" onclick="window.open('https://letterboxd.com/film/everything-everywhere-all-at-once/', '_blank')">
-						<img loading="lazy" src="media/everything.jpg" alt="Everything Everywhere All at Once">
-					</button>
-					<button class="movie" onclick="window.open('https://letterboxd.com/film/amelie/', '_blank')">
-						<img loading="lazy" src="media/amelie.jpg" alt="Amélie">
-					</button>
-					<button class="movie" onclick="window.open('https://letterboxd.com/film/the-secret-life-of-walter-mitty-2013/', '_blank')">
-						<img loading="lazy" src="media/mitty.jpg" alt="The Secret Life of Walter Mitty">
-					</button>
-					<button class="movie" onclick="window.open('https://letterboxd.com/film/all-about-lily-chou-chou/', '_blank')">
-						<img loading="lazy" src="media/lily.jpg" alt="All About Lily Chou-Chou">
-					</button>
-			  <button class="movie" onclick="window.open('https://boxd.it/hiVs', '_blank')">
-						<img loading="lazy" src="media/lazzaro.jpg" alt="Happy as Lazzaro">
-					</button>
-					<button class="movie" onclick="window.open('https://boxd.it/1UkW', '_blank')">
-						<img loading="lazy" src="media/angels.jpg" alt="Fallen Angels">
-					</button>
-					<button class="movie" onclick="window.open('https://boxd.it/5hII', '_blank')">
-						<img loading="lazy" src="media/frank.jpg" alt="Frank">
-					</button>
-					<button class="movie" onclick="window.open('https://boxd.it/1pDe', '_blank')">
-						<img loading="lazy" src="media/love.jpg" alt="Love Exposure">
-					</button>
-				</div>
-			</section>
-
-			
-			<section>
-				<div class="title">GLASS</div>
-				<div class="glass-grid">
-					<div class="camera-card">
-						<div class="camera-header">
-							<span class="camera-icon">📷</span>
+			<section class="section">
+				<div class="section-title">EQUIPMENT</div>
+				<div class="equipment-grid">
+					<div class="equipment-card">
+						<div class="equipment-header">
+							<span class="equipment-icon">📹</span>
 							<div>
-								<div class="camera-name">Sony α6400 (E-Mount)</div>
-								<div class="camera-specs">APS-C/S35 • No-IBIS • S35: 4K-25fps-100Mbps HD-60fps-50Mbps • Crop: 4K-30fps-100Mbps HD-120fps-100Mbps • 18mm flange</div>
+								<div class="equipment-name">Sony α6400 (E-Mount)</div>
+								<div class="equipment-specs">APS-C/S35 • No-IBIS • S35: 4K-25fps-100Mbps HD-60fps-50Mbps • Crop: 4K-30fps-100Mbps HD-120fps-100Mbps • 18mm flange</div>
 							</div>
 						</div>
-						<div class="lens-list">
-							<div class="lens-item">
-								<span class="lens-bullet">35mm ƒ/0.95</span>
+						<div class="item-list">
+							<div class="list-item">
+								<span class="item-bullet">35mm ƒ/0.95</span>
 								<div>
-									<span class="lens-type">MF</span>
-									<span class="lens-specs">7artisans • 52ø</span>
+									<span class="item-type">MF</span>
+									<span class="item-description">7artisans • 52ø</span>
 								</div>
 							</div>
-							<div class="lens-item">
-								<span class="lens-bullet">16-50mm ƒ/3.5-5.6</span>
+							<div class="list-item">
+								<span class="item-bullet">16-50mm ƒ/3.5-5.6</span>
 								<div>
-									<span class="lens-type">AF</span>
-									<span class="lens-specs">Kit Sony OSS • 40.5ø</span>
+									<span class="item-type">AF</span>
+									<span class="item-description">Kit Sony OSS • 40.5ø</span>
 								</div>
 							</div>
-							<div class="lens-item">
-								<span class="lens-bullet">55-210mm ƒ/4.5-6.3</span>
+							<div class="list-item">
+								<span class="item-bullet">55-210mm ƒ/4.5-6.3</span>
 								<div>
-									<span class="lens-type">AF</span>
-									<span class="lens-specs">Kit Sony OSS • 49ø</span>
+									<span class="item-type">AF</span>
+									<span class="item-description">Kit Sony OSS • 49ø</span>
 								</div>
 							</div>
 						</div>
 					</div>
 					
-										<div class="camera-card">
-						<div class="camera-header">
-							<span class="camera-icon"></span>
+					<div class="equipment-card">
+						<div class="equipment-header">
+							<span class="equipment-icon">📷</span>
 							<div>
-								<div class="camera-name">(C-Mount)</div>
-								<div class="camera-specs">17.526mm flange</div>
+								<div class="equipment-name">(C-Mount)</div>
+								<div class="equipment-specs">17.526mm flange</div>
 							</div>
 						</div>
-						<div class="lens-list">
-							<div class="lens-item">
-								<span class="lens-bullet">3.6-10mm ƒ/1.4</span>
+						<div class="item-list">
+							<div class="list-item">
+								<span class="item-bullet">3.6-10mm ƒ/1.4</span>
 								<div>
-									<span class="lens-type">MF</span>
-									<span class="lens-specs">CCTV 1/1.8" • With C to E-mount adapter</span>
+									<span class="item-type">MF</span>
+									<span class="item-description">CCTV 1/1.8" • With C to E-mount adapter</span>
 								</div>
 							</div>
 						</div>
 					</div>
 
-					<div class="camera-card">
-						<div class="camera-header">
-							<span class="camera-icon">📷</span>
+					<div class="equipment-card">
+						<div class="equipment-header">
+							<span class="equipment-icon">📷</span>
 							<div>
-								<div class="camera-name">Pentax P30T (K-Mount)</div>
-								<div class="camera-specs">35mm Full Frame 8 perf • 45.46mm flange</div>
+								<div class="equipment-name">Pentax P30T (K-Mount)</div>
+								<div class="equipment-specs">35mm Full Frame 8 perf • 45.46mm flange</div>
 							</div>
 						</div>
-						<div class="lens-list">
-							<div class="lens-item">
-								<span class="lens-bullet">35-80mm ƒ/4-?</span>
+						<div class="item-list">
+							<div class="list-item">
+								<span class="item-bullet">35-80mm ƒ/4-?</span>
 								<div>
-									<span class="lens-type">MF</span>
-									<span class="lens-specs">Kit Lens • 49ø</span>
+									<span class="item-type">MF</span>
+									<span class="item-description">Kit Lens • 49ø</span>
 								</div>
 							</div>
 						</div>
 					</div>
 
-					<div class="camera-card">
-						<div class="camera-header">
-							<span class="camera-icon">📷</span>
+					<div class="equipment-card">
+						<div class="equipment-header">
+							<span class="equipment-icon">📷</span>
 							<div>
-								<div class="camera-name">Olympus Pen-EE S</div>
-								<div class="camera-specs">35mm Half Frame 4 perf • Fixed 1/40s • Fixed Lens</div>
+								<div class="equipment-name">Olympus Pen-EE S</div>
+								<div class="equipment-specs">35mm Half Frame 4 perf • Fixed 1/40s • Fixed Lens</div>
 							</div>
 						</div>
-						<div class="lens-list">
-							<div class="lens-item">
-								<span class="lens-bullet">30mm ƒ/2.8</span>
+						<div class="item-list">
+							<div class="list-item">
+								<span class="item-bullet">30mm ƒ/2.8</span>
 								<div>
-									<span class="lens-type">MF</span>
-									<span class="lens-specs">22.5ø</span>
+									<span class="item-type">MF</span>
+									<span class="item-description">22.5ø</span>
 								</div>
 							</div>
 						</div>
 					</div>
 					
-					<div class="camera-card">
-						<div class="camera-header">
-							<span class="camera-icon">🪩</span>
+					<div class="equipment-card">
+						<div class="equipment-header">
+							<span class="equipment-icon">🪩</span>
 							<div>
-								<div class="camera-name">Accessories</div>
-								<div class="camera-specs">etc</div>
+								<div class="equipment-name">Accessories</div>
+								<div class="equipment-specs"></div>
 							</div>
 						</div>
-						<div class="lens-list">
-							
-														<div class="lens-item">
-								<span class="lens-bullet">Star Filter</span>
+						<div class="item-list">
+							<div class="list-item">
+								<span class="item-bullet">Star Filter</span>
 								<div>
-									<span class="lens-type"></span>
-									<span class="lens-specs">67ø</span>
+									<span class="item-type">2</span>
+									<span class="item-description">67ø</span>
 								</div>
 							</div>
 							
-							<div class="lens-item">
-								<span class="lens-bullet">Color Filters</span>
+							<div class="list-item">
+								<span class="item-bullet">RGB Filters</span>
 								<div>
-									<span class="lens-type">NOT MONOCHROME</span>
-									<span class="lens-specs">Red; Green; Blue. 79ø</span>
+									<span class="item-type">3</span>
+									<span class="item-description">79ø</span>
 								</div>
 							</div>
 							
-							<div class="lens-item">
-								<span class="lens-bullet">Adapters</span>
+							<div class="list-item">
+								<span class="item-bullet">Adapters</span>
 								<div>
-									<span class="lens-type"></span>
-									<span class="lens-specs">49ø->52ø / 52ø->62ø / 52ø->67ø</span>
+									<span class="item-type">3</span>
+									<span class="item-description">49ø->52ø / 52ø->62ø / 52ø->67ø</span>
 								</div>
 							</div>
 							
-							<div class="lens-item">
-								<span class="lens-bullet">Magnetic Adapters</span>
+							<div class="list-item">
+								<span class="item-bullet">Magnetic Adapters</span>
 								<div>
-									<span class="lens-type">2</span>
-									<span class="lens-specs">52ø -> 79ø</span>
+									<span class="item-type">2</span>
+									<span class="item-description">52ø -> 79ø</span>
 								</div>
 							</div>
 							
-							<div class="lens-item">
-								<span class="lens-bullet">Reflector</span>
+							<div class="list-item">
+								<span class="item-bullet">Reflector</span>
 								<div>
-									<span class="lens-type">1</span>
-									<span class="lens-specs">110cm White/Silver</span>
+									<span class="item-type">1</span>
+									<span class="item-description">110cm White/Silver</span>
 								</div>
 							</div>
 							
-								<div class="lens-item">
-								<span class="lens-bullet">Macro Converter</span>
+							<div class="list-item">
+								<span class="item-bullet">Macro Converter</span>
 								<div>
-									<span class="lens-type">AF</span>
-									<span class="lens-specs">10+16mm E-Mount</span>
+									<span class="item-type">2</span>
+									<span class="item-description">10+16mm AF E-Mount</span>
 								</div>
-							</div>
-							
 							</div>
 						</div>
 					</div>
-					
 				</div>
-			</section>
-
-
-			<section>
-				<div class="title">SOME SONGS I LIKE</div>
-				<iframe style="border: 0; width: 100%; height: 42px;" src="https://bandcamp.com/EmbeddedPlayer/album=856107294/size=small/bgcol=333333/linkcol=e99708/artwork=none/track=2181998010/transparent=true/" seamless><a href="https://boardsofcanada.bandcamp.com/album/geogaddi">Geogaddi by Boards of Canada</a></iframe>
-				<iframe style="border: 0; width: 100%; height: 42px;" src="https://bandcamp.com/EmbeddedPlayer/album=385726686/size=small/bgcol=333333/linkcol=2ebd35/artwork=none/transparent=true/" seamless><a href="https://aphextwin.bandcamp.com/album/syro">Syro by Aphex Twin</a></iframe>
-				<iframe style="border: 0; width: 100%; height: 42px;" src="https://bandcamp.com/EmbeddedPlayer/album=1115961286/size=small/bgcol=333333/linkcol=e32c14/artwork=none/track=1024023728/transparent=true/" seamless><a href="https://menitrust.bandcamp.com/album/oncle-jazz">Oncle Jazz by Men I Trust</a></iframe>
-				<iframe style="border: 0; width: 100%; height: 42px;" src="https://bandcamp.com/EmbeddedPlayer/album=1083983989/size=small/bgcol=333333/linkcol=e99708/artwork=none/track=1893697882/transparent=true/" seamless><a href="https://c418.bandcamp.com/album/life-changing-moments-seem-minor-in-pictures">life changing moments seem minor in pictures by C418</a></iframe>
 			</section>
 		</div>
 	</main>
 
-	<!--<footer>
-		<iframe style="border: 0; width: 100%; height: 42px;" src="https://bandcamp.com/EmbeddedPlayer/album=1083983989/size=small/bgcol=333333/linkcol=e99708/artwork=none/track=1224853952/transparent=true/" seamless><a href="https://c418.bandcamp.com/album/life-changing-moments-seem-minor-in-pictures">life changing moments seem minor in pictures by C418</a></iframe>
-	</footer>-->
+	<!-- Background Music Footer -->
+	<footer>
+		<div class="section-title" style="margin-bottom: 0.5rem; font-size: 0.875rem;">BACKGROUND MUSIC</div>
+		<iframe style="border: 0; width: 100%; height: 42px;" src="https://bandcamp.com/EmbeddedPlayer/album=385726686/size=small/bgcol=333333/linkcol=2ebd35/artwork=none/track=3492351434/transparent=true/" seamless><a href="https://aphextwin.bandcamp.com/track/aisatsana-102">aisatsana [102] by Aphex Twin</a></iframe>
+		<iframe style="border: 0; width: 100%; height: 42px;" src="https://bandcamp.com/EmbeddedPlayer/album=1083983989/size=small/bgcol=333333/linkcol=e99708/artwork=none/track=1893697882/transparent=true/" seamless><a href="https://c418.bandcamp.com/album/life-changing-moments-seem-minor-in-pictures">life changing moments seem minor in pictures by C418</a></iframe>
+	</footer>
 </div>
 
 <script>
-const urlText = 'val-nvs.com';
-const urlDisplay = document.getElementById('urlDisplay');
-const chars = urlText.split('').map((char, index) => {
+// ========================================
+// HEADER ANIMATION
+// ========================================
+const headerText = 'val-nvs.com';
+const headerDisplay = document.querySelector('.header-content');
+const headerChars = headerText.split('').map((char, index) => {
 	const span = document.createElement('span');
 	span.textContent = char;
 	span.dataset.index = index;
 	span.style.animationDelay = `${index * 0.15}s`;
 	return span;
 });
-chars.forEach(span => urlDisplay.appendChild(span));
+headerChars.forEach(span => headerDisplay.appendChild(span));
 
-// Scroll to top when header is clicked
-urlDisplay.addEventListener('click', () => {
-	// Nav button glow animation function
+// ========================================
+// LANGUAGE SELECTOR
+// ========================================
+const translations = {
+	en: {
+		'nav.home': 'Home',
+		'nav.projects': 'Tech Projects',
+		'nav.about': 'About',
+		'home.videography': 'VIDEOGRAPHY PORTFOLIO',
+		'home.photography': 'PHOTOGRAPHY PORTFOLIO',
+		'about.title': 'ABOUT ME',
+		'about.collaborate': 'Looking to collaborate or share ideas?<br>Drop me a message- I\'d love to connect.'
+	},
+	pt: {
+		'nav.home': 'Início',
+		'nav.projects': 'Projetos Tech',
+		'nav.about': 'Sobre',
+		'home.videography': 'PORTFÓLIO DE VIDEOGRAFIA',
+		'home.photography': 'PORTFÓLIO DE FOTOGRAFIA',
+		'about.title': 'SOBRE MIM',
+		'about.collaborate': 'Quer colaborar ou compartilhar ideias?<br>Mande uma mensagem - adoraria conversar.'
+	},
+	es: {
+		'nav.home': 'Inicio',
+		'nav.projects': 'Proyectos Tech',
+		'nav.about': 'Acerca',
+		'home.videography': 'PORTAFOLIO DE VIDEOGRAFÍA',
+		'home.photography': 'PORTAFOLIO DE FOTOGRAFÍA',
+		'about.title': 'ACERCA DE MÍ',
+		'about.collaborate': '¿Quieres colaborar o compartir ideas?<br>Envíame un mensaje - me encantaría conectar.'
+	},
+	fr: {
+		'nav.home': 'Accueil',
+		'nav.projects': 'Projets Tech',
+		'nav.about': 'À propos',
+		'home.videography': 'PORTFOLIO DE VIDÉOGRAPHIE',
+		'home.photography': 'PORTFOLIO DE PHOTOGRAPHIE',
+		'about.title': 'À PROPOS DE MOI',
+		'about.collaborate': 'Envie de collaborer ou partager des idées?<br>Envoyez-moi un message - j\'aimerais échanger.'
+	},
+	de: {
+		'nav.home': 'Startseite',
+		'nav.projects': 'Tech-Projekte',
+		'nav.about': 'Über',
+		'home.videography': 'VIDEOGRAFIE-PORTFOLIO',
+		'home.photography': 'FOTOGRAFIE-PORTFOLIO',
+		'about.title': 'ÜBER MICH',
+		'about.collaborate': 'Möchten Sie zusammenarbeiten oder Ideen austauschen?<br>Schreiben Sie mir - ich würde mich freuen.'
+	},
+	zh: {
+		'nav.home': '首页',
+		'nav.projects': '技术项目',
+		'nav.about': '关于',
+		'home.videography': '视频作品集',
+		'home.photography': '摄影作品集',
+		'about.title': '关于我',
+		'about.collaborate': '想要合作或分享想法？<br>给我发消息 - 我很乐意联系。'
+	},
+	ja: {
+		'nav.home': 'ホーム',
+		'nav.projects': 'テックプロジェクト',
+		'nav.about': '概要',
+		'home.videography': 'ビデオグラフィーポートフォリオ',
+		'home.photography': '写真ポートフォリオ',
+		'about.title': '私について',
+		'about.collaborate': 'コラボレーションやアイデアの共有をご希望ですか？<br>メッセージをお送りください。'
+	},
+	ar: {
+		'nav.home': 'الرئيسية',
+		'nav.projects': 'المشاريع التقنية',
+		'nav.about': 'حول',
+		'home.videography': 'معرض الفيديو',
+		'home.photography': 'معرض التصوير',
+		'about.title': 'نبذة عني',
+		'about.collaborate': 'تبحث عن التعاون أو مشاركة الأفكار؟<br>أرسل لي رسالة - يسعدني التواصل.'
+	}
+};
+
+let currentLang = 'en';
+
+function translatePage(lang) {
+	currentLang = lang;
+	const elements = document.querySelectorAll('[data-translate]');
+	elements.forEach(element => {
+		const key = element.getAttribute('data-translate');
+		if (translations[lang] && translations[lang][key]) {
+			element.innerHTML = translations[lang][key];
+		}
+	});
+	
+	// Store preference
+	localStorage.setItem('preferredLanguage', lang);
+	
+	// Update HTML lang attribute
+	document.documentElement.lang = lang;
+}
+
+// Load saved language preference
+const savedLang = localStorage.getItem('preferredLanguage');
+if (savedLang && translations[savedLang]) {
+	currentLang = savedLang;
+	translatePage(savedLang);
+	// Update active language option
+	document.querySelectorAll('.language-option').forEach(opt => {
+		opt.classList.toggle('active', opt.dataset.lang === savedLang);
+	});
+}
+
+const languageIcon = document.getElementById('languageIcon');
+const languagePopup = document.getElementById('languagePopup');
+const languageOptions = document.querySelectorAll('.language-option');
+
+// Toggle popup
+function toggleLanguagePopup() {
+	const isActive = languagePopup.classList.toggle('active');
+	languageIcon.setAttribute('aria-expanded', isActive);
+}
+
+languageIcon.addEventListener('click', (e) => {
+	e.stopPropagation();
+	toggleLanguagePopup();
+});
+
+// Keyboard support for icon
+languageIcon.addEventListener('keydown', (e) => {
+	if (e.key === 'Enter' || e.key === ' ') {
+		e.preventDefault();
+		toggleLanguagePopup();
+	}
+});
+
+// Close on outside click
+document.addEventListener('click', (e) => {
+	if (!languagePopup.contains(e.target) && e.target !== languageIcon) {
+		languagePopup.classList.remove('active');
+		languageIcon.setAttribute('aria-expanded', 'false');
+	}
+});
+
+// Language option selection
+languageOptions.forEach(option => {
+	option.addEventListener('click', () => {
+		const lang = option.dataset.lang;
+		languageOptions.forEach(opt => opt.classList.remove('active'));
+		option.classList.add('active');
+		languagePopup.classList.remove('active');
+		languageIcon.setAttribute('aria-expanded', 'false');
+		translatePage(lang);
+	});
+	
+	// Keyboard support for options
+	option.addEventListener('keydown', (e) => {
+		if (e.key === 'Enter' || e.key === ' ') {
+			e.preventDefault();
+			option.click();
+		}
+	});
+});
+
+// ========================================
+// SCROLL TO TOP & NAV GLOW
+// ========================================
+headerDisplay.addEventListener('click', () => {
 	const glowNavButtons = () => {
-		const navButtons = document.querySelectorAll('.nav-btn');
+		const navButtons = document.querySelectorAll('.nav-item');
 		navButtons.forEach((btn, index) => {
 			setTimeout(() => {
 				btn.style.transition = 'box-shadow 0.3s ease';
@@ -888,21 +1305,22 @@ urlDisplay.addEventListener('click', () => {
 		});
 	};
 	
-	// Check if already at the top (within 10px tolerance)
 	if (window.scrollY <= 10) {
 		glowNavButtons();
 	} else {
 		window.scrollTo({ top: 0, behavior: 'smooth' });
-		// Wait for scroll to finish (estimated time based on distance)
 		setTimeout(glowNavButtons, 500);
 	}
 });
 
+// ========================================
+// HEADER HOVER EFFECT
+// ========================================
 document.addEventListener('mousemove', (e) => {
 	const mouseX = e.clientX;
 	const mouseY = e.clientY;
 	
-	chars.forEach((span) => {
+	headerChars.forEach((span) => {
 		const rect = span.getBoundingClientRect();
 		const charX = rect.left + rect.width / 2;
 		const charY = rect.top + rect.height / 2;
@@ -929,11 +1347,14 @@ document.addEventListener('mousemove', (e) => {
 	});
 });
 
-const buttons = document.querySelectorAll('.nav-btn');
+// ========================================
+// NAVIGATION
+// ========================================
+const navButtons = document.querySelectorAll('.nav-item');
 
-buttons.forEach(button => {
+navButtons.forEach(button => {
 	button.addEventListener('click', function() {
-		buttons.forEach(btn => btn.classList.remove('active'));
+		navButtons.forEach(btn => btn.classList.remove('active'));
 		this.classList.add('active');
 		
 		const selectedPage = this.dataset.page;
