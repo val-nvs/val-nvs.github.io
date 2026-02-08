@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio</title>
+    <style>
+        /* RESET */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* SCROLL SETUP */
+        html {
+            scroll-snap-type: y mandatory;
+            height: 100vh;
+            overflow-y: scroll;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #111;
+            color: #fff;
+            width: 100vw;
+        }
+
+        /* ---------------------------------- */
+        /* HERO SECTIONS (Full Screen)        */
+        /* ---------------------------------- */
+        .hero-section {
+            position: relative;
+            height: 100vh; 
+            width: 100%;
+            scroll-snap-align: start; 
+            scroll-snap-stop: always;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .hero-section img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.8);
+        }
+
+        h1 {
+            font-size: 5rem;
+            font-weight: 700;
+            margin-bottom: 0rem;
+            letter-spacing: -2px;
+            text-transform: uppercase;
+        }
+
+        p {
+            font-size: 1.2rem;
+            font-weight: 400;
+            opacity: 0.8;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* ---------------------------------- */
+        /* GRID SECTION (The new request)     */
+        /* ---------------------------------- */
+        .grid-section {
+            /* Allows this section to be taller than 100vh if needed */
+            min-height: 100vh; 
+            width: 100%;
+            background-color: #111; /* Dark grey bg for contrast */
+            
+            /* Snaps to the top of this section */
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+            
+            /* Center the grid container */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 50px 0;
+        }
+
+        .grid-container {
+            width: 100%;
+            max-width: 1400px; /* Max width to keep it looking nice on huge screens */
+            display: grid;
+            
+            /* Grid Logic:
+               We want columns roughly "8 units" wide. 
+               auto-fit will fit as many 8-unit columns as possible.
+               minmax(300px, 1fr) ensures they don't get too small on mobile.
+            */
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .grid-item {
+            /* Aspect Ratio 2:3 (Portrait) */
+            aspect-ratio: 2 / 3;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            background-color: #222;
+        }
+
+        /* If you prefer 3:2 (Landscape), change above to: aspect-ratio: 3 / 2; */
+
+        .grid-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+            display: block;
+        }
+        
+        /* Subtle zoom on hover */
+        .grid-item:hover img {
+            transform: scale(1.05);
+            opacity: 0.8;
+        }
+
+    </style>
+</head>
+<body>
+
+    <section class="hero-section">
+        <img src="media/404.jpg" alt="Hero 1">
+        <div class="content">
+            <h1>Create</h1>
+            <p>The Vision</p>
+        </div>
+    </section>
+
+    <section class="hero-section">
+        <img src="media/404.jpg" alt="Hero 2">
+        <div class="content">
+            <h1>Capture</h1>
+            <p>The Moment</p>
+        </div>
+    </section>
+
+    <section class="grid-section">
+        <div class="grid-container">
+            <div class="grid-item"><img src="media/404.jpg" alt="Grid 1"></div>
+            <div class="grid-item"><img src="media/404.jpg" alt="Grid 2"></div>
+            <div class="grid-item"><img src="media/404.jpg" alt="Grid 3"></div>
+            <div class="grid-item"><img src="media/404.jpg" alt="Grid 4"></div>
+            <div class="grid-item"><img src="media/404.jpg" alt="Grid 5"></div>
+            <div class="grid-item"><img src="media/404.jpg" alt="Grid 6"></div>
+        </div>
+    </section>
+
+    <section class="hero-section">
+        <img src="media/404.jpg" alt="Hero 3">
+        <div class="content">
+            <h1>Develop</h1>
+            <p>The Craft</p>
+        </div>
+    </section>
+
+    <section class="hero-section">
+        <img src="media/404.jpg" alt="Hero 4">
+        <div class="content">
+            <h1>Connect</h1>
+            <p>Studio@Email.com</p>
+        </div>
+    </section>
+
+</body>
+</html>
