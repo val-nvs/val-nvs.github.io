@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300&display=swap');
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    height: 100%;
+    scroll-snap-type: y mandatory;
+    overflow-y: scroll;
+    scrollbar-width: none;
+    background: #0a0a0a;
+  }
+  html::-webkit-scrollbar { display: none; }
+
+  body {
+    margin: 0;
+    font-family: 'Cormorant Garamond', serif;
+    background: #0a0a0a;
+  }
+
+  #loader {
+    position: fixed; inset: 0; z-index: 100;
+    background: #0a0a0a;
+    display: flex; align-items: center; justify-content: center;
+    transition: opacity 0.8s ease, visibility 0.8s ease;
+  }
+  #loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+  #loader .pulse {
+    width: 0.52rem; height: 0.52rem;
+    background: #fff;
+    border-radius: 50%;
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.2; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.5); }
+  }
+
+  .slide {
+    position: relative;
+    width: 100%;
+    height: 100dvh;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0a0a0a;
+  }
+
+  .slide img {
+    position: absolute;
+    object-fit: contain;
+    opacity: 0;
+    border-radius: 0.16rem;
+    transition: opacity 0.6s ease;
+  }
+  .slide img.loaded { opacity: 1; }
+  .slide img.expand {
+    border-radius: 0;
+    transition: width 1.4s cubic-bezier(0.16, 1, 0.3, 1),
+                height 1.4s cubic-bezier(0.16, 1, 0.3, 1),
+                border-radius 1.4s ease,
+                opacity 0.6s ease;
+  }
+
+  .slide .vignette {
+    position: absolute; inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.3) 100%);
+    z-index: 2;
+    opacity: 0;
+    transition: opacity 0.5s ease 0.2s;
+  }
+  .slide.active .vignette { opacity: 1; }
+
+  /* ── Photo info (bottom left) ── */
+  .slide .photo-info {
+    position: absolute;
+    bottom: 1.5rem; left: 1.65rem;
+    z-index: 10;
+    font-size: 0.65rem;
+    font-weight: 300;
+    letter-spacing: 0.12em;
+    line-height: 1.45;
+    color: #fff;
+    opacity: 0;
+    transition: opacity 0.6s ease 0.4s;
+    user-select: none;
+    text-transform: uppercase;
+  }
+  .slide.active .photo-info { opacity: 1; }
+
+  /* ── Counter (top left) ── */
+  #counter {
+    position: fixed; top: 1.45rem; left: 1.65rem; z-index: 50;
+    font-size: 0.85rem; font-weight: 300;
+    letter-spacing: 0.15em;
+    color: #fff;
+    user-select: none;
+  }
+
+  /* ── Burger menu (top right) ── */
+  #burger {
+    position: fixed; top: 1.2rem; right: 1.35rem; z-index: 200;
+    width: 1.8rem; height: 1.8rem;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 0.25rem;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  #burger span {
+    display: block;
+    width: 1.3rem; height: 1px;
+    background: #fff;
+    transition: transform 0.35s ease, opacity 0.35s ease;
+  }
+  #burger.open span:nth-child(1) { transform: translateY(0.34rem) rotate(45deg); }
+  #burger.open span:nth-child(2) { opacity: 0; }
+  #burger.open span:nth-child(3) { transform: translateY(-0.34rem) rotate(-45deg); }
+
+  /* ── Film strip overlay ── */
+  #film-overlay {
+    position: fixed; inset: 0; z-index: 150;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  #film-overlay.open {
+    pointer-events: auto;
+    opacity: 1;
+  }
+  #film-overlay .backdrop {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.5);
+  }
+
+  #film-panel {
+    position: absolute;
+    right: 1.5rem;
+    top: 4rem;
+    bottom: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 0.4rem;
+    transform: translateY(calc(100% + 4rem));
+    transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 151;
+  }
+  #film-overlay.open #film-panel {
+    transform: translateY(0);
+  }
+
+  #film-strip, #categories-strip {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Film body */
+  .film-body {
+    position: relative;
+    background: #1a1a1a;
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    min-height: 0;
+  }
+
+  /* Sprocket columns */
+  .sprockets {
+    width: 0.9rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    align-items: center;
+    padding: 0.4rem 0;
+    flex-shrink: 0;
+  }
+  .sprocket {
+    width: 0.45rem;
+    height: 0.3rem;
+    border-radius: 0.06rem;
+    background: #0a0a0a;
+    border: 1px solid #333;
+    flex-shrink: 0;
+  }
+
+  /* Frames area */
+  .film-frames {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 0.5rem 0.15rem;
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+  .film-frames::-webkit-scrollbar { display: none; }
+
+  .film-frame {
+    position: relative;
+    cursor: pointer;
+    border-radius: 0.08rem;
+    overflow: hidden;
+    opacity: 0.6;
+    transition: opacity 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid transparent;
+    flex-shrink: 0;
+  }
+  .film-frame:hover { opacity: 1; }
+  .film-frame.current {
+    opacity: 1;
+    border-color: #fff;
+  }
+
+  .film-frame img {
+    display: block;
+    width: 6rem;
+    height: 4rem;
+    object-fit: cover;
+  }
+  .film-frame.portrait img {
+    width: 4rem;
+    height: 6rem;
+  }
+
+  .film-frame .frame-num {
+    position: absolute;
+    bottom: 0.15rem; right: 0.25rem;
+    font-size: 0.5rem;
+    font-weight: 300;
+    letter-spacing: 0.08em;
+    color: #fff;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+  }
+
+  /* Film edge text */
+  .film-edge-text {
+    font-size: 0.35rem;
+    font-weight: 300;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #444;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    padding: 0.4rem 0.1rem;
+    user-select: none;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+  }
+
+  /* Category frames */
+  .cat-frames {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 0.5rem 0.15rem;
+  }
+
+  .cat-frame {
+    position: relative;
+    width: 6rem;
+    height: 4rem;
+    background: #1e1e1e;
+    border: 1px solid #333;
+    border-radius: 0.08rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: opacity 0.3s ease, border-color 0.3s ease;
+    flex-shrink: 0;
+  }
+  .cat-frame:hover { opacity: 0.8; }
+  .cat-frame.active {
+    opacity: 1;
+    border-color: #fff;
+  }
+
+  .cat-label {
+    font-size: 0.6rem;
+    font-weight: 300;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #fff;
+    user-select: none;
+  }
+
+  /* ── Resize hint ── */
+  #resize-hint {
+    position: fixed;
+    bottom: 1.35rem; right: 1.35rem;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    gap: 0.52rem;
+    opacity: 0;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    transform: translateY(0.3rem);
+    pointer-events: none;
+  }
+  #resize-hint.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+
+  #resize-hint .label {
+    font-size: 0.85rem; font-weight: 300;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: #fff;
+    white-space: nowrap; user-select: none;
+    text-align: right; line-height: 1.3;
+  }
+
+  /* ── Crop preview ── */
+  #crop-preview {
+    position: fixed;
+    z-index: 60;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+  #crop-preview.visible { opacity: 1; }
+
+  #crop-preview .photo-full {
+    position: absolute;
+    border-radius: 0.15rem;
+    border: 1px solid #fff;
+    overflow: hidden;
+    background: #3a0a0a;
+  }
+  #crop-preview .photo-full img {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    opacity: 0.25;
+  }
+
+  #crop-preview .viewport-crop {
+    position: absolute;
+    border-radius: 0.1rem;
+    border: 1px solid #fff;
+    overflow: hidden;
+  }
+  #crop-preview .viewport-crop img {
+    position: absolute;
+    object-fit: cover;
+    opacity: 0.9;
+  }
+
+  #crop-preview .ratio-label {
+    position: absolute;
+    font-size: 0.55rem;
+    font-weight: 300;
+    letter-spacing: 0.12em;
+    color: #fff;
+    user-select: none;
+    white-space: nowrap;
+  }
+
+  /* ── Scroll indicator ── */
+  #scroll-down {
+    position: fixed; bottom: 1.45rem; left: 50%;
+    transform: translateX(-50%);
+    z-index: 50;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 0.3rem;
+    opacity: 0; transition: opacity 0.6s ease;
+    pointer-events: none;
+  }
+  #scroll-down.visible { opacity: 1; }
+
+  #scroll-down span {
+    font-size: 0.75rem; font-weight: 300;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: #fff;
+  }
+
+  #scroll-down .chevron {
+    width: 0.7rem; height: 0.7rem;
+    stroke: #fff;
+    stroke-width: 1.5; fill: none;
+    stroke-linecap: round; stroke-linejoin: round;
+    animation: float 2s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); opacity: 0.3; }
+    50% { transform: translateY(0.2rem); opacity: 0.7; }
+  }
+</style>
+</head>
+<body>
+<script>
+  document.documentElement.style.fontSize = (screen.width / 100) + 'px';
+</script>
+
+<div id="loader"><div class="pulse"></div></div>
+
+<!-- ═══ SLIDES ═══ -->
+<div id="slides-container"></div>
+
+<div id="scroll-down">
+  <span>scroll</span>
+  <svg class="chevron" viewBox="0 0 24 24"><polyline points="6,9 12,15 18,9"/></svg>
+</div>
+
+<div id="counter">1 / 5</div>
+
+<div id="burger">
+  <span></span><span></span><span></span>
+</div>
+
+<!-- Film strip overlay -->
+<div id="film-overlay">
+  <div class="backdrop" id="film-backdrop"></div>
+  <div id="film-panel">
+    <div id="categories-strip">
+      <div class="film-body">
+        <div class="sprockets" id="cat-sprockets-left"></div>
+        <div class="film-edge-text">65mm &nbsp; portfolio &nbsp; index</div>
+        <div class="cat-frames">
+          <div class="cat-frame active" data-cat="highlights">
+            <span class="cat-label">Highlights</span>
+          </div>
+          <div class="cat-frame" data-cat="portraits">
+            <span class="cat-label">Portraits</span>
+          </div>
+          <div class="cat-frame" data-cat="landscapes">
+            <span class="cat-label">Landscapes</span>
+          </div>
+        </div>
+        <div class="film-edge-text">▲ &nbsp; roll &nbsp; 01</div>
+        <div class="sprockets" id="cat-sprockets-right"></div>
+      </div>
+    </div>
+    <div id="film-strip">
+      <div class="film-body">
+        <div class="sprockets" id="sprockets-left"></div>
+        <div class="film-edge-text">65mm &nbsp; kodak &nbsp; 5219 &nbsp; vis3</div>
+        <div class="film-frames" id="film-frames"></div>
+        <div class="film-edge-text">▲ &nbsp; 28 &nbsp; ▲ &nbsp; 28a &nbsp; ▲ &nbsp; 29</div>
+        <div class="sprockets" id="sprockets-right"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="resize-hint">
+  <span class="label" id="hint-label"></span>
+</div>
+
+<div id="crop-preview">
+  <div class="photo-full" id="photo-full"><img id="crop-img-dim" /></div>
+  <div class="viewport-crop" id="viewport-crop"><img id="crop-img-bright" /></div>
+  <span class="ratio-label" id="photo-ratio-label"></span>
+</div>
+
+<script>
+(function() {
+  // ── Photo data per category ──
+  var categories = {
+    highlights: [
+      { src: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=2400&q=85&fit=crop&ar=3:2', alt: 'Mountain landscape', lens: '35mm f1.4 APS-C', date: '03/15/2023' },
+      { src: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=2400&q=85&fit=crop&ar=3:2', alt: 'Forest valley', lens: '35mm f1.4 APS-C', date: '06/22/2023' },
+      { src: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1600&q=85&fit=crop&ar=2:3', alt: 'Portrait', lens: '35mm f1.4 APS-C', date: '09/10/2023', portrait: true },
+      { src: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=2400&q=85&fit=crop&ar=3:2', alt: 'Golden hills', lens: '35mm f1.4 APS-C', date: '11/03/2023' },
+      { src: 'https://images.unsplash.com/photo-1433086966358-54859d0ed716?w=2400&q=85&fit=crop&ar=3:2', alt: 'Waterfall bridge', lens: '35mm f1.4 APS-C', date: '12/28/2023' },
+    ],
+    portraits: [
+      { src: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=1600&q=85&fit=crop&ar=2:3', alt: 'Portrait studio', lens: '35mm f1.4 APS-C', date: '01/14/2024', portrait: true },
+      { src: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=1600&q=85&fit=crop&ar=2:3', alt: 'Natural light portrait', lens: '35mm f1.4 APS-C', date: '02/20/2024', portrait: true },
+      { src: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=1600&q=85&fit=crop&ar=2:3', alt: 'Street portrait', lens: '35mm f1.4 APS-C', date: '04/05/2024', portrait: true },
+    ],
+    landscapes: [
+      { src: 'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=2400&q=85&fit=crop&ar=3:2', alt: 'Rolling green hills', lens: '35mm f1.4 APS-C', date: '05/17/2024' },
+      { src: 'https://images.unsplash.com/photo-1465056836900-8f1e940f1904?w=2400&q=85&fit=crop&ar=3:2', alt: 'Ocean sunset', lens: '35mm f1.4 APS-C', date: '07/09/2024' },
+      { src: 'https://images.unsplash.com/photo-1426604966848-d7adac402bff?w=2400&q=85&fit=crop&ar=3:2', alt: 'Mountain forest', lens: '35mm f1.4 APS-C', date: '08/30/2024' },
+    ]
+  };
+
+  var currentCat = 'highlights';
+  var loader    = document.getElementById('loader');
+  var hint      = document.getElementById('resize-hint');
+  var labelEl   = document.getElementById('hint-label');
+  var scrollInd = document.getElementById('scroll-down');
+  var counterEl = document.getElementById('counter');
+  var cropPrev  = document.getElementById('crop-preview');
+  var photoFull = document.getElementById('photo-full');
+  var vpCrop    = document.getElementById('viewport-crop');
+  var cropDim   = document.getElementById('crop-img-dim');
+  var cropBright= document.getElementById('crop-img-bright');
+  var photoLbl  = document.getElementById('photo-ratio-label');
+  var burger    = document.getElementById('burger');
+  var filmOvl   = document.getElementById('film-overlay');
+  var filmBkdp  = document.getElementById('film-backdrop');
+  var filmFramesEl = document.getElementById('film-frames');
+  var slidesContainer = document.getElementById('slides-container');
+
+  var slides = [];
+  var slideImages = [];
+  var total = 0;
+  var loadedCount = 0;
+  var activeIndex = -1;
+  var menuOpen = false;
+  var firstLoaded = false;
+
+  // ── Build slides from category ──
+  function buildSlides(catKey) {
+    currentCat = catKey;
+    var photos = categories[catKey];
+    activeIndex = -1;
+    loadedCount = 0;
+    firstLoaded = false;
+    total = photos.length;
+
+    // Clear
+    slidesContainer.innerHTML = '';
+    loader.classList.remove('hidden');
+    scrollInd.classList.remove('visible');
+
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'auto' });
+
+    for (var i = 0; i < photos.length; i++) {
+      var p = photos[i];
+      var slide = document.createElement('div');
+      slide.className = 'slide';
+
+      var img = document.createElement('img');
+      img.src = p.src;
+      img.alt = p.alt;
+      img.crossOrigin = 'anonymous';
+      slide.appendChild(img);
+
+      var vig = document.createElement('div');
+      vig.className = 'vignette';
+      slide.appendChild(vig);
+
+      var info = document.createElement('div');
+      info.className = 'photo-info';
+      info.innerHTML = p.lens + '<br>' + p.date;
+      slide.appendChild(info);
+
+      slidesContainer.appendChild(slide);
+    }
+
+    slides = document.querySelectorAll('.slide');
+    slideImages = document.querySelectorAll('.slide img');
+    counterEl.textContent = '1 / ' + total;
+
+    slideImages.forEach(function(img) {
+      if (img.complete && img.naturalWidth > 0) {
+        onImgLoad(img);
+      } else {
+        img.addEventListener('load', function() { onImgLoad(img); });
+        img.addEventListener('error', function() {
+          loadedCount++;
+          if (!firstLoaded) { firstLoaded = true; loader.classList.add('hidden'); }
+        });
+      }
+    });
+
+    buildFilmFrames(catKey);
+  }
+
+  // ── Image sizing ──
+  function containSize(natW, natH, boxW, boxH) {
+    var scale = Math.min(boxW / natW, boxH / natH);
+    return { w: Math.round(natW * scale), h: Math.round(natH * scale) };
+  }
+
+  function coverSize(natW, natH, boxW, boxH) {
+    var scale = Math.max(boxW / natW, boxH / natH);
+    return { w: Math.round(natW * scale), h: Math.round(natH * scale) };
+  }
+
+  function setSmallSize(img) {
+    var natW = img.naturalWidth || 3;
+    var natH = img.naturalHeight || 2;
+    var s = containSize(natW, natH, window.innerWidth * 0.8, window.innerHeight * 0.8);
+    img.style.width = s.w + 'px';
+    img.style.height = s.h + 'px';
+  }
+
+  function setExpandSize(img) {
+    var natW = img.naturalWidth || 3;
+    var natH = img.naturalHeight || 2;
+    var s = coverSize(natW, natH, window.innerWidth, window.innerHeight);
+    img.style.width = s.w + 'px';
+    img.style.height = s.h + 'px';
+  }
+
+  function onImgLoad(img) {
+    setSmallSize(img);
+    img.classList.add('loaded');
+    loadedCount++;
+    if (!firstLoaded) {
+      firstLoaded = true;
+      loader.classList.add('hidden');
+      scrollInd.classList.add('visible');
+      updateRatio();
+      setTimeout(function() { activateSlide(0); }, 150);
+    }
+  }
+
+  function activateSlide(idx) {
+    if (idx === activeIndex) return;
+    activeIndex = idx;
+    for (var i = 0; i < total; i++) {
+      var img = slides[i].querySelector('img');
+      if (i === idx) {
+        img.classList.add('expand');
+        setExpandSize(img);
+        slides[i].classList.add('active');
+      } else {
+        img.classList.remove('expand');
+        setSmallSize(img);
+        slides[i].classList.remove('active');
+      }
+    }
+    updateRatio();
+    if (menuOpen) updateFilmHighlight();
+  }
+
+  // ── Scroll ──
+  var scrollTimer = null;
+  function onScroll() {
+    var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+    var vh = window.innerHeight;
+    var nearestIdx = Math.round(scrollTop / vh);
+    nearestIdx = Math.max(0, Math.min(nearestIdx, total - 1));
+    counterEl.textContent = (nearestIdx + 1) + ' / ' + total;
+
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(function() {
+      var st = document.documentElement.scrollTop || document.body.scrollTop;
+      var snapped = Math.round(st / vh);
+      snapped = Math.max(0, Math.min(snapped, total - 1));
+      activateSlide(snapped);
+    }, 80);
+
+    if (scrollTop > vh * 0.15) {
+      scrollInd.classList.remove('visible');
+    } else {
+      if (loadedCount >= 1) scrollInd.classList.add('visible');
+    }
+  }
+
+  window.addEventListener('scroll', function() {
+    requestAnimationFrame(onScroll);
+  }, { passive: true });
+
+  window.addEventListener('resize', function() {
+    for (var i = 0; i < total; i++) {
+      var img = slides[i].querySelector('img');
+      if (i === activeIndex) setExpandSize(img);
+      else setSmallSize(img);
+    }
+    updateRatio();
+  });
+
+  // ── Build film strip sprockets & frames ──
+  function buildCatSprockets() {
+    var catSprocketsL = document.getElementById('cat-sprockets-left');
+    var catSprocketsR = document.getElementById('cat-sprockets-right');
+    if (catSprocketsL.children.length > 0) return;
+    for (var c = 0; c < 20; c++) {
+      var cl = document.createElement('div');
+      cl.className = 'sprocket';
+      catSprocketsL.appendChild(cl);
+      var cr = document.createElement('div');
+      cr.className = 'sprocket';
+      catSprocketsR.appendChild(cr);
+    }
+  }
+
+  function buildFilmFrames(catKey) {
+    var sprocketsL = document.getElementById('sprockets-left');
+    var sprocketsR = document.getElementById('sprockets-right');
+    sprocketsL.innerHTML = '';
+    sprocketsR.innerHTML = '';
+    filmFramesEl.innerHTML = '';
+
+    var photos = categories[catKey];
+
+    // Fill sprockets for full height
+    for (var s = 0; s < 40; s++) {
+      var sl = document.createElement('div');
+      sl.className = 'sprocket';
+      sprocketsL.appendChild(sl);
+      var sr = document.createElement('div');
+      sr.className = 'sprocket';
+      sprocketsR.appendChild(sr);
+    }
+
+    for (var i = 0; i < photos.length; i++) {
+      var frame = document.createElement('div');
+      frame.className = 'film-frame';
+      if (photos[i].portrait) frame.classList.add('portrait');
+
+      var thumb = document.createElement('img');
+      thumb.src = photos[i].src;
+      thumb.alt = photos[i].alt;
+      frame.appendChild(thumb);
+
+      var num = document.createElement('span');
+      num.className = 'frame-num';
+      num.textContent = (i + 1) + 'A';
+      frame.appendChild(num);
+
+      frame.setAttribute('data-index', i);
+      frame.addEventListener('click', (function(idx) {
+        return function() {
+          var vh = window.innerHeight;
+          window.scrollTo({ top: vh * idx, behavior: 'smooth' });
+        };
+      })(i));
+
+      filmFramesEl.appendChild(frame);
+    }
+
+    if (menuOpen) updateFilmHighlight();
+  }
+
+  function updateFilmHighlight() {
+    var frames = filmFramesEl.querySelectorAll('.film-frame');
+    for (var i = 0; i < frames.length; i++) {
+      if (i === activeIndex) frames[i].classList.add('current');
+      else frames[i].classList.remove('current');
+    }
+  }
+
+  // ── Menu toggle ──
+  function toggleMenu() {
+    menuOpen = !menuOpen;
+    burger.classList.toggle('open', menuOpen);
+    filmOvl.classList.toggle('open', menuOpen);
+    if (menuOpen) updateFilmHighlight();
+  }
+
+  burger.addEventListener('click', toggleMenu);
+  filmBkdp.addEventListener('click', function() {
+    if (menuOpen) toggleMenu();
+  });
+
+  // ── Category click handlers ──
+  var catFrames = document.querySelectorAll('.cat-frame');
+  catFrames.forEach(function(cf) {
+    cf.addEventListener('click', function() {
+      var cat = cf.getAttribute('data-cat');
+      if (cat === currentCat) return;
+      catFrames.forEach(function(c) { c.classList.remove('active'); });
+      cf.classList.add('active');
+      buildSlides(cat);
+    });
+  });
+
+  // ── Resize hint ──
+  var TOLERANCE = 0.06;
+
+  function getTargetRatio() {
+    if (activeIndex < 0 || !slides[activeIndex]) return 3 / 2;
+    var img = slides[activeIndex].querySelector('img');
+    var natW = img.naturalWidth || 3;
+    var natH = img.naturalHeight || 2;
+    return natW / natH;
+  }
+
+  function updateRatio() {
+    var target = getTargetRatio();
+    var ratio = window.innerWidth / window.innerHeight;
+    var diff = ratio - target;
+    if (Math.abs(diff) < TOLERANCE) {
+      hint.classList.remove('visible');
+      return;
+    }
+    hint.classList.add('visible');
+    if (diff > 0) {
+      labelEl.innerHTML = 'shrink left \u2190<br>or expand down \u2193';
+    } else {
+      labelEl.innerHTML = 'expand right \u2192<br>or shrink up \u2191';
+    }
+  }
+
+  // ── Crop preview ──
+  function gcd(a, b) { return b === 0 ? a : gcd(b, a % b); }
+  function niceRatio(w, h) {
+    var g = gcd(Math.round(w), Math.round(h));
+    var rw = Math.round(w / g);
+    var rh = Math.round(h / g);
+    if (rw > 30 || rh > 30) {
+      var r = w / h;
+      var common = [[16,9],[16,10],[21,9],[4,3],[3,2],[2,3],[3,4],[1,1],[9,16]];
+      for (var i = 0; i < common.length; i++) {
+        if (Math.abs(r - common[i][0]/common[i][1]) < 0.05) return common[i][0] + ':' + common[i][1];
+      }
+    }
+    return rw + ':' + rh;
+  }
+
+  function updateCropPreview() {
+    if (activeIndex < 0 || !slides[activeIndex]) return;
+    var img = slides[activeIndex].querySelector('img');
+    var natW = img.naturalWidth || 3;
+    var natH = img.naturalHeight || 2;
+    var vpW = window.innerWidth;
+    var vpH = window.innerHeight;
+    var photoRatio = natW / natH;
+    var vpRatio = vpW / vpH;
+
+    var boxSize = screen.width * 0.1;
+
+    var pW, pH;
+    if (photoRatio > 1) { pW = boxSize; pH = boxSize / photoRatio; }
+    else { pH = boxSize; pW = boxSize * photoRatio; }
+
+    var vW, vH;
+    if (vpRatio > photoRatio) { vW = pW; vH = pW / vpRatio; }
+    else { vH = pH; vW = pH * vpRatio; }
+
+    var maxW = Math.max(pW, vW);
+    var maxH = Math.max(pH, vH);
+
+    cropPrev.style.width = maxW + 'px';
+    cropPrev.style.height = maxH + 'px';
+
+    var src = img.src;
+    cropDim.src = src;
+    cropBright.src = src;
+
+    var pLeft = (maxW - pW) / 2;
+    var pTop = (maxH - pH) / 2;
+    photoFull.style.width = pW + 'px';
+    photoFull.style.height = pH + 'px';
+    photoFull.style.left = pLeft + 'px';
+    photoFull.style.top = pTop + 'px';
+
+    var vLeft = (maxW - vW) / 2;
+    var vTop = (maxH - vH) / 2;
+    vpCrop.style.width = vW + 'px';
+    vpCrop.style.height = vH + 'px';
+    vpCrop.style.left = vLeft + 'px';
+    vpCrop.style.top = vTop + 'px';
+
+    cropBright.style.width = pW + 'px';
+    cropBright.style.height = pH + 'px';
+    cropBright.style.left = (pLeft - vLeft) + 'px';
+    cropBright.style.top = (pTop - vTop) + 'px';
+
+    photoLbl.textContent = niceRatio(natW, natH) + ' photo';
+    photoLbl.style.left = pLeft + 'px';
+    photoLbl.style.top = (pTop - screen.width * 0.014) + 'px';
+  }
+
+  function positionCropPreview() {
+    var hintRect = hint.getBoundingClientRect();
+    cropPrev.style.bottom = (window.innerHeight - hintRect.top + screen.width * 0.01) + 'px';
+    cropPrev.style.right = (window.innerWidth - hintRect.right) + 'px';
+  }
+
+  hint.addEventListener('mouseenter', function() {
+    updateCropPreview();
+    positionCropPreview();
+    cropPrev.classList.add('visible');
+  });
+
+  hint.addEventListener('mouseleave', function() {
+    cropPrev.classList.remove('visible');
+  });
+
+  // ── Init ──
+  buildCatSprockets();
+  buildSlides('highlights');
+})();
+</script>
+</body>
+</html>
