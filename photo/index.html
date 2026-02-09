@@ -1,11 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-font="default" data-fontsize="medium">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Portfolio</title>
+<title>portfolio</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Atkinson+Hyperlegible:wght@400;700&display=swap');
+  @import url('https://fonts.cdnfonts.com/css/open-dyslexic');
+
+  :root {
+    --font-default: 'Cormorant Garamond', serif;
+    --font-atkinson: 'Atkinson Hyperlegible', sans-serif;
+    --font-dyslexic: 'OpenDyslexic', sans-serif;
+    --font-active: var(--font-default);
+    --size-scale: 1;
+  }
+  [data-font="atkinson"] { --font-active: var(--font-atkinson); }
+  [data-font="dyslexic"] { --font-active: var(--font-dyslexic); }
+  [data-fontsize="small"] { --size-scale: 0.8; }
+  [data-fontsize="large"] { --size-scale: 1.25; }
 
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -20,10 +33,12 @@
 
   body {
     margin: 0;
-    font-family: 'Cormorant Garamond', serif;
+    font-family: var(--font-active);
     background: #0a0a0a;
+    color: #fff;
   }
 
+  /* ══════ LOADER ══════ */
   #loader {
     position: fixed; inset: 0; z-index: 100;
     background: #0a0a0a;
@@ -33,8 +48,7 @@
   #loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
   #loader .pulse {
     width: 0.52rem; height: 0.52rem;
-    background: #fff;
-    border-radius: 50%;
+    background: #fff; border-radius: 50%;
     animation: pulse 1.4s ease-in-out infinite;
   }
   @keyframes pulse {
@@ -42,122 +56,326 @@
     50% { opacity: 1; transform: scale(1.5); }
   }
 
+  /* ══════ SLIDES ══════ */
   .slide {
     position: relative;
-    width: 100%;
-    height: 100dvh;
+    width: 100%; height: 100dvh;
     scroll-snap-align: start;
     scroll-snap-stop: always;
     overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     background: #0a0a0a;
   }
-
-  .slide img {
+  .slide img.main-photo {
     position: absolute;
     object-fit: contain;
     opacity: 0;
     border-radius: 0.16rem;
     transition: opacity 0.6s ease;
   }
-  .slide img.loaded { opacity: 1; }
-  .slide img.expand {
+  .slide img.main-photo.loaded { opacity: 1; }
+  .slide img.main-photo.expand {
     border-radius: 0;
-    transition: width 1.4s cubic-bezier(0.16, 1, 0.3, 1),
-                height 1.4s cubic-bezier(0.16, 1, 0.3, 1),
-                border-radius 1.4s ease,
+    transition: width 5s cubic-bezier(0.22, 1, 0.36, 1),
+                height 5s cubic-bezier(0.22, 1, 0.36, 1),
+                border-radius 5s ease,
                 opacity 0.6s ease;
   }
-
   .slide .vignette {
     position: absolute; inset: 0;
     pointer-events: none;
     background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.3) 100%);
-    z-index: 2;
-    opacity: 0;
+    z-index: 2; opacity: 0;
     transition: opacity 0.5s ease 0.2s;
   }
   .slide.active .vignette { opacity: 1; }
 
-  /* ── Photo info (bottom left) ── */
-  .slide .photo-info {
+  /* ══════ HERO SLIDE ══════ */
+  .hero-grid {
+    position: absolute; inset: 0;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    gap: 2px;
+  }
+  .hero-grid img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    filter: grayscale(1);
+    opacity: 0;
+    animation: gridIn 0.15s ease forwards;
+  }
+  @keyframes gridIn {
+    to { opacity: 1; }
+  }
+  .hero-overlay {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 3;
+  }
+  .hero-text {
+    position: absolute; z-index: 5;
+    text-align: center;
+    user-select: none;
+  }
+  .hero-text h1 {
+    font-family: var(--font-active);
+    font-size: calc(4rem * var(--size-scale));
+    font-weight: 300;
+    letter-spacing: 0.3em;
+    text-transform: none;
+    color: #fff;
+    margin-bottom: 0.4rem;
+  }
+  .hero-text p {
+    font-family: var(--font-active);
+    font-size: calc(0.8rem * var(--size-scale));
+    font-weight: 300;
+    letter-spacing: 0.2em;
+    text-transform: none;
+    color: rgba(255,255,255,0.5);
+  }
+
+  /* ══════ PHOTO INFO (bottom left) ══════ */
+  .photo-info {
     position: absolute;
     bottom: 1.5rem; left: 1.65rem;
     z-index: 10;
-    font-size: 0.65rem;
+    font-size: calc(0.6rem * var(--size-scale));
     font-weight: 300;
     letter-spacing: 0.12em;
-    line-height: 1.45;
+    line-height: 1.5;
     color: #fff;
     opacity: 0;
     transition: opacity 0.6s ease 0.4s;
     user-select: none;
-    text-transform: uppercase;
+    text-transform: none;
   }
   .slide.active .photo-info { opacity: 1; }
+  .photo-info .info-line {
+    display: flex; align-items: center; gap: 0.3rem;
+    white-space: nowrap;
+    cursor: default;
+    position: relative;
+  }
+  .photo-info .info-line.hoverable { cursor: pointer; }
+  .photo-info .info-line .extra-text { display: none; }
+  .photo-info .info-line.hovered .extra-text { display: inline; }
+  .photo-info .hover-photo {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    margin-bottom: 0.4rem;
+    width: 10rem;
+    height: auto;
+    border-radius: 0.15rem;
+    object-fit: cover;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+  }
+  .photo-info.show-photo .hover-photo { opacity: 1; }
 
-  /* ── Counter (top left) ── */
-  #counter {
-    position: fixed; top: 1.45rem; left: 1.65rem; z-index: 50;
-    font-size: 0.85rem; font-weight: 300;
-    letter-spacing: 0.15em;
-    color: #fff;
-    user-select: none;
+  /* ══════ FROSTED GLASS (hero corners) ══════ */
+  .frosted {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    background: rgba(0,0,0,0.3);
+    border-radius: 0.3rem;
+    padding: 0.25rem 0.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
   }
 
-  /* ── Burger menu (top right) ── */
-  #burger {
-    position: fixed; top: 1.2rem; right: 1.35rem; z-index: 200;
-    width: 1.8rem; height: 1.8rem;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    gap: 0.25rem;
+  /* ══════ COUNTER (top left) ══════ */
+  #counter {
+    position: fixed; top: 1.45rem; left: 1.65rem; z-index: 50;
+    font-size: calc(0.85rem * var(--size-scale)); font-weight: 300;
+    letter-spacing: 0.15em;
+    color: #fff; user-select: none;
+    transition: opacity 0.4s ease;
+  }
+
+  /* ══════ LEATHER TAB (top center) ══════ */
+  #leather-tab {
+    position: fixed; top: 0; left: 50%; transform: translateX(-50%);
+    z-index: 200;
+    padding: 0.45rem 1.4rem 0.5rem;
+    background:
+      repeating-linear-gradient(45deg, transparent, transparent 1px, rgba(0,0,0,0.04) 1px, rgba(0,0,0,0.04) 2px),
+      repeating-linear-gradient(-45deg, transparent, transparent 1px, rgba(0,0,0,0.04) 1px, rgba(0,0,0,0.04) 2px),
+      linear-gradient(180deg, #8a6235, #6b4423, #5a3618);
+    border-radius: 0 0 0.5rem 0.5rem;
+    cursor: pointer;
+    text-align: center;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.5);
+    user-select: none;
+    transition: box-shadow 0.3s ease;
+  }
+  #leather-tab:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.7); }
+  #leather-tab::after {
+    content: '';
+    position: absolute;
+    left: 0.2rem; right: 0.2rem; bottom: 0.2rem; top: 0;
+    border: 1.5px dashed rgba(255,255,255,0.18);
+    border-top: none;
+    border-radius: 0 0 0.4rem 0.4rem;
+    pointer-events: none;
+  }
+  #leather-tab .tab-title {
+    font-size: calc(0.7rem * var(--size-scale));
+    font-weight: 300;
+    letter-spacing: 0.25em;
+    text-transform: none;
+    color: rgba(255,255,255,0.85);
+  }
+  #leather-tab .tab-sub {
+    font-size: calc(0.4rem * var(--size-scale));
+    font-weight: 300;
+    letter-spacing: 0.15em;
+    text-transform: none;
+    color: rgba(255,255,255,0.4);
+    margin-top: 0.05rem;
+  }
+
+  /* ══════ SETTINGS BUTTON (top right) ══════ */
+  #settings-btn {
+    position: fixed; top: 1.25rem; right: 1.35rem; z-index: 200;
+    width: 1.6rem; height: 1.6rem;
+    display: flex; align-items: center; justify-content: center;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
   }
-  #burger span {
-    display: block;
-    width: 1.3rem; height: 1px;
-    background: #fff;
-    transition: transform 0.35s ease, opacity 0.35s ease;
+  #settings-btn svg {
+    width: 1.1rem; height: 1.1rem;
+    stroke: #fff; stroke-width: 1.5; fill: none;
+    stroke-linecap: round; stroke-linejoin: round;
+    transition: transform 0.4s ease;
   }
-  #burger.open span:nth-child(1) { transform: translateY(0.34rem) rotate(45deg); }
-  #burger.open span:nth-child(2) { opacity: 0; }
-  #burger.open span:nth-child(3) { transform: translateY(-0.34rem) rotate(-45deg); }
+  #settings-btn:hover svg { transform: rotate(30deg); }
 
-  /* ── Film strip overlay ── */
+  /* ══════ SETTINGS POPUP ══════ */
+  #settings-popup {
+    position: fixed;
+    top: 3.5rem; right: 1.35rem;
+    z-index: 201;
+    background: rgba(15,15,15,0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 0.4rem;
+    padding: 0.8rem 1rem;
+    opacity: 0; pointer-events: none;
+    transform: translateY(-0.3rem);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    min-width: 14rem;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  #settings-popup.open {
+    opacity: 1; pointer-events: auto; transform: translateY(0);
+  }
+  .setting-row {
+    margin-bottom: 0.55rem;
+  }
+  .setting-row:last-child { margin-bottom: 0; }
+  .setting-label {
+    display: block;
+    font-size: calc(0.45rem * var(--size-scale));
+    font-weight: 300;
+    letter-spacing: 0.2em;
+    text-transform: none;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 0.25rem;
+  }
+  .setting-options {
+    display: flex; gap: 0.25rem; flex-wrap: wrap;
+  }
+  .setting-btn {
+    font-family: var(--font-active);
+    font-size: calc(0.42rem * var(--size-scale));
+    font-weight: 300;
+    letter-spacing: 0.1em;
+    text-transform: none;
+    color: rgba(255,255,255,0.5);
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 0.2rem;
+    padding: 0.2rem 0.45rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .setting-btn:hover { color: #fff; border-color: rgba(255,255,255,0.3); }
+  .setting-btn.active {
+    color: #fff;
+    background: rgba(255,255,255,0.12);
+    border-color: rgba(255,255,255,0.4);
+  }
+
+  /* ══════ FILM OVERLAY ══════ */
   #film-overlay {
     position: fixed; inset: 0; z-index: 150;
-    pointer-events: none;
-    opacity: 0;
+    pointer-events: none; opacity: 0;
     transition: opacity 0.4s ease;
   }
-  #film-overlay.open {
-    pointer-events: auto;
-    opacity: 1;
-  }
+  #film-overlay.open { pointer-events: auto; opacity: 1; }
   #film-overlay .backdrop {
     position: absolute; inset: 0;
-    background: rgba(0,0,0,0.5);
+    background: rgba(0,0,0,0.6);
   }
-
   #film-panel {
     position: absolute;
-    right: 1.5rem;
-    top: 4rem;
-    bottom: 0;
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    gap: 0.4rem;
-    transform: translateY(calc(100% + 4rem));
-    transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+    left: 50%; bottom: 0; top: 4rem;
+    transform: translateX(-50%) translateY(calc(100% + 4rem));
+    transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
     z-index: 151;
+    display: flex; flex-direction: column; align-items: center;
   }
-  #film-overlay.open #film-panel {
-    transform: translateY(0);
+  #film-overlay.open #film-panel.animate-in {
+    transform: translateX(-50%) translateY(0);
+  }
+  #film-content {
+    display: flex; flex-direction: row;
+    align-items: flex-start; gap: 0.4rem;
+    flex: 1; min-height: 0; overflow: hidden;
+  }
+
+  /* ── Film canister ── */
+  #film-canister {
+    width: 14rem; height: 10rem;
+    position: relative;
+    flex-shrink: 0;
+    margin-top: 0;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    margin-bottom: 1.5rem;
+  }
+  #film-canister.visible { opacity: 1; }
+  .canister-body {
+    position: absolute;
+    top: 1.2rem; bottom: 1.2rem;
+    left: 1rem; right: 1rem;
+    background: linear-gradient(90deg, #333, #222, #2a2a2a, #222, #333);
+    border-left: 1px solid #444;
+    border-right: 1px solid #444;
+  }
+  .canister-cap {
+    position: absolute;
+    left: 0; right: 0; height: 2.4rem;
+    background: linear-gradient(180deg, #444, #2a2a2a);
+    border-radius: 50%;
+    border: 1px solid #555;
+  }
+  .canister-cap.top { top: 0; }
+  .canister-cap.bottom { bottom: 0; background: linear-gradient(180deg, #2a2a2a, #444); }
+  .canister-label {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.45rem;
+    letter-spacing: 0.2em;
+    text-transform: none;
+    color: #555;
+    white-space: nowrap;
+    user-select: none;
   }
 
   #film-strip, #categories-strip {
@@ -165,171 +383,145 @@
     display: flex;
     flex-direction: column;
   }
-
-  /* Film body */
+  #film-strip .film-body, #categories-strip .film-body {
+    flex: 1; min-height: 0;
+  }
   .film-body {
     position: relative;
     background: #1a1a1a;
-    display: flex;
-    flex-direction: row;
-    flex: 1;
-    min-height: 0;
+    display: flex; flex-direction: row;
+    flex: 1; min-height: 0;
   }
-
-  /* Sprocket columns */
   .sprockets {
     width: 0.9rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.55rem;
-    align-items: center;
-    padding: 0.4rem 0;
-    flex-shrink: 0;
+    display: flex; flex-direction: column;
+    gap: 0.55rem; align-items: center;
+    padding: 0.4rem 0; flex-shrink: 0;
   }
   .sprocket {
-    width: 0.45rem;
-    height: 0.3rem;
+    width: 0.45rem; height: 0.3rem;
     border-radius: 0.06rem;
     background: #0a0a0a;
     border: 1px solid #333;
     flex-shrink: 0;
   }
-
-  /* Frames area */
   .film-frames {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-    padding: 0.5rem 0.15rem;
-    overflow-y: auto;
-    scrollbar-width: none;
+    display: flex; flex-direction: column;
+    gap: 0.35rem; padding: 0.5rem 0.15rem;
+    overflow-y: auto; scrollbar-width: none;
   }
   .film-frames::-webkit-scrollbar { display: none; }
-
   .film-frame {
     position: relative;
     cursor: pointer;
     border-radius: 0.08rem;
     overflow: hidden;
     opacity: 0.6;
-    transition: opacity 0.3s ease, box-shadow 0.3s ease;
+    transition: opacity 0.3s ease;
     border: 1px solid transparent;
     flex-shrink: 0;
   }
   .film-frame:hover { opacity: 1; }
-  .film-frame.current {
-    opacity: 1;
-    border-color: #fff;
-  }
-
+  .film-frame.current { opacity: 1; border-color: #fff; }
   .film-frame img {
-    display: block;
-    width: 6rem;
-    height: 4rem;
-    object-fit: cover;
+    display: block; width: 6rem; height: 4rem; object-fit: cover;
   }
-  .film-frame.portrait img {
-    width: 4rem;
-    height: 6rem;
-  }
-
   .film-frame .frame-num {
     position: absolute;
     bottom: 0.15rem; right: 0.25rem;
-    font-size: 0.5rem;
-    font-weight: 300;
-    letter-spacing: 0.08em;
-    color: #fff;
+    font-size: 0.5rem; font-weight: 300;
+    letter-spacing: 0.08em; color: #fff;
     text-shadow: 0 1px 3px rgba(0,0,0,0.8);
   }
-
-  /* Film edge text */
   .film-edge-text {
-    font-size: 0.35rem;
-    font-weight: 300;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
+    font-size: 0.35rem; font-weight: 300;
+    letter-spacing: 0.15em; text-transform: none;
     color: #444;
-    writing-mode: vertical-rl;
-    text-orientation: mixed;
-    padding: 0.4rem 0.1rem;
-    user-select: none;
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
+    writing-mode: vertical-rl; text-orientation: mixed;
+    padding: 0.4rem 0.1rem; user-select: none;
+    white-space: nowrap; display: flex; align-items: center;
   }
-
-  /* Category frames */
   .cat-frames {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-    padding: 0.5rem 0.15rem;
+    display: flex; flex-direction: column;
+    gap: 0.35rem; padding: 0.5rem 0.15rem;
   }
-
   .cat-frame {
-    position: relative;
-    width: 6rem;
-    height: 4rem;
+    width: 6rem; height: 4rem;
     background: #1e1e1e;
     border: 1px solid #333;
     border-radius: 0.08rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    opacity: 0.5;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; opacity: 0.5;
     transition: opacity 0.3s ease, border-color 0.3s ease;
     flex-shrink: 0;
   }
   .cat-frame:hover { opacity: 0.8; }
-  .cat-frame.active {
-    opacity: 1;
-    border-color: #fff;
-  }
-
+  .cat-frame.active { opacity: 1; border-color: #fff; }
   .cat-label {
-    font-size: 0.6rem;
-    font-weight: 300;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: #fff;
-    user-select: none;
+    font-size: 0.6rem; font-weight: 300;
+    letter-spacing: 0.2em; text-transform: none;
+    color: #fff; user-select: none;
   }
 
-  /* ── Resize hint ── */
-  #resize-hint {
+  /* ══════ LOREM IPSUM WINDOW ══════ */
+  #lorem-window {
+    position: fixed;
+    top: 5rem; left: 2rem;
+    z-index: 152;
+    width: 22rem;
+    max-height: 60vh;
+    background: rgba(15,15,15,0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 0.5rem;
+    padding: 1.2rem 1.4rem;
+    border: 1px solid rgba(255,255,255,0.08);
+    opacity: 0; pointer-events: none;
+    transform: translateY(0.5rem);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    overflow-y: auto;
+  }
+  #lorem-window.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+  #lorem-window h2 {
+    font-size: calc(1rem * var(--size-scale));
+    font-weight: 300;
+    letter-spacing: 0.15em;
+    margin-bottom: 0.6rem;
+    color: rgba(255,255,255,0.8);
+  }
+  #lorem-window p {
+    font-size: calc(0.52rem * var(--size-scale));
+    font-weight: 300;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 0.5rem;
+  }
+
+  /* ══════ RESIZE HINT + PREVIEW ══════ */
+  #resize-group {
     position: fixed;
     bottom: 1.35rem; right: 1.35rem;
     z-index: 50;
-    display: flex;
-    align-items: center;
-    gap: 0.52rem;
+    display: flex; flex-direction: column;
+    align-items: flex-end; gap: 0.4rem;
     opacity: 0;
     transition: opacity 0.5s ease, transform 0.5s ease;
     transform: translateY(0.3rem);
     pointer-events: none;
   }
-  #resize-hint.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
-
-  #resize-hint .label {
-    font-size: 0.85rem; font-weight: 300;
-    letter-spacing: 0.18em; text-transform: uppercase;
+  #resize-group.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  #resize-group .label {
+    font-size: calc(0.85rem * var(--size-scale)); font-weight: 300;
+    letter-spacing: 0.18em; text-transform: none;
     color: #fff;
     white-space: nowrap; user-select: none;
     text-align: right; line-height: 1.3;
   }
 
-  /* ── Crop preview ── */
+  /* Crop preview */
   #crop-preview {
-    position: fixed;
-    z-index: 60;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    pointer-events: none;
+    position: relative;
   }
-  #crop-preview.visible { opacity: 1; }
-
   #crop-preview .photo-full {
     position: absolute;
     border-radius: 0.15rem;
@@ -338,13 +530,10 @@
     background: #3a0a0a;
   }
   #crop-preview .photo-full img {
-    position: absolute;
-    top: 0; left: 0;
+    position: absolute; top: 0; left: 0;
     width: 100%; height: 100%;
-    object-fit: cover;
-    opacity: 0.25;
+    object-fit: cover; opacity: 0.25;
   }
-
   #crop-preview .viewport-crop {
     position: absolute;
     border-radius: 0.1rem;
@@ -352,22 +541,17 @@
     overflow: hidden;
   }
   #crop-preview .viewport-crop img {
-    position: absolute;
-    object-fit: cover;
-    opacity: 0.9;
+    position: absolute; object-fit: cover; opacity: 0.9;
   }
-
   #crop-preview .ratio-label {
     position: absolute;
-    font-size: 0.55rem;
+    font-size: calc(0.5rem * var(--size-scale));
     font-weight: 300;
     letter-spacing: 0.12em;
-    color: #fff;
-    user-select: none;
-    white-space: nowrap;
+    color: #fff; user-select: none; white-space: nowrap;
   }
 
-  /* ── Scroll indicator ── */
+  /* ══════ SCROLL INDICATOR ══════ */
   #scroll-down {
     position: fixed; bottom: 1.45rem; left: 50%;
     transform: translateX(-50%);
@@ -378,24 +562,50 @@
     pointer-events: none;
   }
   #scroll-down.visible { opacity: 1; }
-
   #scroll-down span {
-    font-size: 0.75rem; font-weight: 300;
-    letter-spacing: 0.2em; text-transform: uppercase;
-    color: #fff;
+    font-size: calc(0.75rem * var(--size-scale)); font-weight: 300;
+    letter-spacing: 0.2em; text-transform: none; color: #fff;
   }
-
   #scroll-down .chevron {
     width: 0.7rem; height: 0.7rem;
-    stroke: #fff;
-    stroke-width: 1.5; fill: none;
+    stroke: #fff; stroke-width: 1.5; fill: none;
     stroke-linecap: round; stroke-linejoin: round;
     animation: float 2s ease-in-out infinite;
   }
-
   @keyframes float {
     0%, 100% { transform: translateY(0); opacity: 0.3; }
     50% { transform: translateY(0.2rem); opacity: 0.7; }
+  }
+
+  /* ══════ PEEK FILM STRIP (right) ══════ */
+  #peek-strip {
+    position: fixed;
+    right: 0; top: 4rem; bottom: 4rem;
+    z-index: 49;
+    transform: translateX(100%);
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease;
+    opacity: 0;
+    pointer-events: none;
+    cursor: pointer;
+  }
+  #peek-strip.visible {
+    transform: translateX(75%);
+    opacity: 0.4;
+    pointer-events: auto;
+  }
+  #peek-strip.visible:hover {
+    transform: translateX(30%);
+    opacity: 0.7;
+  }
+  #film-overlay.open ~ #peek-strip {
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+  #peek-strip .film-body {
+    height: 100%;
+  }
+  #peek-strip .film-frames {
+    overflow: hidden;
   }
 </style>
 </head>
@@ -405,8 +615,6 @@
 </script>
 
 <div id="loader"><div class="pulse"></div></div>
-
-<!-- ═══ SLIDES ═══ -->
 <div id="slides-container"></div>
 
 <div id="scroll-down">
@@ -416,192 +624,310 @@
 
 <div id="counter">1 / 5</div>
 
-<div id="burger">
-  <span></span><span></span><span></span>
+<div id="leather-tab">
+  <div class="tab-title">portfolio</div>
+  <div class="tab-sub">tap to open menu</div>
 </div>
 
-<!-- Film strip overlay -->
-<div id="film-overlay">
-  <div class="backdrop" id="film-backdrop"></div>
-  <div id="film-panel">
-    <div id="categories-strip">
-      <div class="film-body">
-        <div class="sprockets" id="cat-sprockets-left"></div>
-        <div class="film-edge-text">65mm &nbsp; portfolio &nbsp; index</div>
-        <div class="cat-frames">
-          <div class="cat-frame active" data-cat="highlights">
-            <span class="cat-label">Highlights</span>
-          </div>
-          <div class="cat-frame" data-cat="portraits">
-            <span class="cat-label">Portraits</span>
-          </div>
-          <div class="cat-frame" data-cat="landscapes">
-            <span class="cat-label">Landscapes</span>
-          </div>
-        </div>
-        <div class="film-edge-text">▲ &nbsp; roll &nbsp; 01</div>
-        <div class="sprockets" id="cat-sprockets-right"></div>
-      </div>
+<div id="settings-btn">
+  <svg viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="3"/>
+    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+  </svg>
+</div>
+
+<div id="settings-popup">
+  <div class="setting-row">
+    <span class="setting-label">font</span>
+    <div class="setting-options">
+      <button class="setting-btn active" data-setting="font" data-val="default">default</button>
+      <button class="setting-btn" data-setting="font" data-val="atkinson">atkinson</button>
+      <button class="setting-btn" data-setting="font" data-val="dyslexic">opendyslexic</button>
     </div>
-    <div id="film-strip">
-      <div class="film-body">
-        <div class="sprockets" id="sprockets-left"></div>
-        <div class="film-edge-text">65mm &nbsp; kodak &nbsp; 5219 &nbsp; vis3</div>
-        <div class="film-frames" id="film-frames"></div>
-        <div class="film-edge-text">▲ &nbsp; 28 &nbsp; ▲ &nbsp; 28a &nbsp; ▲ &nbsp; 29</div>
-        <div class="sprockets" id="sprockets-right"></div>
-      </div>
+  </div>
+  <div class="setting-row">
+    <span class="setting-label">size</span>
+    <div class="setting-options">
+      <button class="setting-btn" data-setting="fontsize" data-val="small">small</button>
+      <button class="setting-btn active" data-setting="fontsize" data-val="medium">medium</button>
+      <button class="setting-btn" data-setting="fontsize" data-val="large">large</button>
+    </div>
+  </div>
+  <div class="setting-row">
+    <span class="setting-label">language</span>
+    <div class="setting-options">
+      <button class="setting-btn active" data-setting="lang" data-val="en">english</button>
+      <button class="setting-btn" data-setting="lang" data-val="pt">portugu&#234;s</button>
+    </div>
+  </div>
+  <div class="setting-row">
+    <span class="setting-label">photo resolution</span>
+    <div class="setting-options">
+      <button class="setting-btn" data-setting="res" data-val="low">low</button>
+      <button class="setting-btn active" data-setting="res" data-val="default">default</button>
+      <button class="setting-btn" data-setting="res" data-val="high">high</button>
     </div>
   </div>
 </div>
 
-<div id="resize-hint">
+<!-- Film overlay -->
+<div id="film-overlay">
+  <div class="backdrop" id="film-backdrop"></div>
+  <div id="film-panel">
+    <div id="film-content">
+      <div id="categories-strip">
+        <div class="film-body">
+          <div class="sprockets" id="cat-sprockets-left"></div>
+          <div class="film-edge-text">65mm &nbsp; portfolio &nbsp; index</div>
+          <div class="cat-frames">
+            <div class="cat-frame active" data-cat="main"><span class="cat-label">main</span></div>
+            <div class="cat-frame" data-cat="portraits"><span class="cat-label">portraits</span></div>
+            <div class="cat-frame" data-cat="landscapes"><span class="cat-label">landscapes</span></div>
+          </div>
+          <div class="film-edge-text">&#9650; &nbsp; roll &nbsp; 01</div>
+          <div class="sprockets" id="cat-sprockets-right"></div>
+        </div>
+      </div>
+      <div id="film-strip">
+        <div class="film-body">
+          <div class="sprockets" id="sprockets-left"></div>
+          <div class="film-edge-text">65mm &nbsp; kodak &nbsp; 5219 &nbsp; vis3</div>
+          <div class="film-frames" id="film-frames"></div>
+          <div class="film-edge-text">&#9650; &nbsp; 28 &nbsp; &#9650; &nbsp; 28a &nbsp; &#9650; &nbsp; 29</div>
+          <div class="sprockets" id="sprockets-right"></div>
+        </div>
+      </div>
+    </div>
+    <div id="film-canister">
+      <div class="canister-cap top"></div>
+      <div class="canister-body"><span class="canister-label">65mm &bull; kodak</span></div>
+      <div class="canister-cap bottom"></div>
+    </div>
+  </div>
+</div>
+
+<div id="lorem-window">
+  <h2>about</h2>
+  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+  <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+  <p>Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris.</p>
+</div>
+
+<div id="resize-group">
+  <div id="crop-preview">
+    <div class="photo-full" id="photo-full"><img id="crop-img-dim" /></div>
+    <div class="viewport-crop" id="viewport-crop"><img id="crop-img-bright" /></div>
+    <span class="ratio-label" id="photo-ratio-label"></span>
+  </div>
   <span class="label" id="hint-label"></span>
 </div>
 
-<div id="crop-preview">
-  <div class="photo-full" id="photo-full"><img id="crop-img-dim" /></div>
-  <div class="viewport-crop" id="viewport-crop"><img id="crop-img-bright" /></div>
-  <span class="ratio-label" id="photo-ratio-label"></span>
+<!-- Peek strip (right) -->
+<div id="peek-strip">
+  <div class="film-body">
+    <div class="sprockets" id="peek-sprockets-left"></div>
+    <div class="film-frames" id="peek-frames"></div>
+    <div class="sprockets" id="peek-sprockets-right"></div>
+  </div>
 </div>
+
+<!-- Sound placeholder -->
+<audio id="shutter-sound" preload="none"></audio>
 
 <script>
 (function() {
-  // ── Photo data per category ──
+  /* ══════ DATA ══════ */
+  var resMap = { low: 800, default: 2400, high: 4000 };
+  var currentRes = 'default';
+
+  function imgUrl(base, res) {
+    return base.replace(/w=\d+/, 'w=' + resMap[res]);
+  }
+
   var categories = {
-    highlights: [
-      { src: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=2400&q=85&fit=crop&ar=3:2', alt: 'Mountain landscape', lens: '35mm f1.4 APS-C', date: '03/15/2023' },
-      { src: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=2400&q=85&fit=crop&ar=3:2', alt: 'Forest valley', lens: '35mm f1.4 APS-C', date: '06/22/2023' },
-      { src: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1600&q=85&fit=crop&ar=2:3', alt: 'Portrait', lens: '35mm f1.4 APS-C', date: '09/10/2023', portrait: true },
-      { src: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=2400&q=85&fit=crop&ar=3:2', alt: 'Golden hills', lens: '35mm f1.4 APS-C', date: '11/03/2023' },
-      { src: 'https://images.unsplash.com/photo-1433086966358-54859d0ed716?w=2400&q=85&fit=crop&ar=3:2', alt: 'Waterfall bridge', lens: '35mm f1.4 APS-C', date: '12/28/2023' },
+    main: [
+      { base: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=2400&q=85&fit=crop&ar=3:2', alt: 'Mountain landscape', lens: '35mm f1.4', sensor: 'APS-C', date: '03/15/2023' },
+      { base: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=2400&q=85&fit=crop&ar=3:2', alt: 'Forest valley', lens: '35mm f1.4', sensor: 'APS-C', date: '06/22/2023' },
+      { base: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1600&q=85&fit=crop&ar=2:3', alt: 'Portrait', lens: '35mm f1.4', sensor: 'APS-C', date: '09/10/2023', portrait: true },
+      { base: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=2400&q=85&fit=crop&ar=3:2', alt: 'Golden hills', lens: '35mm f1.4', sensor: 'APS-C', date: '11/03/2023' },
+      { base: 'https://images.unsplash.com/photo-1433086966358-54859d0ed716?w=2400&q=85&fit=crop&ar=3:2', alt: 'Waterfall bridge', lens: '35mm f1.4', sensor: 'APS-C', date: '12/28/2023' },
     ],
     portraits: [
-      { src: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=1600&q=85&fit=crop&ar=2:3', alt: 'Portrait studio', lens: '35mm f1.4 APS-C', date: '01/14/2024', portrait: true },
-      { src: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=1600&q=85&fit=crop&ar=2:3', alt: 'Natural light portrait', lens: '35mm f1.4 APS-C', date: '02/20/2024', portrait: true },
-      { src: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=1600&q=85&fit=crop&ar=2:3', alt: 'Street portrait', lens: '35mm f1.4 APS-C', date: '04/05/2024', portrait: true },
+      { base: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=1600&q=85&fit=crop&ar=2:3', alt: 'Portrait studio', lens: '35mm f1.4', sensor: 'APS-C', date: '01/14/2024', portrait: true },
+      { base: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=1600&q=85&fit=crop&ar=2:3', alt: 'Natural light', lens: '35mm f1.4', sensor: 'APS-C', date: '02/20/2024', portrait: true },
+      { base: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=1600&q=85&fit=crop&ar=2:3', alt: 'Street portrait', lens: '35mm f1.4', sensor: 'APS-C', date: '04/05/2024', portrait: true },
     ],
     landscapes: [
-      { src: 'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=2400&q=85&fit=crop&ar=3:2', alt: 'Rolling green hills', lens: '35mm f1.4 APS-C', date: '05/17/2024' },
-      { src: 'https://images.unsplash.com/photo-1465056836900-8f1e940f1904?w=2400&q=85&fit=crop&ar=3:2', alt: 'Ocean sunset', lens: '35mm f1.4 APS-C', date: '07/09/2024' },
-      { src: 'https://images.unsplash.com/photo-1426604966848-d7adac402bff?w=2400&q=85&fit=crop&ar=3:2', alt: 'Mountain forest', lens: '35mm f1.4 APS-C', date: '08/30/2024' },
+      { base: 'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=2400&q=85&fit=crop&ar=3:2', alt: 'Green hills', lens: '35mm f1.4', sensor: 'APS-C', date: '05/17/2024' },
+      { base: 'https://images.unsplash.com/photo-1465056836900-8f1e940f1904?w=2400&q=85&fit=crop&ar=3:2', alt: 'Ocean sunset', lens: '35mm f1.4', sensor: 'APS-C', date: '07/09/2024' },
+      { base: 'https://images.unsplash.com/photo-1426604966848-d7adac402bff?w=2400&q=85&fit=crop&ar=3:2', alt: 'Mountain forest', lens: '35mm f1.4', sensor: 'APS-C', date: '08/30/2024' },
     ]
   };
 
-  var currentCat = 'highlights';
-  var loader    = document.getElementById('loader');
-  var hint      = document.getElementById('resize-hint');
-  var labelEl   = document.getElementById('hint-label');
-  var scrollInd = document.getElementById('scroll-down');
-  var counterEl = document.getElementById('counter');
-  var cropPrev  = document.getElementById('crop-preview');
-  var photoFull = document.getElementById('photo-full');
-  var vpCrop    = document.getElementById('viewport-crop');
-  var cropDim   = document.getElementById('crop-img-dim');
-  var cropBright= document.getElementById('crop-img-bright');
-  var photoLbl  = document.getElementById('photo-ratio-label');
-  var burger    = document.getElementById('burger');
-  var filmOvl   = document.getElementById('film-overlay');
-  var filmBkdp  = document.getElementById('film-backdrop');
-  var filmFramesEl = document.getElementById('film-frames');
+  var heroPhotoUrls = [
+    'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=60&fit=crop',
+    'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=400&q=60&fit=crop',
+    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=60&fit=crop',
+    'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=400&q=60&fit=crop',
+    'https://images.unsplash.com/photo-1433086966358-54859d0ed716?w=400&q=60&fit=crop',
+    'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&q=60&fit=crop',
+    'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=400&q=60&fit=crop',
+    'https://images.unsplash.com/photo-1465056836900-8f1e940f1904?w=400&q=60&fit=crop',
+  ];
+
+  /* ══════ DOM REFS ══════ */
+  var loader = document.getElementById('loader');
   var slidesContainer = document.getElementById('slides-container');
+  var counterEl = document.getElementById('counter');
+  var scrollInd = document.getElementById('scroll-down');
+  var leatherTab = document.getElementById('leather-tab');
+  var tabSub = leatherTab.querySelector('.tab-sub');
+  var settingsBtn = document.getElementById('settings-btn');
+  var settingsPopup = document.getElementById('settings-popup');
+  var filmOvl = document.getElementById('film-overlay');
+  var filmBkdp = document.getElementById('film-backdrop');
+  var filmPanel = document.getElementById('film-panel');
+  var filmFramesEl = document.getElementById('film-frames');
+  var filmCanister = document.getElementById('film-canister');
+  var loremWindow = document.getElementById('lorem-window');
+  var resizeGroup = document.getElementById('resize-group');
+  var hintLabel = document.getElementById('hint-label');
+  var cropPreview = document.getElementById('crop-preview');
+  var photoFullEl = document.getElementById('photo-full');
+  var vpCropEl = document.getElementById('viewport-crop');
+  var cropDimImg = document.getElementById('crop-img-dim');
+  var cropBrightImg = document.getElementById('crop-img-bright');
+  var photoRatioLbl = document.getElementById('photo-ratio-label');
+  var peekStrip = document.getElementById('peek-strip');
+  var peekFrames = document.getElementById('peek-frames');
 
-  var slides = [];
-  var slideImages = [];
-  var total = 0;
-  var loadedCount = 0;
-  var activeIndex = -1;
-  var menuOpen = false;
-  var firstLoaded = false;
+  /* ══════ STATE ══════ */
+  var currentCat = 'main';
+  var slides = [], slideImages = [], total = 0;
+  var loadedCount = 0, firstLoaded = false, activeIndex = -1;
+  var filmMenuOpen = false;
+  var hasHero = true;
+  var sw = screen.width;
 
-  // ── Build slides from category ──
+  /* ══════ IMAGE SIZING ══════ */
+  function containSize(nw, nh, bw, bh) {
+    var s = Math.min(bw/nw, bh/nh);
+    return { w: Math.round(nw*s), h: Math.round(nh*s) };
+  }
+  function coverSize(nw, nh, bw, bh) {
+    var s = Math.max(bw/nw, bh/nh);
+    return { w: Math.round(nw*s), h: Math.round(nh*s) };
+  }
+  function setSmall(img) {
+    var nw = img.naturalWidth||3, nh = img.naturalHeight||2;
+    var s = containSize(nw, nh, window.innerWidth*0.8, window.innerHeight*0.8);
+    img.style.width = s.w+'px'; img.style.height = s.h+'px';
+  }
+  function setExpand(img) {
+    var nw = img.naturalWidth||3, nh = img.naturalHeight||2;
+    var s = coverSize(nw, nh, window.innerWidth, window.innerHeight);
+    img.style.width = s.w+'px'; img.style.height = s.h+'px';
+  }
+
+  /* ══════ BUILD SLIDES ══════ */
   function buildSlides(catKey) {
     currentCat = catKey;
     var photos = categories[catKey];
-    activeIndex = -1;
-    loadedCount = 0;
-    firstLoaded = false;
-    total = photos.length;
-
-    // Clear
+    activeIndex = -1; loadedCount = 0; firstLoaded = false;
     slidesContainer.innerHTML = '';
     loader.classList.remove('hidden');
     scrollInd.classList.remove('visible');
-
-    // Scroll to top
     window.scrollTo({ top: 0, behavior: 'auto' });
 
+    // Hero slide
+    var hero = document.createElement('div');
+    hero.className = 'slide hero-slide';
+    var grid = document.createElement('div');
+    grid.className = 'hero-grid';
+    for (var g = 0; g < 30; g++) {
+      var gi = document.createElement('img');
+      gi.src = heroPhotoUrls[g % heroPhotoUrls.length];
+      gi.style.animationDelay = (g * 40) + 'ms';
+      gi.alt = '';
+      grid.appendChild(gi);
+    }
+    hero.appendChild(grid);
+    var overlay = document.createElement('div');
+    overlay.className = 'hero-overlay';
+    hero.appendChild(overlay);
+    var vig = document.createElement('div');
+    vig.className = 'vignette';
+    vig.style.opacity = '1';
+    hero.appendChild(vig);
+    var heroText = document.createElement('div');
+    heroText.className = 'hero-text';
+    heroText.innerHTML = '<h1>portfolio</h1><p>photography collection</p>';
+    hero.appendChild(heroText);
+    slidesContainer.appendChild(hero);
+
+    // Photo slides
     for (var i = 0; i < photos.length; i++) {
       var p = photos[i];
       var slide = document.createElement('div');
       slide.className = 'slide';
-
       var img = document.createElement('img');
-      img.src = p.src;
+      img.className = 'main-photo';
+      img.src = imgUrl(p.base, currentRes);
       img.alt = p.alt;
       img.crossOrigin = 'anonymous';
       slide.appendChild(img);
+      var v = document.createElement('div');
+      v.className = 'vignette';
+      slide.appendChild(v);
 
-      var vig = document.createElement('div');
-      vig.className = 'vignette';
-      slide.appendChild(vig);
-
+      // Photo info
       var info = document.createElement('div');
       info.className = 'photo-info';
-      info.innerHTML = p.lens + '<br>' + p.date;
+      var photoSrc = imgUrl(p.base, 'low');
+      info.innerHTML =
+        '<img class="hover-photo" src="'+photoSrc+'" />' +
+        '<div class="info-line hoverable" data-base="'+p.lens+'" data-ext=" to f/16 - 7artisans">' + p.lens + '<span class="extra-text"></span></div>' +
+        '<div class="info-line hoverable" data-base="'+p.sensor+'" data-ext=" Sony a6400">' + p.sensor + '<span class="extra-text"></span></div>' +
+        '<div class="info-line">' + p.date + '</div>';
       slide.appendChild(info);
-
       slidesContainer.appendChild(slide);
     }
 
-    slides = document.querySelectorAll('.slide');
-    slideImages = document.querySelectorAll('.slide img');
-    counterEl.textContent = '1 / ' + total;
+    total = photos.length + 1; // +1 for hero
+    slides = slidesContainer.querySelectorAll('.slide');
+    slideImages = slidesContainer.querySelectorAll('.slide img.main-photo');
+    counterEl.textContent = '';
 
+    // Setup hover on info lines
+    setupInfoHovers();
+
+    // Load handlers
     slideImages.forEach(function(img) {
-      if (img.complete && img.naturalWidth > 0) {
-        onImgLoad(img);
-      } else {
+      if (img.complete && img.naturalWidth > 0) onImgLoad(img);
+      else {
         img.addEventListener('load', function() { onImgLoad(img); });
-        img.addEventListener('error', function() {
-          loadedCount++;
-          if (!firstLoaded) { firstLoaded = true; loader.classList.add('hidden'); }
-        });
+        img.addEventListener('error', function() { loadedCount++; if(!firstLoaded){firstLoaded=true;loader.classList.add('hidden');} });
       }
     });
 
+    // Hero loads fast, just hide loader
+    if (slideImages.length === 0) {
+      loader.classList.add('hidden');
+      firstLoaded = true;
+    }
+    setTimeout(function() {
+      loader.classList.add('hidden');
+      firstLoaded = true;
+      scrollInd.classList.add('visible');
+      activateSlide(0);
+    }, 500);
+
     buildFilmFrames(catKey);
-  }
-
-  // ── Image sizing ──
-  function containSize(natW, natH, boxW, boxH) {
-    var scale = Math.min(boxW / natW, boxH / natH);
-    return { w: Math.round(natW * scale), h: Math.round(natH * scale) };
-  }
-
-  function coverSize(natW, natH, boxW, boxH) {
-    var scale = Math.max(boxW / natW, boxH / natH);
-    return { w: Math.round(natW * scale), h: Math.round(natH * scale) };
-  }
-
-  function setSmallSize(img) {
-    var natW = img.naturalWidth || 3;
-    var natH = img.naturalHeight || 2;
-    var s = containSize(natW, natH, window.innerWidth * 0.8, window.innerHeight * 0.8);
-    img.style.width = s.w + 'px';
-    img.style.height = s.h + 'px';
-  }
-
-  function setExpandSize(img) {
-    var natW = img.naturalWidth || 3;
-    var natH = img.naturalHeight || 2;
-    var s = coverSize(natW, natH, window.innerWidth, window.innerHeight);
-    img.style.width = s.w + 'px';
-    img.style.height = s.h + 'px';
+    buildPeekFrames(catKey);
   }
 
   function onImgLoad(img) {
-    setSmallSize(img);
+    setSmall(img);
     img.classList.add('loaded');
     loadedCount++;
     if (!firstLoaded) {
@@ -609,278 +935,398 @@
       loader.classList.add('hidden');
       scrollInd.classList.add('visible');
       updateRatio();
-      setTimeout(function() { activateSlide(0); }, 150);
     }
   }
 
+  /* ══════ ACTIVATE SLIDE ══════ */
   function activateSlide(idx) {
     if (idx === activeIndex) return;
     activeIndex = idx;
-    for (var i = 0; i < total; i++) {
-      var img = slides[i].querySelector('img');
+    var isHero = (idx === 0);
+
+    for (var i = 0; i < slides.length; i++) {
+      if (i === 0) continue; // hero has no main-photo
+      var img = slides[i].querySelector('img.main-photo');
+      if (!img) continue;
       if (i === idx) {
         img.classList.add('expand');
-        setExpandSize(img);
+        setExpand(img);
         slides[i].classList.add('active');
       } else {
         img.classList.remove('expand');
-        setSmallSize(img);
+        setSmall(img);
         slides[i].classList.remove('active');
       }
     }
+
+    // Hero active state
+    if (isHero) {
+      slides[0].classList.add('active');
+    } else {
+      slides[0].classList.remove('active');
+    }
+
+    // Counter
+    if (isHero) {
+      counterEl.textContent = '';
+    } else {
+      counterEl.textContent = idx + ' / ' + (total - 1);
+    }
+
+    // Frosted glass on corners for hero
+    counterEl.classList.toggle('frosted', isHero);
+    settingsBtn.classList.toggle('frosted', isHero);
+    leatherTab.style.boxShadow = isHero ? '0 3px 10px rgba(0,0,0,0.5)' : '0 3px 10px rgba(0,0,0,0.5)';
+
+    // Resize group: hide on hero
     updateRatio();
-    if (menuOpen) updateFilmHighlight();
+
+    if (filmMenuOpen) updateFilmHighlight();
+    updatePeekHighlight();
   }
 
-  // ── Scroll ──
+  /* ══════ SCROLL ══════ */
   var scrollTimer = null;
   function onScroll() {
-    var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+    var st = document.documentElement.scrollTop || document.body.scrollTop;
     var vh = window.innerHeight;
-    var nearestIdx = Math.round(scrollTop / vh);
-    nearestIdx = Math.max(0, Math.min(nearestIdx, total - 1));
-    counterEl.textContent = (nearestIdx + 1) + ' / ' + total;
+    var nearest = Math.round(st / vh);
+    nearest = Math.max(0, Math.min(nearest, total - 1));
+
+    if (nearest === 0) counterEl.textContent = '';
+    else counterEl.textContent = nearest + ' / ' + (total - 1);
 
     clearTimeout(scrollTimer);
     scrollTimer = setTimeout(function() {
-      var st = document.documentElement.scrollTop || document.body.scrollTop;
-      var snapped = Math.round(st / vh);
+      var s = document.documentElement.scrollTop || document.body.scrollTop;
+      var snapped = Math.round(s / vh);
       snapped = Math.max(0, Math.min(snapped, total - 1));
       activateSlide(snapped);
     }, 80);
 
-    if (scrollTop > vh * 0.15) {
-      scrollInd.classList.remove('visible');
-    } else {
-      if (loadedCount >= 1) scrollInd.classList.add('visible');
-    }
+    if (st > vh * 0.15) scrollInd.classList.remove('visible');
+    else if (firstLoaded) scrollInd.classList.add('visible');
   }
 
-  window.addEventListener('scroll', function() {
-    requestAnimationFrame(onScroll);
-  }, { passive: true });
+  window.addEventListener('scroll', function() { requestAnimationFrame(onScroll); }, { passive: true });
 
   window.addEventListener('resize', function() {
-    for (var i = 0; i < total; i++) {
-      var img = slides[i].querySelector('img');
-      if (i === activeIndex) setExpandSize(img);
-      else setSmallSize(img);
+    for (var i = 1; i < slides.length; i++) {
+      var img = slides[i].querySelector('img.main-photo');
+      if (!img) continue;
+      if (i === activeIndex) setExpand(img);
+      else setSmall(img);
     }
     updateRatio();
   });
 
-  // ── Build film strip sprockets & frames ──
+  /* ══════ FILM STRIP ══════ */
   function buildCatSprockets() {
-    var catSprocketsL = document.getElementById('cat-sprockets-left');
-    var catSprocketsR = document.getElementById('cat-sprockets-right');
-    if (catSprocketsL.children.length > 0) return;
-    for (var c = 0; c < 20; c++) {
-      var cl = document.createElement('div');
-      cl.className = 'sprocket';
-      catSprocketsL.appendChild(cl);
-      var cr = document.createElement('div');
-      cr.className = 'sprocket';
-      catSprocketsR.appendChild(cr);
+    var el = ['cat-sprockets-left','cat-sprockets-right'];
+    el.forEach(function(id) {
+      var c = document.getElementById(id);
+      if (c.children.length > 0) return;
+      for (var i = 0; i < 20; i++) {
+        var s = document.createElement('div'); s.className = 'sprocket'; c.appendChild(s);
+      }
+    });
+  }
+
+  function fillSprockets(id, n) {
+    var c = document.getElementById(id); c.innerHTML = '';
+    for (var i = 0; i < n; i++) {
+      var s = document.createElement('div'); s.className = 'sprocket'; c.appendChild(s);
     }
   }
 
   function buildFilmFrames(catKey) {
-    var sprocketsL = document.getElementById('sprockets-left');
-    var sprocketsR = document.getElementById('sprockets-right');
-    sprocketsL.innerHTML = '';
-    sprocketsR.innerHTML = '';
     filmFramesEl.innerHTML = '';
-
+    fillSprockets('sprockets-left', 40);
+    fillSprockets('sprockets-right', 40);
     var photos = categories[catKey];
 
-    // Fill sprockets for full height
-    for (var s = 0; s < 40; s++) {
-      var sl = document.createElement('div');
-      sl.className = 'sprocket';
-      sprocketsL.appendChild(sl);
-      var sr = document.createElement('div');
-      sr.className = 'sprocket';
-      sprocketsR.appendChild(sr);
-    }
+    // Hero frame first
+    var hf = document.createElement('div'); hf.className = 'film-frame hero-thumb';
+    var ht = document.createElement('img');
+    ht.src = heroPhotoUrls[0]; ht.alt = 'hero';
+    ht.style.filter = 'grayscale(1)';
+    hf.appendChild(ht);
+    var hn = document.createElement('span'); hn.className = 'frame-num';
+    hn.textContent = '0'; hf.appendChild(hn);
+    hf.addEventListener('click', function() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    filmFramesEl.appendChild(hf);
 
     for (var i = 0; i < photos.length; i++) {
-      var frame = document.createElement('div');
-      frame.className = 'film-frame';
-      if (photos[i].portrait) frame.classList.add('portrait');
-
-      var thumb = document.createElement('img');
-      thumb.src = photos[i].src;
-      thumb.alt = photos[i].alt;
-      frame.appendChild(thumb);
-
-      var num = document.createElement('span');
-      num.className = 'frame-num';
-      num.textContent = (i + 1) + 'A';
-      frame.appendChild(num);
-
-      frame.setAttribute('data-index', i);
-      frame.addEventListener('click', (function(idx) {
+      var f = document.createElement('div'); f.className = 'film-frame';
+      var t = document.createElement('img');
+      t.src = imgUrl(photos[i].base, 'low'); t.alt = photos[i].alt;
+      f.appendChild(t);
+      var n = document.createElement('span'); n.className = 'frame-num';
+      n.textContent = (i+1) + 'a'; f.appendChild(n);
+      f.setAttribute('data-index', i);
+      f.addEventListener('click', (function(idx) {
         return function() {
-          var vh = window.innerHeight;
-          window.scrollTo({ top: vh * idx, behavior: 'smooth' });
+          window.scrollTo({ top: window.innerHeight * (idx + 1), behavior: 'smooth' });
         };
       })(i));
-
-      filmFramesEl.appendChild(frame);
+      filmFramesEl.appendChild(f);
     }
-
-    if (menuOpen) updateFilmHighlight();
+    if (filmMenuOpen) updateFilmHighlight();
   }
 
   function updateFilmHighlight() {
     var frames = filmFramesEl.querySelectorAll('.film-frame');
     for (var i = 0; i < frames.length; i++) {
-      if (i === activeIndex) frames[i].classList.add('current');
-      else frames[i].classList.remove('current');
+      // frame 0 = hero (activeIndex 0), frame 1+ = photos (activeIndex 1+)
+      frames[i].classList.toggle('current', i === activeIndex);
     }
   }
 
-  // ── Menu toggle ──
-  function toggleMenu() {
-    menuOpen = !menuOpen;
-    burger.classList.toggle('open', menuOpen);
-    filmOvl.classList.toggle('open', menuOpen);
-    if (menuOpen) updateFilmHighlight();
+  /* ══════ PEEK STRIP ══════ */
+  function buildPeekFrames(catKey) {
+    peekFrames.innerHTML = '';
+    fillSprockets('peek-sprockets-left', 30);
+    fillSprockets('peek-sprockets-right', 30);
+    var photos = categories[catKey];
+
+    // Hero frame first
+    var hf = document.createElement('div'); hf.className = 'film-frame hero-thumb';
+    var ht = document.createElement('img');
+    ht.src = heroPhotoUrls[0]; ht.alt = 'hero';
+    ht.style.filter = 'grayscale(1)';
+    hf.appendChild(ht);
+    var hn = document.createElement('span'); hn.className = 'frame-num';
+    hn.textContent = '0'; hf.appendChild(hn);
+    peekFrames.appendChild(hf);
+
+    for (var i = 0; i < photos.length; i++) {
+      var f = document.createElement('div'); f.className = 'film-frame';
+      var t = document.createElement('img');
+      t.src = imgUrl(photos[i].base, 'low'); t.alt = photos[i].alt;
+      f.appendChild(t);
+      var n = document.createElement('span'); n.className = 'frame-num';
+      n.textContent = (i+1) + 'a'; f.appendChild(n);
+      peekFrames.appendChild(f);
+    }
   }
 
-  burger.addEventListener('click', toggleMenu);
-  filmBkdp.addEventListener('click', function() {
-    if (menuOpen) toggleMenu();
+  function updatePeekHighlight() {
+    var frames = peekFrames.querySelectorAll('.film-frame');
+    for (var i = 0; i < frames.length; i++) {
+      frames[i].classList.toggle('current', i === activeIndex);
+    }
+  }
+
+  // Peek strip click → open menu
+  peekStrip.addEventListener('click', function() {
+    if (!filmMenuOpen) toggleFilmMenu();
   });
 
-  // ── Category click handlers ──
-  var catFrames = document.querySelectorAll('.cat-frame');
-  catFrames.forEach(function(cf) {
+  // Peek strip: show on scroll or mouse near right edge
+  var peekTimer = null;
+  function showPeek() {
+    peekStrip.classList.add('visible');
+    clearTimeout(peekTimer);
+    peekTimer = setTimeout(function() {
+      peekStrip.classList.remove('visible');
+    }, 1500);
+  }
+
+  window.addEventListener('scroll', function() {
+    showPeek();
+  }, { passive: true });
+
+  document.addEventListener('mousemove', function(e) {
+    if (e.clientX > window.innerWidth * 0.92) {
+      peekStrip.classList.add('visible');
+      clearTimeout(peekTimer);
+      // keep visible while mouse is near edge — hide handled by mousemove away
+    } else if (peekStrip.classList.contains('visible') && !peekStrip.matches(':hover')) {
+      clearTimeout(peekTimer);
+      peekTimer = setTimeout(function() {
+        peekStrip.classList.remove('visible');
+      }, 800);
+    }
+  });
+
+  /* ══════ FILM MENU TOGGLE ══════ */
+  function toggleFilmMenu() {
+    filmMenuOpen = !filmMenuOpen;
+    filmOvl.classList.toggle('open', filmMenuOpen);
+    loremWindow.classList.toggle('open', filmMenuOpen);
+    settingsPopup.classList.toggle('open', filmMenuOpen);
+    tabSub.textContent = filmMenuOpen ? 'tap to close' : 'tap to open menu';
+
+    if (filmMenuOpen) {
+      filmCanister.classList.add('visible');
+      setTimeout(function() {
+        filmPanel.classList.add('animate-in');
+      }, 200);
+      updateFilmHighlight();
+    } else {
+      filmPanel.classList.remove('animate-in');
+      setTimeout(function() {
+        filmCanister.classList.remove('visible');
+      }, 400);
+    }
+  }
+
+  leatherTab.addEventListener('click', toggleFilmMenu);
+  settingsBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    toggleFilmMenu();
+  });
+  filmBkdp.addEventListener('click', function() { if (filmMenuOpen) toggleFilmMenu(); });
+
+  // Category clicks
+  document.querySelectorAll('.cat-frame').forEach(function(cf) {
     cf.addEventListener('click', function() {
       var cat = cf.getAttribute('data-cat');
       if (cat === currentCat) return;
-      catFrames.forEach(function(c) { c.classList.remove('active'); });
+      document.querySelectorAll('.cat-frame').forEach(function(c) { c.classList.remove('active'); });
       cf.classList.add('active');
       buildSlides(cat);
     });
   });
 
-  // ── Resize hint ──
+  /* ══════ SETTINGS ══════ */
+
+  document.querySelectorAll('.setting-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var setting = btn.getAttribute('data-setting');
+      var val = btn.getAttribute('data-val');
+      // Update active button in group
+      btn.parentElement.querySelectorAll('.setting-btn').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+
+      if (setting === 'font') {
+        document.documentElement.setAttribute('data-font', val);
+      } else if (setting === 'fontsize') {
+        document.documentElement.setAttribute('data-fontsize', val);
+      } else if (setting === 'lang') {
+        // placeholder
+      } else if (setting === 'res') {
+        currentRes = val;
+        buildSlides(currentCat);
+      }
+    });
+  });
+
+  /* ══════ RESIZE HINT + CROP PREVIEW ══════ */
   var TOLERANCE = 0.06;
 
   function getTargetRatio() {
-    if (activeIndex < 0 || !slides[activeIndex]) return 3 / 2;
-    var img = slides[activeIndex].querySelector('img');
-    var natW = img.naturalWidth || 3;
-    var natH = img.naturalHeight || 2;
-    return natW / natH;
+    if (activeIndex <= 0 || !slides[activeIndex]) return 3/2;
+    var img = slides[activeIndex].querySelector('img.main-photo');
+    if (!img) return 3/2;
+    return (img.naturalWidth||3) / (img.naturalHeight||2);
+  }
+
+  function gcd(a,b) { return b===0?a:gcd(b,a%b); }
+  function niceRatio(w,h) {
+    var g = gcd(Math.round(w),Math.round(h));
+    var rw = Math.round(w/g), rh = Math.round(h/g);
+    if (rw>30||rh>30) {
+      var r = w/h;
+      var c = [[16,9],[16,10],[21,9],[4,3],[3,2],[2,3],[3,4],[1,1],[9,16]];
+      for (var i=0;i<c.length;i++) { if(Math.abs(r-c[i][0]/c[i][1])<0.05) return c[i][0]+':'+c[i][1]; }
+    }
+    return rw+':'+rh;
   }
 
   function updateRatio() {
+    // Hide on hero
+    if (activeIndex === 0) {
+      resizeGroup.classList.remove('visible');
+      return;
+    }
     var target = getTargetRatio();
     var ratio = window.innerWidth / window.innerHeight;
     var diff = ratio - target;
     if (Math.abs(diff) < TOLERANCE) {
-      hint.classList.remove('visible');
+      resizeGroup.classList.remove('visible');
       return;
     }
-    hint.classList.add('visible');
-    if (diff > 0) {
-      labelEl.innerHTML = 'shrink left \u2190<br>or expand down \u2193';
-    } else {
-      labelEl.innerHTML = 'expand right \u2192<br>or shrink up \u2191';
-    }
-  }
+    resizeGroup.classList.add('visible');
 
-  // ── Crop preview ──
-  function gcd(a, b) { return b === 0 ? a : gcd(b, a % b); }
-  function niceRatio(w, h) {
-    var g = gcd(Math.round(w), Math.round(h));
-    var rw = Math.round(w / g);
-    var rh = Math.round(h / g);
-    if (rw > 30 || rh > 30) {
-      var r = w / h;
-      var common = [[16,9],[16,10],[21,9],[4,3],[3,2],[2,3],[3,4],[1,1],[9,16]];
-      for (var i = 0; i < common.length; i++) {
-        if (Math.abs(r - common[i][0]/common[i][1]) < 0.05) return common[i][0] + ':' + common[i][1];
-      }
+    if (diff > 0) {
+      hintLabel.innerHTML = 'shrink horizontally \u2194<br>or expand vertically \u2195';
+    } else {
+      hintLabel.innerHTML = 'expand horizontally \u2194<br>or shrink vertically \u2195';
     }
-    return rw + ':' + rh;
+
+    updateCropPreview();
   }
 
   function updateCropPreview() {
-    if (activeIndex < 0 || !slides[activeIndex]) return;
-    var img = slides[activeIndex].querySelector('img');
-    var natW = img.naturalWidth || 3;
-    var natH = img.naturalHeight || 2;
-    var vpW = window.innerWidth;
-    var vpH = window.innerHeight;
-    var photoRatio = natW / natH;
-    var vpRatio = vpW / vpH;
-
-    var boxSize = screen.width * 0.1;
+    if (activeIndex <= 0 || !slides[activeIndex]) return;
+    var img = slides[activeIndex].querySelector('img.main-photo');
+    if (!img) return;
+    var nw = img.naturalWidth||3, nh = img.naturalHeight||2;
+    var vpW = window.innerWidth, vpH = window.innerHeight;
+    var pr = nw/nh, vr = vpW/vpH;
+    var box = sw * 0.07;
 
     var pW, pH;
-    if (photoRatio > 1) { pW = boxSize; pH = boxSize / photoRatio; }
-    else { pH = boxSize; pW = boxSize * photoRatio; }
+    if (pr > 1) { pW = box; pH = box/pr; }
+    else { pH = box; pW = box*pr; }
 
     var vW, vH;
-    if (vpRatio > photoRatio) { vW = pW; vH = pW / vpRatio; }
-    else { vH = pH; vW = pH * vpRatio; }
+    if (vr > pr) { vW = pW; vH = pW/vr; }
+    else { vH = pH; vW = pH*vr; }
 
-    var maxW = Math.max(pW, vW);
-    var maxH = Math.max(pH, vH);
+    var mW = Math.max(pW,vW), mH = Math.max(pH,vH);
+    cropPreview.style.width = mW+'px';
+    cropPreview.style.height = mH+'px';
 
-    cropPrev.style.width = maxW + 'px';
-    cropPrev.style.height = maxH + 'px';
+    cropDimImg.src = img.src;
+    cropBrightImg.src = img.src;
 
-    var src = img.src;
-    cropDim.src = src;
-    cropBright.src = src;
+    var pL=(mW-pW)/2, pT=(mH-pH)/2;
+    photoFullEl.style.width=pW+'px'; photoFullEl.style.height=pH+'px';
+    photoFullEl.style.left=pL+'px'; photoFullEl.style.top=pT+'px';
 
-    var pLeft = (maxW - pW) / 2;
-    var pTop = (maxH - pH) / 2;
-    photoFull.style.width = pW + 'px';
-    photoFull.style.height = pH + 'px';
-    photoFull.style.left = pLeft + 'px';
-    photoFull.style.top = pTop + 'px';
+    var vL=(mW-vW)/2, vT=(mH-vH)/2;
+    vpCropEl.style.width=vW+'px'; vpCropEl.style.height=vH+'px';
+    vpCropEl.style.left=vL+'px'; vpCropEl.style.top=vT+'px';
 
-    var vLeft = (maxW - vW) / 2;
-    var vTop = (maxH - vH) / 2;
-    vpCrop.style.width = vW + 'px';
-    vpCrop.style.height = vH + 'px';
-    vpCrop.style.left = vLeft + 'px';
-    vpCrop.style.top = vTop + 'px';
+    cropBrightImg.style.width=pW+'px'; cropBrightImg.style.height=pH+'px';
+    cropBrightImg.style.left=(pL-vL)+'px'; cropBrightImg.style.top=(pT-vT)+'px';
 
-    cropBright.style.width = pW + 'px';
-    cropBright.style.height = pH + 'px';
-    cropBright.style.left = (pLeft - vLeft) + 'px';
-    cropBright.style.top = (pTop - vTop) + 'px';
-
-    photoLbl.textContent = niceRatio(natW, natH) + ' photo';
-    photoLbl.style.left = pLeft + 'px';
-    photoLbl.style.top = (pTop - screen.width * 0.014) + 'px';
+    photoRatioLbl.textContent = niceRatio(nw,nh) + ' photo';
+    photoRatioLbl.style.left = pL+'px';
+    photoRatioLbl.style.top = (pT - sw*0.01) + 'px';
   }
 
-  function positionCropPreview() {
-    var hintRect = hint.getBoundingClientRect();
-    cropPrev.style.bottom = (window.innerHeight - hintRect.top + screen.width * 0.01) + 'px';
-    cropPrev.style.right = (window.innerWidth - hintRect.right) + 'px';
+  /* ══════ PHOTO INFO HOVER ══════ */
+  function setupInfoHovers() {
+    document.querySelectorAll('.info-line.hoverable').forEach(function(line) {
+      line.addEventListener('mouseenter', function() {
+        line.classList.add('hovered');
+        var ext = line.querySelector('.extra-text');
+        if (ext) ext.textContent = line.getAttribute('data-ext');
+        var info = line.closest('.photo-info');
+        if (info) info.classList.add('show-photo');
+      });
+      line.addEventListener('mouseleave', function() {
+        line.classList.remove('hovered');
+        var info = line.closest('.photo-info');
+        if (info) info.classList.remove('show-photo');
+      });
+    });
   }
 
-  hint.addEventListener('mouseenter', function() {
-    updateCropPreview();
-    positionCropPreview();
-    cropPrev.classList.add('visible');
-  });
+  /* ══════ SOUND ══════ */
+  function playSound() {
+    var audio = document.getElementById('shutter-sound');
+    if (audio.src) { audio.currentTime = 0; audio.play().catch(function(){}); }
+  }
 
-  hint.addEventListener('mouseleave', function() {
-    cropPrev.classList.remove('visible');
-  });
-
-  // ── Init ──
+  /* ══════ INIT ══════ */
   buildCatSprockets();
-  buildSlides('highlights');
+  buildSlides('main');
 })();
 </script>
 </body>
