@@ -28,6 +28,9 @@
   [data-font="default"] { --size-scale: 1.1; }
   [data-font="default"][data-fontsize="small"] { --size-scale: 0.88; }
   [data-font="default"][data-fontsize="large"] { --size-scale: 1.375; }
+  [data-font="dyslexic"] { --size-scale: 0.8; }
+  [data-font="dyslexic"][data-fontsize="small"] { --size-scale: 0.64; }
+  [data-font="dyslexic"][data-fontsize="large"] { --size-scale: 1; }
 
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -36,21 +39,21 @@
     scroll-snap-type: y mandatory;
     overflow-y: scroll;
     scrollbar-width: none;
-    background: #0a0a0a;
+    background: rgb(118,118,118);
   }
   html::-webkit-scrollbar { display: none; }
 
   body {
     margin: 0;
     font-family: var(--font-active);
-    background: #0a0a0a;
+    background: rgb(118,118,118);
     color: #fff;
   }
 
   /* ══════ LOADER ══════ */
   #loader {
     position: fixed; inset: 0; z-index: 100;
-    background: #0a0a0a;
+    background: rgb(118,118,118);
     display: flex; align-items: center; justify-content: center;
     transition: opacity 0.8s ease, visibility 0.8s ease;
   }
@@ -73,7 +76,7 @@
     scroll-snap-stop: always;
     overflow: hidden;
     display: flex; align-items: center; justify-content: center;
-    background: #0a0a0a;
+    background: rgb(118,118,118);
   }
   .slide img.main-photo {
     position: absolute;
@@ -167,7 +170,7 @@
     cursor: default;
     position: relative;
   }
-  .photo-info .info-line.hoverable { cursor: pointer; }
+  .photo-info .info-line.hoverable { cursor: default; }
   .photo-info .info-line .extra-text { display: none; }
   .photo-info .info-line.hovered .extra-text { display: inline; }
   .photo-info .hover-photo {
@@ -416,7 +419,7 @@
   .sprocket {
     width: 0.45rem; height: 0.3rem;
     border-radius: 0.06rem;
-    background: #0a0a0a;
+    background: #111;
     border: 1px solid #333;
     flex-shrink: 0;
   }
@@ -526,10 +529,10 @@
   }
   #resize-group.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
   #resize-group .label {
-    font-size: calc(0.85rem * var(--size-scale)); font-weight: 300;
-    letter-spacing: 0.18em; text-transform: none;
+    font-size: calc(0.6rem * var(--size-scale)); font-weight: 300;
+    letter-spacing: 0.12em; text-transform: none;
     color: #fff;
-    white-space: nowrap; user-select: none; cursor: pointer;
+    white-space: nowrap; user-select: none;
     text-align: right; line-height: 1.3;
   }
 
@@ -578,23 +581,20 @@
     z-index: 50;
     display: flex; flex-direction: column;
     align-items: center; gap: 0.3rem;
-    opacity: 0; transition: opacity 0.6s ease;
+    opacity: 1;
     cursor: pointer;
+    pointer-events: auto;
   }
-  #scroll-down.visible { opacity: 1; pointer-events: auto; }
   #scroll-down span {
     font-size: calc(0.75rem * var(--size-scale)); font-weight: 300;
     letter-spacing: 0.2em; text-transform: none; color: #fff;
+    transition: opacity 0.4s ease;
   }
+  #scroll-down.scrolled span { opacity: 0; }
   #scroll-down .chevron {
     width: 0.7rem; height: 0.7rem;
     stroke: #fff; stroke-width: 1.5; fill: none;
     stroke-linecap: round; stroke-linejoin: round;
-    animation: float 2s ease-in-out infinite;
-  }
-  @keyframes float {
-    0%, 100% { transform: translateY(0); opacity: 0.3; }
-    50% { transform: translateY(0.2rem); opacity: 0.7; }
   }
 
   /* ══════ PEEK FILM STRIP (right) ══════ */
@@ -610,12 +610,12 @@
   }
   #peek-strip.visible {
     transform: translateX(75%);
-    opacity: 0.4;
+    opacity: 0.6;
     pointer-events: auto;
   }
   #peek-strip.visible:hover {
     transform: translateX(10%);
-    opacity: 0.85;
+    opacity: 1;
   }
   #film-overlay.open ~ #peek-strip {
     opacity: 0 !important;
@@ -761,38 +761,45 @@
   var currentRes = 'default';
 
   function imgUrl(base, res) {
+    // If it's a local file (doesn't have 'http'), just return the path
+    if (!base.startsWith('http')) return base;
+  
+    // Otherwise, do the Unsplash resolution replacement
     return base.replace(/w=\d+/, 'w=' + resMap[res]);
   }
 
   var categories = {
     main: [
-      { base: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=2400&q=85&fit=crop&ar=3:2', alt: 'Mountain landscape', lens: '35mm f1.4', sensor: 'APS-C', date: '03/15/2023' },
-      { base: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=2400&q=85&fit=crop&ar=3:2', alt: 'Forest valley', lens: '35mm f1.4', sensor: 'APS-C', date: '06/22/2023' },
-      { base: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1600&q=85&fit=crop&ar=2:3', alt: 'Portrait', lens: '35mm f1.4', sensor: 'APS-C', date: '09/10/2023', portrait: true },
-      { base: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=2400&q=85&fit=crop&ar=3:2', alt: 'Golden hills', lens: '35mm f1.4', sensor: 'APS-C', date: '11/03/2023' },
-      { base: 'https://images.unsplash.com/photo-1433086966358-54859d0ed716?w=2400&q=85&fit=crop&ar=3:2', alt: 'Waterfall bridge', lens: '35mm f1.4', sensor: 'APS-C', date: '12/28/2023' },
+      { base: 'photos/a1.jpg', thumb: 'photos/a1-small.jpg', alt: 'Mountain landscape', lens: '35mm f1.4', sensor: 'APS-C', stock: 'kodak portra 400', date: '03/15/2023' },
+      { base: 'photos/a2.jpg', thumb: 'photos/a2-small.jpg', alt: 'Forest valley', lens: '35mm f1.4', sensor: 'APS-C', stock: 'kodak portra 400', date: '06/22/2023' },
+      { base: 'photos/a3.jpg', thumb: 'photos/a3-small.jpg', alt: 'Portrait', lens: '35mm f1.4', sensor: 'APS-C', stock: 'fuji superia 400', date: '09/10/2023', portrait: true },
+      { base: 'photos/a4.jpg', thumb: 'photos/a4-small.jpg', alt: 'Golden hills', lens: '35mm f1.4', sensor: 'APS-C', stock: 'kodak gold 200', date: '11/03/2023' },
+      { base: 'photos/a5.jpg', thumb: 'photos/a5-small.jpg', alt: 'Waterfall bridge', lens: '35mm f1.4', sensor: 'APS-C', stock: 'kodak portra 400', date: '12/28/2023' },
     ],
     portraits: [
-      { base: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=1600&q=85&fit=crop&ar=2:3', alt: 'Portrait studio', lens: '35mm f1.4', sensor: 'APS-C', date: '01/14/2024', portrait: true },
-      { base: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=1600&q=85&fit=crop&ar=2:3', alt: 'Natural light', lens: '35mm f1.4', sensor: 'APS-C', date: '02/20/2024', portrait: true },
-      { base: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=1600&q=85&fit=crop&ar=2:3', alt: 'Street portrait', lens: '35mm f1.4', sensor: 'APS-C', date: '04/05/2024', portrait: true },
+      { base: 'photos/b1.jpg', thumb: 'photos/b1-small.jpg', alt: 'Portrait studio', lens: '35mm f1.4', sensor: 'APS-C', stock: 'kodak portra 800', date: '01/14/2024', portrait: true },
+      { base: 'photos/b2.jpg', thumb: 'photos/b2-small.jpg', alt: 'Natural light', lens: '35mm f1.4', sensor: 'APS-C', stock: 'fuji pro 400h', date: '02/20/2024', portrait: true },
+      { base: 'photos/b3.jpg', thumb: 'photos/b3-small.jpg', alt: 'Street portrait', lens: '35mm f1.4', sensor: 'APS-C', stock: 'kodak portra 400', date: '04/05/2024', portrait: true },
     ],
     landscapes: [
-      { base: 'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=2400&q=85&fit=crop&ar=3:2', alt: 'Green hills', lens: '35mm f1.4', sensor: 'APS-C', date: '05/17/2024' },
-      { base: 'https://images.unsplash.com/photo-1465056836900-8f1e940f1904?w=2400&q=85&fit=crop&ar=3:2', alt: 'Ocean sunset', lens: '35mm f1.4', sensor: 'APS-C', date: '07/09/2024' },
-      { base: 'https://images.unsplash.com/photo-1426604966848-d7adac402bff?w=2400&q=85&fit=crop&ar=3:2', alt: 'Mountain forest', lens: '35mm f1.4', sensor: 'APS-C', date: '08/30/2024' },
+      { base: 'photos/c1.jpg', thumb: 'photos/c1-small.jpg', alt: 'Green hills', lens: '35mm f1.4', sensor: 'APS-C', stock: 'kodak ektar 100', date: '05/17/2024' },
+      { base: 'photos/c2.jpg', thumb: 'photos/c2-small.jpg', alt: 'Ocean sunset', lens: '35mm f1.4', sensor: 'APS-C', stock: 'kodak gold 200', date: '07/09/2024' },
+      { base: 'photos/c3.jpg', thumb: 'photos/c3-small.jpg', alt: 'Mountain forest', lens: '35mm f1.4', sensor: 'APS-C', stock: 'kodak ektar 100', date: '08/30/2024' },
     ]
   };
 
   var heroPhotoUrls = [
-    'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=60&fit=crop',
-    'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=400&q=60&fit=crop',
-    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=60&fit=crop',
-    'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=400&q=60&fit=crop',
-    'https://images.unsplash.com/photo-1433086966358-54859d0ed716?w=400&q=60&fit=crop',
-    'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&q=60&fit=crop',
-    'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=400&q=60&fit=crop',
-    'https://images.unsplash.com/photo-1465056836900-8f1e940f1904?w=400&q=60&fit=crop',
+    'photos/a1-small.jpg',
+    'photos/a2-small.jpg',
+    'photos/a3-small.jpg',
+    'photos/a4-small.jpg',
+    'photos/a5-small.jpg',
+    'photos/b1-small.jpg',
+    'photos/b2-small.jpg',
+    'photos/b3-small.jpg',
+    'photos/c1-small.jpg',
+    'photos/c2-small.jpg',
+    'photos/c3-small.jpg',
   ];
 
   /* ══════ DOM REFS ══════ */
@@ -857,7 +864,7 @@
     activeIndex = -1; loadedCount = 0; firstLoaded = false;
     slidesContainer.innerHTML = '';
     loader.classList.remove('hidden');
-    scrollInd.classList.remove('visible');
+    scrollInd.classList.remove('scrolled');
     window.scrollTo({ top: 0, behavior: 'auto' });
 
     // Hero slide only for main
@@ -888,35 +895,49 @@
       slidesContainer.appendChild(hero);
     }
 
-    // Photo slides
-    for (var i = 0; i < photos.length; i++) {
-      var p = photos[i];
-      var slide = document.createElement('div');
-      slide.className = 'slide';
-      var img = document.createElement('img');
-      img.className = 'main-photo';
-      img.src = imgUrl(p.base, currentRes);
-      img.alt = p.alt;
-      img.crossOrigin = 'anonymous';
-      slide.appendChild(img);
-      var v = document.createElement('div');
-      v.className = 'vignette';
-      slide.appendChild(v);
+// Photo slides
+for (var i = 0; i < photos.length; i++) {
+  var p = photos[i];
+  var slide = document.createElement('div');
+  slide.className = 'slide';
+  
+  var img = document.createElement('img');
+  img.className = 'main-photo';
+  
+  // Get the main high-res URL
+  var mainUrl = imgUrl(p.base, currentRes);
+  img.src = mainUrl;
+  
+  // FIX: Only use crossOrigin for external web links
+  if (mainUrl.startsWith('http')) {
+    img.crossOrigin = 'anonymous';
+  }
+  
+  img.alt = p.alt;
+  slide.appendChild(img);
+  
+  var v = document.createElement('div');
+  v.className = 'vignette';
+  slide.appendChild(v);
 
-      // Photo info
-      var info = document.createElement('div');
-      info.className = 'photo-info';
-      var photoSrc = imgUrl(p.base, 'low');
-      info.innerHTML =
-        '<img class="hover-photo" src="media/f095.png" data-for="lens" />' +
-        '<img class="hover-photo" src="media/a6400.png" data-for="sensor" />' +
-        '<div class="info-line hoverable" data-hover="lens" data-base="'+p.lens+'" data-ext=" to f/16 - 7artisans">' + p.lens + '<span class="extra-text"></span></div>' +
-        '<div class="info-line hoverable" data-hover="sensor" data-base="'+p.sensor+'" data-ext=" Sony a6400">' + p.sensor + '<span class="extra-text"></span></div>' +
-        '<div class="info-line date-line" data-year="'+p.date.split('/')[2]+'" data-full="'+p.date+'">' + p.date.split('/')[2] + '</div>';
-      slide.appendChild(info);
-      slidesContainer.appendChild(slide);
-    }
-
+  // Photo info
+  var info = document.createElement('div');
+  info.className = 'photo-info';
+  
+  // USE THUMB IF IT EXISTS, OTHERWISE FALLBACK TO 'LOW' RES BASE
+  var photoSrc = p.thumb ? p.thumb : imgUrl(p.base, 'low');
+  
+  info.innerHTML =
+    '<img class="hover-photo" src="media/f095.png" data-for="lens" />' +
+    '<img class="hover-photo" src="media/a6400.png" data-for="sensor" />' +
+    '<div class="info-line hoverable" data-hover="lens" data-base="'+p.lens+'" data-ext=" to f/16 - 7artisans">' + p.lens + '<span class="extra-text"></span></div>' +
+    '<div class="info-line hoverable" data-hover="sensor" data-base="'+p.sensor+'" data-ext=" Sony a6400">' + p.sensor + '<span class="extra-text"></span></div>' +
+    '<div class="info-line">' + p.stock + '</div>' +
+    '<div class="info-line date-line" data-year="'+p.date.split('/')[2]+'" data-full="'+p.date+'">' + p.date.split('/')[2] + '</div>';
+  
+  slide.appendChild(info);
+  slidesContainer.appendChild(slide);
+}
     total = photos.length + (isMain ? 1 : 0);
     slides = slidesContainer.querySelectorAll('.slide');
     slideImages = slidesContainer.querySelectorAll('.slide img.main-photo');
@@ -942,7 +963,7 @@
     setTimeout(function() {
       loader.classList.add('hidden');
       firstLoaded = true;
-      scrollInd.classList.add('visible');
+      scrollInd.classList.remove('scrolled');
       activateSlide(0);
     }, 500);
 
@@ -957,7 +978,7 @@
     if (!firstLoaded) {
       firstLoaded = true;
       loader.classList.add('hidden');
-      scrollInd.classList.add('visible');
+      scrollInd.classList.remove('scrolled');
       updateRatio();
     }
   }
@@ -1028,8 +1049,8 @@
       activateSlide(snapped);
     }, 80);
 
-    if (st > vh * 0.15) scrollInd.classList.remove('visible');
-    else if (firstLoaded) scrollInd.classList.add('visible');
+    if (st > vh * 0.15) scrollInd.classList.add('scrolled');
+    else scrollInd.classList.remove('scrolled');
   }
 
   window.addEventListener('scroll', function() { requestAnimationFrame(onScroll); }, { passive: true });
@@ -1072,7 +1093,7 @@
     }
   }
 
-  function buildFilmFrames(catKey) {
+function buildFilmFrames(catKey) {
     filmFramesEl.innerHTML = '';
     fillSprockets('sprockets-left', 40);
     fillSprockets('sprockets-right', 40);
@@ -1082,7 +1103,9 @@
     if (catKey === 'main') {
       var hf = document.createElement('div'); hf.className = 'film-frame hero-thumb';
       var ht = document.createElement('img');
-      ht.src = heroPhotoUrls[0]; ht.alt = 'hero';
+      // If you have a small version of your hero, put the path here:
+      ht.src = heroPhotoUrls[1] || heroPhotoUrls[0]; 
+      ht.alt = 'hero';
       ht.style.filter = 'grayscale(1)';
       hf.appendChild(ht);
       var hn = document.createElement('span'); hn.className = 'frame-num';
@@ -1097,7 +1120,11 @@
     for (var i = 0; i < photos.length; i++) {
       var f = document.createElement('div'); f.className = 'film-frame';
       var t = document.createElement('img');
-      t.src = imgUrl(photos[i].base, 'low'); t.alt = photos[i].alt;
+      
+      // FIX: Use the 'thumb' property if it exists in your categories data
+      t.src = photos[i].thumb ? photos[i].thumb : imgUrl(photos[i].base, 'low'); 
+      
+      t.alt = photos[i].alt;
       f.appendChild(t);
       var n = document.createElement('span'); n.className = 'frame-num';
       n.textContent = (i+1); f.appendChild(n);
@@ -1111,7 +1138,6 @@
     }
     if (filmMenuOpen) updateFilmHighlight();
   }
-
   function updateFilmHighlight() {
     var frames = filmFramesEl.querySelectorAll('.film-frame');
     for (var i = 0; i < frames.length; i++) {
@@ -1120,7 +1146,7 @@
   }
 
   /* ══════ PEEK STRIP ══════ */
-  function buildPeekFrames(catKey) {
+function buildPeekFrames(catKey) {
     peekFrames.innerHTML = '';
     fillSprockets('peek-sprockets-left', 30);
     fillSprockets('peek-sprockets-right', 30);
@@ -1130,7 +1156,7 @@
     // Frame 0: hero for main, back button for others
     var hf = document.createElement('div'); hf.className = 'film-frame hero-thumb';
     var ht = document.createElement('img');
-    ht.src = isMain ? heroPhotoUrls[0] : 'back.jpg';
+    ht.src = isMain ? heroPhotoUrls[0] : 'media/back.jpg';
     ht.alt = isMain ? 'hero' : 'back to main';
     if (isMain) ht.style.filter = 'grayscale(1)';
     hf.appendChild(ht);
@@ -1139,7 +1165,6 @@
     hf.addEventListener('click', function(e) {
       e.stopPropagation();
       if (!isMain) {
-        // Switch to main category
         document.querySelectorAll('.cat-frame').forEach(function(c) { c.classList.remove('active'); });
         document.querySelector('.cat-frame[data-cat="main"]').classList.add('active');
         buildSlides('main');
@@ -1153,7 +1178,11 @@
     for (var i = 0; i < photos.length; i++) {
       var f = document.createElement('div'); f.className = 'film-frame';
       var t = document.createElement('img');
-      t.src = imgUrl(photos[i].base, 'low'); t.alt = photos[i].alt;
+      
+      // FIX: Use the 'thumb' property here as well
+      t.src = photos[i].thumb ? photos[i].thumb : imgUrl(photos[i].base, 'low'); 
+      
+      t.alt = photos[i].alt;
       f.appendChild(t);
       var n = document.createElement('span'); n.className = 'frame-num';
       n.textContent = (i+1); f.appendChild(n);
@@ -1166,7 +1195,6 @@
       peekFrames.appendChild(f);
     }
   }
-
   function updatePeekHighlight() {
     var frames = peekFrames.querySelectorAll('.film-frame');
     var isMain = (currentCat === 'main');
@@ -1180,10 +1208,7 @@
     }
   }
 
-  // Peek strip: clicking non-frame areas opens menu
-  peekStrip.addEventListener('click', function(e) {
-    if (!e.target.closest('.film-frame') && !filmMenuOpen) toggleFilmMenu();
-  });
+  // Peek strip: photo clicks handle navigation individually
 
   // Peek strip: show on scroll briefly or mouse near right edge
   var peekScrollTimer = null;
@@ -1244,7 +1269,6 @@
       if (cat === currentCat) return;
       document.querySelectorAll('.cat-frame').forEach(function(c) { c.classList.remove('active'); });
       cf.classList.add('active');
-      if (filmMenuOpen) toggleFilmMenu();
       buildSlides(cat);
     });
   });
@@ -1393,7 +1417,7 @@
     });
 
     document.querySelectorAll('.date-line').forEach(function(line) {
-      line.style.cursor = 'pointer';
+      line.style.cursor = 'default';
       line.addEventListener('mouseenter', function() {
         var full = line.getAttribute('data-full');
         var parts = full.split('/');
