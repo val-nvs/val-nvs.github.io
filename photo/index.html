@@ -36,7 +36,6 @@
 
   html {
     height: 100%;
-    scroll-snap-type: y mandatory;
     overflow-y: scroll;
     scrollbar-width: none;
     background: rgb(118,118,118);
@@ -72,8 +71,6 @@
   .slide {
     position: relative;
     width: 100%; height: 100dvh;
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
     overflow: hidden;
     display: flex; align-items: center; justify-content: center;
     background: rgb(118,118,118);
@@ -211,6 +208,16 @@
     font-size: calc(0.85rem * var(--size-scale)); font-weight: 300;
     letter-spacing: 0.15em;
     color: #fff; user-select: none;
+    transition: opacity 0.4s ease;
+  }
+  
+  /* Per-slide counter (for continuous scroll mode) */
+  .slide-counter {
+    position: absolute; top: 1.45rem; left: 1.65rem; z-index: 10;
+    font-size: calc(0.85rem * var(--size-scale)); font-weight: 300;
+    letter-spacing: 0.15em;
+    color: #fff; user-select: none;
+    opacity: 0; /* Hidden by default */
     transition: opacity 0.4s ease;
   }
 
@@ -585,17 +592,21 @@
     cursor: pointer;
     pointer-events: auto;
   }
+  #scroll-down.hidden { opacity: 0; pointer-events: none; }
   #scroll-down span {
     font-size: calc(0.75rem * var(--size-scale)); font-weight: 300;
     letter-spacing: 0.2em; text-transform: none; color: #fff;
     transition: opacity 0.4s ease;
   }
   #scroll-down.scrolled span { opacity: 0; }
+  #scroll-down.scroll-to-top span { opacity: 1; } /* Always visible on last slide */
   #scroll-down .chevron {
     width: 0.7rem; height: 0.7rem;
     stroke: #fff; stroke-width: 1.5; fill: none;
     stroke-linecap: round; stroke-linejoin: round;
+    transition: transform 0.3s ease;
   }
+  #scroll-down.scroll-to-top .chevron { transform: rotate(180deg); } /* Flip arrow up */
 
   /* ══════ PEEK FILM STRIP (right) ══════ */
   #peek-strip {
@@ -688,6 +699,13 @@
       <button class="setting-btn" data-setting="res" data-val="high">high</button>
     </div>
   </div>
+  <div class="setting-row">
+    <span class="setting-label">snapping</span>
+    <div class="setting-options">
+      <button class="setting-btn active" data-setting="snapping" data-val="on">on</button>
+      <button class="setting-btn" data-setting="snapping" data-val="off">off</button>
+    </div>
+  </div>
 </div>
 
 <!-- Film overlay -->
@@ -754,53 +772,69 @@
 <!-- Sound placeholder -->
 <audio id="shutter-sound" preload="none"></audio>
 
+<!-- Load photo data from external file -->
+<script src="data.js"></script>
+
 <script>
 (function() {
   /* ══════ DATA ══════ */
-  var resMap = { low: 800, default: 2400, high: 4000 };
-  var currentRes = 'default';
+  // Photo data is now in data.js - edit that file to change your photos!
+  // 
+  // EXAMPLE STRUCTURE (for reference - actual data in data.js):
+  // 
+  // var lenses = {
+  //   '7art_35_f095': {
+  //     name: '35mm f/0.95',
+  //     image: 'media/f095.png',
+  //     extra: ' 7artisans'
+  //   }
+  // };
+  //
+  // var cameras = {
+  //   'a6400': {
+  //     name: 'APS-C',
+  //     image: 'media/a6400.png',
+  //     extra: ' Sony a6400'
+  //   }
+  // };
+  //
+  // var categories = {
+  //   main: [
+  //     { 
+  //       base: 'a1.jpg',                    // Just filename - auto-adds "photos/"
+  //       lens: '7art_35_f095',              // Reference lens key (for hover image)
+  //       camera: 'a6400',                   // Reference camera key
+  //       stock: '',                         // Film stock (blank for digital)
+  //       date: '2023-03-15',                // YYYY-MM-DD format
+  //       focal: '35mm',                     // Focal length used
+  //       aperture: 'f/8',                   // Aperture used
+  //       iso: '100',                        // ISO used
+  //       shutter: '1/50s'                   // Shutter speed used
+  //     },
+  //   ],
+  //   portraits: [ ... ],
+  //   landscapes: [ ... ]
+  // };
+  //
+  // var heroPhotoUrls = [
+  //   'a1.jpg',         // Just filename - auto-adds "photos/" and "-small"
+  //   'a2.jpg',
+  // ];
 
+  var currentRes = 'default'; // Kept for settings UI
+
+  // Auto-add photos/ prefix and return full path
   function imgUrl(base, res) {
-    // If it's a local file (doesn't have 'http'), just return the path
-    if (!base.startsWith('http')) return base;
-  
-    // Otherwise, do the Unsplash resolution replacement
-    return base.replace(/w=\d+/, 'w=' + resMap[res]);
+    return 'photos/' + base;
   }
-
-  var categories = {
-    main: [
-      { base: 'photos/a1.jpg', thumb: 'photos/a1-small.jpg', alt: 'Mountain landscape', lens: '35mm f1.4', sensor: 'APS-C', stock: 'kodak portra 400', date: '03/15/2023' },
-      { base: 'photos/a2.jpg', thumb: 'photos/a2-small.jpg', alt: 'Forest valley', lens: '35mm f1.4', sensor: 'APS-C', stock: 'kodak portra 400', date: '06/22/2023' },
-      { base: 'photos/a3.jpg', thumb: 'photos/a3-small.jpg', alt: 'Portrait', lens: '35mm f1.4', sensor: 'APS-C', stock: 'fuji superia 400', date: '09/10/2023', portrait: true },
-      { base: 'photos/a4.jpg', thumb: 'photos/a4-small.jpg', alt: 'Golden hills', lens: '35mm f1.4', sensor: 'APS-C', stock: 'kodak gold 200', date: '11/03/2023' },
-      { base: 'photos/a5.jpg', thumb: 'photos/a5-small.jpg', alt: 'Waterfall bridge', lens: '35mm f1.4', sensor: 'APS-C', stock: 'kodak portra 400', date: '12/28/2023' },
-    ],
-    portraits: [
-      { base: 'photos/b1.jpg', thumb: 'photos/b1-small.jpg', alt: 'Portrait studio', lens: '35mm f1.4', sensor: 'APS-C', stock: 'kodak portra 800', date: '01/14/2024', portrait: true },
-      { base: 'photos/b2.jpg', thumb: 'photos/b2-small.jpg', alt: 'Natural light', lens: '35mm f1.4', sensor: 'APS-C', stock: 'fuji pro 400h', date: '02/20/2024', portrait: true },
-      { base: 'photos/b3.jpg', thumb: 'photos/b3-small.jpg', alt: 'Street portrait', lens: '35mm f1.4', sensor: 'APS-C', stock: 'kodak portra 400', date: '04/05/2024', portrait: true },
-    ],
-    landscapes: [
-      { base: 'photos/c1.jpg', thumb: 'photos/c1-small.jpg', alt: 'Green hills', lens: '35mm f1.4', sensor: 'APS-C', stock: 'kodak ektar 100', date: '05/17/2024' },
-      { base: 'photos/c2.jpg', thumb: 'photos/c2-small.jpg', alt: 'Ocean sunset', lens: '35mm f1.4', sensor: 'APS-C', stock: 'kodak gold 200', date: '07/09/2024' },
-      { base: 'photos/c3.jpg', thumb: 'photos/c3-small.jpg', alt: 'Mountain forest', lens: '35mm f1.4', sensor: 'APS-C', stock: 'kodak ektar 100', date: '08/30/2024' },
-    ]
-  };
-
-  var heroPhotoUrls = [
-    'photos/a1-small.jpg',
-    'photos/a2-small.jpg',
-    'photos/a3-small.jpg',
-    'photos/a4-small.jpg',
-    'photos/a5-small.jpg',
-    'photos/b1-small.jpg',
-    'photos/b2-small.jpg',
-    'photos/b3-small.jpg',
-    'photos/c1-small.jpg',
-    'photos/c2-small.jpg',
-    'photos/c3-small.jpg',
-  ];
+  
+  // Auto-generate thumbnail path: photo.jpg → photos/photo-small.jpg
+  function thumbUrl(base) {
+    var lastDot = base.lastIndexOf('.');
+    var name = base.substring(0, lastDot);
+    var ext = base.substring(lastDot);
+    return 'photos/' + name + '-small' + ext;
+  }
 
   /* ══════ DOM REFS ══════ */
   var loader = document.getElementById('loader');
@@ -832,9 +866,11 @@
   var currentCat = 'main';
   var slides = [], slideImages = [], total = 0;
   var loadedCount = 0, firstLoaded = false, activeIndex = -1;
+  var targetSlideIndex = -1; // Track where we're scrolling TO (for smooth scroll interruption)
   var filmMenuOpen = false;
   var hasHero = true;
   var sw = screen.width;
+  var snappingEnabled = true; // Toggle for snapping behavior
 
   /* ══════ IMAGE SIZING ══════ */
   function containSize(nw, nh, bw, bh) {
@@ -861,7 +897,7 @@
     currentCat = catKey;
     var photos = categories[catKey];
     var isMain = (catKey === 'main');
-    activeIndex = -1; loadedCount = 0; firstLoaded = false;
+    activeIndex = -1; targetSlideIndex = -1; loadedCount = 0; firstLoaded = false;
     slidesContainer.innerHTML = '';
     loader.classList.remove('hidden');
     scrollInd.classList.remove('scrolled');
@@ -875,7 +911,7 @@
       grid.className = 'hero-grid';
       for (var g = 0; g < 30; g++) {
         var gi = document.createElement('img');
-        gi.src = heroPhotoUrls[g % heroPhotoUrls.length];
+        gi.src = thumbUrl(heroPhotoUrls[g % heroPhotoUrls.length]);
         gi.style.animationDelay = (g * 40) + 'ms';
         gi.alt = '';
         grid.appendChild(gi);
@@ -903,17 +939,8 @@ for (var i = 0; i < photos.length; i++) {
   
   var img = document.createElement('img');
   img.className = 'main-photo';
-  
-  // Get the main high-res URL
-  var mainUrl = imgUrl(p.base, currentRes);
-  img.src = mainUrl;
-  
-  // FIX: Only use crossOrigin for external web links
-  if (mainUrl.startsWith('http')) {
-    img.crossOrigin = 'anonymous';
-  }
-  
-  img.alt = p.alt;
+  img.src = imgUrl(p.base, currentRes);
+  img.alt = p.base.replace('.jpg', '').replace('.png', ''); // Use filename as alt
   slide.appendChild(img);
   
   var v = document.createElement('div');
@@ -924,18 +951,54 @@ for (var i = 0; i < photos.length; i++) {
   var info = document.createElement('div');
   info.className = 'photo-info';
   
-  // USE THUMB IF IT EXISTS, OTHERWISE FALLBACK TO 'LOW' RES BASE
-  var photoSrc = p.thumb ? p.thumb : imgUrl(p.base, 'low');
+  // Auto-generate thumbnail path
+  var photoSrc = thumbUrl(p.base);
+  
+  // Get lens and camera data from definitions
+  var lensData = lenses[p.lens] || { name: p.lens, image: 'media/f095.png', extra: '' };
+  var cameraData = cameras[p.camera] || { name: p.camera, image: 'media/a6400.png', extra: '' };
+  
+  // Build info lines (only show non-empty lines)
+  var infoLines = '';
+  
+  // Line 1: Focal + Aperture (replaces lens name)
+  if (p.focal && p.aperture) {
+    infoLines += '<div class="info-line hoverable" data-hover="lens" data-base="' + p.focal + ' ' + p.aperture + '" data-ext="' + lensData.extra + '">' + p.focal + ' ' + p.aperture + '<span class="extra-text"></span></div>';
+  }
+  
+  // Line 2: Shutter speed
+  if (p.shutter) {
+    infoLines += '<div class="info-line">' + p.shutter + '</div>';
+  }
+  
+  // Line 3: Camera
+  infoLines += '<div class="info-line hoverable" data-hover="sensor" data-base="' + cameraData.name + '" data-ext="' + cameraData.extra + '">' + cameraData.name + '<span class="extra-text"></span></div>';
+  
+  // Line 4: Stock + ISO (show "@ ISO" even if stock is blank)
+  var stockIsoLine = (p.stock ? p.stock + ' ' : '') + '@ ' + (p.iso || '');
+  if (p.iso) {
+    infoLines += '<div class="info-line">' + stockIsoLine + '</div>';
+  }
+  
+  // Line 5: Date (YYYY-MM-DD format)
+  var dateParts = p.date.split('-'); // ['2023', '03', '15']
+  var year = dateParts[0];
+  infoLines += '<div class="info-line date-line" data-year="' + year + '" data-full="' + p.date + '">' + year + '</div>';
   
   info.innerHTML =
-    '<img class="hover-photo" src="media/f095.png" data-for="lens" />' +
-    '<img class="hover-photo" src="media/a6400.png" data-for="sensor" />' +
-    '<div class="info-line hoverable" data-hover="lens" data-base="'+p.lens+'" data-ext=" to f/16 - 7artisans">' + p.lens + '<span class="extra-text"></span></div>' +
-    '<div class="info-line hoverable" data-hover="sensor" data-base="'+p.sensor+'" data-ext=" Sony a6400">' + p.sensor + '<span class="extra-text"></span></div>' +
-    '<div class="info-line">' + p.stock + '</div>' +
-    '<div class="info-line date-line" data-year="'+p.date.split('/')[2]+'" data-full="'+p.date+'">' + p.date.split('/')[2] + '</div>';
+    '<img class="hover-photo" src="' + lensData.image + '" data-for="lens" />' +
+    '<img class="hover-photo" src="' + cameraData.image + '" data-for="sensor" />' +
+    infoLines;
   
   slide.appendChild(info);
+  
+  // Per-slide counter (for continuous scroll mode)
+  var slideCounter = document.createElement('div');
+  slideCounter.className = 'slide-counter';
+  var counterText = isMain ? (i + 1) + ' / ' + photos.length : (i + 1) + ' / ' + photos.length;
+  slideCounter.textContent = counterText;
+  slide.appendChild(slideCounter);
+  
   slidesContainer.appendChild(slide);
 }
     total = photos.length + (isMain ? 1 : 0);
@@ -987,6 +1050,7 @@ for (var i = 0; i < photos.length; i++) {
   function activateSlide(idx) {
     if (idx === activeIndex) return;
     activeIndex = idx;
+    targetSlideIndex = idx; // Keep target in sync with actual position
     var isMain = (currentCat === 'main');
     var isHero = isMain && (idx === 0);
 
@@ -997,32 +1061,60 @@ for (var i = 0; i < photos.length; i++) {
         slides[i].classList.toggle('active', i === idx);
         continue;
       }
-      if (i === idx) {
+      if (snappingEnabled) {
+        // Normal snapping mode: expand active, shrink others
+        if (i === idx) {
+          img.classList.add('expand');
+          setExpand(img);
+          slides[i].classList.add('active');
+        } else {
+          img.classList.remove('expand');
+          setSmall(img);
+          slides[i].classList.remove('active');
+        }
+      } else {
+        // Continuous scroll mode: all images stay expanded
         img.classList.add('expand');
         setExpand(img);
         slides[i].classList.add('active');
-      } else {
-        img.classList.remove('expand');
-        setSmall(img);
-        slides[i].classList.remove('active');
       }
     }
 
-    // Counter
-    if (isHero) {
-      counterEl.textContent = '';
-    } else if (isMain) {
-      counterEl.textContent = idx + ' / ' + (total - 1);
+    // Counter visibility based on snapping mode
+    if (snappingEnabled) {
+      // Snapping ON: use fixed counter
+      counterEl.style.opacity = '1';
+      document.querySelectorAll('.slide-counter').forEach(function(c) { c.style.opacity = '0'; });
+      
+      // Update fixed counter text
+      if (isHero) {
+        counterEl.textContent = '';
+      } else if (isMain) {
+        counterEl.textContent = idx + ' / ' + (total - 1);
+      } else {
+        counterEl.textContent = (idx + 1) + ' / ' + total;
+      }
     } else {
-      counterEl.textContent = (idx + 1) + ' / ' + total;
+      // Snapping OFF: use per-slide counters
+      counterEl.style.opacity = '0';
+      document.querySelectorAll('.slide-counter').forEach(function(c) { c.style.opacity = '1'; });
     }
 
     // Frosted glass on corners for hero
     counterEl.classList.toggle('frosted', isHero);
-    settingsBtn.classList.toggle('frosted', isHero);
 
     // Resize group: hide on hero
     updateRatio();
+    
+    // Update scroll indicator
+    var scrollIndSpan = scrollInd.querySelector('span');
+    if (idx >= total - 1) {
+      scrollInd.classList.add('scroll-to-top');
+      scrollIndSpan.textContent = 'scroll to top';
+    } else {
+      scrollInd.classList.remove('scroll-to-top');
+      scrollIndSpan.textContent = 'scroll';
+    }
 
     if (filmMenuOpen) updateFilmHighlight();
     updatePeekHighlight();
@@ -1035,6 +1127,11 @@ for (var i = 0; i < photos.length; i++) {
     var vh = window.innerHeight;
     var nearest = Math.round(st / vh);
     nearest = Math.max(0, Math.min(nearest, total - 1));
+
+    // Update peek highlight in real-time as user scrolls
+    updatePeekHighlight(nearest);
+    // Update film highlight too if menu is open
+    if (filmMenuOpen) updateFilmHighlight(nearest);
 
     var isMain = (currentCat === 'main');
     if (isMain && nearest === 0) counterEl.textContent = '';
@@ -1051,17 +1148,36 @@ for (var i = 0; i < photos.length; i++) {
 
     if (st > vh * 0.15) scrollInd.classList.add('scrolled');
     else scrollInd.classList.remove('scrolled');
+    
+    // Update scroll indicator based on position
+    var scrollIndSpan = scrollInd.querySelector('span');
+    if (nearest >= total - 1) {
+      // On last slide - show "scroll to top" with up arrow
+      scrollInd.classList.add('scroll-to-top');
+      scrollIndSpan.textContent = 'scroll to top';
+    } else {
+      // Not on last slide - show "scroll" with down arrow
+      scrollInd.classList.remove('scroll-to-top');
+      scrollIndSpan.textContent = 'scroll';
+    }
   }
 
   window.addEventListener('scroll', function() { requestAnimationFrame(onScroll); }, { passive: true });
 
-  // Scroll indicator click → scroll to next slide
+  // Scroll indicator click → scroll to next slide or top if on last
   scrollInd.addEventListener('click', function() {
     var st = document.documentElement.scrollTop || document.body.scrollTop;
     var vh = window.innerHeight;
     var current = Math.round(st / vh);
-    var next = Math.min(current + 1, total - 1);
-    window.scrollTo({ top: vh * next, behavior: 'smooth' });
+    
+    if (current >= total - 1) {
+      // On last slide - scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      // Not on last slide - scroll to next
+      var next = Math.min(current + 1, total - 1);
+      window.scrollTo({ top: vh * next, behavior: 'smooth' });
+    }
   });
 
   window.addEventListener('resize', function() {
@@ -1103,8 +1219,7 @@ function buildFilmFrames(catKey) {
     if (catKey === 'main') {
       var hf = document.createElement('div'); hf.className = 'film-frame hero-thumb';
       var ht = document.createElement('img');
-      // If you have a small version of your hero, put the path here:
-      ht.src = heroPhotoUrls[1] || heroPhotoUrls[0]; 
+      ht.src = thumbUrl(heroPhotoUrls[1] || heroPhotoUrls[0]);
       ht.alt = 'hero';
       ht.style.filter = 'grayscale(1)';
       hf.appendChild(ht);
@@ -1121,10 +1236,10 @@ function buildFilmFrames(catKey) {
       var f = document.createElement('div'); f.className = 'film-frame';
       var t = document.createElement('img');
       
-      // FIX: Use the 'thumb' property if it exists in your categories data
-      t.src = photos[i].thumb ? photos[i].thumb : imgUrl(photos[i].base, 'low'); 
+      // Auto-generate thumbnail path
+      t.src = thumbUrl(photos[i].base);
       
-      t.alt = photos[i].alt;
+      t.alt = photos[i].base.replace('.jpg', '').replace('.png', '');
       f.appendChild(t);
       var n = document.createElement('span'); n.className = 'frame-num';
       n.textContent = (i+1); f.appendChild(n);
@@ -1138,10 +1253,11 @@ function buildFilmFrames(catKey) {
     }
     if (filmMenuOpen) updateFilmHighlight();
   }
-  function updateFilmHighlight() {
+  function updateFilmHighlight(idx) {
     var frames = filmFramesEl.querySelectorAll('.film-frame');
+    var currentIdx = (idx !== undefined) ? idx : activeIndex; // Use provided index or activeIndex
     for (var i = 0; i < frames.length; i++) {
-      frames[i].classList.toggle('current', i === activeIndex);
+      frames[i].classList.toggle('current', i === currentIdx);
     }
   }
 
@@ -1156,7 +1272,7 @@ function buildPeekFrames(catKey) {
     // Frame 0: hero for main, back button for others
     var hf = document.createElement('div'); hf.className = 'film-frame hero-thumb';
     var ht = document.createElement('img');
-    ht.src = isMain ? heroPhotoUrls[0] : 'media/back.jpg';
+    ht.src = isMain ? thumbUrl(heroPhotoUrls[0]) : 'media/back.jpg';
     ht.alt = isMain ? 'hero' : 'back to main';
     if (isMain) ht.style.filter = 'grayscale(1)';
     hf.appendChild(ht);
@@ -1179,10 +1295,10 @@ function buildPeekFrames(catKey) {
       var f = document.createElement('div'); f.className = 'film-frame';
       var t = document.createElement('img');
       
-      // FIX: Use the 'thumb' property here as well
-      t.src = photos[i].thumb ? photos[i].thumb : imgUrl(photos[i].base, 'low'); 
+      // Auto-generate thumbnail path
+      t.src = thumbUrl(photos[i].base);
       
-      t.alt = photos[i].alt;
+      t.alt = photos[i].base.replace('.jpg', '').replace('.png', '');
       f.appendChild(t);
       var n = document.createElement('span'); n.className = 'frame-num';
       n.textContent = (i+1); f.appendChild(n);
@@ -1195,15 +1311,16 @@ function buildPeekFrames(catKey) {
       peekFrames.appendChild(f);
     }
   }
-  function updatePeekHighlight() {
+  function updatePeekHighlight(idx) {
     var frames = peekFrames.querySelectorAll('.film-frame');
     var isMain = (currentCat === 'main');
+    var currentIdx = (idx !== undefined) ? idx : activeIndex; // Use provided index or activeIndex
     for (var i = 0; i < frames.length; i++) {
       if (isMain) {
-        frames[i].classList.toggle('current', i === activeIndex);
+        frames[i].classList.toggle('current', i === currentIdx);
       } else {
         // frame 0 = back button, frame 1+ = photos
-        frames[i].classList.toggle('current', i === activeIndex + 1);
+        frames[i].classList.toggle('current', i === currentIdx + 1);
       }
     }
   }
@@ -1219,6 +1336,74 @@ function buildPeekFrames(catKey) {
       peekStrip.classList.remove('visible');
     }, 1200);
   }
+
+  // Scroll-triggered navigation
+  var scrollAccumulator = 0;
+  var scrollThreshold = 40; // Safe value that works across mice/trackpads
+  var lastScrollTime = Date.now();
+  var scrollTimeout = null;
+  var canScroll = true; // Cooldown flag
+
+  window.addEventListener('wheel', function(e) {
+    // If snapping is disabled, allow natural scrolling
+    if (!snappingEnabled) return;
+    
+    // Prevent default scrolling so we can control it
+    e.preventDefault();
+    
+    if (!canScroll) return; // Short cooldown active
+    
+    var now = Date.now();
+    var timeDelta = now - lastScrollTime;
+    lastScrollTime = now;
+    
+    // Accumulate scroll delta
+    scrollAccumulator += e.deltaY;
+    
+    // Fast scroll detection: if scrolling fast, reduce threshold slightly
+    var currentThreshold = timeDelta < 100 ? scrollThreshold * 0.7 : scrollThreshold;
+    
+    // Clear timeout - we're still scrolling
+    clearTimeout(scrollTimeout);
+    
+    // Check if we've scrolled enough to change slides
+    if (Math.abs(scrollAccumulator) >= currentThreshold) {
+      
+      var newTargetIndex = targetSlideIndex; // Use target, not activeIndex!
+      if (scrollAccumulator > 0) {
+        // Scroll down - go to next slide
+        newTargetIndex = Math.min(targetSlideIndex + 1, slides.length - 1);
+      } else {
+        // Scroll up - go to previous slide
+        newTargetIndex = Math.max(targetSlideIndex - 1, 0);
+      }
+      
+      if (newTargetIndex !== targetSlideIndex) {
+        targetSlideIndex = newTargetIndex; // Update target
+        // Update peek highlight immediately
+        updatePeekHighlight(targetSlideIndex);
+        // Update film highlight too if menu is open
+        if (filmMenuOpen) updateFilmHighlight(targetSlideIndex);
+        // Smooth scroll - can be interrupted by next scroll
+        window.scrollTo({ top: window.innerHeight * targetSlideIndex, behavior: 'smooth' });
+        
+        // Short cooldown to prevent super fast scrolling
+        canScroll = false;
+        setTimeout(function() {
+          canScroll = true;
+        }, 180); // ~180ms = deliberate pacing
+      }
+      
+      scrollAccumulator = 0;
+    }
+    
+    // Reset accumulator if user stops scrolling
+    scrollTimeout = setTimeout(function() {
+      scrollAccumulator = 0;
+    }, 200);
+    
+    showPeekBriefly();
+  }, { passive: false });
 
   window.addEventListener('scroll', function() {
     showPeekBriefly();
@@ -1292,6 +1477,10 @@ function buildPeekFrames(catKey) {
       } else if (setting === 'res') {
         currentRes = val;
         buildSlides(currentCat);
+      } else if (setting === 'snapping') {
+        snappingEnabled = (val === 'on');
+        // Refresh all image states to apply new mode
+        activateSlide(activeIndex);
       }
     });
   });
@@ -1419,10 +1608,12 @@ function buildPeekFrames(catKey) {
     document.querySelectorAll('.date-line').forEach(function(line) {
       line.style.cursor = 'default';
       line.addEventListener('mouseenter', function() {
-        var full = line.getAttribute('data-full');
-        var parts = full.split('/');
-        var m = parseInt(parts[0], 10) - 1;
-        line.textContent = parts[2] + ' ' + months[m] + ' ' + parts[1];
+        var full = line.getAttribute('data-full'); // YYYY-MM-DD format
+        var parts = full.split('-'); // ['2023', '03', '15']
+        var year = parts[0];
+        var m = parseInt(parts[1], 10) - 1; // month index (0-11)
+        var day = parts[2];
+        line.textContent = day + ' ' + months[m] + ' ' + year;
       });
       line.addEventListener('mouseleave', function() {
         line.textContent = line.getAttribute('data-year');
