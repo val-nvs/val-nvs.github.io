@@ -958,32 +958,86 @@ for (var i = 0; i < photos.length; i++) {
   var lensData = lenses[p.lens] || { name: p.lens, image: 'media/f095.png', extra: '' };
   var cameraData = cameras[p.camera] || { name: p.camera, image: 'media/a6400.png', extra: '' };
   
+  // Calculate EV (Exposure Value) from aperture and shutter speed
+  function calculateEV(aperture, shutter) {
+    if (!aperture || !shutter) return null;
+    
+    // Parse f-number: "f/8" -> 8
+    var fNumber = parseFloat(aperture.replace('f/', ''));
+    
+    // Parse shutter speed: "1/50s" -> 0.02
+    var shutterTime;
+    if (shutter.includes('/')) {
+      var parts = shutter.replace('s', '').split('/');
+      shutterTime = parseFloat(parts[0]) / parseFloat(parts[1]);
+    } else {
+      shutterTime = parseFloat(shutter.replace('s', ''));
+    }
+    
+    // EV = log2(N²/t)
+    var ev = Math.log2((fNumber * fNumber) / shutterTime);
+    return Math.round(ev * 10) / 10; // Round to 1 decimal
+  }
+  
+  var evValue = calculateEV(p.aperture, p.shutter);
+  
   // Build info lines (only show non-empty lines)
   var infoLines = '';
   
-  // Line 1: Focal + Aperture (replaces lens name)
+  // Line 1: Focal + Aperture OR Lens Name (with hover)
+  var lensLineText = '';
+  var lensHoverBase = '';
+  
   if (p.focal && p.aperture) {
-    infoLines += '<div class="info-line hoverable" data-hover="lens" data-base="' + p.focal + ' ' + p.aperture + '" data-ext="' + lensData.extra + '">' + p.focal + ' ' + p.aperture + '<span class="extra-text"></span></div>';
+    // Both focal and aperture exist - show them
+    lensLineText = p.focal + ' ' + p.aperture;
+    lensHoverBase = lensLineText;
+  } else if (p.focal || p.aperture) {
+    // Only one exists - show what we have
+    lensLineText = (p.focal || '') + (p.focal && p.aperture ? ' ' : '') + (p.aperture || '');
+    lensHoverBase = lensLineText;
+  } else if (p.lens && lensData.name) {
+    // No focal/aperture, but lens key exists - show lens name
+    lensLineText = lensData.name;
+    lensHoverBase = lensData.name;
   }
   
-  // Line 2: Shutter speed
+  // Only add lens line if we have something to show
+  if (lensLineText) {
+    infoLines += '<div class="info-line hoverable" data-hover="lens" data-base="' + lensHoverBase + '" data-ext="' + lensData.extra + '">' + lensLineText + '<span class="extra-text"></span></div>';
+  }
+  
+  // Line 2: Shutter speed + EV (only if shutter exists)
   if (p.shutter) {
-    infoLines += '<div class="info-line">' + p.shutter + '</div>';
+    var shutterLine = p.shutter;
+    // Only calculate EV if we have both aperture and shutter
+    if (p.aperture && p.shutter) {
+      if (evValue !== null) {
+        shutterLine += ' EV' + evValue;
+      }
+    }
+    infoLines += '<div class="info-line">' + shutterLine + '</div>';
   }
   
-  // Line 3: Camera
-  infoLines += '<div class="info-line hoverable" data-hover="sensor" data-base="' + cameraData.name + '" data-ext="' + cameraData.extra + '">' + cameraData.name + '<span class="extra-text"></span></div>';
+  // Line 3: Camera (only if camera exists)
+  if (p.camera && cameraData.name) {
+    infoLines += '<div class="info-line hoverable" data-hover="sensor" data-base="' + cameraData.name + '" data-ext="' + cameraData.extra + '">' + cameraData.name + '<span class="extra-text"></span></div>';
+  }
   
-  // Line 4: Stock + ISO (show "@ ISO" even if stock is blank)
-  var stockIsoLine = (p.stock ? p.stock + ' ' : '') + '@ ' + (p.iso || '');
+  // Line 4: Stock + ISO (only if ISO exists)
   if (p.iso) {
+    var stockIsoLine = (p.stock ? p.stock + ' ' : '') + '@ ' + p.iso + ' ISO';
     infoLines += '<div class="info-line">' + stockIsoLine + '</div>';
   }
   
-  // Line 5: Date (YYYY-MM-DD format)
-  var dateParts = p.date.split('-'); // ['2023', '03', '15']
-  var year = dateParts[0];
-  infoLines += '<div class="info-line date-line" data-year="' + year + '" data-full="' + p.date + '">' + year + '</div>';
+  // Line 5: Date (only if date exists and is valid)
+  if (p.date) {
+    var dateParts = p.date.split('-'); // ['2023', '03', '15'] or ['2021']
+    var year = dateParts[0];
+    if (year) {
+      infoLines += '<div class="info-line date-line" data-year="' + year + '" data-full="' + p.date + '">' + year + '</div>';
+    }
+  }
   
   info.innerHTML =
     '<img class="hover-photo" src="' + lensData.image + '" data-for="lens" />' +

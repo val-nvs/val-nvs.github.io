@@ -4,15 +4,20 @@
 
 // Lens definitions - define once, use everywhere
 var lenses = {
-  '7art_35_f095': {
-    name: '35mm f/0.95',
-    image: 'media/f095.png',
-    extra: ' 7artisans'
+  '7artf095': {
+    name: '"35mm f/0.95"',
+    image: 'media/7artf095.png',
+    extra: ' 7artisans 35mm f/0.95'
   },
-  'pentax_35_80_f4': {
-    name: '35-80mm f/4',
-    image: 'media/pentax.png',
-    extra: ' Pentax'
+  'sonykit': {
+    name: '"16-50mm f/3.5-5.6"',
+    image: 'media/sonykit.png',
+    extra: ' Sony 16-50mm f/3.5-5.6'
+  },
+  'pentaxf4': {
+    name: '"35-80mm f/4"',
+    image: 'media/pentaxf4.png',
+    extra: ' Pentax 35-80mm f/4'
   }
 };
 
@@ -23,9 +28,9 @@ var cameras = {
     image: 'media/a6400.png',
     extra: ' Sony a6400'
   },
-  'pentax': {
+  'p30t': {
     name: 'Full Frame',
-    image: 'media/pentax.png',
+    image: 'media/p30t.png',
     extra: ' Pentax P30T'
   }
 };
@@ -34,92 +39,92 @@ var categories = {
   main: [
     { 
       base: 'a1.jpg',
-      lens: '7art_35_f095',
-      camera: 'a6400',
-      stock: '',
-      date: '2023-03-15',
-      focal: '35mm',
-      aperture: 'f/8',
-      iso: '100',
-      shutter: '1/50s'
+      lens: 'pentaxf4',
+      camera: 'p30t',
+      stock: 'Kodak Kodacolor 200',
+      date: '2021',
+      focal: '',
+      aperture: '',
+      iso: '200',
+      shutter: ''
     },
     { 
       base: 'a2.jpg',
-      lens: 'pentax_35_80_f4',
-      camera: 'pentax',
-      stock: 'kodak portra 400',
-      date: '2023-06-22',
-      focal: '50mm',
-      aperture: 'f/5.6',
+      lens: 'pentaxf4',
+      camera: 'p30t',
+      stock: 'Kodak Ultramax 400',
+      date: '2025-11-27',
+      focal: '',
+      aperture: '',
       iso: '400',
-      shutter: '1/125s'
+      shutter: ''
     },
     { 
       base: 'a3.jpg',
-      lens: '7art_35_f095',
-      camera: 'a6400',
-      stock: '',
-      date: '2023-09-10',
-      focal: '35mm',
-      aperture: 'f/2.8',
-      iso: '200',
-      shutter: '1/100s'
+      lens: 'pentaxf4',
+      camera: 'p30t',
+      stock: 'Kodak Ultramax 400',
+      date: '2025-10-31',
+      focal: '',
+      aperture: '',
+      iso: '400',
+      shutter: ''
     },
     { 
       base: 'a4.jpg',
-      lens: 'pentax_35_80_f4',
-      camera: 'pentax',
-      stock: 'kodak gold 200',
-      date: '2023-11-03',
-      focal: '80mm',
-      aperture: 'f/8',
-      iso: '200',
-      shutter: '1/250s'
+      lens: 'sonykit',
+      camera: 'a6400',
+      stock: '',
+      date: '2022-04-15',
+      focal: '20mm',
+      aperture: 'f/4',
+      iso: '2000',
+      shutter: '1/30s'
     },
     { 
       base: 'a5.jpg',
-      lens: '7art_35_f095',
-      camera: 'a6400',
+      lens: '',
+      camera: '',
       stock: '',
-      date: '2023-12-28',
-      focal: '35mm',
-      aperture: 'f/4',
-      iso: '800',
-      shutter: '1/60s'
+      date: '',
+      focal: '',
+      aperture: '',
+      iso: '',
+      shutter: ''
     },
   ],
   
   portraits: [
     { 
       base: 'b1.jpg',
-      lens: '7art_35_f095',
-      camera: 'pentax',
-      stock: 'kodak portra 800',
-      date: '2024-01-14',
-      focal: '35mm',
-      aperture: 'f/1.4',
-      iso: '800',
-      shutter: '1/125s'
+      lens: 'sonykit',
+      camera: 'a6400',
+      stock: '',
+      date: '2022-04-15',
+      focal: '26mm',
+      aperture: 'f/4.5',
+      iso: '1250',
+      shutter: '1/40s'
     },
     { 
       base: 'b2.jpg',
-      lens: 'pentax_35_80_f4',
-      camera: 'pentax',
-      stock: 'fuji pro 400h',
-      date: '2024-02-20',
-      focal: '80mm',
-      aperture: 'f/4',
-      iso: '400',
-      shutter: '1/250s'
+      lens: '',
+      camera: 'a6400',
+      stock: '',
+      date: '2000-01-01',
+      focal: '',
+      aperture: '',
+      iso: '',
+      shutter: ''
     },
     { 
       base: 'b3.jpg',
-      lens: '7art_35_f095',
+      lens: '7artf095',
       camera: 'a6400',
       stock: '',
-      date: '2024-04-05',
+      date: '2025-10-03',
       focal: '35mm',
-      aperture: 'f/2',
+      aperture: '~f/1',
       iso: '400',
       shutter: '1/160s'
     },
@@ -128,36 +133,36 @@ var categories = {
   landscapes: [
     { 
       base: 'c1.jpg',
-      lens: 'pentax_35_80_f4',
-      camera: 'pentax',
-      stock: 'kodak ektar 100',
-      date: '2024-05-17',
-      focal: '35mm',
-      aperture: 'f/11',
+      lens: '',
+      camera: 'a6400',
+      stock: '',
+      date: '2000-01-01',
+      focal: '',
+      aperture: '',
       iso: '100',
-      shutter: '1/125s'
+      shutter: ''
     },
     { 
       base: 'c2.jpg',
-      lens: 'pentax_35_80_f4',
-      camera: 'pentax',
-      stock: 'kodak gold 200',
-      date: '2024-07-09',
-      focal: '50mm',
-      aperture: 'f/8',
-      iso: '200',
-      shutter: '1/500s'
+      lens: '',
+      camera: '',
+      stock: '',
+      date: '',
+      focal: '',
+      aperture: '',
+      iso: '',
+      shutter: ''
     },
     { 
       base: 'c3.jpg',
-      lens: '7art_35_f095',
+      lens: '7artf095',
       camera: 'a6400',
       stock: '',
-      date: '2024-08-30',
-      focal: '35mm',
-      aperture: 'f/5.6',
+      date: '2025-12-20',
+      focal: '',
+      aperture: '',
       iso: '100',
-      shutter: '1/320s'
+      shutter: '1/80s'
     },
   ]
 };
@@ -190,7 +195,7 @@ var heroPhotoUrls = [
 // 3. Add entry to the appropriate category:
 //    { 
 //      base: 'myPhoto.jpg',           // Just the filename!
-//      lens: '7art_35_f095',          // Reference lens key (for hover)
+//      lens: '7artf095',          // Reference lens key (for hover)
 //      camera: 'a6400',               // Reference camera key
 //      stock: '',                     // Film stock (blank for digital)
 //      date: '2023-03-15',            // YYYY-MM-DD format
