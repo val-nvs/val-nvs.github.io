@@ -263,6 +263,63 @@
     margin-top: 0.05rem;
   }
 
+  /* Search bar */
+  #search-bar-container {
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 199;
+    width: 400px;
+    max-width: 90vw;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease, top 0.3s ease;
+  }
+  #search-bar-container.visible {
+    opacity: 1;
+    pointer-events: all;
+  }
+  .search-wrapper {
+    position: relative;
+  }
+  #search-bar {
+    width: 100%;
+    background: rgba(30, 30, 30, 0.95);
+    border: 2px solid rgba(150, 150, 150, 0.3);
+    border-radius: 8px;
+    padding: 12px 12px 12px 45px;
+    font-family: var(--font-active);
+    font-size: calc(14px * var(--size-scale));
+    color: #fff;
+    outline: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    transition: border-color 0.2s ease;
+  }
+  #search-bar:focus {
+    border-color: rgba(200, 200, 200, 0.5);
+  }
+  #search-bar::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+  }
+  #search-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  #search-icon svg {
+    width: 100%;
+    height: 100%;
+    stroke: #fff;
+    fill: none;
+    stroke-width: 2;
+  }
+
   /* ══════ SETTINGS BUTTON (top right) ══════ */
   #settings-btn {
     position: fixed; top: 1.25rem; right: 1.35rem; z-index: 200;
@@ -660,6 +717,19 @@
   <div class="tab-sub">tap to open menu</div>
 </div>
 
+<!-- Search bar -->
+<div id="search-bar-container">
+  <div class="search-wrapper">
+    <div id="search-icon">
+      <svg viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="8"></circle>
+        <path d="m21 21-4.35-4.35"></path>
+      </svg>
+    </div>
+    <input type="text" id="search-bar" placeholder="search photos..." />
+  </div>
+</div>
+
 <div id="settings-btn">
   <svg viewBox="0 0 24 24">
     <circle cx="12" cy="12" r="3"/>
@@ -769,8 +839,14 @@
   </div>
 </div>
 
-<!-- Sound placeholder -->
+<!-- Sound elements -->
 <audio id="shutter-sound" preload="none"></audio>
+<audio id="tap-sound" src="sounds/tap.wav" preload="auto"></audio>
+<audio id="open-sound" src="sounds/open.wav" preload="auto"></audio>
+<audio id="close-sound" src="sounds/close.wav" preload="auto"></audio>
+<audio id="plastic-sound" src="sounds/plastic.ogg" preload="auto"></audio>
+<audio id="select-sound" src="sounds/select.wav" preload="auto"></audio>
+<audio id="type-sound" src="sounds/type.wav" preload="auto"></audio>
 
 <!-- Load photo data from external file -->
 <script src="data.js"></script>
@@ -861,6 +937,16 @@
   var photoRatioLbl = document.getElementById('photo-ratio-label');
   var peekStrip = document.getElementById('peek-strip');
   var peekFrames = document.getElementById('peek-frames');
+  var searchBarContainer = document.getElementById('search-bar-container');
+  var searchBar = document.getElementById('search-bar');
+
+  // Sound elements
+  var tapSound = document.getElementById('tap-sound');
+  var openSound = document.getElementById('open-sound');
+  var closeSound = document.getElementById('close-sound');
+  var plasticSound = document.getElementById('plastic-sound');
+  var selectSound = document.getElementById('select-sound');
+  var typeSound = document.getElementById('type-sound');
 
   /* ══════ STATE ══════ */
   var currentCat = 'main';
@@ -871,6 +957,7 @@
   var hasHero = true;
   var sw = screen.width;
   var snappingEnabled = true; // Toggle for snapping behavior
+  var centerStripScrollTimeout = null; // Track delayed center strip scroll animation
 
   /* ══════ IMAGE SIZING ══════ */
   function containSize(nw, nh, bw, bh) {
@@ -1279,7 +1366,17 @@ function buildFilmFrames(catKey) {
       hf.appendChild(ht);
       var hn = document.createElement('span'); hn.className = 'frame-num';
       hn.textContent = '0'; hf.appendChild(hn);
+      
+      // Add hover sound
+      hf.addEventListener('mouseenter', function() {
+        tapSound.currentTime = 0;
+        tapSound.play().catch(function() {});
+      });
+      
       hf.addEventListener('click', function() {
+        // Play click sound
+        typeSound.currentTime = 0;
+        typeSound.play().catch(function() {});
         window.scrollTo({ top: 0, behavior: 'smooth' });
       });
       filmFramesEl.appendChild(hf);
@@ -1298,8 +1395,18 @@ function buildFilmFrames(catKey) {
       var n = document.createElement('span'); n.className = 'frame-num';
       n.textContent = (i+1); f.appendChild(n);
       f.setAttribute('data-index', i);
+      
+      // Add hover sound
+      f.addEventListener('mouseenter', function() {
+        tapSound.currentTime = 0;
+        tapSound.play().catch(function() {});
+      });
+      
       f.addEventListener('click', (function(idx, off) {
         return function() {
+          // Play click sound
+          typeSound.currentTime = 0;
+          typeSound.play().catch(function() {});
           window.scrollTo({ top: window.innerHeight * (idx + off), behavior: 'smooth' });
         };
       })(i, heroOffset));
@@ -1332,8 +1439,19 @@ function buildPeekFrames(catKey) {
     hf.appendChild(ht);
     var hn = document.createElement('span'); hn.className = 'frame-num';
     hn.textContent = '0'; hf.appendChild(hn);
+    
+    // Add hover sound
+    hf.addEventListener('mouseenter', function() {
+      tapSound.currentTime = 0;
+      tapSound.play().catch(function() {});
+    });
+    
     hf.addEventListener('click', function(e) {
       e.stopPropagation();
+      // Play click sound
+      typeSound.currentTime = 0;
+      typeSound.play().catch(function() {});
+      
       if (!isMain) {
         document.querySelectorAll('.cat-frame').forEach(function(c) { c.classList.remove('active'); });
         document.querySelector('.cat-frame[data-cat="main"]').classList.add('active');
@@ -1356,9 +1474,19 @@ function buildPeekFrames(catKey) {
       f.appendChild(t);
       var n = document.createElement('span'); n.className = 'frame-num';
       n.textContent = (i+1); f.appendChild(n);
+      
+      // Add hover sound
+      f.addEventListener('mouseenter', function() {
+        tapSound.currentTime = 0;
+        tapSound.play().catch(function() {});
+      });
+      
       f.addEventListener('click', (function(idx, off) {
         return function(e) {
           e.stopPropagation();
+          // Play click sound
+          typeSound.currentTime = 0;
+          typeSound.play().catch(function() {});
           window.scrollTo({ top: window.innerHeight * (idx + off), behavior: 'smooth' });
         };
       })(i, heroOffset));
@@ -1474,19 +1602,45 @@ function buildPeekFrames(catKey) {
 
   /* ══════ FILM MENU TOGGLE ══════ */
   function toggleFilmMenu() {
+    // CRITICAL: Clear any existing timeout FIRST to prevent multiple sounds
+    if (centerStripScrollTimeout) {
+      clearTimeout(centerStripScrollTimeout);
+      centerStripScrollTimeout = null;
+    }
+    
     filmMenuOpen = !filmMenuOpen;
     filmOvl.classList.toggle('open', filmMenuOpen);
     loremWindow.classList.toggle('open', filmMenuOpen);
     settingsPopup.classList.toggle('open', filmMenuOpen);
+    searchBarContainer.classList.toggle('visible', filmMenuOpen);
     tabSub.textContent = filmMenuOpen ? 'tap to close' : 'tap to open menu';
 
     if (filmMenuOpen) {
+      // Play open sound
+      openSound.currentTime = 0;
+      openSound.play().catch(function() {});
+      
       filmCanister.classList.add('visible');
       setTimeout(function() {
         filmPanel.classList.add('animate-in');
       }, 200);
       updateFilmHighlight();
+      
+      // Delay center strip scroll and play plastic sound
+      centerStripScrollTimeout = setTimeout(function() {
+        // CRITICAL: Only play if menu is STILL open
+        if (filmMenuOpen) {
+          plasticSound.currentTime = 0;
+          plasticSound.play().catch(function() {});
+        }
+        centerStripScrollTimeout = null;
+      }, 800);
+      
     } else {
+      // Play close sound
+      closeSound.currentTime = 0;
+      closeSound.play().catch(function() {});
+      
       filmPanel.classList.remove('animate-in');
       setTimeout(function() {
         filmCanister.classList.remove('visible');
@@ -1495,17 +1649,50 @@ function buildPeekFrames(catKey) {
   }
 
   leatherTab.addEventListener('click', toggleFilmMenu);
+  
+  // Add hover sound to leather tab
+  leatherTab.addEventListener('mouseenter', function() {
+    tapSound.currentTime = 0;
+    tapSound.play().catch(function() {});
+  });
+  
   settingsBtn.addEventListener('click', function(e) {
     e.stopPropagation();
     toggleFilmMenu();
   });
   filmBkdp.addEventListener('click', function() { if (filmMenuOpen) toggleFilmMenu(); });
 
+  // Search bar functionality
+  searchBar.addEventListener('focus', function() {
+    selectSound.currentTime = 0;
+    selectSound.play().catch(function() {});
+  });
+  
+  searchBar.addEventListener('input', function(e) {
+    // Play type sound on each character typed
+    typeSound.currentTime = 0;
+    typeSound.play().catch(function() {});
+    
+    // Search functionality will be implemented later
+    // For now, just handle the sound
+  });
+
   // Category clicks
   document.querySelectorAll('.cat-frame').forEach(function(cf) {
+    // Add hover sound
+    cf.addEventListener('mouseenter', function() {
+      tapSound.currentTime = 0;
+      tapSound.play().catch(function() {});
+    });
+    
     cf.addEventListener('click', function() {
       var cat = cf.getAttribute('data-cat');
       if (cat === currentCat) return;
+      
+      // Play click sound
+      typeSound.currentTime = 0;
+      typeSound.play().catch(function() {});
+      
       document.querySelectorAll('.cat-frame').forEach(function(c) { c.classList.remove('active'); });
       cf.classList.add('active');
       buildSlides(cat);

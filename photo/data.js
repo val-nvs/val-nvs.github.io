@@ -38,7 +38,7 @@ var cameras = {
 var categories = {
   main: [
     { 
-      base: 'a1.jpg',
+      base: 'beach.jpg',
       lens: 'pentaxf4',
       camera: 'p30t',
       stock: 'Kodak Kodacolor 200',
@@ -46,7 +46,11 @@ var categories = {
       focal: '',
       aperture: '',
       iso: '200',
-      shutter: ''
+      shutter: '',
+      place: '',
+      country: 'Brazil',
+      subject: '',
+      developing: 'C-41 at home'
     },
     { 
       base: 'a2.jpg',
@@ -57,7 +61,11 @@ var categories = {
       focal: '',
       aperture: '',
       iso: '400',
-      shutter: ''
+      shutter: '',
+      place: 'Kreatori',
+      country: 'Portugal',
+      subject: '',
+      developing: 'Carmencita Lisboa'
     },
     { 
       base: 'a3.jpg',
@@ -68,7 +76,26 @@ var categories = {
       focal: '',
       aperture: '',
       iso: '400',
-      shutter: ''
+      shutter: '',
+      place: 'Alvalaxia',
+      country: 'Portugal',
+      subject: 'Fairy',
+      developing: 'Carmencita Lisboa'
+    },
+    { 
+      base: 'seine.jpg',
+      lens: '7artf095',
+      camera: 'a6400',
+      stock: '',
+      date: '2024-07-28',
+      focal: '35mm',
+      aperture: '?',
+      iso: '100',
+      shutter: '1/1000s',
+      place: 'Seine',
+      country: 'France',
+      subject: '',
+      developing: ''
     },
     { 
       base: 'a4.jpg',
@@ -79,7 +106,11 @@ var categories = {
       focal: '20mm',
       aperture: 'f/4',
       iso: '2000',
-      shutter: '1/30s'
+      shutter: '1/30s',
+      place: 'Galveston',
+      country: 'USA',
+      subject: '',
+      developing: ''
     },
     { 
       base: 'a5.jpg',
@@ -90,7 +121,11 @@ var categories = {
       focal: '',
       aperture: '',
       iso: '',
-      shutter: ''
+      shutter: '',
+      place: 'Recife',
+      country: 'Brazil',
+      subject: '',
+      developing: ''
     },
   ],
   
@@ -104,7 +139,11 @@ var categories = {
       focal: '26mm',
       aperture: 'f/4.5',
       iso: '1250',
-      shutter: '1/40s'
+      shutter: '1/40s',
+      place: 'Galveston',
+      country: 'USA',
+      subject: '',
+      developing: ''
     },
     { 
       base: 'b2.jpg',
@@ -115,7 +154,11 @@ var categories = {
       focal: '',
       aperture: '',
       iso: '',
-      shutter: ''
+      shutter: '',
+      place: 'EPI ETIC',
+      country: 'Portugal',
+      subject: 'Charlie',
+      developing: ''
     },
     { 
       base: 'b3.jpg',
@@ -126,13 +169,17 @@ var categories = {
       focal: '35mm',
       aperture: '~f/1',
       iso: '400',
-      shutter: '1/160s'
+      shutter: '1/160s',
+      place: 'Fundação Oriente',
+      country: 'Portugal',
+      subject: 'NUNCHI',
+      developing: ''
     },
   ],
   
   landscapes: [
     { 
-      base: 'c1.jpg',
+      base: 'bridge-moon.jpg',
       lens: '',
       camera: 'a6400',
       stock: '',
@@ -140,7 +187,11 @@ var categories = {
       focal: '',
       aperture: '',
       iso: '100',
-      shutter: ''
+      shutter: '',
+      place: 'Belém',
+      country: 'Portugal',
+      subject: '',
+      developing: ''
     },
     { 
       base: 'c2.jpg',
@@ -151,7 +202,11 @@ var categories = {
       focal: '',
       aperture: '',
       iso: '',
-      shutter: ''
+      shutter: '',
+      place: 'Recife',
+      country: 'Brazil',
+      subject: '',
+      developing: ''
     },
     { 
       base: 'c3.jpg',
@@ -162,7 +217,11 @@ var categories = {
       focal: '',
       aperture: '',
       iso: '100',
-      shutter: '1/80s'
+      shutter: '1/80s',
+      place: 'NARRATIVA',
+      country: 'Portugal',
+      subject: 'Jiani',
+      developing: ''
     },
   ]
 };
@@ -177,7 +236,7 @@ var heroPhotoUrls = [
   'b1.jpg',
   'b2.jpg',
   'b3.jpg',
-  'c1.jpg',
+  'bridge-moon.jpg',
   'c2.jpg',
   'c3.jpg',
 ];
