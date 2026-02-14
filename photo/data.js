@@ -241,6 +241,22 @@ var heroPhotoUrls = [
   'c3.jpg',
 ];
 
+// Search category order - customize which categories appear and in what order
+var searchCategories = [
+  'ISO',
+  'Aperture', 
+  'Focal Length',
+  'Shutter Speed',
+  'Camera',
+  'Lens',
+  'Film Stock',
+  'Place',
+  'Country',
+  'Subject',
+  'Developing',
+  'Date'
+];
+
 // ═══════════════════════════════════════════════════════════
 // HOW TO ADD/EDIT PHOTOS:
 // ═══════════════════════════════════════════════════════════
@@ -304,3 +320,8 @@ var heroPhotoUrls = [
 // - Stock can be blank ('') for digital photos
 //
 // ═══════════════════════════════════════════════════════════
+// SEARCH CATEGORIES:
+// Edit the searchCategories array above to customize which tags appear in search:
+// - Change the order by rearranging items
+// - Remove categories you don't want
+// - Category names must match photo field names (place, country, subject, developing, etc.)

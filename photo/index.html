@@ -270,7 +270,7 @@
     left: 50%;
     transform: translateX(-50%);
     z-index: 199;
-    width: 400px;
+    width: 500px;
     max-width: 90vw;
     opacity: 0;
     pointer-events: none;
@@ -318,6 +318,113 @@
     stroke: #fff;
     fill: none;
     stroke-width: 2;
+  }
+
+  /* Search results dropdown */
+  #search-results {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    background: rgba(25, 25, 25, 0.98);
+    border: 2px solid rgba(150, 150, 150, 0.3);
+    border-radius: 8px;
+    max-height: 70vh;
+    overflow-y: auto;
+    display: none;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+  }
+  #search-results.visible {
+    display: block;
+  }
+  #search-results::-webkit-scrollbar {
+    width: 8px;
+  }
+  #search-results::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+  }
+  #search-results::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+  }
+
+  /* Tag categories */
+  .tag-category {
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .tag-category:last-child {
+    border-bottom: none;
+  }
+  .tag-category-title {
+    font-size: calc(11px * var(--size-scale));
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+  .tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .tag-item {
+    padding: 4px 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    font-size: calc(12px * var(--size-scale));
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+  }
+  .tag-item:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.4);
+  }
+  .tag-item.active {
+    background: rgba(100, 150, 255, 0.3);
+    border-color: rgba(100, 150, 255, 0.6);
+  }
+  .tag-count {
+    opacity: 0.6;
+    font-size: 0.9em;
+    margin-left: 4px;
+  }
+
+  /* Thumbnail results */
+  .search-thumbnails {
+    padding: 12px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 8px;
+  }
+  .search-thumb {
+    position: relative;
+    aspect-ratio: 3/2;
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+  .search-thumb:hover {
+    transform: scale(1.05);
+  }
+  .search-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .search-thumb-number {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    background: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 10px;
   }
 
   /* ══════ SETTINGS BUTTON (top right) ══════ */
@@ -726,7 +833,10 @@
         <path d="m21 21-4.35-4.35"></path>
       </svg>
     </div>
-    <input type="text" id="search-bar" placeholder="search photos..." />
+    <input type="text" id="search-bar" placeholder="type to filter tags..." autocomplete="off" />
+    
+    <!-- Search results dropdown -->
+    <div id="search-results"></div>
   </div>
 </div>
 
@@ -774,6 +884,13 @@
     <div class="setting-options">
       <button class="setting-btn active" data-setting="snapping" data-val="on">on</button>
       <button class="setting-btn" data-setting="snapping" data-val="off">off</button>
+    </div>
+  </div>
+  <div class="setting-row">
+    <span class="setting-label">sounds</span>
+    <div class="setting-options">
+      <button class="setting-btn active" data-setting="sounds" data-val="on">on</button>
+      <button class="setting-btn" data-setting="sounds" data-val="off">off</button>
     </div>
   </div>
 </div>
@@ -844,9 +961,9 @@
 <audio id="tap-sound" src="sounds/tap.wav" preload="auto"></audio>
 <audio id="open-sound" src="sounds/open.wav" preload="auto"></audio>
 <audio id="close-sound" src="sounds/close.wav" preload="auto"></audio>
-<audio id="plastic-sound" src="sounds/plastic.ogg" preload="auto"></audio>
 <audio id="select-sound" src="sounds/select.wav" preload="auto"></audio>
 <audio id="type-sound" src="sounds/type.wav" preload="auto"></audio>
+<audio id="scroll-sound" src="sounds/scroll.wav" preload="auto"></audio>
 
 <!-- Load photo data from external file -->
 <script src="data.js"></script>
@@ -861,8 +978,8 @@
   // var lenses = {
   //   '7art_35_f095': {
   //     name: '35mm f/0.95',
-  //     image: 'media/f095.png',
-  //     extra: ' 7artisans'
+  //     image: 'media/7artf095.png',
+  //     extra: ' 35mm f/0.95 7artisans'
   //   }
   // };
   //
@@ -885,7 +1002,11 @@
   //       focal: '35mm',                     // Focal length used
   //       aperture: 'f/8',                   // Aperture used
   //       iso: '100',                        // ISO used
-  //       shutter: '1/50s'                   // Shutter speed used
+  //       shutter: '1/50s',                  // Shutter speed used
+  //       city: 'Lisbon',                    // Optional: City
+  //       country: 'Portugal',               // Optional: Country
+  //       subject: 'street photography',     // Optional: Subject/theme
+  //       tags: ['urban', 'sunset', 'people'] // Optional: Search tags array
   //     },
   //   ],
   //   portraits: [ ... ],
@@ -896,6 +1017,12 @@
   //   'a1.jpg',         // Just filename - auto-adds "photos/" and "-small"
   //   'a2.jpg',
   // ];
+  //
+  // SEARCH INDEXES ALL FIELDS:
+  // - base filename, focal, aperture, iso, shutter, stock, date
+  // - lens name and brand, camera name and model
+  // - city, country, subject, tags
+  // Search is case-insensitive and matches partial text
 
   var currentRes = 'default'; // Kept for settings UI
 
@@ -939,14 +1066,15 @@
   var peekFrames = document.getElementById('peek-frames');
   var searchBarContainer = document.getElementById('search-bar-container');
   var searchBar = document.getElementById('search-bar');
+  var searchResults = document.getElementById('search-results');
 
   // Sound elements
   var tapSound = document.getElementById('tap-sound');
   var openSound = document.getElementById('open-sound');
   var closeSound = document.getElementById('close-sound');
-  var plasticSound = document.getElementById('plastic-sound');
   var selectSound = document.getElementById('select-sound');
   var typeSound = document.getElementById('type-sound');
+  var scrollSound = document.getElementById('scroll-sound');
 
   /* ══════ STATE ══════ */
   var currentCat = 'main';
@@ -957,7 +1085,14 @@
   var hasHero = true;
   var sw = screen.width;
   var snappingEnabled = true; // Toggle for snapping behavior
-  var centerStripScrollTimeout = null; // Track delayed center strip scroll animation
+  var soundsEnabled = true; // Toggle for sound effects
+
+  /* ══════ SOUND HELPER ══════ */
+  function playSound(audioElement) {
+    if (!soundsEnabled) return;
+    audioElement.currentTime = 0;
+    audioElement.play().catch(function() {});
+  }
 
   /* ══════ IMAGE SIZING ══════ */
   function containSize(nw, nh, bw, bh) {
@@ -1097,11 +1232,9 @@ for (var i = 0; i < photos.length; i++) {
   // Line 2: Shutter speed + EV (only if shutter exists)
   if (p.shutter) {
     var shutterLine = p.shutter;
-    // Only calculate EV if we have both aperture and shutter
-    if (p.aperture && p.shutter) {
-      if (evValue !== null) {
-        shutterLine += ' EV' + evValue;
-      }
+    // Only calculate and show EV if we have both aperture and shutter AND evValue is valid
+    if (p.aperture && p.shutter && evValue !== null && !isNaN(evValue)) {
+      shutterLine += ' EV' + evValue;
     }
     infoLines += '<div class="info-line">' + shutterLine + '</div>';
   }
@@ -1307,6 +1440,9 @@ for (var i = 0; i < photos.length; i++) {
 
   // Scroll indicator click → scroll to next slide or top if on last
   scrollInd.addEventListener('click', function() {
+    // Play scroll sound
+    playSound(scrollSound);
+    
     var st = document.documentElement.scrollTop || document.body.scrollTop;
     var vh = window.innerHeight;
     var current = Math.round(st / vh);
@@ -1369,14 +1505,12 @@ function buildFilmFrames(catKey) {
       
       // Add hover sound
       hf.addEventListener('mouseenter', function() {
-        tapSound.currentTime = 0;
-        tapSound.play().catch(function() {});
+        playSound(tapSound);
       });
       
       hf.addEventListener('click', function() {
         // Play click sound
-        typeSound.currentTime = 0;
-        typeSound.play().catch(function() {});
+        playSound(typeSound);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       });
       filmFramesEl.appendChild(hf);
@@ -1398,15 +1532,13 @@ function buildFilmFrames(catKey) {
       
       // Add hover sound
       f.addEventListener('mouseenter', function() {
-        tapSound.currentTime = 0;
-        tapSound.play().catch(function() {});
+        playSound(tapSound);
       });
       
       f.addEventListener('click', (function(idx, off) {
         return function() {
           // Play click sound
-          typeSound.currentTime = 0;
-          typeSound.play().catch(function() {});
+          playSound(typeSound);
           window.scrollTo({ top: window.innerHeight * (idx + off), behavior: 'smooth' });
         };
       })(i, heroOffset));
@@ -1442,15 +1574,13 @@ function buildPeekFrames(catKey) {
     
     // Add hover sound
     hf.addEventListener('mouseenter', function() {
-      tapSound.currentTime = 0;
-      tapSound.play().catch(function() {});
+      playSound(tapSound);
     });
     
     hf.addEventListener('click', function(e) {
       e.stopPropagation();
       // Play click sound
-      typeSound.currentTime = 0;
-      typeSound.play().catch(function() {});
+      playSound(typeSound);
       
       if (!isMain) {
         document.querySelectorAll('.cat-frame').forEach(function(c) { c.classList.remove('active'); });
@@ -1477,16 +1607,14 @@ function buildPeekFrames(catKey) {
       
       // Add hover sound
       f.addEventListener('mouseenter', function() {
-        tapSound.currentTime = 0;
-        tapSound.play().catch(function() {});
+        playSound(tapSound);
       });
       
       f.addEventListener('click', (function(idx, off) {
         return function(e) {
           e.stopPropagation();
           // Play click sound
-          typeSound.currentTime = 0;
-          typeSound.play().catch(function() {});
+          playSound(typeSound);
           window.scrollTo({ top: window.innerHeight * (idx + off), behavior: 'smooth' });
         };
       })(i, heroOffset));
@@ -1561,6 +1689,9 @@ function buildPeekFrames(catKey) {
       }
       
       if (newTargetIndex !== targetSlideIndex) {
+        // Play scroll sound when changing slides
+        playSound(scrollSound);
+        
         targetSlideIndex = newTargetIndex; // Update target
         // Update peek highlight immediately
         updatePeekHighlight(targetSlideIndex);
@@ -1602,12 +1733,6 @@ function buildPeekFrames(catKey) {
 
   /* ══════ FILM MENU TOGGLE ══════ */
   function toggleFilmMenu() {
-    // CRITICAL: Clear any existing timeout FIRST to prevent multiple sounds
-    if (centerStripScrollTimeout) {
-      clearTimeout(centerStripScrollTimeout);
-      centerStripScrollTimeout = null;
-    }
-    
     filmMenuOpen = !filmMenuOpen;
     filmOvl.classList.toggle('open', filmMenuOpen);
     loremWindow.classList.toggle('open', filmMenuOpen);
@@ -1617,8 +1742,7 @@ function buildPeekFrames(catKey) {
 
     if (filmMenuOpen) {
       // Play open sound
-      openSound.currentTime = 0;
-      openSound.play().catch(function() {});
+      playSound(openSound);
       
       filmCanister.classList.add('visible');
       setTimeout(function() {
@@ -1626,20 +1750,9 @@ function buildPeekFrames(catKey) {
       }, 200);
       updateFilmHighlight();
       
-      // Delay center strip scroll and play plastic sound
-      centerStripScrollTimeout = setTimeout(function() {
-        // CRITICAL: Only play if menu is STILL open
-        if (filmMenuOpen) {
-          plasticSound.currentTime = 0;
-          plasticSound.play().catch(function() {});
-        }
-        centerStripScrollTimeout = null;
-      }, 800);
-      
     } else {
       // Play close sound
-      closeSound.currentTime = 0;
-      closeSound.play().catch(function() {});
+      playSound(closeSound);
       
       filmPanel.classList.remove('animate-in');
       setTimeout(function() {
@@ -1652,8 +1765,7 @@ function buildPeekFrames(catKey) {
   
   // Add hover sound to leather tab
   leatherTab.addEventListener('mouseenter', function() {
-    tapSound.currentTime = 0;
-    tapSound.play().catch(function() {});
+    playSound(tapSound);
   });
   
   settingsBtn.addEventListener('click', function(e) {
@@ -1662,27 +1774,376 @@ function buildPeekFrames(catKey) {
   });
   filmBkdp.addEventListener('click', function() { if (filmMenuOpen) toggleFilmMenu(); });
 
-  // Search bar functionality
+  // Search bar functionality - instant photo search + clickable tags
   searchBar.addEventListener('focus', function() {
-    selectSound.currentTime = 0;
-    selectSound.play().catch(function() {});
+    playSound(selectSound);
+    // Show tag categories on focus
+    if (!searchBar.value.trim()) {
+      buildTagCategories();
+      searchResults.classList.add('visible');
+    }
   });
   
   searchBar.addEventListener('input', function(e) {
     // Play type sound on each character typed
-    typeSound.currentTime = 0;
-    typeSound.play().catch(function() {});
+    playSound(typeSound);
     
-    // Search functionality will be implemented later
-    // For now, just handle the sound
+    var query = searchBar.value.toLowerCase().trim();
+    
+    if (!query) {
+      // Empty search - show all tags
+      buildTagCategories();
+      searchResults.classList.add('visible');
+    } else {
+      // Show matching photos AND filtered tags
+      showSearchResults(query);
+    }
   });
+  
+  // Show both instant photo results and filtered tags
+  function showSearchResults(query) {
+    var matchedPhotos = [];
+    
+    // Search through ALL categories for photos
+    for (var cat in categories) {
+      var photos = categories[cat];
+      
+      for (var i = 0; i < photos.length; i++) {
+        var p = photos[i];
+        var searchText = buildSearchableText(p);
+        
+        if (searchText.indexOf(query) !== -1) {
+          matchedPhotos.push({ photo: p, index: i, category: cat });
+        }
+      }
+    }
+    
+    // Build HTML with photos at top and tags below
+    var html = '';
+    
+    // Show photo results if any
+    if (matchedPhotos.length > 0) {
+      html += '<div class="tag-category">';
+      html += '<div class="tag-category-title">' + matchedPhotos.length + ' photo' + (matchedPhotos.length === 1 ? '' : 's') + ' matching "' + query + '"</div>';
+      html += '</div>';
+      
+      html += '<div class="search-thumbnails">';
+      
+      for (var i = 0; i < matchedPhotos.length; i++) {
+        var result = matchedPhotos[i];
+        var photo = result.photo;
+        var photoIndex = result.index;
+        var photoCat = result.category;
+        
+        html += '<div class="search-thumb" data-index="' + photoIndex + '" data-category="' + photoCat + '">';
+        html += '<img src="' + thumbUrl(photo.base) + '" alt="' + photo.base + '" />';
+        html += '<div class="search-thumb-number">' + photoCat + ' #' + (photoIndex + 1) + '</div>';
+        html += '</div>';
+      }
+      
+      html += '</div>';
+    }
+    
+    // Show filtered tags below
+    html += buildTagCategoriesHTML(query);
+    
+    searchResults.innerHTML = html;
+    searchResults.classList.add('visible');
+    
+    // Add click handlers to thumbnails
+    addThumbnailHandlers();
+    
+    // Add click handlers to tags
+    addTagHandlers();
+  }
+  
+  // Close search results when clicking outside
+  document.addEventListener('click', function(e) {
+    if (!searchBarContainer.contains(e.target)) {
+      searchResults.classList.remove('visible');
+    }
+  });
+  
+  // Prevent page scroll when scrolling inside search results dropdown
+  searchResults.addEventListener('wheel', function(e) {
+    e.stopPropagation();
+  }, { passive: true });
+  
+  // Build tag categories (for showing all tags or filtered tags)
+  function buildTagCategories(filterQuery) {
+    var html = buildTagCategoriesHTML(filterQuery);
+    searchResults.innerHTML = html;
+    searchResults.classList.add('visible');
+    addTagHandlers();
+  }
+  
+  // Build tag categories HTML
+  function buildTagCategoriesHTML(filterQuery) {
+    // Get all photos from all categories
+    var allPhotos = [];
+    for (var cat in categories) {
+      allPhotos = allPhotos.concat(categories[cat]);
+    }
+    
+    var tagGroups = extractTagGroups(allPhotos);
+    
+    // Filter tags if search query provided
+    if (filterQuery) {
+      for (var category in tagGroups) {
+        tagGroups[category] = tagGroups[category].filter(function(tag) {
+          return tag.value.toLowerCase().indexOf(filterQuery) !== -1;
+        });
+      }
+    }
+    
+    var html = '';
+    var categoryOrder = searchCategories;
+    
+    for (var i = 0; i < categoryOrder.length; i++) {
+      var catName = categoryOrder[i];
+      var tags = tagGroups[catName];
+      
+      if (tags && tags.length > 0) {
+        html += '<div class="tag-category">';
+        html += '<div class="tag-category-title">' + catName + '</div>';
+        html += '<div class="tag-list">';
+        
+        for (var j = 0; j < tags.length; j++) {
+          var tag = tags[j];
+          html += '<div class="tag-item" data-category="' + catName + '" data-value="' + tag.value + '">';
+          html += tag.value;
+          html += '<span class="tag-count">(' + tag.count + ')</span>';
+          html += '</div>';
+        }
+        
+        html += '</div></div>';
+      }
+    }
+    
+    if (!html && filterQuery) {
+      html = '<div style="padding: 20px; text-align: center; color: rgba(255,255,255,0.5);">No tags match "' + filterQuery + '"</div>';
+    }
+    
+    return html;
+  }
+  
+  // Extract and group tags from photos
+  function extractTagGroups(photos) {
+    var groups = {
+      'ISO': {},
+      'Aperture': {},
+      'Focal Length': {},
+      'Shutter Speed': {},
+      'Camera': {},
+      'Lens': {},
+      'Film Stock': {},
+      'Place': {},
+      'Country': {},
+      'Subject': {},
+      'Developing': {},
+      'Date': {}
+    };
+    
+    for (var i = 0; i < photos.length; i++) {
+      var p = photos[i];
+      
+      if (p.iso) groups['ISO'][p.iso] = (groups['ISO'][p.iso] || 0) + 1;
+      if (p.aperture) groups['Aperture'][p.aperture] = (groups['Aperture'][p.aperture] || 0) + 1;
+      if (p.focal) groups['Focal Length'][p.focal] = (groups['Focal Length'][p.focal] || 0) + 1;
+      if (p.shutter) groups['Shutter Speed'][p.shutter] = (groups['Shutter Speed'][p.shutter] || 0) + 1;
+      
+      if (p.camera && cameras[p.camera]) {
+        var camName = cameras[p.camera].name;
+        groups['Camera'][camName] = (groups['Camera'][camName] || 0) + 1;
+      }
+      
+      if (p.lens && lenses[p.lens]) {
+        var lensName = lenses[p.lens].name;
+        groups['Lens'][lensName] = (groups['Lens'][lensName] || 0) + 1;
+      }
+      
+      if (p.stock) groups['Film Stock'][p.stock] = (groups['Film Stock'][p.stock] || 0) + 1;
+      if (p.place) groups['Place'][p.place] = (groups['Place'][p.place] || 0) + 1;
+      if (p.country) groups['Country'][p.country] = (groups['Country'][p.country] || 0) + 1;
+      if (p.subject) groups['Subject'][p.subject] = (groups['Subject'][p.subject] || 0) + 1;
+      if (p.developing) groups['Developing'][p.developing] = (groups['Developing'][p.developing] || 0) + 1;
+      
+      if (p.date) {
+        var year = p.date.split('-')[0];
+        if (year) groups['Date'][year] = (groups['Date'][year] || 0) + 1;
+      }
+    }
+    
+    // Convert to arrays with counts
+    var result = {};
+    for (var category in groups) {
+      result[category] = [];
+      for (var value in groups[category]) {
+        result[category].push({ value: value, count: groups[category][value] });
+      }
+      result[category].sort(function(a, b) {
+        return a.value.localeCompare(b.value);
+      });
+    }
+    
+    return result;
+  }
+  
+  // Add click handlers to tags
+  function addTagHandlers() {
+    searchResults.querySelectorAll('.tag-item').forEach(function(tagEl) {
+      tagEl.addEventListener('mouseenter', function() {
+        playSound(tapSound);
+      });
+      
+      tagEl.addEventListener('click', function(e) {
+        e.stopPropagation();
+        playSound(typeSound);
+        
+        var category = tagEl.getAttribute('data-category');
+        var value = tagEl.getAttribute('data-value');
+        
+        // Show photos for this tag
+        showPhotosForTag(category, value);
+      });
+    });
+  }
+  
+  // Show photos matching a specific tag
+  function showPhotosForTag(category, value) {
+    var matched = [];
+    
+    // Search through ALL categories
+    for (var cat in categories) {
+      var photos = categories[cat];
+      
+      for (var i = 0; i < photos.length; i++) {
+        var p = photos[i];
+        var matches = false;
+        
+        if (category === 'ISO' && p.iso === value) matches = true;
+        if (category === 'Aperture' && p.aperture === value) matches = true;
+        if (category === 'Focal Length' && p.focal === value) matches = true;
+        if (category === 'Shutter Speed' && p.shutter === value) matches = true;
+        if (category === 'Camera' && p.camera && cameras[p.camera] && cameras[p.camera].name === value) matches = true;
+        if (category === 'Lens' && p.lens && lenses[p.lens] && lenses[p.lens].name === value) matches = true;
+        if (category === 'Film Stock' && p.stock === value) matches = true;
+        if (category === 'Place' && p.place === value) matches = true;
+        if (category === 'Country' && p.country === value) matches = true;
+        if (category === 'Subject' && p.subject === value) matches = true;
+        if (category === 'Developing' && p.developing === value) matches = true;
+        if (category === 'Date' && p.date && p.date.split('-')[0] === value) matches = true;
+        
+        if (matches) {
+          matched.push({ photo: p, index: i, category: cat });
+        }
+      }
+    }
+    
+    // Build results HTML
+    var html = '<div class="tag-category">';
+    html += '<div class="tag-category-title">' + category + ': ' + value + ' (' + matched.length + ' photo' + (matched.length === 1 ? '' : 's') + ')</div>';
+    html += '</div>';
+    
+    if (matched.length > 0) {
+      html += '<div class="search-thumbnails">';
+      
+      for (var i = 0; i < matched.length; i++) {
+        var result = matched[i];
+        var photo = result.photo;
+        var photoIndex = result.index;
+        var photoCat = result.category;
+        
+        html += '<div class="search-thumb" data-index="' + photoIndex + '" data-category="' + photoCat + '">';
+        html += '<img src="' + thumbUrl(photo.base) + '" alt="' + photo.base + '" />';
+        html += '<div class="search-thumb-number">' + photoCat + ' #' + (photoIndex + 1) + '</div>';
+        html += '</div>';
+      }
+      
+      html += '</div>';
+    }
+    
+    searchResults.innerHTML = html;
+    addThumbnailHandlers();
+  }
+  
+  // Add click handlers to thumbnails
+  function addThumbnailHandlers() {
+    searchResults.querySelectorAll('.search-thumb').forEach(function(thumb) {
+      thumb.addEventListener('mouseenter', function() {
+        playSound(tapSound);
+      });
+      
+      thumb.addEventListener('click', function(e) {
+        e.stopPropagation();
+        playSound(typeSound);
+        
+        var index = parseInt(thumb.getAttribute('data-index'));
+        var photoCat = thumb.getAttribute('data-category');
+        
+        // Close search
+        searchResults.classList.remove('visible');
+        searchBar.value = '';
+        
+        if (filmMenuOpen) {
+          toggleFilmMenu();
+        }
+        
+        // Switch to the photo's category if needed
+        if (photoCat !== currentCat) {
+          document.querySelectorAll('.cat-frame').forEach(function(c) { c.classList.remove('active'); });
+          document.querySelector('.cat-frame[data-cat="' + photoCat + '"]').classList.add('active');
+          buildSlides(photoCat);
+        }
+        
+        // Calculate scroll position with correct hero offset
+        var isMain = (photoCat === 'main');
+        var heroOffset = isMain ? 1 : 0;
+        var scrollTo = window.innerHeight * (index + heroOffset);
+        
+        // Navigate to photo
+        window.scrollTo({ top: scrollTo, behavior: 'smooth' });
+      });
+    });
+  }
+  
+  // Build searchable text from photo data
+  function buildSearchableText(photo) {
+    var text = [];
+    
+    // Add all fields
+    if (photo.base) text.push(photo.base.toLowerCase());
+    if (photo.focal) text.push(photo.focal.toLowerCase());
+    if (photo.aperture) text.push(photo.aperture.toLowerCase());
+    if (photo.iso) text.push(photo.iso.toLowerCase());
+    if (photo.shutter) text.push(photo.shutter.toLowerCase());
+    if (photo.stock) text.push(photo.stock.toLowerCase());
+    if (photo.date) text.push(photo.date.toLowerCase());
+    if (photo.place) text.push(photo.place.toLowerCase());
+    if (photo.country) text.push(photo.country.toLowerCase());
+    if (photo.subject) text.push(photo.subject.toLowerCase());
+    if (photo.developing) text.push(photo.developing.toLowerCase());
+    
+    // Add lens data
+    if (photo.lens && lenses[photo.lens]) {
+      text.push(lenses[photo.lens].name.toLowerCase());
+      text.push(lenses[photo.lens].extra.toLowerCase());
+    }
+    
+    // Add camera data
+    if (photo.camera && cameras[photo.camera]) {
+      text.push(cameras[photo.camera].name.toLowerCase());
+      text.push(cameras[photo.camera].extra.toLowerCase());
+    }
+    
+    return text.join(' ');
+  }
 
   // Category clicks
   document.querySelectorAll('.cat-frame').forEach(function(cf) {
     // Add hover sound
     cf.addEventListener('mouseenter', function() {
-      tapSound.currentTime = 0;
-      tapSound.play().catch(function() {});
+      playSound(tapSound);
     });
     
     cf.addEventListener('click', function() {
@@ -1690,8 +2151,7 @@ function buildPeekFrames(catKey) {
       if (cat === currentCat) return;
       
       // Play click sound
-      typeSound.currentTime = 0;
-      typeSound.play().catch(function() {});
+      playSound(typeSound);
       
       document.querySelectorAll('.cat-frame').forEach(function(c) { c.classList.remove('active'); });
       cf.classList.add('active');
@@ -1722,6 +2182,8 @@ function buildPeekFrames(catKey) {
         snappingEnabled = (val === 'on');
         // Refresh all image states to apply new mode
         activateSlide(activeIndex);
+      } else if (setting === 'sounds') {
+        soundsEnabled = (val === 'on');
       }
     });
   });
