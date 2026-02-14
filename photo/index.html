@@ -46,7 +46,7 @@
     margin: 0;
     font-family: var(--font-active);
     background: rgb(118,118,118);
-    color: #fff;
+    color: rgba(255,255,255,0.9);
   }
 
   /* ══════ LOADER ══════ */
@@ -75,6 +75,9 @@
     display: flex; align-items: center; justify-content: center;
     background: rgb(118,118,118);
   }
+  .slide.ending-slide {
+    background: rgb(118,118,118);
+  }
   .slide img.main-photo {
     position: absolute;
     object-fit: contain;
@@ -98,6 +101,32 @@
     transition: opacity 0.5s ease 0.2s;
   }
   .slide.active .vignette { opacity: 1; }
+
+  /* ══════ VIEW MORE BUTTON (ending slide) ══════ */
+  .view-more-btn {
+    position: relative;
+    z-index: 10;
+    padding: 1rem 2.5rem;
+    font-family: var(--font-active);
+    font-size: calc(0.9rem * var(--size-scale));
+    font-weight: 300;
+    letter-spacing: 0.2em;
+    text-transform: none;
+    color: rgba(255,255,255,0.9);
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 0.4rem;
+    cursor: pointer;
+    transition: all 0.3s ease, opacity 0.5s ease;
+    user-select: none;
+  }
+  .view-more-btn:hover {
+    background: rgba(0, 0, 0, 0.6);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: scale(1.05);
+  }
 
   /* ══════ HERO SLIDE ══════ */
   .hero-grid {
@@ -154,7 +183,7 @@
     font-weight: 300;
     letter-spacing: 0.12em;
     line-height: 1.5;
-    color: #fff;
+    color: rgba(255,255,255,0.9);
     opacity: 0;
     transition: opacity 0.6s ease 0.4s;
     user-select: none;
@@ -192,14 +221,41 @@
   }
   .photo-info .hover-photo.show { display: block; opacity: 1; }
 
-  /* ══════ FROSTED GLASS (hero corners) ══════ */
-  .frosted {
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    background: rgba(0,0,0,0.3);
-    border-radius: 0.3rem;
-    padding: 0.25rem 0.5rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  /* ══════ AUTO-HIDE UI ══════ */
+  .ui-element {
+    transition: opacity 0.5s ease;
+  }
+  .ui-element.hidden {
+    opacity: 0 !important;
+    pointer-events: none;
+  }
+
+  /* ══════ CENTER DESCRIPTION ══════ */
+  .photo-description {
+    position: absolute;
+    top: 88%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 15;
+    max-width: 600px;
+    padding: 1rem 2rem;
+    text-align: center;
+    font-size: calc(0.8rem * var(--size-scale));
+    font-weight: 300;
+    letter-spacing: 0.1em;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.9);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    user-select: none;
+    pointer-events: none;
+  }
+  .slide.active .photo-description {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .photo-description:hover {
+    opacity: 1 !important;
   }
 
   /* ══════ COUNTER (top left) ══════ */
@@ -207,8 +263,17 @@
     position: fixed; top: 1.45rem; left: 1.65rem; z-index: 50;
     font-size: calc(0.85rem * var(--size-scale)); font-weight: 300;
     letter-spacing: 0.15em;
-    color: #fff; user-select: none;
+    color: rgba(255,255,255,0.9); user-select: none;
     transition: opacity 0.4s ease;
+    min-width: 3rem; /* Prevent layout shift */
+  }
+  #counter:empty {
+    opacity: 0 !important;
+    pointer-events: none;
+  }
+  #counter.hero-page {
+    opacity: 0 !important;
+    pointer-events: none;
   }
   
   /* Per-slide counter (for continuous scroll mode) */
@@ -216,7 +281,7 @@
     position: absolute; top: 1.45rem; left: 1.65rem; z-index: 10;
     font-size: calc(0.85rem * var(--size-scale)); font-weight: 300;
     letter-spacing: 0.15em;
-    color: #fff; user-select: none;
+    color: rgba(255,255,255,0.9); user-select: none;
     opacity: 0; /* Hidden by default */
     transition: opacity 0.4s ease;
   }
@@ -235,7 +300,7 @@
     text-align: center;
     box-shadow: 0 3px 10px rgba(0,0,0,0.5);
     user-select: none;
-    transition: box-shadow 0.3s ease;
+    transition: opacity 0.5s ease, box-shadow 0.3s ease;
   }
   #leather-tab:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.7); }
   #leather-tab::after {
@@ -252,7 +317,7 @@
     font-weight: 300;
     letter-spacing: 0.25em;
     text-transform: none;
-    color: rgba(255,255,255,0.85);
+    color: #fff;
   }
   #leather-tab .tab-sub {
     font-size: calc(0.4rem * var(--size-scale));
@@ -437,11 +502,38 @@
   }
   #settings-btn svg {
     width: 1.1rem; height: 1.1rem;
-    stroke: #fff; stroke-width: 1.5; fill: none;
+    stroke: rgba(255,255,255,0.9); stroke-width: 1.5; fill: none;
     stroke-linecap: round; stroke-linejoin: round;
     transition: transform 0.4s ease;
   }
   #settings-btn:hover svg { transform: rotate(30deg); }
+
+  /* ══════ SOUND TOGGLE BUTTON (top right, next to settings) ══════ */
+  #sound-btn {
+    position: fixed; top: 1.25rem; right: 3.5rem; z-index: 200;
+    width: 1.6rem; height: 1.6rem;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  #sound-btn svg {
+    width: 1.1rem; height: 1.1rem;
+    stroke: rgba(255,255,255,0.9); stroke-width: 1.5; fill: none;
+    stroke-linecap: round; stroke-linejoin: round;
+    transition: opacity 0.3s ease;
+  }
+  #sound-btn.muted svg {
+    opacity: 0.4;
+  }
+  #sound-btn .sound-slash {
+    stroke: rgba(255,255,255,0.9);
+    stroke-width: 2;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  #sound-btn.muted .sound-slash {
+    opacity: 1;
+  }
 
   /* ══════ SETTINGS POPUP ══════ */
   #settings-popup {
@@ -458,6 +550,14 @@
     transition: opacity 0.3s ease, transform 0.3s ease;
     min-width: 14rem;
     border: 1px solid rgba(255,255,255,0.08);
+  }
+  @media (max-width: 768px) {
+    #settings-popup {
+      right: 0.5rem;
+      left: 0.5rem;
+      min-width: 0;
+      max-width: calc(100vw - 1rem);
+    }
   }
   #settings-popup.open {
     opacity: 1; pointer-events: auto; transform: translateY(0);
@@ -571,6 +671,8 @@
     height: 100%;
     display: flex;
     flex-direction: column;
+    width: 8.1rem; /* Match peek strip: sprockets (0.9) + padding (0.15) + frame (6) + padding (0.15) + sprockets (0.9) */
+    flex-shrink: 0;
   }
   #film-strip .film-body, #categories-strip .film-body {
     flex: 1; min-height: 0;
@@ -584,8 +686,8 @@
   .sprockets {
     width: 0.9rem;
     display: flex; flex-direction: column;
-    gap: 0.55rem; align-items: center;
-    padding: 0.4rem 0; flex-shrink: 0;
+    gap: 0.8rem; align-items: center;
+    padding: 0; flex-shrink: 0;
   }
   .sprocket {
     width: 0.45rem; height: 0.3rem;
@@ -596,7 +698,7 @@
   }
   .film-frames {
     display: flex; flex-direction: column;
-    gap: 0.35rem; padding: 0.5rem 0.15rem;
+    gap: 0.35rem; padding: 0 0.15rem;
     overflow-y: auto; scrollbar-width: none;
   }
   .film-frames::-webkit-scrollbar { display: none; }
@@ -606,12 +708,12 @@
     border-radius: 0.08rem;
     overflow: hidden;
     opacity: 0.6;
-    transition: opacity 0.3s ease;
-    border: 1px solid transparent;
+    transition: opacity 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: inset 0 0 0 1px transparent;
     flex-shrink: 0;
   }
   .film-frame:hover { opacity: 1; }
-  .film-frame.current { opacity: 1; border-color: #fff; }
+  .film-frame.current { opacity: 1; box-shadow: inset 0 0 0 1px #fff; }
   .film-frame img {
     display: block; width: 6rem; height: 4rem; object-fit: cover;
   }
@@ -637,15 +739,15 @@
   .cat-frame {
     width: 6rem; height: 4rem;
     background: #1e1e1e;
-    border: 1px solid #333;
+    box-shadow: inset 0 0 0 1px #333;
     border-radius: 0.08rem;
     display: flex; align-items: center; justify-content: center;
     cursor: pointer; opacity: 0.5;
-    transition: opacity 0.3s ease, border-color 0.3s ease;
+    transition: opacity 0.3s ease, box-shadow 0.3s ease;
     flex-shrink: 0;
   }
   .cat-frame:hover { opacity: 0.8; }
-  .cat-frame.active { opacity: 1; border-color: #fff; }
+  .cat-frame.active { opacity: 1; box-shadow: inset 0 0 0 1px #fff; }
   .cat-label {
     font-size: 0.6rem; font-weight: 300;
     letter-spacing: 0.2em; text-transform: none;
@@ -669,6 +771,21 @@
     transform: translateY(0.5rem);
     transition: opacity 0.4s ease, transform 0.4s ease;
     overflow-y: auto;
+  }
+  @media (max-width: 768px) {
+    #lorem-window {
+      top: 140px;          /* Below search bar */
+      left: 50%;
+      transform: translateX(-50%) translateY(0.5rem);
+      right: auto;
+      width: 90vw;
+      max-width: 500px;
+      max-height: calc(100vh - 160px);
+      padding: 1rem;
+    }
+    #lorem-window.open {
+      transform: translateX(-50%) translateY(0);
+    }
   }
   #lorem-window.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
   #lorem-window h2 {
@@ -759,14 +876,14 @@
   #scroll-down.hidden { opacity: 0; pointer-events: none; }
   #scroll-down span {
     font-size: calc(0.75rem * var(--size-scale)); font-weight: 300;
-    letter-spacing: 0.2em; text-transform: none; color: #fff;
+    letter-spacing: 0.2em; text-transform: none; color: rgba(255,255,255,0.9);
     transition: opacity 0.4s ease;
   }
   #scroll-down.scrolled span { opacity: 0; }
   #scroll-down.scroll-to-top span { opacity: 1; } /* Always visible on last slide */
   #scroll-down .chevron {
     width: 0.7rem; height: 0.7rem;
-    stroke: #fff; stroke-width: 1.5; fill: none;
+    stroke: rgba(255,255,255,0.9); stroke-width: 1.5; fill: none;
     stroke-linecap: round; stroke-linejoin: round;
     transition: transform 0.3s ease;
   }
@@ -775,13 +892,14 @@
   /* ══════ PEEK FILM STRIP (right) ══════ */
   #peek-strip {
     position: fixed;
-    right: 0; top: 4rem; bottom: 4rem;
+    right: 0; top: 0; bottom: 0;
     z-index: 49;
+    width: 8.1rem; /* Match menu strips */
     transform: translateX(100%);
     transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease;
     opacity: 0;
     pointer-events: none;
-    cursor: pointer;
+    cursor: default;
   }
   #peek-strip.visible {
     transform: translateX(75%);
@@ -806,21 +924,33 @@
 </head>
 <body>
 <script>
-  document.documentElement.style.fontSize = (screen.width / 100) + 'px';
+  // Detect mobile device
+  var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
+    || ('ontouchstart' in window) 
+    || (window.innerWidth <= 768);
+  
+  // Set base font size - different calculation for mobile
+  if (isMobile) {
+    // Mobile: fixed 20px for readable text
+    document.documentElement.style.fontSize = '20px';
+  } else {
+    // Desktop: original calculation
+    document.documentElement.style.fontSize = (screen.width / 100) + 'px';
+  }
 </script>
 
 <div id="loader"><div class="pulse"></div></div>
 <div id="slides-container"></div>
 
-<div id="scroll-down">
+<div id="scroll-down" class="ui-element">
   <span>scroll</span>
   <svg class="chevron" viewBox="0 0 24 24"><polyline points="6,9 12,15 18,9"/></svg>
 </div>
 
-<div id="counter">1 / 5</div>
+<div id="counter" class="ui-element">1 / 5</div>
 
-<div id="leather-tab">
-  <div class="tab-title">portfolio</div>
+<div id="leather-tab" class="ui-element">
+  <div class="tab-title">Val's Photofolio</div>
   <div class="tab-sub">tap to open menu</div>
 </div>
 
@@ -840,7 +970,16 @@
   </div>
 </div>
 
-<div id="settings-btn">
+<div id="sound-btn" class="ui-element">
+  <svg viewBox="0 0 24 24">
+    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+    <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+    <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+    <line class="sound-slash" x1="3" y1="3" x2="21" y2="21"/>
+  </svg>
+</div>
+
+<div id="settings-btn" class="ui-element">
   <svg viewBox="0 0 24 24">
     <circle cx="12" cy="12" r="3"/>
     <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
@@ -886,13 +1025,6 @@
       <button class="setting-btn" data-setting="snapping" data-val="off">off</button>
     </div>
   </div>
-  <div class="setting-row">
-    <span class="setting-label">sounds</span>
-    <div class="setting-options">
-      <button class="setting-btn active" data-setting="sounds" data-val="on">on</button>
-      <button class="setting-btn" data-setting="sounds" data-val="off">off</button>
-    </div>
-  </div>
 </div>
 
 <!-- Film overlay -->
@@ -903,22 +1035,18 @@
       <div id="categories-strip">
         <div class="film-body">
           <div class="sprockets" id="cat-sprockets-left"></div>
-          <div class="film-edge-text">65mm &nbsp; portfolio &nbsp; index</div>
           <div class="cat-frames">
             <div class="cat-frame active" data-cat="main"><span class="cat-label">main</span></div>
             <div class="cat-frame" data-cat="portraits"><span class="cat-label">portraits</span></div>
             <div class="cat-frame" data-cat="landscapes"><span class="cat-label">landscapes</span></div>
           </div>
-          <div class="film-edge-text">&#9650; &nbsp; roll &nbsp; 01</div>
           <div class="sprockets" id="cat-sprockets-right"></div>
         </div>
       </div>
       <div id="film-strip">
         <div class="film-body">
           <div class="sprockets" id="sprockets-left"></div>
-          <div class="film-edge-text">65mm &nbsp; kodak &nbsp; 5219 &nbsp; vis3</div>
           <div class="film-frames" id="film-frames"></div>
-          <div class="film-edge-text">&#9650; &nbsp; 28 &nbsp; &#9650; &nbsp; 28a &nbsp; &#9650; &nbsp; 29</div>
           <div class="sprockets" id="sprockets-right"></div>
         </div>
       </div>
@@ -938,7 +1066,7 @@
   <p>Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris.</p>
 </div>
 
-<div id="resize-group">
+<div id="resize-group" class="ui-element">
   <div id="crop-preview">
     <div class="photo-full" id="photo-full"><img id="crop-img-dim" /></div>
     <div class="viewport-crop" id="viewport-crop"><img id="crop-img-bright" /></div>
@@ -958,12 +1086,12 @@
 
 <!-- Sound elements -->
 <audio id="shutter-sound" preload="none"></audio>
-<audio id="tap-sound" src="sounds/tap.wav" preload="auto"></audio>
-<audio id="open-sound" src="sounds/open.wav" preload="auto"></audio>
-<audio id="close-sound" src="sounds/close.wav" preload="auto"></audio>
+<audio id="hover-sound" src="sounds/hover.wav" preload="auto"></audio>
+<audio id="open-sound" src="sounds/open.ogg" preload="auto"></audio>
+<audio id="close-sound" src="sounds/close.ogg" preload="auto"></audio>
 <audio id="select-sound" src="sounds/select.wav" preload="auto"></audio>
-<audio id="type-sound" src="sounds/type.wav" preload="auto"></audio>
-<audio id="scroll-sound" src="sounds/scroll.wav" preload="auto"></audio>
+<audio id="tap-sound" src="sounds/tap.wav" preload="auto"></audio>
+</audio>
 
 <!-- Load photo data from external file -->
 <script src="data.js"></script>
@@ -1047,6 +1175,7 @@
   var leatherTab = document.getElementById('leather-tab');
   var tabSub = leatherTab.querySelector('.tab-sub');
   var settingsBtn = document.getElementById('settings-btn');
+  var soundBtn = document.getElementById('sound-btn');
   var settingsPopup = document.getElementById('settings-popup');
   var filmOvl = document.getElementById('film-overlay');
   var filmBkdp = document.getElementById('film-backdrop');
@@ -1069,14 +1198,12 @@
   var searchResults = document.getElementById('search-results');
 
   // Sound elements
+  var hoverSound = document.getElementById('hover-sound');
   var tapSound = document.getElementById('tap-sound');
   var openSound = document.getElementById('open-sound');
   var closeSound = document.getElementById('close-sound');
   var selectSound = document.getElementById('select-sound');
-  var typeSound = document.getElementById('type-sound');
-  var scrollSound = document.getElementById('scroll-sound');
-
-  /* ══════ STATE ══════ */
+      /* ══════ STATE ══════ */
   var currentCat = 'main';
   var slides = [], slideImages = [], total = 0;
   var loadedCount = 0, firstLoaded = false, activeIndex = -1;
@@ -1171,7 +1298,7 @@ for (var i = 0; i < photos.length; i++) {
 
   // Photo info
   var info = document.createElement('div');
-  info.className = 'photo-info';
+  info.className = 'photo-info ui-element';
   
   // Auto-generate thumbnail path
   var photoSrc = thumbUrl(p.base);
@@ -1250,6 +1377,11 @@ for (var i = 0; i < photos.length; i++) {
     infoLines += '<div class="info-line">' + stockIsoLine + '</div>';
   }
   
+  // Line 4.5: Developing (only if developing exists) - NEW!
+  if (p.developing) {
+    infoLines += '<div class="info-line">Developing: ' + p.developing + '</div>';
+  }
+  
   // Line 5: Date (only if date exists and is valid)
   if (p.date) {
     var dateParts = p.date.split('-'); // ['2023', '03', '15'] or ['2021']
@@ -1266,6 +1398,14 @@ for (var i = 0; i < photos.length; i++) {
   
   slide.appendChild(info);
   
+  // Photo description (centered) - NEW!
+  if (p.description) {
+    var desc = document.createElement('div');
+    desc.className = 'photo-description ui-element';
+    desc.textContent = p.description;
+    slide.appendChild(desc);
+  }
+  
   // Per-slide counter (for continuous scroll mode)
   var slideCounter = document.createElement('div');
   slideCounter.className = 'slide-counter';
@@ -1275,7 +1415,31 @@ for (var i = 0; i < photos.length; i++) {
   
   slidesContainer.appendChild(slide);
 }
-    total = photos.length + (isMain ? 1 : 0);
+
+    // Add ending slide after all photos
+    var endingSlide = document.createElement('div');
+    endingSlide.className = 'slide ending-slide';
+    
+    // Add vignette
+    var endVig = document.createElement('div');
+    endVig.className = 'vignette';
+    endingSlide.appendChild(endVig);
+    
+    // Add centered "view more" button
+    var viewMoreBtn = document.createElement('button');
+    viewMoreBtn.className = 'view-more-btn ui-element';
+    viewMoreBtn.textContent = 'view more';
+    viewMoreBtn.addEventListener('click', function() {
+      toggleFilmMenu();
+    });
+    viewMoreBtn.addEventListener('mouseenter', function() {
+      playSound(hoverSound);
+    });
+    endingSlide.appendChild(viewMoreBtn);
+    
+    slidesContainer.appendChild(endingSlide);
+
+    total = photos.length + (isMain ? 2 : 1); // +2 for main (hero + ending), +1 for others (ending)
     slides = slidesContainer.querySelectorAll('.slide');
     slideImages = slidesContainer.querySelectorAll('.slide img.main-photo');
     counterEl.textContent = '';
@@ -1360,22 +1524,26 @@ for (var i = 0; i < photos.length; i++) {
       counterEl.style.opacity = '1';
       document.querySelectorAll('.slide-counter').forEach(function(c) { c.style.opacity = '0'; });
       
+      var isEndingSlide = (idx === total - 1);
+      
       // Update fixed counter text
-      if (isHero) {
+      if (isHero || isEndingSlide) {
         counterEl.textContent = '';
-      } else if (isMain) {
-        counterEl.textContent = idx + ' / ' + (total - 1);
+        counterEl.classList.add('hero-page');
       } else {
-        counterEl.textContent = (idx + 1) + ' / ' + total;
+        counterEl.classList.remove('hero-page');
+        if (isMain) {
+          counterEl.textContent = idx + ' / ' + (total - 2); // -2 to exclude hero and ending
+        } else {
+          counterEl.textContent = (idx + 1) + ' / ' + (total - 1); // +1 because idx starts at 0, -1 to exclude ending
+        }
       }
     } else {
       // Snapping OFF: use per-slide counters
       counterEl.style.opacity = '0';
+      counterEl.classList.remove('hero-page');
       document.querySelectorAll('.slide-counter').forEach(function(c) { c.style.opacity = '1'; });
     }
-
-    // Frosted glass on corners for hero
-    counterEl.classList.toggle('frosted', isHero);
 
     // Resize group: hide on hero
     updateRatio();
@@ -1408,9 +1576,16 @@ for (var i = 0; i < photos.length; i++) {
     if (filmMenuOpen) updateFilmHighlight(nearest);
 
     var isMain = (currentCat === 'main');
-    if (isMain && nearest === 0) counterEl.textContent = '';
-    else if (isMain) counterEl.textContent = nearest + ' / ' + (total - 1);
-    else counterEl.textContent = (nearest + 1) + ' / ' + total;
+    var isEndingSlide = (nearest === total - 1);
+    
+    if ((isMain && nearest === 0) || isEndingSlide) {
+      counterEl.textContent = '';
+      counterEl.classList.add('hero-page');
+    } else {
+      counterEl.classList.remove('hero-page');
+      if (isMain) counterEl.textContent = nearest + ' / ' + (total - 2); // -2 to exclude hero and ending
+      else counterEl.textContent = (nearest + 1) + ' / ' + (total - 1); // +1 because nearest starts at 0, -1 to exclude ending
+    }
 
     clearTimeout(scrollTimer);
     scrollTimer = setTimeout(function() {
@@ -1441,7 +1616,7 @@ for (var i = 0; i < photos.length; i++) {
   // Scroll indicator click → scroll to next slide or top if on last
   scrollInd.addEventListener('click', function() {
     // Play scroll sound
-    playSound(scrollSound);
+    playSound(hoverSound);
     
     var st = document.documentElement.scrollTop || document.body.scrollTop;
     var vh = window.innerHeight;
@@ -1492,6 +1667,12 @@ function buildFilmFrames(catKey) {
     fillSprockets('sprockets-right', 40);
     var photos = categories[catKey];
 
+    // Empty spacer at top for settings gear area (perfs but no frame)
+    var spacer = document.createElement('div');
+    spacer.style.height = '4.35rem'; // One frame pitch
+    spacer.style.flexShrink = '0';
+    filmFramesEl.appendChild(spacer);
+
     // Hero frame only for main
     if (catKey === 'main') {
       var hf = document.createElement('div'); hf.className = 'film-frame hero-thumb';
@@ -1505,12 +1686,12 @@ function buildFilmFrames(catKey) {
       
       // Add hover sound
       hf.addEventListener('mouseenter', function() {
-        playSound(tapSound);
+        playSound(hoverSound);
       });
       
       hf.addEventListener('click', function() {
         // Play click sound
-        playSound(typeSound);
+        playSound(tapSound);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       });
       filmFramesEl.appendChild(hf);
@@ -1532,18 +1713,45 @@ function buildFilmFrames(catKey) {
       
       // Add hover sound
       f.addEventListener('mouseenter', function() {
-        playSound(tapSound);
+        playSound(hoverSound);
       });
       
       f.addEventListener('click', (function(idx, off) {
         return function() {
           // Play click sound
-          playSound(typeSound);
+          playSound(tapSound);
           window.scrollTo({ top: window.innerHeight * (idx + off), behavior: 'smooth' });
         };
       })(i, heroOffset));
       filmFramesEl.appendChild(f);
     }
+    
+    // Add ending frame
+    var endFrame = document.createElement('div'); 
+    endFrame.className = 'film-frame ending-frame';
+    var endIcon = document.createElement('div');
+    endIcon.style.cssText = 'width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: rgba(255,255,255,0.5);';
+    endIcon.textContent = '→';
+    endFrame.appendChild(endIcon);
+    var endNum = document.createElement('span'); 
+    endNum.className = 'frame-num';
+    endNum.textContent = '→'; 
+    endFrame.appendChild(endNum);
+    
+    // Add hover sound
+    endFrame.addEventListener('mouseenter', function() {
+      playSound(hoverSound);
+    });
+    
+    endFrame.addEventListener('click', function() {
+      // Play click sound
+      playSound(tapSound);
+      // Scroll to ending slide
+      var endingSlideIndex = photos.length + heroOffset;
+      window.scrollTo({ top: window.innerHeight * endingSlideIndex, behavior: 'smooth' });
+    });
+    filmFramesEl.appendChild(endFrame);
+    
     if (filmMenuOpen) updateFilmHighlight();
   }
   function updateFilmHighlight(idx) {
@@ -1562,6 +1770,12 @@ function buildPeekFrames(catKey) {
     var photos = categories[catKey];
     var isMain = (catKey === 'main');
 
+    // Empty spacer at top for settings gear area (perfs but no frame)
+    var spacer = document.createElement('div');
+    spacer.style.height = '4.35rem'; // One frame pitch
+    spacer.style.flexShrink = '0';
+    peekFrames.appendChild(spacer);
+
     // Frame 0: hero for main, back button for others
     var hf = document.createElement('div'); hf.className = 'film-frame hero-thumb';
     var ht = document.createElement('img');
@@ -1574,13 +1788,13 @@ function buildPeekFrames(catKey) {
     
     // Add hover sound
     hf.addEventListener('mouseenter', function() {
-      playSound(tapSound);
+      playSound(hoverSound);
     });
     
     hf.addEventListener('click', function(e) {
       e.stopPropagation();
       // Play click sound
-      playSound(typeSound);
+      playSound(tapSound);
       
       if (!isMain) {
         document.querySelectorAll('.cat-frame').forEach(function(c) { c.classList.remove('active'); });
@@ -1607,19 +1821,46 @@ function buildPeekFrames(catKey) {
       
       // Add hover sound
       f.addEventListener('mouseenter', function() {
-        playSound(tapSound);
+        playSound(hoverSound);
       });
       
       f.addEventListener('click', (function(idx, off) {
         return function(e) {
           e.stopPropagation();
           // Play click sound
-          playSound(typeSound);
+          playSound(tapSound);
           window.scrollTo({ top: window.innerHeight * (idx + off), behavior: 'smooth' });
         };
       })(i, heroOffset));
       peekFrames.appendChild(f);
     }
+    
+    // Add ending frame
+    var endFrame = document.createElement('div'); 
+    endFrame.className = 'film-frame ending-frame';
+    var endIcon = document.createElement('div');
+    endIcon.style.cssText = 'width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: rgba(255,255,255,0.5);';
+    endIcon.textContent = '→';
+    endFrame.appendChild(endIcon);
+    var endNum = document.createElement('span'); 
+    endNum.className = 'frame-num';
+    endNum.textContent = '→'; 
+    endFrame.appendChild(endNum);
+    
+    // Add hover sound
+    endFrame.addEventListener('mouseenter', function() {
+      playSound(hoverSound);
+    });
+    
+    endFrame.addEventListener('click', function(e) {
+      e.stopPropagation();
+      // Play click sound
+      playSound(tapSound);
+      // Scroll to ending slide
+      var endingSlideIndex = photos.length + heroOffset;
+      window.scrollTo({ top: window.innerHeight * endingSlideIndex, behavior: 'smooth' });
+    });
+    peekFrames.appendChild(endFrame);
   }
   function updatePeekHighlight(idx) {
     var frames = peekFrames.querySelectorAll('.film-frame');
@@ -1690,7 +1931,7 @@ function buildPeekFrames(catKey) {
       
       if (newTargetIndex !== targetSlideIndex) {
         // Play scroll sound when changing slides
-        playSound(scrollSound);
+        playSound(hoverSound);
         
         targetSlideIndex = newTargetIndex; // Update target
         // Update peek highlight immediately
@@ -1736,7 +1977,12 @@ function buildPeekFrames(catKey) {
     filmMenuOpen = !filmMenuOpen;
     filmOvl.classList.toggle('open', filmMenuOpen);
     loremWindow.classList.toggle('open', filmMenuOpen);
-    settingsPopup.classList.toggle('open', filmMenuOpen);
+    
+    // Only toggle settings popup on desktop
+    if (!isMobile) {
+      settingsPopup.classList.toggle('open', filmMenuOpen);
+    }
+    
     searchBarContainer.classList.toggle('visible', filmMenuOpen);
     tabSub.textContent = filmMenuOpen ? 'tap to close' : 'tap to open menu';
 
@@ -1765,14 +2011,43 @@ function buildPeekFrames(catKey) {
   
   // Add hover sound to leather tab
   leatherTab.addEventListener('mouseenter', function() {
-    playSound(tapSound);
+    playSound(hoverSound);
   });
   
   settingsBtn.addEventListener('click', function(e) {
     e.stopPropagation();
-    toggleFilmMenu();
+    
+    if (isMobile) {
+      // On mobile: only toggle settings popup, not the menu
+      settingsPopup.classList.toggle('open');
+    } else {
+      // On desktop: toggle full menu
+      toggleFilmMenu();
+    }
   });
+  
+  // Sound toggle button
+  soundBtn.addEventListener('mouseenter', function() {
+    playSound(hoverSound);
+  });
+  
+  soundBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    soundsEnabled = !soundsEnabled;
+    soundBtn.classList.toggle('muted', !soundsEnabled);
+    playSound(tapSound);
+  });
+  
   filmBkdp.addEventListener('click', function() { if (filmMenuOpen) toggleFilmMenu(); });
+
+  // Close settings popup on mobile when clicking outside
+  document.addEventListener('click', function(e) {
+    if (isMobile && settingsPopup.classList.contains('open')) {
+      if (!settingsPopup.contains(e.target) && !settingsBtn.contains(e.target)) {
+        settingsPopup.classList.remove('open');
+      }
+    }
+  });
 
   // Search bar functionality - instant photo search + clickable tags
   searchBar.addEventListener('focus', function() {
@@ -1786,7 +2061,7 @@ function buildPeekFrames(catKey) {
   
   searchBar.addEventListener('input', function(e) {
     // Play type sound on each character typed
-    playSound(typeSound);
+    playSound(tapSound);
     
     var query = searchBar.value.toLowerCase().trim();
     
@@ -1804,6 +2079,9 @@ function buildPeekFrames(catKey) {
   function showSearchResults(query) {
     var matchedPhotos = [];
     
+    // Split query into terms for AND search
+    var terms = query.split(/\s+/).filter(function(t) { return t.length > 0; });
+    
     // Search through ALL categories for photos
     for (var cat in categories) {
       var photos = categories[cat];
@@ -1812,13 +2090,22 @@ function buildPeekFrames(catKey) {
         var p = photos[i];
         var searchText = buildSearchableText(p);
         
-        if (searchText.indexOf(query) !== -1) {
+        // Check if ALL terms are present (AND logic)
+        var matchesAll = true;
+        for (var t = 0; t < terms.length; t++) {
+          if (searchText.indexOf(terms[t]) === -1) {
+            matchesAll = false;
+            break;
+          }
+        }
+        
+        if (matchesAll) {
           matchedPhotos.push({ photo: p, index: i, category: cat });
         }
       }
     }
     
-    // Build HTML with photos at top and tags below
+    // Build HTML with photos only (no tags when typing)
     var html = '';
     
     // Show photo results if any
@@ -1842,19 +2129,16 @@ function buildPeekFrames(catKey) {
       }
       
       html += '</div>';
+    } else {
+      // No matches - show message but no tags
+      html += '<div style="padding: 20px; text-align: center; color: rgba(255,255,255,0.5);">No photos match "' + query + '"</div>';
     }
-    
-    // Show filtered tags below
-    html += buildTagCategoriesHTML(query);
     
     searchResults.innerHTML = html;
     searchResults.classList.add('visible');
     
     // Add click handlers to thumbnails
     addThumbnailHandlers();
-    
-    // Add click handlers to tags
-    addTagHandlers();
   }
   
   // Close search results when clicking outside
@@ -1938,6 +2222,7 @@ function buildPeekFrames(catKey) {
       'Lens': {},
       'Film Stock': {},
       'Place': {},
+      'City': {},
       'Country': {},
       'Subject': {},
       'Developing': {},
@@ -1964,6 +2249,7 @@ function buildPeekFrames(catKey) {
       
       if (p.stock) groups['Film Stock'][p.stock] = (groups['Film Stock'][p.stock] || 0) + 1;
       if (p.place) groups['Place'][p.place] = (groups['Place'][p.place] || 0) + 1;
+      if (p.city) groups['City'][p.city] = (groups['City'][p.city] || 0) + 1;
       if (p.country) groups['Country'][p.country] = (groups['Country'][p.country] || 0) + 1;
       if (p.subject) groups['Subject'][p.subject] = (groups['Subject'][p.subject] || 0) + 1;
       if (p.developing) groups['Developing'][p.developing] = (groups['Developing'][p.developing] || 0) + 1;
@@ -1993,20 +2279,59 @@ function buildPeekFrames(catKey) {
   function addTagHandlers() {
     searchResults.querySelectorAll('.tag-item').forEach(function(tagEl) {
       tagEl.addEventListener('mouseenter', function() {
-        playSound(tapSound);
+        playSound(hoverSound);
       });
       
       tagEl.addEventListener('click', function(e) {
         e.stopPropagation();
-        playSound(typeSound);
         
-        var category = tagEl.getAttribute('data-category');
         var value = tagEl.getAttribute('data-value');
         
-        // Show photos for this tag
-        showPhotosForTag(category, value);
+        // Type the tag text into search bar character by character
+        typeIntoSearch(value);
       });
     });
+  }
+  
+  // Type text into search bar with animation
+  var typingInProgress = false;
+  function typeIntoSearch(textToType) {
+    if (typingInProgress) return; // Don't start new typing if already typing
+    
+    typingInProgress = true;
+    
+    // Get current search value
+    var currentText = searchBar.value.trim();
+    
+    // Add space if there's already text
+    var finalText = currentText ? currentText + ' ' + textToType : textToType;
+    
+    // Start from current position
+    var startPos = currentText.length + (currentText ? 1 : 0);
+    var currentPos = 0;
+    
+    // Clear search bar and set to current text
+    searchBar.value = currentText ? currentText + ' ' : '';
+    searchBar.focus();
+    
+    // Type character by character
+    var typeInterval = setInterval(function() {
+      if (currentPos < textToType.length) {
+        searchBar.value += textToType[currentPos];
+        currentPos++;
+        
+        // Play hover sound
+        playSound(hoverSound);
+        
+        // Trigger input event to update search results
+        var event = new Event('input', { bubbles: true });
+        searchBar.dispatchEvent(event);
+      } else {
+        // Typing complete
+        clearInterval(typeInterval);
+        typingInProgress = false;
+      }
+    }, 100); // 100ms between characters for typing effect
   }
   
   // Show photos matching a specific tag
@@ -2029,6 +2354,7 @@ function buildPeekFrames(catKey) {
         if (category === 'Lens' && p.lens && lenses[p.lens] && lenses[p.lens].name === value) matches = true;
         if (category === 'Film Stock' && p.stock === value) matches = true;
         if (category === 'Place' && p.place === value) matches = true;
+        if (category === 'City' && p.city === value) matches = true;
         if (category === 'Country' && p.country === value) matches = true;
         if (category === 'Subject' && p.subject === value) matches = true;
         if (category === 'Developing' && p.developing === value) matches = true;
@@ -2071,12 +2397,12 @@ function buildPeekFrames(catKey) {
   function addThumbnailHandlers() {
     searchResults.querySelectorAll('.search-thumb').forEach(function(thumb) {
       thumb.addEventListener('mouseenter', function() {
-        playSound(tapSound);
+        playSound(hoverSound);
       });
       
       thumb.addEventListener('click', function(e) {
         e.stopPropagation();
-        playSound(typeSound);
+        playSound(tapSound);
         
         var index = parseInt(thumb.getAttribute('data-index'));
         var photoCat = thumb.getAttribute('data-category');
@@ -2120,9 +2446,11 @@ function buildPeekFrames(catKey) {
     if (photo.stock) text.push(photo.stock.toLowerCase());
     if (photo.date) text.push(photo.date.toLowerCase());
     if (photo.place) text.push(photo.place.toLowerCase());
+    if (photo.city) text.push(photo.city.toLowerCase());
     if (photo.country) text.push(photo.country.toLowerCase());
     if (photo.subject) text.push(photo.subject.toLowerCase());
     if (photo.developing) text.push(photo.developing.toLowerCase());
+    if (photo.description) text.push(photo.description.toLowerCase());
     
     // Add lens data
     if (photo.lens && lenses[photo.lens]) {
@@ -2143,7 +2471,7 @@ function buildPeekFrames(catKey) {
   document.querySelectorAll('.cat-frame').forEach(function(cf) {
     // Add hover sound
     cf.addEventListener('mouseenter', function() {
-      playSound(tapSound);
+      playSound(hoverSound);
     });
     
     cf.addEventListener('click', function() {
@@ -2151,7 +2479,7 @@ function buildPeekFrames(catKey) {
       if (cat === currentCat) return;
       
       // Play click sound
-      playSound(typeSound);
+      playSound(tapSound);
       
       document.querySelectorAll('.cat-frame').forEach(function(c) { c.classList.remove('active'); });
       cf.classList.add('active');
@@ -2162,7 +2490,15 @@ function buildPeekFrames(catKey) {
   /* ══════ SETTINGS ══════ */
 
   document.querySelectorAll('.setting-btn').forEach(function(btn) {
+    // Add hover sound
+    btn.addEventListener('mouseenter', function() {
+      playSound(hoverSound);
+    });
+    
     btn.addEventListener('click', function() {
+      // Play tap sound
+      playSound(tapSound);
+      
       var setting = btn.getAttribute('data-setting');
       var val = btn.getAttribute('data-val');
       // Update active button in group
@@ -2324,11 +2660,96 @@ function buildPeekFrames(catKey) {
     });
   }
 
-  /* ══════ SOUND ══════ */
-  function playSound() {
-    var audio = document.getElementById('shutter-sound');
-    if (audio.src) { audio.currentTime = 0; audio.play().catch(function(){}); }
+  /* ══════ AUTO-HIDE UI ══════ */
+  var uiElements = [];
+  var hideTimeout = null;
+  var isUIVisible = true;
+
+  function initAutoHideUI() {
+    // Get all UI elements that should auto-hide
+    uiElements = [
+      document.getElementById('counter'),
+      document.getElementById('leather-tab'),
+      document.getElementById('sound-btn'),
+      document.getElementById('settings-btn'),
+      document.getElementById('scroll-down'),
+      document.getElementById('resize-group')
+    ].concat(Array.from(document.querySelectorAll('.photo-info')))
+     .concat(Array.from(document.querySelectorAll('.photo-description')))
+     .concat(Array.from(document.querySelectorAll('.view-more-btn')));
+    
+    // Remove nulls
+    uiElements = uiElements.filter(function(el) { return el !== null; });
   }
+
+  function showUI() {
+    if (!isUIVisible) {
+      uiElements.forEach(function(el) {
+        if (el) el.classList.remove('hidden');
+      });
+      isUIVisible = true;
+    }
+    
+    // Clear existing timeout
+    if (hideTimeout) {
+      clearTimeout(hideTimeout);
+    }
+    
+    // Set new timeout to hide UI after 2 seconds
+    hideTimeout = setTimeout(function() {
+      hideUI();
+    }, 2000);
+  }
+
+  function hideUI() {
+    uiElements.forEach(function(el) {
+      if (el) el.classList.add('hidden');
+    });
+    isUIVisible = false;
+  }
+
+  // Track mouse movement
+  document.addEventListener('mousemove', function() {
+    showUI();
+  });
+
+  // Track any click/interaction
+  document.addEventListener('click', function() {
+    showUI();
+  });
+
+  // Track scroll
+  document.addEventListener('scroll', function() {
+    showUI();
+  });
+
+  // Track keyboard
+  document.addEventListener('keydown', function() {
+    showUI();
+  });
+
+  // Prevent photo descriptions from hiding when hovering over them
+  document.addEventListener('DOMNodeInserted', function(e) {
+    var target = e.target;
+    if (target.classList && target.classList.contains('photo-description')) {
+      target.addEventListener('mouseenter', function() {
+        // Keep showing UI while hovering over description
+        if (hideTimeout) {
+          clearTimeout(hideTimeout);
+        }
+      });
+      target.addEventListener('mouseleave', function() {
+        // Resume auto-hide when leaving description
+        showUI();
+      });
+    }
+  });
+
+  // Start with UI visible and set initial timeout
+  setTimeout(function() {
+    initAutoHideUI();
+    showUI();
+  }, 100);
 
   /* ══════ INIT ══════ */
   buildCatSprockets();

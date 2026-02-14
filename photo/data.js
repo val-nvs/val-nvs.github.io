@@ -48,9 +48,11 @@ var categories = {
       iso: '200',
       shutter: '',
       place: '',
+      city: '',
       country: 'Brazil',
       subject: '',
-      developing: 'C-41 at home'
+      developing: 'C-41 at home',
+      description: 'A serene beach captured on film'
     },
     { 
       base: 'a2.jpg',
@@ -63,9 +65,11 @@ var categories = {
       iso: '400',
       shutter: '',
       place: 'Kreatori',
+      city: 'Lisboa',
       country: 'Portugal',
       subject: '',
-      developing: 'Carmencita Lisboa'
+      developing: 'Carmencita Lisboa',
+      description: 'An evening at Kreatori'
     },
     { 
       base: 'a3.jpg',
@@ -78,9 +82,11 @@ var categories = {
       iso: '400',
       shutter: '',
       place: 'Alvalaxia',
+      city: 'Lisboa',
       country: 'Portugal',
       subject: 'Fairy',
-      developing: 'Carmencita Lisboa'
+      developing: 'Carmencita Lisboa',
+      description: 'Fairy at Alvalaxia on Halloween night'
     },
     { 
       base: 'seine.jpg',
@@ -93,9 +99,11 @@ var categories = {
       iso: '100',
       shutter: '1/1000s',
       place: 'Seine',
+      city: 'Paris',
       country: 'France',
       subject: '',
-      developing: ''
+      developing: '',
+      description: 'Along the Seine river in summer'
     },
     { 
       base: 'a4.jpg',
@@ -108,9 +116,11 @@ var categories = {
       iso: '2000',
       shutter: '1/30s',
       place: 'Galveston',
+      city: 'Galveston',
       country: 'USA',
       subject: '',
-      developing: ''
+      developing: '',
+      description: 'Night photography in Galveston'
     },
     { 
       base: 'a5.jpg',
@@ -123,9 +133,11 @@ var categories = {
       iso: '',
       shutter: '',
       place: 'Recife',
+      city: 'Recife',
       country: 'Brazil',
       subject: '',
-      developing: ''
+      developing: '',
+      description: 'Views of Recife'
     },
   ],
   
@@ -141,9 +153,11 @@ var categories = {
       iso: '1250',
       shutter: '1/40s',
       place: 'Galveston',
+      city: 'Galveston',
       country: 'USA',
       subject: '',
-      developing: ''
+      developing: '',
+      description: 'Portrait in Galveston'
     },
     { 
       base: 'b2.jpg',
@@ -156,9 +170,11 @@ var categories = {
       iso: '',
       shutter: '',
       place: 'EPI ETIC',
+      city: 'Lisboa',
       country: 'Portugal',
       subject: 'Charlie',
-      developing: ''
+      developing: '',
+      description: 'Charlie at EPI ETIC'
     },
     { 
       base: 'b3.jpg',
@@ -171,9 +187,11 @@ var categories = {
       iso: '400',
       shutter: '1/160s',
       place: 'Fundação Oriente',
+      city: 'Lisboa',
       country: 'Portugal',
       subject: 'NUNCHI',
-      developing: ''
+      developing: '',
+      description: 'NUNCHI performing at Fundação Oriente'
     },
   ],
   
@@ -189,9 +207,11 @@ var categories = {
       iso: '100',
       shutter: '',
       place: 'Belém',
+      city: 'Lisboa',
       country: 'Portugal',
       subject: '',
-      developing: ''
+      developing: '',
+      description: 'Moonlight over the bridge in Belém'
     },
     { 
       base: 'c2.jpg',
@@ -204,9 +224,11 @@ var categories = {
       iso: '',
       shutter: '',
       place: 'Recife',
+      city: 'Recife',
       country: 'Brazil',
       subject: '',
-      developing: ''
+      developing: '',
+      description: 'Coastal views of Recife'
     },
     { 
       base: 'c3.jpg',
@@ -219,9 +241,11 @@ var categories = {
       iso: '100',
       shutter: '1/80s',
       place: 'NARRATIVA',
+      city: 'Lisboa',
       country: 'Portugal',
       subject: 'Jiani',
-      developing: ''
+      developing: '',
+      description: 'Jiani at NARRATIVA gallery'
     },
   ]
 };
@@ -251,6 +275,7 @@ var searchCategories = [
   'Lens',
   'Film Stock',
   'Place',
+  'City',
   'Country',
   'Subject',
   'Developing',
