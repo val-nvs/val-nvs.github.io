@@ -55,6 +55,23 @@ var categories = {
       description: 'A serene beach captured on film'
     },
     { 
+      base: 'seine.jpg',
+      lens: '7artf095',
+      camera: 'a6400',
+      stock: '',
+      date: '2024-07-28',
+      focal: '35mm',
+      aperture: '?',
+      iso: '100',
+      shutter: '1/1000s',
+      place: 'Seine',
+      city: 'Paris',
+      country: 'France',
+      subject: '',
+      developing: '',
+      description: 'Along the Seine river'
+    },
+    { 
       base: 'a2.jpg',
       lens: 'pentaxf4',
       camera: 'p30t',
@@ -71,6 +88,9 @@ var categories = {
       developing: 'Carmencita Lisboa',
       description: 'An evening at Kreatori'
     },
+  ],
+  
+  portraits: [
     { 
       base: 'a3.jpg',
       lens: 'pentaxf4',
@@ -88,60 +108,6 @@ var categories = {
       developing: 'Carmencita Lisboa',
       description: 'Fairy at Alvalaxia on Halloween night'
     },
-    { 
-      base: 'seine.jpg',
-      lens: '7artf095',
-      camera: 'a6400',
-      stock: '',
-      date: '2024-07-28',
-      focal: '35mm',
-      aperture: '?',
-      iso: '100',
-      shutter: '1/1000s',
-      place: 'Seine',
-      city: 'Paris',
-      country: 'France',
-      subject: '',
-      developing: '',
-      description: 'Along the Seine river in summer'
-    },
-    { 
-      base: 'a4.jpg',
-      lens: 'sonykit',
-      camera: 'a6400',
-      stock: '',
-      date: '2022-04-15',
-      focal: '20mm',
-      aperture: 'f/4',
-      iso: '2000',
-      shutter: '1/30s',
-      place: 'Galveston',
-      city: 'Galveston',
-      country: 'USA',
-      subject: '',
-      developing: '',
-      description: 'Night photography in Galveston'
-    },
-    { 
-      base: 'a5.jpg',
-      lens: '',
-      camera: '',
-      stock: '',
-      date: '',
-      focal: '',
-      aperture: '',
-      iso: '',
-      shutter: '',
-      place: 'Recife',
-      city: 'Recife',
-      country: 'Brazil',
-      subject: '',
-      developing: '',
-      description: 'Views of Recife'
-    },
-  ],
-  
-  portraits: [
     { 
       base: 'b1.jpg',
       lens: 'sonykit',
@@ -177,21 +143,21 @@ var categories = {
       description: 'Charlie at EPI ETIC'
     },
     { 
-      base: 'b3.jpg',
-      lens: '7artf095',
+      base: 'a4.jpg',
+      lens: 'sonykit',
       camera: 'a6400',
       stock: '',
-      date: '2025-10-03',
-      focal: '35mm',
-      aperture: '~f/1',
-      iso: '400',
-      shutter: '1/160s',
-      place: 'Fundação Oriente',
-      city: 'Lisboa',
-      country: 'Portugal',
-      subject: 'NUNCHI',
+      date: '2022-04-15',
+      focal: '20mm',
+      aperture: 'f/4',
+      iso: '2000',
+      shutter: '1/30s',
+      place: 'Galveston',
+      city: 'Galveston',
+      country: 'USA',
+      subject: '',
       developing: '',
-      description: 'NUNCHI performing at Fundação Oriente'
+      description: 'Night photography in Galveston'
     },
   ],
   
@@ -211,7 +177,7 @@ var categories = {
       country: 'Portugal',
       subject: '',
       developing: '',
-      description: 'Moonlight over the bridge in Belém'
+      description: ''
     },
     { 
       base: 'c2.jpg',
@@ -246,6 +212,23 @@ var categories = {
       subject: 'Jiani',
       developing: '',
       description: 'Jiani at NARRATIVA gallery'
+    },
+    { 
+      base: 'a5.jpg',
+      lens: '',
+      camera: '',
+      stock: '',
+      date: '',
+      focal: '',
+      aperture: '',
+      iso: '',
+      shutter: '',
+      place: 'Recife',
+      city: 'Recife',
+      country: 'Brazil',
+      subject: '',
+      developing: '',
+      description: 'Views of Recife'
     },
   ]
 };

@@ -350,33 +350,62 @@
   /* Category buttons below search bar */
   #category-buttons {
     display: flex;
-    gap: 2.5rem;
+    gap: 0.8rem;
     justify-content: center;
-    margin-top: 1rem;
-    padding: 0 1rem;
+    align-items: flex-start;
+    margin-top: 4rem;
+    padding: 0;
+    width: 500px;
+    max-width: 90vw;
+    position: relative;
+    z-index: 1;
   }
+  
+  /* Wrapper controls width */
+  .can-wrapper {
+    width: 4rem; /* Closed - narrow */
+    height: 4rem;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.4s;
+    overflow: visible;
+  }
+  
+  /* Wrapper expands when can inside is active */
+  .can-wrapper:has(.category-btn.active) {
+    width: 9rem; /* Expanded for rotated cans */
+    transition-delay: 0s; /* No delay when opening */
+  }
+  
+  /* Can itself stays fixed size */
   .category-btn {
     position: relative;
-    width: 9rem;
-    height: 4rem;
+    width: 9rem; /* Fixed width */
+    height: 4rem; /* Fixed height */
     background: rgba(20, 20, 20, 1) !important;
     cursor: pointer;
     flex-shrink: 0;
     overflow: visible;
-    transition: none !important;
-  }
-  .category-btn:hover {
-    background: rgba(20, 20, 20, 1) !important;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.2s !important;
+    transform: rotate(-90deg);
+    transform-origin: center;
   }
   .category-btn.active {
+    transform: rotate(0deg);
+    background: rgba(20, 20, 20, 1) !important;
+    transition-delay: 0s !important;
+  }
+  .category-btn:hover {
     background: rgba(20, 20, 20, 1) !important;
   }
   .category-btn::before {
     content: '';
     position: absolute;
     top: 0;
-    left: -0.6rem;
-    width: 1.2rem;
+    left: -0.4rem;
+    width: 0.8rem;
     height: 100%;
     background: rgba(20, 20, 20, 1) !important;
     border-radius: 50% 0 0 50%;
@@ -390,8 +419,8 @@
     content: '';
     position: absolute;
     top: 0;
-    right: -0.6rem;
-    width: 1.2rem;
+    right: -0.4rem;
+    width: 0.8rem;
     height: 100%;
     background: rgba(20, 20, 20, 1) !important;
     border-radius: 0 50% 50% 0;
@@ -409,25 +438,29 @@
     width: 8.1rem;
     max-height: 0;
     background: rgba(20, 20, 20, 1);
-    transition: max-height 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: 0s;
     overflow: hidden;
     z-index: 10;
     opacity: 1;
+    pointer-events: none;
   }
   /* Extension expands when button is active AND menu is open */
   .category-btn.active .category-extension {
     max-height: 0;
+    transition-delay: 0s;
   }
   #search-bar-container.visible .category-btn.active .category-extension {
     max-height: calc(100vh - 300px);
+    transition-delay: 0.2s;
   }
   
   /* Single colored center strip for each can - ALWAYS VISIBLE */
   .category-btn-overlay {
     position: absolute;
     top: 0;
-    left: 10%;
-    right: 10%;
+    left: 5%;
+    right: 5%;
     height: 4rem;
     display: flex;
     align-items: center;
@@ -438,13 +471,13 @@
     transition: none !important;
   }
   
-  /* Add elliptical ends to colored overlay - SAME SIZE as outer shell */
+  /* Add elliptical ends to colored overlay - more subtle */
   .category-btn-overlay::before {
     content: '';
     position: absolute;
     top: 0;
-    left: -0.6rem;
-    width: 1.2rem;
+    left: -0.4rem;
+    width: 0.8rem;
     height: 100%;
     border-radius: 50% 0 0 50%;
     transition: none !important;
@@ -453,68 +486,68 @@
     content: '';
     position: absolute;
     top: 0;
-    right: -0.6rem;
-    width: 1.2rem;
+    right: -0.4rem;
+    width: 0.8rem;
     height: 100%;
     border-radius: 0 50% 50% 0;
     transition: none !important;
   }
   
-  /* Left can = Bright Blue - NEVER CHANGES */
+  /* Left can = Darker Blue - NEVER CHANGES */
   .category-btn[data-cat="main"] .category-btn-overlay {
-    background: rgb(100, 150, 255) !important;
+    background: rgb(47, 72, 142) !important;
   }
   .category-btn[data-cat="main"] .category-btn-overlay::before,
   .category-btn[data-cat="main"] .category-btn-overlay::after {
-    background: rgb(100, 150, 255) !important;
+    background: rgb(47, 72, 142) !important;
   }
   .category-btn[data-cat="main"]:hover .category-btn-overlay,
   .category-btn[data-cat="main"].active .category-btn-overlay {
-    background: rgb(100, 150, 255) !important;
+    background: rgb(47, 72, 142) !important;
   }
   .category-btn[data-cat="main"]:hover .category-btn-overlay::before,
   .category-btn[data-cat="main"]:hover .category-btn-overlay::after,
   .category-btn[data-cat="main"].active .category-btn-overlay::before,
   .category-btn[data-cat="main"].active .category-btn-overlay::after {
-    background: rgb(100, 150, 255) !important;
+    background: rgb(47, 72, 142) !important;
   }
   
   /* Middle can = Bright White - NEVER CHANGES */
   .category-btn[data-cat="portraits"] .category-btn-overlay {
-    background: rgb(255, 255, 255) !important;
+    background: rgb(191, 191, 191) !important;
   }
   .category-btn[data-cat="portraits"] .category-btn-overlay::before,
   .category-btn[data-cat="portraits"] .category-btn-overlay::after {
-    background: rgb(255, 255, 255) !important;
+    background: rgb(191, 191, 191) !important;
   }
   .category-btn[data-cat="portraits"]:hover .category-btn-overlay,
   .category-btn[data-cat="portraits"].active .category-btn-overlay {
-    background: rgb(255, 255, 255) !important;
+    background: rgb(191, 191, 191) !important;
   }
   .category-btn[data-cat="portraits"]:hover .category-btn-overlay::before,
   .category-btn[data-cat="portraits"]:hover .category-btn-overlay::after,
   .category-btn[data-cat="portraits"].active .category-btn-overlay::before,
   .category-btn[data-cat="portraits"].active .category-btn-overlay::after {
-    background: rgb(255, 255, 255) !important;
+    background: rgb(191, 191, 191) !important;
   }
   
-  /* Right can = Bright Orange - NEVER CHANGES */
+  /* Right can = Darker Orange - NEVER CHANGES */
   .category-btn[data-cat="landscapes"] .category-btn-overlay {
-    background: rgb(255, 150, 50) !important;
+    background: rgb(110, 55, 16) !important;
   }
   .category-btn[data-cat="landscapes"] .category-btn-overlay::before,
   .category-btn[data-cat="landscapes"] .category-btn-overlay::after {
-    background: rgb(255, 150, 50) !important;
+    background: rgb(110, 55, 16) !important;
   }
   .category-btn[data-cat="landscapes"]:hover .category-btn-overlay,
   .category-btn[data-cat="landscapes"].active .category-btn-overlay {
-    background: rgb(255, 150, 50) !important;
+    background: rgb(110, 55, 16) !important;
   }
   .category-btn[data-cat="landscapes"]:hover .category-btn-overlay::before,
   .category-btn[data-cat="landscapes"]:hover .category-btn-overlay::after,
   .category-btn[data-cat="landscapes"].active .category-btn-overlay::before,
   .category-btn[data-cat="landscapes"].active .category-btn-overlay::after {
-    background: rgb(255, 150, 50) !important;
+    background: rgb(110, 55, 16) !important;
   }
   .film-panel {
     position: relative;
@@ -522,6 +555,7 @@
     height: 100%;
     display: flex;
     flex-direction: column;
+    pointer-events: auto;
   }
   .film-panel.active {
     /* No max-height needed - parent extension controls this */
@@ -531,6 +565,33 @@
     align-items: flex-start; gap: 0.4rem;
     flex: 1; min-height: 0; overflow: hidden;
     width: 100%;
+    position: relative;
+  }
+  
+  /* Colored overlay for each film strip */
+  .film-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 10;
+    opacity: 0.4;
+    mix-blend-mode: screen;
+  }
+  
+  #film-panel-main .film-content::before {
+    background: rgb(80, 140, 255);
+  }
+  
+  #film-panel-portraits .film-content::before {
+    background: rgb(200, 200, 200);
+  }
+  
+  #film-panel-landscapes .film-content::before {
+    background: rgb(255, 140, 60);
   }
   
   .category-btn-label {
@@ -552,6 +613,7 @@
   
   .search-wrapper {
     position: relative;
+    z-index: 200;
   }
   #search-bar {
     width: 100%;
@@ -575,12 +637,17 @@
   #search-icon {
     position: absolute;
     left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
+    top: 14px;
     width: 18px;
     height: 18px;
     opacity: 0.5;
     pointer-events: none;
+  }
+  @media (max-width: 768px) {
+    #search-icon {
+      left: 15px;
+      top: 14px;
+    }
   }
   #search-icon svg {
     width: 100%;
@@ -763,6 +830,29 @@
       min-width: 0;
       max-width: calc(100vw - 1rem);
     }
+    
+    /* Hide resize group on mobile */
+    #resize-group {
+      display: none !important;
+    }
+    
+    /* Move photo description to bottom right on mobile */
+    .photo-description {
+      top: auto;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      left: auto;
+      transform: none;
+      text-align: right;
+      max-width: 50vw;
+      padding: 0.5rem 1rem;
+    }
+    
+    /* Adjust category buttons for mobile - move down to accommodate about section */
+    #category-buttons {
+      margin-top: 6rem !important; /* Right below about when collapsed */
+      transition: margin-top 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
   }
   #settings-popup.open {
     opacity: 1; pointer-events: auto; transform: translateY(0);
@@ -896,9 +986,15 @@
     transition: opacity 0.3s ease, box-shadow 0.3s ease;
     box-shadow: inset 0 0 0 1px transparent;
     flex-shrink: 0;
+    z-index: 15;
   }
   .film-frame:hover { opacity: 1; }
-  .film-frame.current { opacity: 1; box-shadow: inset 0 0 0 1px #fff; }
+  .film-frame.current { 
+    opacity: 1; 
+    box-shadow: inset 0 0 0 3px #fff;
+    position: relative;
+    z-index: 20;
+  }
   .film-frame img {
     display: block; width: 6rem; height: 4rem; object-fit: cover;
   }
@@ -959,17 +1055,68 @@
   }
   @media (max-width: 768px) {
     #lorem-window {
+      position: fixed;
       top: 140px;          /* Below search bar */
       left: 50%;
-      transform: translateX(-50%) translateY(0.5rem);
+      transform: translateX(-50%) !important;
       right: auto;
-      width: 90vw;
-      max-width: 500px;
-      max-height: calc(100vh - 160px);
-      padding: 1rem;
+      width: 500px;
+      max-width: 90vw;
+      max-height: 58px;  /* Taller to prevent text clipping */
+      padding: 0;
+      background: rgba(30, 30, 30, 0.95);
+      border: 2px solid rgba(150, 150, 150, 0.3);
+      border-radius: 8px;
+      overflow: hidden;
+      transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+      cursor: pointer;
+      pointer-events: none;
+      opacity: 0;
+      z-index: 200;
     }
     #lorem-window.open {
-      transform: translateX(-50%) translateY(0);
+      transform: translateX(-50%) !important;
+      opacity: 1 !important;
+      pointer-events: auto !important;
+    }
+    #lorem-window.expanded {
+      max-height: 400px;  /* Expanded state */
+      overflow-y: auto;
+      padding-bottom: 12px;  /* Add padding at bottom when expanded */
+    }
+    #lorem-window h2 {
+      font-size: calc(0.7rem * var(--size-scale));
+      margin-bottom: 0;
+      padding: 14px 16px;
+      user-select: none;
+      color: rgba(255,255,255,0.9);
+      transition: color 0.2s ease;
+    }
+    #lorem-window:hover h2 {
+      color: rgba(255,255,255,1);
+    }
+    #lorem-window h2::after {
+      content: ' ▼';
+      font-size: 0.6em;
+      opacity: 0.6;
+      margin-left: 0.5em;
+    }
+    #lorem-window.expanded h2::after {
+      content: ' ▲';
+    }
+    #lorem-window p {
+      font-size: calc(0.48rem * var(--size-scale));
+      line-height: 1.6;
+      margin-bottom: 0.5rem;
+      padding: 0 16px;
+      display: none;
+    }
+    #lorem-window.expanded p {
+      display: block;
+    }
+    #lorem-window.expanded h2 {
+      border-bottom: 1px solid rgba(150, 150, 150, 0.2);
+      margin-bottom: 0.8rem;
     }
   }
   #lorem-window.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
@@ -1085,6 +1232,7 @@
     opacity: 0;
     pointer-events: none;
     cursor: default;
+    box-shadow: -8px 0 20px 0 rgba(0, 0, 0, 0.8);
   }
   #peek-strip.visible {
     transform: translateX(75%);
@@ -1156,57 +1304,63 @@
   
   <!-- Category buttons -->
   <div id="category-buttons">
-    <div class="category-btn active" data-cat="main">
-      <div class="category-btn-overlay">
-        <span class="category-btn-label">main</span>
-      </div>
-      <div class="category-extension">
-        <!-- Main film strip inside extension -->
-        <div class="film-panel" id="film-panel-main" data-cat="main">
-          <div class="film-content">
-            <div class="film-strip">
-              <div class="film-body">
-                <div class="sprockets"></div>
-                <div class="film-frames"></div>
-                <div class="sprockets"></div>
+    <div class="can-wrapper">
+      <div class="category-btn active" data-cat="main">
+        <div class="category-btn-overlay">
+          <span class="category-btn-label">main</span>
+        </div>
+        <div class="category-extension">
+          <!-- Main film strip inside extension -->
+          <div class="film-panel" id="film-panel-main" data-cat="main">
+            <div class="film-content">
+              <div class="film-strip">
+                <div class="film-body">
+                  <div class="sprockets"></div>
+                  <div class="film-frames"></div>
+                  <div class="sprockets"></div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="category-btn" data-cat="portraits">
-      <div class="category-btn-overlay">
-        <span class="category-btn-label">portraits</span>
-      </div>
-      <div class="category-extension">
-        <!-- Portraits film strip inside extension -->
-        <div class="film-panel" id="film-panel-portraits" data-cat="portraits">
-          <div class="film-content">
-            <div class="film-strip">
-              <div class="film-body">
-                <div class="sprockets"></div>
-                <div class="film-frames"></div>
-                <div class="sprockets"></div>
+    <div class="can-wrapper">
+      <div class="category-btn" data-cat="portraits">
+        <div class="category-btn-overlay">
+          <span class="category-btn-label">portraits</span>
+        </div>
+        <div class="category-extension">
+          <!-- Portraits film strip inside extension -->
+          <div class="film-panel" id="film-panel-portraits" data-cat="portraits">
+            <div class="film-content">
+              <div class="film-strip">
+                <div class="film-body">
+                  <div class="sprockets"></div>
+                  <div class="film-frames"></div>
+                  <div class="sprockets"></div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="category-btn" data-cat="landscapes">
-      <div class="category-btn-overlay">
-        <span class="category-btn-label">landscapes</span>
-      </div>
-      <div class="category-extension">
-        <!-- Landscapes film strip inside extension -->
-        <div class="film-panel" id="film-panel-landscapes" data-cat="landscapes">
-          <div class="film-content">
-            <div class="film-strip">
-              <div class="film-body">
-                <div class="sprockets"></div>
-                <div class="film-frames"></div>
-                <div class="sprockets"></div>
+    <div class="can-wrapper">
+      <div class="category-btn" data-cat="landscapes">
+        <div class="category-btn-overlay">
+          <span class="category-btn-label">landscapes</span>
+        </div>
+        <div class="category-extension">
+          <!-- Landscapes film strip inside extension -->
+          <div class="film-panel" id="film-panel-landscapes" data-cat="landscapes">
+            <div class="film-content">
+              <div class="film-strip">
+                <div class="film-body">
+                  <div class="sprockets"></div>
+                  <div class="film-frames"></div>
+                  <div class="sprockets"></div>
+                </div>
               </div>
             </div>
           </div>
@@ -1918,12 +2072,6 @@ function buildFilmFrames(catKey) {
     fillSprockets(sprocketsRight, 40);
     var photos = categories[catKey];
 
-    // Empty spacer at top for settings gear area (perfs but no frame)
-    var spacer = document.createElement('div');
-    spacer.style.height = '4.35rem'; // One frame pitch
-    spacer.style.flexShrink = '0';
-    filmFramesEl.appendChild(spacer);
-
     // Hero frame only for main
     if (catKey === 'main') {
       var hf = document.createElement('div'); hf.className = 'film-frame hero-thumb';
@@ -1940,7 +2088,10 @@ function buildFilmFrames(catKey) {
         playSound(hoverSound);
       });
       
-      hf.addEventListener('click', function() {
+      hf.addEventListener('click', function(e) {
+        // Stop event from bubbling to can button
+        e.stopPropagation();
+        
         // Play click sound
         playSound(tapSound);
         
@@ -1974,7 +2125,10 @@ function buildFilmFrames(catKey) {
       });
       
       f.addEventListener('click', (function(idx, off, cat) {
-        return function() {
+        return function(e) {
+          // Stop event from bubbling to can button
+          e.stopPropagation();
+          
           // Play click sound
           playSound(tapSound);
           
@@ -2008,7 +2162,10 @@ function buildFilmFrames(catKey) {
     });
     
     endFrame.addEventListener('click', (function(cat) {
-      return function() {
+      return function(e) {
+        // Stop event from bubbling to can button
+        e.stopPropagation();
+        
         // Play click sound
         playSound(tapSound);
         
@@ -2269,6 +2426,12 @@ function buildPeekFrames(catKey) {
       // Play open sound
       playSound(openSound);
       
+      // Auto-open the can matching the current category
+      var currentCanBtn = document.querySelector('.category-btn[data-cat="' + currentCat + '"]');
+      if (currentCanBtn && !currentCanBtn.classList.contains('active')) {
+        currentCanBtn.classList.add('active');
+      }
+      
       // Show film panels for any active category buttons
       document.querySelectorAll('.category-btn.active').forEach(function(btn) {
         var cat = btn.getAttribute('data-cat');
@@ -2279,6 +2442,11 @@ function buildPeekFrames(catKey) {
     } else {
       // Play close sound
       playSound(closeSound);
+      
+      // Close all active cans
+      document.querySelectorAll('.category-btn.active').forEach(function(btn) {
+        btn.classList.remove('active');
+      });
       
       // Hide all film panels
       document.querySelectorAll('.film-panel').forEach(function(p) {
@@ -2785,6 +2953,7 @@ function buildPeekFrames(catKey) {
         btn.classList.remove('active');
         var panel = document.getElementById('film-panel-' + cat);
         if (panel) panel.classList.remove('active');
+        
       } else {
         // Open this cartridge (don't close others, don't switch photos)
         btn.classList.add('active');
@@ -2830,6 +2999,23 @@ function buildPeekFrames(catKey) {
       }
     });
   });
+
+  /* ══════ MOBILE ABOUT TOGGLE ══════ */
+  if (isMobile) {
+    var categoryButtons = document.getElementById('category-buttons');
+    
+    // Make entire about window clickable on mobile
+    loremWindow.addEventListener('click', function() {
+      loremWindow.classList.toggle('expanded');
+      
+      // Adjust can position dynamically
+      if (loremWindow.classList.contains('expanded')) {
+        categoryButtons.style.marginTop = '18rem';  // Pushed down when expanded
+      } else {
+        categoryButtons.style.marginTop = '6rem';   // Close when collapsed
+      }
+    });
+  }
 
   /* ══════ RESIZE HINT + CROP PREVIEW ══════ */
   var TOLERANCE = 0.06;
