@@ -2,6 +2,25 @@
 // PORTFOLIO DATA - Edit your photos here!
 // ═══════════════════════════════════════════════════════════
 
+// Site branding
+var siteTitle = "Val's Photofolio";
+var heroTitle = 'portfolio';
+var heroSubtitle = 'photography collection';
+
+// About section paragraphs
+var aboutText = [
+  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiuaaaaaaaaaaaaaaaaaaa tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+  'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+  'Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris.'
+];
+
+// Category cans - order determines left-to-right display
+var categoryConfig = [
+  { key: 'main',       label: 'main',       canColor: 'rgb(47, 72, 142)',  stripColor: 'rgb(80, 140, 255)',  labelColor: 'rgba(255,255,255,0.9)' },
+  { key: 'portraits',  label: 'portraits',  canColor: 'rgb(191, 191, 191)', stripColor: 'rgb(200, 200, 200)', labelColor: 'rgba(0,0,0,0.9)' },
+  { key: 'landscapes', label: 'landscapes', canColor: 'rgb(110, 55, 16)',  stripColor: 'rgb(255, 140, 60)',  labelColor: 'rgba(255,255,255,0.9)' }
+];
+
 // Lens definitions - define once, use everywhere
 var lenses = {
   '7artf095': {

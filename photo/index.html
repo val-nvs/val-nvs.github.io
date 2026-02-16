@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="media/favicon.png">
-<title>Val's Photofolio</title>
+<title></title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Atkinson+Hyperlegible:wght@400;700&display=swap');
 
@@ -353,12 +353,13 @@
     gap: 0.8rem;
     justify-content: center;
     align-items: flex-start;
-    margin-top: 4rem;
+    margin-top: 6rem;
     padding: 0;
     width: 500px;
     max-width: 90vw;
     position: relative;
     z-index: 1;
+    transition: margin-top 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   }
   
   /* Wrapper controls width */
@@ -493,61 +494,17 @@
     transition: none !important;
   }
   
-  /* Left can = Darker Blue - NEVER CHANGES */
-  .category-btn[data-cat="main"] .category-btn-overlay {
-    background: rgb(47, 72, 142) !important;
-  }
-  .category-btn[data-cat="main"] .category-btn-overlay::before,
-  .category-btn[data-cat="main"] .category-btn-overlay::after {
-    background: rgb(47, 72, 142) !important;
-  }
-  .category-btn[data-cat="main"]:hover .category-btn-overlay,
-  .category-btn[data-cat="main"].active .category-btn-overlay {
-    background: rgb(47, 72, 142) !important;
-  }
-  .category-btn[data-cat="main"]:hover .category-btn-overlay::before,
-  .category-btn[data-cat="main"]:hover .category-btn-overlay::after,
-  .category-btn[data-cat="main"].active .category-btn-overlay::before,
-  .category-btn[data-cat="main"].active .category-btn-overlay::after {
-    background: rgb(47, 72, 142) !important;
-  }
-  
-  /* Middle can = Bright White - NEVER CHANGES */
-  .category-btn[data-cat="portraits"] .category-btn-overlay {
-    background: rgb(191, 191, 191) !important;
-  }
-  .category-btn[data-cat="portraits"] .category-btn-overlay::before,
-  .category-btn[data-cat="portraits"] .category-btn-overlay::after {
-    background: rgb(191, 191, 191) !important;
-  }
-  .category-btn[data-cat="portraits"]:hover .category-btn-overlay,
-  .category-btn[data-cat="portraits"].active .category-btn-overlay {
-    background: rgb(191, 191, 191) !important;
-  }
-  .category-btn[data-cat="portraits"]:hover .category-btn-overlay::before,
-  .category-btn[data-cat="portraits"]:hover .category-btn-overlay::after,
-  .category-btn[data-cat="portraits"].active .category-btn-overlay::before,
-  .category-btn[data-cat="portraits"].active .category-btn-overlay::after {
-    background: rgb(191, 191, 191) !important;
-  }
-  
-  /* Right can = Darker Orange - NEVER CHANGES */
-  .category-btn[data-cat="landscapes"] .category-btn-overlay {
-    background: rgb(110, 55, 16) !important;
-  }
-  .category-btn[data-cat="landscapes"] .category-btn-overlay::before,
-  .category-btn[data-cat="landscapes"] .category-btn-overlay::after {
-    background: rgb(110, 55, 16) !important;
-  }
-  .category-btn[data-cat="landscapes"]:hover .category-btn-overlay,
-  .category-btn[data-cat="landscapes"].active .category-btn-overlay {
-    background: rgb(110, 55, 16) !important;
-  }
-  .category-btn[data-cat="landscapes"]:hover .category-btn-overlay::before,
-  .category-btn[data-cat="landscapes"]:hover .category-btn-overlay::after,
-  .category-btn[data-cat="landscapes"].active .category-btn-overlay::before,
-  .category-btn[data-cat="landscapes"].active .category-btn-overlay::after {
-    background: rgb(110, 55, 16) !important;
+  /* Can colors driven by --can-color custom property (set from data.js) */
+  .category-btn-overlay,
+  .category-btn-overlay::before,
+  .category-btn-overlay::after,
+  .category-btn:hover .category-btn-overlay,
+  .category-btn.active .category-btn-overlay,
+  .category-btn:hover .category-btn-overlay::before,
+  .category-btn:hover .category-btn-overlay::after,
+  .category-btn.active .category-btn-overlay::before,
+  .category-btn.active .category-btn-overlay::after {
+    background: var(--can-color) !important;
   }
   .film-panel {
     position: relative;
@@ -582,16 +539,9 @@
     mix-blend-mode: screen;
   }
   
-  #film-panel-main .film-content::before {
-    background: rgb(80, 140, 255);
-  }
-  
-  #film-panel-portraits .film-content::before {
-    background: rgb(200, 200, 200);
-  }
-  
-  #film-panel-landscapes .film-content::before {
-    background: rgb(255, 140, 60);
+  /* Strip color driven by --strip-color custom property (set from data.js) */
+  .film-content::before {
+    background: var(--strip-color);
   }
   
   .category-btn-label {
@@ -599,16 +549,11 @@
     font-size: calc(0.6rem * var(--size-scale));
     font-weight: 300;
     letter-spacing: 0.15em;
-    color: rgba(255, 255, 255, 0.9);
+    color: var(--label-color, rgba(255, 255, 255, 0.9));
     text-transform: none;
     user-select: none;
     position: relative;
     z-index: 2;
-  }
-  
-  /* Dark text on white can */
-  .category-btn[data-cat="portraits"] .category-btn-label {
-    color: rgba(0, 0, 0, 0.9);
   }
   
   .search-wrapper {
@@ -847,12 +792,6 @@
       max-width: 50vw;
       padding: 0.5rem 1rem;
     }
-    
-    /* Adjust category buttons for mobile - move down to accommodate about section */
-    #category-buttons {
-      margin-top: 6rem !important; /* Right below about when collapsed */
-      transition: margin-top 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
-    }
   }
   #settings-popup.open {
     opacity: 1; pointer-events: auto; transform: translateY(0);
@@ -1035,104 +974,74 @@
     color: #fff; user-select: none;
   }
 
-  /* ══════ LOREM IPSUM WINDOW ══════ */
+  /* ══════ ABOUT WINDOW (collapsible card) ══════ */
   #lorem-window {
     position: fixed;
-    top: 5rem; left: 2rem;
-    z-index: 152;
-    width: 22rem;
-    max-height: 60vh;
-    background: rgba(15,15,15,0.7);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-radius: 0.5rem;
-    padding: 1.2rem 1.4rem;
-    border: 1px solid rgba(255,255,255,0.08);
-    opacity: 0; pointer-events: none;
-    transform: translateY(0.5rem);
-    transition: opacity 0.4s ease, transform 0.4s ease;
+    top: 140px;
+    left: 50%;
+    transform: translateX(-50%);
+    right: auto;
+    z-index: 200;
+    width: 500px;
+    max-width: 90vw;
+    max-height: 58px;
+    padding: 0;
+    background: rgba(30, 30, 30, 0.95);
+    border: 2px solid rgba(150, 150, 150, 0.3);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+    cursor: pointer;
+    pointer-events: none;
+    opacity: 0;
+  }
+  #lorem-window.open {
+    transform: translateX(-50%);
+    opacity: 1;
+    pointer-events: auto;
+  }
+  #lorem-window.expanded {
+    max-height: 400px;
     overflow-y: auto;
+    padding-bottom: 12px;
   }
-  @media (max-width: 768px) {
-    #lorem-window {
-      position: fixed;
-      top: 140px;          /* Below search bar */
-      left: 50%;
-      transform: translateX(-50%) !important;
-      right: auto;
-      width: 500px;
-      max-width: 90vw;
-      max-height: 58px;  /* Taller to prevent text clipping */
-      padding: 0;
-      background: rgba(30, 30, 30, 0.95);
-      border: 2px solid rgba(150, 150, 150, 0.3);
-      border-radius: 8px;
-      overflow: hidden;
-      transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
-      cursor: pointer;
-      pointer-events: none;
-      opacity: 0;
-      z-index: 200;
-    }
-    #lorem-window.open {
-      transform: translateX(-50%) !important;
-      opacity: 1 !important;
-      pointer-events: auto !important;
-    }
-    #lorem-window.expanded {
-      max-height: 400px;  /* Expanded state */
-      overflow-y: auto;
-      padding-bottom: 12px;  /* Add padding at bottom when expanded */
-    }
-    #lorem-window h2 {
-      font-size: calc(0.7rem * var(--size-scale));
-      margin-bottom: 0;
-      padding: 14px 16px;
-      user-select: none;
-      color: rgba(255,255,255,0.9);
-      transition: color 0.2s ease;
-    }
-    #lorem-window:hover h2 {
-      color: rgba(255,255,255,1);
-    }
-    #lorem-window h2::after {
-      content: ' ▼';
-      font-size: 0.6em;
-      opacity: 0.6;
-      margin-left: 0.5em;
-    }
-    #lorem-window.expanded h2::after {
-      content: ' ▲';
-    }
-    #lorem-window p {
-      font-size: calc(0.48rem * var(--size-scale));
-      line-height: 1.6;
-      margin-bottom: 0.5rem;
-      padding: 0 16px;
-      display: none;
-    }
-    #lorem-window.expanded p {
-      display: block;
-    }
-    #lorem-window.expanded h2 {
-      border-bottom: 1px solid rgba(150, 150, 150, 0.2);
-      margin-bottom: 0.8rem;
-    }
-  }
-  #lorem-window.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
   #lorem-window h2 {
-    font-size: calc(1rem * var(--size-scale));
+    font-size: calc(0.7rem * var(--size-scale));
     font-weight: 300;
     letter-spacing: 0.15em;
-    margin-bottom: 0.6rem;
-    color: rgba(255,255,255,0.8);
+    margin-bottom: 0;
+    padding: 14px 16px;
+    user-select: none;
+    color: rgba(255,255,255,0.9);
+    transition: color 0.2s ease;
+  }
+  #lorem-window:hover h2 {
+    color: rgba(255,255,255,1);
+  }
+  #lorem-window h2::after {
+    content: ' ▼';
+    font-size: 0.6em;
+    opacity: 0.6;
+    margin-left: 0.5em;
+  }
+  #lorem-window.expanded h2::after {
+    content: ' ▲';
   }
   #lorem-window p {
-    font-size: calc(0.52rem * var(--size-scale));
+    font-size: calc(0.48rem * var(--size-scale));
     font-weight: 300;
-    line-height: 1.7;
+    line-height: 1.6;
     color: rgba(255,255,255,0.5);
     margin-bottom: 0.5rem;
+    padding: 0 16px;
+    display: none;
+  }
+  #lorem-window.expanded p {
+    display: block;
+  }
+  #lorem-window.expanded h2 {
+    border-bottom: 1px solid rgba(150, 150, 150, 0.2);
+    margin-bottom: 0.8rem;
   }
 
   /* ══════ RESIZE HINT + PREVIEW ══════ */
@@ -1283,7 +1192,7 @@
 <div id="counter" class="ui-element">1 / 5</div>
 
 <div id="leather-tab" class="ui-element">
-  <div class="tab-title">Val's Photofolio</div>
+  <div class="tab-title"></div>
   <div class="tab-sub">tap to open menu</div>
 </div>
 
@@ -1307,7 +1216,7 @@
     <div class="can-wrapper">
       <div class="category-btn active" data-cat="main">
         <div class="category-btn-overlay">
-          <span class="category-btn-label">main</span>
+          <span class="category-btn-label"></span>
         </div>
         <div class="category-extension">
           <!-- Main film strip inside extension -->
@@ -1328,7 +1237,7 @@
     <div class="can-wrapper">
       <div class="category-btn" data-cat="portraits">
         <div class="category-btn-overlay">
-          <span class="category-btn-label">portraits</span>
+          <span class="category-btn-label"></span>
         </div>
         <div class="category-extension">
           <!-- Portraits film strip inside extension -->
@@ -1349,7 +1258,7 @@
     <div class="can-wrapper">
       <div class="category-btn" data-cat="landscapes">
         <div class="category-btn-overlay">
-          <span class="category-btn-label">landscapes</span>
+          <span class="category-btn-label"></span>
         </div>
         <div class="category-extension">
           <!-- Landscapes film strip inside extension -->
@@ -1434,9 +1343,6 @@
 
 <div id="lorem-window">
   <h2>about</h2>
-  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-  <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-  <p>Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris.</p>
 </div>
 
 <div id="resize-group" class="ui-element">
@@ -1595,6 +1501,29 @@
   var snappingEnabled = true; // Toggle for snapping behavior
   var soundsEnabled = true; // Toggle for sound effects
 
+  /* ══════ APPLY DATA.JS CONFIG ══════ */
+  // Site title
+  document.title = siteTitle;
+  leatherTab.querySelector('.tab-title').textContent = siteTitle;
+
+  // About text
+  aboutText.forEach(function(text) {
+    var p = document.createElement('p');
+    p.textContent = text;
+    loremWindow.appendChild(p);
+  });
+
+  // Category can colors, strip colors, and labels
+  categoryConfig.forEach(function(cat) {
+    var btn = document.querySelector('.category-btn[data-cat="' + cat.key + '"]');
+    if (!btn) return;
+    btn.style.setProperty('--can-color', cat.canColor);
+    btn.style.setProperty('--strip-color', cat.stripColor);
+    btn.style.setProperty('--label-color', cat.labelColor);
+    var label = btn.querySelector('.category-btn-label');
+    if (label) label.textContent = cat.label;
+  });
+
   /* ══════ SOUND HELPER ══════ */
   function playSound(audioElement) {
     if (!soundsEnabled) return;
@@ -1668,7 +1597,7 @@
       hero.appendChild(vig);
       var heroText = document.createElement('div');
       heroText.className = 'hero-text';
-      heroText.innerHTML = '<h1>portfolio</h1><p>photography collection</p>';
+      heroText.innerHTML = '<h1>' + heroTitle + '</h1><p>' + heroSubtitle + '</p>';
       hero.appendChild(heroText);
       slidesContainer.appendChild(hero);
     }
@@ -2414,17 +2343,15 @@ function buildPeekFrames(catKey) {
     filmOvl.classList.toggle('open', filmMenuOpen);
     loremWindow.classList.toggle('open', filmMenuOpen);
     
-    // Only toggle settings popup on desktop
-    if (!isMobile) {
-      settingsPopup.classList.toggle('open', filmMenuOpen);
-    }
-    
     searchBarContainer.classList.toggle('visible', filmMenuOpen);
     tabSub.textContent = filmMenuOpen ? 'tap to close' : 'tap to open menu';
 
     if (filmMenuOpen) {
       // Play open sound
       playSound(openSound);
+      
+      // Close settings popup if open (they overlap)
+      settingsPopup.classList.remove('open');
       
       // Auto-open the can matching the current category
       var currentCanBtn = document.querySelector('.category-btn[data-cat="' + currentCat + '"]');
@@ -2442,6 +2369,11 @@ function buildPeekFrames(catKey) {
     } else {
       // Play close sound
       playSound(closeSound);
+      
+      // Reset about window expanded state
+      loremWindow.classList.remove('expanded');
+      var categoryButtons = document.getElementById('category-buttons');
+      if (categoryButtons) categoryButtons.style.marginTop = '6rem';
       
       // Close all active cans
       document.querySelectorAll('.category-btn.active').forEach(function(btn) {
@@ -2464,14 +2396,7 @@ function buildPeekFrames(catKey) {
   
   settingsBtn.addEventListener('click', function(e) {
     e.stopPropagation();
-    
-    if (isMobile) {
-      // On mobile: only toggle settings popup, not the menu
-      settingsPopup.classList.toggle('open');
-    } else {
-      // On desktop: toggle full menu
-      toggleFilmMenu();
-    }
+    settingsPopup.classList.toggle('open');
   });
   
   // Sound toggle button
@@ -2488,9 +2413,9 @@ function buildPeekFrames(catKey) {
   
   filmBkdp.addEventListener('click', function() { if (filmMenuOpen) toggleFilmMenu(); });
 
-  // Close settings popup on mobile when clicking outside
+  // Close settings popup when clicking outside
   document.addEventListener('click', function(e) {
-    if (isMobile && settingsPopup.classList.contains('open')) {
+    if (settingsPopup.classList.contains('open')) {
       if (!settingsPopup.contains(e.target) && !settingsBtn.contains(e.target)) {
         settingsPopup.classList.remove('open');
       }
@@ -3000,22 +2925,20 @@ function buildPeekFrames(catKey) {
     });
   });
 
-  /* ══════ MOBILE ABOUT TOGGLE ══════ */
-  if (isMobile) {
-    var categoryButtons = document.getElementById('category-buttons');
+  /* ══════ ABOUT TOGGLE ══════ */
+  var categoryButtons = document.getElementById('category-buttons');
+  
+  // Make entire about window clickable to expand/collapse
+  loremWindow.addEventListener('click', function() {
+    loremWindow.classList.toggle('expanded');
     
-    // Make entire about window clickable on mobile
-    loremWindow.addEventListener('click', function() {
-      loremWindow.classList.toggle('expanded');
-      
-      // Adjust can position dynamically
-      if (loremWindow.classList.contains('expanded')) {
-        categoryButtons.style.marginTop = '18rem';  // Pushed down when expanded
-      } else {
-        categoryButtons.style.marginTop = '6rem';   // Close when collapsed
-      }
-    });
-  }
+    // Adjust can position dynamically
+    if (loremWindow.classList.contains('expanded')) {
+      categoryButtons.style.marginTop = '18rem';  // Pushed down when expanded
+    } else {
+      categoryButtons.style.marginTop = '6rem';   // Close when collapsed
+    }
+  });
 
   /* ══════ RESIZE HINT + CROP PREVIEW ══════ */
   var TOLERANCE = 0.06;
