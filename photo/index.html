@@ -143,7 +143,7 @@
   .hero-grid img {
     width: 100%; height: 100%;
     object-fit: cover;
-    filter: grayscale(1);
+    filter: grayscale(1) brightness(0.5);
     opacity: 0;
     animation: gridIn 0.15s ease forwards;
   }
@@ -389,7 +389,7 @@
   /* Wrapper controls width */
   .can-wrapper {
     width: 4rem; /* Closed - narrow */
-    height: 4rem;
+    height: 9rem;
     flex-shrink: 0;
     display: flex;
     align-items: center;
@@ -478,6 +478,7 @@
   #search-bar-container.visible .category-btn.active .category-extension {
     max-height: calc(100vh - 300px);
     transition-delay: 0.2s;
+    pointer-events: auto;
   }
   
   /* Single colored center strip for each can - ALWAYS VISIBLE */
@@ -549,6 +550,32 @@
     position: relative;
   }
   
+  /* Height chain for scrollable film strips inside cans */
+  .category-extension .film-content {
+    align-items: stretch;
+  }
+  .category-extension .film-content > .film-strip {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    width: 100%;
+  }
+  .category-extension .film-body {
+    display: flex; flex-direction: row;
+    flex: 1; min-height: 0;
+    overflow: hidden;
+  }
+  .category-extension .film-frames {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+  .category-extension .film-frames::-webkit-scrollbar { display: none; }
+  .category-extension .sprockets {
+    overflow: hidden;
+  }
+  
   /* Colored overlay for each film strip */
   .film-content::before {
     content: '';
@@ -580,75 +607,108 @@
     z-index: 2;
   }
   
-  .search-wrapper {
-    position: relative;
+  /* ══════ MENU WINDOW (tabbed card: search + about) ══════ */
+  #menu-window {
+    flex-shrink: 0;
     z-index: 200;
     width: 100%;
+    overflow: hidden;
   }
-  #search-bar {
-    width: 100%;
+
+  /* Tab bar */
+  .menu-tabs {
+    display: flex;
+    gap: 4px;
+    padding: 0;
+  }
+  .menu-tab {
+    font-family: var(--font-active);
+    font-size: calc(0.65rem * var(--size-scale));
+    font-weight: 300;
+    letter-spacing: 0.15em;
+    padding: 10px 20px 8px;
+    color: rgba(255,255,255,0.5);
+    background: rgba(30, 30, 30, 0.6);
+    border: 2px solid rgba(150, 150, 150, 0.15);
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+    position: relative;
+    bottom: -2px;
+  }
+  .menu-tab:hover {
+    color: rgba(255,255,255,0.8);
+    background: rgba(30, 30, 30, 0.8);
+  }
+  .menu-tab.active {
+    color: rgba(255,255,255,0.9);
+    background: rgba(30, 30, 30, 0.95);
+    border-color: rgba(150, 150, 150, 0.3);
+    border-bottom: 2px solid rgba(30, 30, 30, 0.95);
+    z-index: 1;
+  }
+
+  /* Card body */
+  .menu-body {
     background: rgba(30, 30, 30, 0.95);
     border: 2px solid rgba(150, 150, 150, 0.3);
-    border-radius: 8px;
-    padding: 12px 12px 12px 45px;
+    border-radius: 0 0 8px 8px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s cubic-bezier(0.16, 1, 0.3, 1), padding 0.4s ease;
+    padding: 0 12px;
+  }
+  #menu-window.expanded .menu-body {
+    max-height: 60vh;
+    padding: 12px;
+  }
+
+  /* Panels */
+  .menu-panel {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .menu-panel.active {
+    display: block;
+    opacity: 1;
+  }
+
+  /* Search panel */
+  #search-bar {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(150, 150, 150, 0.2);
+    border-radius: 6px;
+    padding: 10px 12px;
     font-family: var(--font-active);
     font-size: calc(14px * var(--size-scale));
     color: #fff;
     outline: none;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
     transition: border-color 0.2s ease;
   }
   #search-bar:focus {
-    border-color: rgba(200, 200, 200, 0.5);
+    border-color: rgba(200, 200, 200, 0.4);
   }
   #search-bar::placeholder {
-    color: rgba(255, 255, 255, 0.4);
-  }
-  #search-icon {
-    position: absolute;
-    left: 15px;
-    top: 14px;
-    width: 18px;
-    height: 18px;
-    opacity: 0.5;
-    pointer-events: none;
-  }
-  @media (max-width: 768px) {
-    #search-icon {
-      left: 15px;
-      top: 14px;
-    }
-  }
-  #search-icon svg {
-    width: 100%;
-    height: 100%;
-    stroke: #fff;
-    fill: none;
-    stroke-width: 2;
+    color: rgba(255, 255, 255, 0.3);
   }
 
-  /* Search results dropdown */
+  /* Search results inside card */
   #search-results {
     width: 100%;
-    background: rgba(25, 25, 25, 0.98);
-    border: 2px solid rgba(150, 150, 150, 0.3);
-    border-top: 1px solid rgba(150, 150, 150, 0.15);
-    border-radius: 0 0 8px 8px;
     max-height: 0;
     overflow: hidden;
     opacity: 0;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
     transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
   }
   #search-results.visible {
-    max-height: 50vh;
+    max-height: 45vh;
     overflow-y: auto;
     opacity: 1;
-  }
-  /* Connect search bar to results when results are visible */
-  .search-wrapper:has(#search-results.visible) #search-bar {
-    border-radius: 8px 8px 0 0;
-    border-bottom-color: rgba(150, 150, 150, 0.15);
+    margin-top: 8px;
   }
   #search-results::-webkit-scrollbar {
     width: 8px;
@@ -1007,67 +1067,16 @@
     color: #fff; user-select: none;
   }
 
-  /* ══════ ABOUT WINDOW (collapsible card) ══════ */
-  #lorem-window {
-    flex-shrink: 0;
-    z-index: 200;
-    width: 100%;
-    max-height: 58px;
-    padding: 0;
-    background: rgba(30, 30, 30, 0.95);
-    border: 2px solid rgba(150, 150, 150, 0.3);
-    border-radius: 8px;
-    overflow: hidden;
-    transition: max-height 0.5s cubic-bezier(0.16, 1, 0.3, 1), padding-bottom 0.4s ease;
-    cursor: pointer;
-  }
-  #lorem-window.open {
-    /* parent container handles visibility */
-  }
-  #lorem-window.expanded {
-    max-height: 600px;
-    padding-bottom: 12px;
-  }
-  #lorem-window h2 {
-    font-size: calc(0.7rem * var(--size-scale));
-    font-weight: 300;
-    letter-spacing: 0.15em;
-    margin-bottom: 0;
-    padding: 14px 16px;
-    user-select: none;
-    color: rgba(255,255,255,0.9);
-    transition: color 0.2s ease;
-  }
-  #lorem-window:hover h2 {
-    color: rgba(255,255,255,1);
-  }
-  #lorem-window h2::after {
-    content: ' ▼';
-    font-size: 0.6em;
-    opacity: 0.6;
-    margin-left: 0.5em;
-    transition: transform 0.3s ease;
-    display: inline-block;
-  }
-  #lorem-window.expanded h2::after {
-    content: ' ▲';
-  }
-  #lorem-window p {
+  /* ══════ ABOUT PANEL (inside menu window) ══════ */
+  #about-panel p {
     font-size: calc(0.48rem * var(--size-scale));
     font-weight: 300;
     line-height: 1.6;
     color: rgba(255,255,255,0.5);
     margin-bottom: 0.5rem;
-    padding: 0 16px;
-    opacity: 0;
-    transition: opacity 0.3s ease 0.1s;
   }
-  #lorem-window.expanded p {
-    opacity: 1;
-  }
-  #lorem-window.expanded h2 {
-    border-bottom: 1px solid rgba(150, 150, 150, 0.2);
-    margin-bottom: 0.8rem;
+  #about-panel p:last-child {
+    margin-bottom: 0;
   }
 
   /* ══════ RESIZE HINT + PREVIEW ══════ */
@@ -1225,21 +1234,19 @@
 
 <!-- Search bar -->
 <div id="search-bar-container">
-  <div class="search-wrapper">
-    <div id="search-icon">
-      <svg viewBox="0 0 24 24">
-        <circle cx="11" cy="11" r="8"></circle>
-        <path d="m21 21-4.35-4.35"></path>
-      </svg>
+  <div id="menu-window">
+    <div class="menu-tabs">
+      <div class="menu-tab" data-tab="about">about</div>
+      <div class="menu-tab" data-tab="search">search</div>
     </div>
-    <input type="text" id="search-bar" placeholder="type to filter tags..." autocomplete="off" />
-    
-    <!-- Search results dropdown -->
-    <div id="search-results"></div>
-  </div>
-  
-  <div id="lorem-window">
-    <h2>about</h2>
+    <div class="menu-body">
+      <div class="menu-panel" id="search-panel" data-tab="search">
+        <input type="text" id="search-bar" placeholder="type to filter tags..." autocomplete="off" />
+        <div id="search-results"></div>
+      </div>
+      <div class="menu-panel" id="about-panel" data-tab="about">
+      </div>
+    </div>
   </div>
 
   <!-- Category buttons -->
@@ -1497,7 +1504,8 @@
   var filmPanelMain = document.getElementById('film-panel-main');
   var filmPanelPortraits = document.getElementById('film-panel-portraits');
   var filmPanelLandscapes = document.getElementById('film-panel-landscapes');
-  var loremWindow = document.getElementById('lorem-window');
+  var loremWindow = document.getElementById('about-panel');
+  var menuWindow = document.getElementById('menu-window');
   var resizeGroup = document.getElementById('resize-group');
   var hintLabel = document.getElementById('hint-label');
   var cropPreview = document.getElementById('crop-preview');
@@ -1522,10 +1530,41 @@
   function closeSearch() {
     searchResults.classList.remove('visible');
     searchBar.value = '';
+    searchBar.blur();
   }
 
   function closeAbout() {
-    loremWindow.classList.remove('expanded');
+    // Nothing to collapse separately now
+  }
+
+  function closeMenuWindow() {
+    menuWindow.classList.remove('expanded');
+    document.querySelectorAll('.menu-tab').forEach(function(t) { t.classList.remove('active'); });
+    document.querySelectorAll('.menu-panel').forEach(function(p) { p.classList.remove('active'); });
+    closeSearch();
+  }
+
+  function openMenuTab(tabName) {
+    // Switch active tab
+    document.querySelectorAll('.menu-tab').forEach(function(t) {
+      t.classList.toggle('active', t.getAttribute('data-tab') === tabName);
+    });
+    document.querySelectorAll('.menu-panel').forEach(function(p) {
+      p.classList.toggle('active', p.getAttribute('data-tab') === tabName);
+    });
+    menuWindow.classList.add('expanded');
+
+    if (tabName === 'search') {
+      setTimeout(function() {
+        searchBar.focus();
+        if (!searchBar.value.trim()) {
+          buildTagCategories();
+          searchResults.classList.add('visible');
+        }
+      }, 150);
+    } else {
+      closeSearch();
+    }
   }
 
       /* ══════ STATE ══════ */
@@ -2066,9 +2105,8 @@ function buildFilmFrames(catKey) {
         // Stop event from bubbling to can button
         e.stopPropagation();
         
-        // Close search results
-        closeSearch();
-        closeAbout();
+        // Close menu window
+        closeMenuWindow();
         
         // Play click sound
         playSound(tapSound);
@@ -2107,9 +2145,8 @@ function buildFilmFrames(catKey) {
           // Stop event from bubbling to can button
           e.stopPropagation();
           
-          // Close search results
-          closeSearch();
-          closeAbout();
+          // Close menu window
+          closeMenuWindow();
           
           // Play click sound
           playSound(tapSound);
@@ -2125,6 +2162,17 @@ function buildFilmFrames(catKey) {
       })(i, heroOffset, catKey));
       filmFramesEl.appendChild(f);
     }
+    
+    // Prevent page scroll when scrolling inside film strip
+    filmFramesEl.addEventListener('wheel', function(e) {
+      var el = filmFramesEl;
+      var atTop = el.scrollTop <= 0;
+      var atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 1;
+      if ((e.deltaY < 0 && atTop) || (e.deltaY > 0 && atBottom)) return;
+      e.stopPropagation();
+      e.preventDefault();
+      el.scrollTop += e.deltaY;
+    }, { passive: false });
     
     if (filmMenuOpen) updateFilmHighlight();
   }
@@ -2375,8 +2423,8 @@ function buildPeekFrames(catKey) {
       // Play close sound
       playSound(closeSound);
       
-      // Reset about window expanded state
-      loremWindow.classList.remove('expanded');
+      // Reset menu window state
+      closeMenuWindow();
       
       // Close all active cans
       document.querySelectorAll('.category-btn.active').forEach(function(btn) {
@@ -2426,16 +2474,28 @@ function buildPeekFrames(catKey) {
   });
 
   // Search bar functionality - instant photo search + clickable tags
-  searchBar.addEventListener('focus', function() {
-    playSound(selectSound);
-    closeAbout();
-    // Show tag categories on focus
-    if (!searchBar.value.trim()) {
-      buildTagCategories();
-      searchResults.classList.add('visible');
-    }
+  // Menu window tab clicks
+  document.querySelectorAll('.menu-tab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      playSound(tapSound);
+      var tabName = tab.getAttribute('data-tab');
+      var isActive = tab.classList.contains('active');
+
+      if (isActive) {
+        // Click active tab again → collapse
+        closeMenuWindow();
+      } else {
+        // Switch to this tab
+        openMenuTab(tabName);
+      }
+    });
   });
-  
+
+  // Prevent clicks inside search panel from collapsing
+  document.getElementById('search-panel').addEventListener('click', function(e) {
+    e.stopPropagation();
+  });
+
   searchBar.addEventListener('input', function(e) {
     // Play type sound on each character typed
     playSound(tapSound);
@@ -2783,14 +2843,12 @@ function buildPeekFrames(catKey) {
       thumb.addEventListener('click', function(e) {
         e.stopPropagation();
         playSound(tapSound);
-        closeAbout();
         
         var index = parseInt(thumb.getAttribute('data-index'));
         var photoCat = thumb.getAttribute('data-category');
         
-        // Close search
-        searchResults.classList.remove('visible');
-        searchBar.value = '';
+        // Close menu
+        closeMenuWindow();
         
         if (filmMenuOpen) {
           toggleFilmMenu();
@@ -2878,9 +2936,8 @@ function buildPeekFrames(catKey) {
       var cat = btn.getAttribute('data-cat');
       var wasActive = btn.classList.contains('active');
       
-      // Close search results
-      closeSearch();
-      closeAbout();
+      // Close menu window
+      closeMenuWindow();
       
       // Play click sound
       playSound(tapSound);
@@ -2935,13 +2992,6 @@ function buildPeekFrames(catKey) {
         soundsEnabled = (val === 'on');
       }
     });
-  });
-
-  /* ══════ ABOUT TOGGLE ══════ */
-  // Make entire about window clickable to expand/collapse
-  loremWindow.addEventListener('click', function() {
-    closeSearch();
-    loremWindow.classList.toggle('expanded');
   });
 
   /* ══════ RESIZE HINT + CROP PREVIEW ══════ */

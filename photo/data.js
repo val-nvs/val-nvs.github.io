@@ -9,9 +9,9 @@ var heroSubtitle = 'photography collection';
 
 // About section paragraphs
 var aboutText = [
-  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiuaaaaaaaaaaaaaaaaaaa tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-  'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-  'Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris.'
+  'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+  'Aaaaaaaaaaaaaaaaaaaaaa.',
+  ':)'
 ];
 
 // Category cans - order determines left-to-right display
@@ -128,23 +128,6 @@ var categories = {
       subject: '',
       developing: '',
       description: 'Along the Seine river'
-    },
-    { 
-      base: 'bridge-moon.jpg',
-      lens: 'telephoto',
-      camera: 'a6400',
-      stock: '',
-      date: '2023-01-01',
-      focal: '',
-      aperture: '',
-      iso: '',
-      shutter: '?s',
-      place: 'Belem',
-      city: 'Lisboa',
-      country: 'Portugal',
-      subject: '',
-      developing: '',
-      description: 'Ponte 25 de Abril'
     },
     { 
       base: 'recife.jpg',
