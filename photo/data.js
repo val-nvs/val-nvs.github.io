@@ -267,16 +267,20 @@ var categories = {
   ]
 };
 
-// Hero grid images (thumbnails auto-generated with -small suffix)
-var heroPhotoUrls = [
-  'toning.jpg',
-  'toning.jpg',
-  'toning.jpg',
-  'toning.jpg',
-  'toning.jpg',
-  'toning.jpg',
-  'bridge-moon.jpg',
-];
+// Hero grid images - auto-generated from all category photos
+var heroPhotoUrls = (function() {
+  var all = [];
+  var keys = Object.keys(categories);
+  for (var i = 0; i < keys.length; i++) {
+    var photos = categories[keys[i]];
+    for (var j = 0; j < photos.length; j++) {
+      if (all.indexOf(photos[j].base) === -1) {
+        all.push(photos[j].base);
+      }
+    }
+  }
+  return all;
+})();
 
 // Search category order - customize which categories appear and in what order
 var searchCategories = [

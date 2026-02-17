@@ -24,14 +24,17 @@
   }
   [data-font="atkinson"] { --font-active: var(--font-atkinson); }
   [data-font="dyslexic"] { --font-active: var(--font-dyslexic); }
-  [data-fontsize="small"] { --size-scale: 0.8; }
-  [data-fontsize="large"] { --size-scale: 1.25; }
+  [data-fontsize="small"] { --size-scale: 1; }
+  [data-fontsize="medium"] { --size-scale: 1.25; }
+  [data-fontsize="big"] { --size-scale: 1.55; }
   [data-font="default"] { --size-scale: 1.1; }
-  [data-font="default"][data-fontsize="small"] { --size-scale: 0.88; }
-  [data-font="default"][data-fontsize="large"] { --size-scale: 1.375; }
+  [data-font="default"][data-fontsize="small"] { --size-scale: 1.1; }
+  [data-font="default"][data-fontsize="medium"] { --size-scale: 1.375; }
+  [data-font="default"][data-fontsize="big"] { --size-scale: 1.7; }
   [data-font="dyslexic"] { --size-scale: 0.8; }
-  [data-font="dyslexic"][data-fontsize="small"] { --size-scale: 0.64; }
-  [data-font="dyslexic"][data-fontsize="large"] { --size-scale: 1; }
+  [data-font="dyslexic"][data-fontsize="small"] { --size-scale: 0.8; }
+  [data-font="dyslexic"][data-fontsize="medium"] { --size-scale: 1; }
+  [data-font="dyslexic"][data-fontsize="big"] { --size-scale: 1.25; }
 
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -1309,7 +1312,7 @@
     <div class="setting-options">
       <button class="setting-btn" data-setting="fontsize" data-val="small">small</button>
       <button class="setting-btn active" data-setting="fontsize" data-val="medium">medium</button>
-      <button class="setting-btn" data-setting="fontsize" data-val="large">large</button>
+      <button class="setting-btn" data-setting="fontsize" data-val="big">big</button>
     </div>
   </div>
   <div class="setting-row">
@@ -2073,43 +2076,6 @@ function buildFilmFrames(catKey) {
       filmFramesEl.appendChild(f);
     }
     
-    // Add ending frame
-    var endFrame = document.createElement('div'); 
-    endFrame.className = 'film-frame ending-frame';
-    var endIcon = document.createElement('div');
-    endIcon.style.cssText = 'width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: rgba(255,255,255,0.5);';
-    endIcon.textContent = '→';
-    endFrame.appendChild(endIcon);
-    var endNum = document.createElement('span'); 
-    endNum.className = 'frame-num';
-    endNum.textContent = '→'; 
-    endFrame.appendChild(endNum);
-    
-    // Add hover sound
-    endFrame.addEventListener('mouseenter', function() {
-      playSound(hoverSound);
-    });
-    
-    endFrame.addEventListener('click', (function(cat) {
-      return function(e) {
-        // Stop event from bubbling to can button
-        e.stopPropagation();
-        
-        // Play click sound
-        playSound(tapSound);
-        
-        // Switch to this category if not already there
-        if (currentCat !== cat) {
-          buildSlides(cat);
-        }
-        
-        // Scroll to ending slide
-        var endingSlideIndex = categories[cat].length + (cat === 'main' ? 1 : 0);
-        window.scrollTo({ top: window.innerHeight * endingSlideIndex, behavior: 'smooth' });
-      };
-    })(catKey));
-    filmFramesEl.appendChild(endFrame);
-    
     if (filmMenuOpen) updateFilmHighlight();
   }
   
@@ -2141,35 +2107,30 @@ function buildPeekFrames(catKey) {
     spacer.style.flexShrink = '0';
     peekFrames.appendChild(spacer);
 
-    // Frame 0: hero for main, back button for others
-    var hf = document.createElement('div'); hf.className = 'film-frame hero-thumb';
-    var ht = document.createElement('img');
-    ht.src = isMain ? thumbUrl(heroPhotoUrls[0]) : 'media/back.jpg';
-    ht.alt = isMain ? 'hero' : 'back to main';
-    if (isMain) ht.style.filter = 'grayscale(1)';
-    hf.appendChild(ht);
-    var hn = document.createElement('span'); hn.className = 'frame-num';
-    hn.textContent = '0'; hf.appendChild(hn);
-    
-    // Add hover sound
-    hf.addEventListener('mouseenter', function() {
-      playSound(hoverSound);
-    });
-    
-    hf.addEventListener('click', function(e) {
-      e.stopPropagation();
-      // Play click sound
-      playSound(tapSound);
+    // Frame 0: hero thumbnail for main only
+    if (isMain) {
+      var hf = document.createElement('div'); hf.className = 'film-frame hero-thumb';
+      var ht = document.createElement('img');
+      ht.src = thumbUrl(heroPhotoUrls[0]);
+      ht.alt = 'hero';
+      ht.style.filter = 'grayscale(1)';
+      hf.appendChild(ht);
+      var hn = document.createElement('span'); hn.className = 'frame-num';
+      hn.textContent = '0'; hf.appendChild(hn);
       
-      if (!isMain) {
-        document.querySelectorAll('.cat-frame').forEach(function(c) { c.classList.remove('active'); });
-        document.querySelector('.cat-frame[data-cat="main"]').classList.add('active');
-        buildSlides('main');
-      } else {
+      // Add hover sound
+      hf.addEventListener('mouseenter', function() {
+        playSound(hoverSound);
+      });
+      
+      hf.addEventListener('click', function(e) {
+        e.stopPropagation();
+        // Play click sound
+        playSound(tapSound);
         window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-    });
-    peekFrames.appendChild(hf);
+      });
+      peekFrames.appendChild(hf);
+    }
 
     var heroOffset = isMain ? 1 : 0;
     for (var i = 0; i < photos.length; i++) {
@@ -2203,10 +2164,11 @@ function buildPeekFrames(catKey) {
     // Add ending frame
     var endFrame = document.createElement('div'); 
     endFrame.className = 'film-frame ending-frame';
-    var endIcon = document.createElement('div');
-    endIcon.style.cssText = 'width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: rgba(255,255,255,0.5);';
-    endIcon.textContent = '→';
-    endFrame.appendChild(endIcon);
+    var endImg = document.createElement('img');
+    endImg.src = 'media/more.jpg';
+    endImg.alt = 'view more';
+    endImg.style.cssText = 'width: 100%; height: 100%; object-fit: cover;';
+    endFrame.appendChild(endImg);
     var endNum = document.createElement('span'); 
     endNum.className = 'frame-num';
     endNum.textContent = '→'; 
@@ -2229,15 +2191,9 @@ function buildPeekFrames(catKey) {
   }
   function updatePeekHighlight(idx) {
     var frames = peekFrames.querySelectorAll('.film-frame');
-    var isMain = (currentCat === 'main');
     var currentIdx = (idx !== undefined) ? idx : activeIndex; // Use provided index or activeIndex
     for (var i = 0; i < frames.length; i++) {
-      if (isMain) {
-        frames[i].classList.toggle('current', i === currentIdx);
-      } else {
-        // frame 0 = back button, frame 1+ = photos
-        frames[i].classList.toggle('current', i === currentIdx + 1);
-      }
+      frames[i].classList.toggle('current', i === currentIdx);
     }
   }
 
