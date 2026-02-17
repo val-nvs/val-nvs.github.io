@@ -16,9 +16,9 @@ var aboutText = [
 
 // Category cans - order determines left-to-right display
 var categoryConfig = [
-  { key: 'main',       label: 'main',       canColor: 'rgb(47, 72, 142)',  stripColor: 'rgb(80, 140, 255)',  labelColor: 'rgba(255,255,255,0.9)' },
-  { key: 'portraits',  label: 'portraits',  canColor: 'rgb(191, 191, 191)', stripColor: 'rgb(200, 200, 200)', labelColor: 'rgba(0,0,0,0.9)' },
-  { key: 'landscapes', label: 'landscapes', canColor: 'rgb(110, 55, 16)',  stripColor: 'rgb(255, 140, 60)',  labelColor: 'rgba(255,255,255,0.9)' }
+  { key: 'main',       label: 'Main',       canColor: 'rgb(47, 72, 142)',  stripColor: 'rgb(80, 140, 255)',  labelColor: 'rgba(255,255,255,0.9)' },
+  { key: 'portraits',  label: 'Portraits',  canColor: 'rgb(191, 191, 191)', stripColor: 'rgb(200, 200, 200)', labelColor: 'rgba(0,0,0,0.9)' },
+  { key: 'landscapes', label: 'Experiments', canColor: 'rgb(110, 55, 16)',  stripColor: 'rgb(255, 140, 60)',  labelColor: 'rgba(255,255,255,0.9)' }
 ];
 
 // Lens definitions - define once, use everywhere
@@ -33,10 +33,25 @@ var lenses = {
     image: 'media/sonykit.png',
     extra: ' Sony 16-50mm f/3.5-5.6'
   },
+  'telephoto': {
+    name: '"55-210mm f/4.5-6.3"',
+    image: 'media/telephoto.png',
+    extra: ' Sony 55-210mm f/4.5-6.3'
+  },
   'pentaxf4': {
     name: '"35-80mm f/4"',
     image: 'media/pentaxf4.png',
     extra: ' Pentax 35-80mm f/4'
+  },
+  'cctv': {
+    name: '"3.6-10mm f/1.4"',
+    image: 'media/pentaxf4.png',
+    extra: ' CCTV 3.6-10mm f/1.4'
+  },
+  'fisheye': {
+    name: '"7.5mm f/2.8"',
+    image: 'media/pentaxf4.png',
+    extra: ' 7artisans 7.5mm f/2.8'
   }
 };
 
@@ -48,7 +63,7 @@ var cameras = {
     extra: ' Sony a6400'
   },
   'p30t': {
-    name: 'Full Frame',
+    name: '8 Perforations',
     image: 'media/p30t.png',
     extra: ' Pentax P30T'
   }
@@ -71,7 +86,7 @@ var categories = {
       country: 'Brazil',
       subject: '',
       developing: 'C-41 at home',
-      description: 'A serene beach captured on film'
+      description: 'C-41 film developed at home'
     },
     { 
       base: 'seine.jpg',
@@ -79,8 +94,8 @@ var categories = {
       camera: 'a6400',
       stock: '',
       date: '2024-07-28',
-      focal: '35mm',
-      aperture: '?',
+      focal: '',
+      aperture: '',
       iso: '100',
       shutter: '1/1000s',
       place: 'Seine',
@@ -91,27 +106,27 @@ var categories = {
       description: 'Along the Seine river'
     },
     { 
-      base: 'a2.jpg',
-      lens: 'pentaxf4',
-      camera: 'p30t',
-      stock: 'Kodak Ultramax 400',
-      date: '2025-11-27',
+      base: 'bridge-moon.jpg',
+      lens: 'telephoto',
+      camera: 'a6400',
+      stock: '',
+      date: '2023-01-01',
       focal: '',
       aperture: '',
-      iso: '400',
-      shutter: '',
-      place: 'Kreatori',
+      iso: '',
+      shutter: '?s',
+      place: 'Belem',
       city: 'Lisboa',
       country: 'Portugal',
       subject: '',
-      developing: 'Carmencita Lisboa',
-      description: 'An evening at Kreatori'
+      developing: '',
+      description: 'Ponte 25 de Abril'
     },
   ],
   
   portraits: [
     { 
-      base: 'a3.jpg',
+      base: 'fairy.jpg',
       lens: 'pentaxf4',
       camera: 'p30t',
       stock: 'Kodak Ultramax 400',
@@ -125,10 +140,10 @@ var categories = {
       country: 'Portugal',
       subject: 'Fairy',
       developing: 'Carmencita Lisboa',
-      description: 'Fairy at Alvalaxia on Halloween night'
+      description: 'Film vs digital'
     },
     { 
-      base: 'b1.jpg',
+      base: 'jellyfish.jpg',
       lens: 'sonykit',
       camera: 'a6400',
       stock: '',
@@ -145,7 +160,7 @@ var categories = {
       description: 'Portrait in Galveston'
     },
     { 
-      base: 'b2.jpg',
+      base: 'charlie.jpg',
       lens: '',
       camera: 'a6400',
       stock: '',
@@ -162,7 +177,7 @@ var categories = {
       description: 'Charlie at EPI ETIC'
     },
     { 
-      base: 'a4.jpg',
+      base: 'aquarium.jpg',
       lens: 'sonykit',
       camera: 'a6400',
       stock: '',
@@ -182,21 +197,38 @@ var categories = {
   
   landscapes: [
     { 
-      base: 'bridge-moon.jpg',
-      lens: '',
+      base: 'toning.jpg',
+      lens: 'sonykit',
       camera: 'a6400',
       stock: '',
       date: '2000-01-01',
-      focal: '',
-      aperture: '',
-      iso: '100',
-      shutter: '',
-      place: 'Belém',
+      focal: '16mm',
+      aperture: 'f/3.5',
+      iso: '?',
+      shutter: '1/30s',
+      place: 'Oriente',
       city: 'Lisboa',
       country: 'Portugal',
       subject: '',
       developing: '',
-      description: ''
+      description: 'B&W to color'
+    },
+    { 
+      base: 'kreatori.jpg',
+      lens: 'pentaxf4',
+      camera: 'p30t',
+      stock: 'Kodak Ultramax 400',
+      date: '2025-11-27',
+      focal: '',
+      aperture: '',
+      iso: '400',
+      shutter: '',
+      place: 'Kreatori',
+      city: 'Lisboa',
+      country: 'Portugal',
+      subject: '',
+      developing: 'Carmencita Lisboa',
+      description: 'Club Benares x Cinecore at Kreatori'
     },
     { 
       base: 'c2.jpg',
@@ -213,10 +245,10 @@ var categories = {
       country: 'Brazil',
       subject: '',
       developing: '',
-      description: 'Coastal views of Recife'
+      description: 'Coastal view of Recife'
     },
     { 
-      base: 'c3.jpg',
+      base: 'narrativa.jpg',
       lens: '7artf095',
       camera: 'a6400',
       stock: '',
@@ -230,41 +262,20 @@ var categories = {
       country: 'Portugal',
       subject: 'Jiani',
       developing: '',
-      description: 'Jiani at NARRATIVA gallery'
-    },
-    { 
-      base: 'a5.jpg',
-      lens: '',
-      camera: '',
-      stock: '',
-      date: '',
-      focal: '',
-      aperture: '',
-      iso: '',
-      shutter: '',
-      place: 'Recife',
-      city: 'Recife',
-      country: 'Brazil',
-      subject: '',
-      developing: '',
-      description: 'Views of Recife'
+      description: 'Kalabongó exhibition by Jorge Panchoaga'
     },
   ]
 };
 
 // Hero grid images (thumbnails auto-generated with -small suffix)
 var heroPhotoUrls = [
-  'a1.jpg',
-  'a2.jpg',
-  'a3.jpg',
-  'a4.jpg',
-  'a5.jpg',
-  'b1.jpg',
-  'b2.jpg',
-  'b3.jpg',
+  'toning.jpg',
+  'toning.jpg',
+  'toning.jpg',
+  'toning.jpg',
+  'toning.jpg',
+  'toning.jpg',
   'bridge-moon.jpg',
-  'c2.jpg',
-  'c3.jpg',
 ];
 
 // Search category order - customize which categories appear and in what order
