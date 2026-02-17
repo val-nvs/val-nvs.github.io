@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="media/favicon.png">
-<title></title>
+<title>Val's Photofolio</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Atkinson+Hyperlegible:wght@400;700&display=swap');
 
@@ -24,17 +24,14 @@
   }
   [data-font="atkinson"] { --font-active: var(--font-atkinson); }
   [data-font="dyslexic"] { --font-active: var(--font-dyslexic); }
-  [data-fontsize="small"] { --size-scale: 1; }
-  [data-fontsize="medium"] { --size-scale: 1.25; }
-  [data-fontsize="big"] { --size-scale: 1.55; }
+  [data-fontsize="small"] { --size-scale: 0.8; }
+  [data-fontsize="large"] { --size-scale: 1.25; }
   [data-font="default"] { --size-scale: 1.1; }
-  [data-font="default"][data-fontsize="small"] { --size-scale: 1.1; }
-  [data-font="default"][data-fontsize="medium"] { --size-scale: 1.375; }
-  [data-font="default"][data-fontsize="big"] { --size-scale: 1.7; }
+  [data-font="default"][data-fontsize="small"] { --size-scale: 0.88; }
+  [data-font="default"][data-fontsize="large"] { --size-scale: 1.375; }
   [data-font="dyslexic"] { --size-scale: 0.8; }
-  [data-font="dyslexic"][data-fontsize="small"] { --size-scale: 0.8; }
-  [data-font="dyslexic"][data-fontsize="medium"] { --size-scale: 1; }
-  [data-font="dyslexic"][data-fontsize="big"] { --size-scale: 1.25; }
+  [data-font="dyslexic"][data-fontsize="small"] { --size-scale: 0.64; }
+  [data-font="dyslexic"][data-fontsize="large"] { --size-scale: 1; }
 
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -201,7 +198,6 @@
     position: relative;
   }
   .photo-info .info-line.hoverable { cursor: default; }
-  .photo-info .info-line.hoverable:hover { text-decoration: underline; }
   .photo-info .info-line .extra-text { display: none; }
   .photo-info .info-line.hovered .extra-text { display: inline; }
   .photo-info .hover-photo {
@@ -231,7 +227,7 @@
     transition: opacity 0.5s ease;
   }
   .ui-element.hidden {
-    opacity: 0.2 !important;
+    opacity: 0 !important;
     pointer-events: none;
   }
 
@@ -292,28 +288,10 @@
   }
 
   /* ══════ LEATHER TAB (top center) ══════ */
-  /* ══════ TOP MENU WRAPPER ══════ */
-  #top-menu {
-    position: fixed;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 200;
-    width: 500px;
-    max-width: 90vw;
-    height: 100dvh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    pointer-events: none;
-  }
-
   #leather-tab {
-    position: relative;
-    flex-shrink: 0;
+    position: fixed; top: 0; left: 50%; transform: translateX(-50%);
     z-index: 200;
     padding: 0.45rem 1.4rem 0.5rem;
-    pointer-events: auto;
     background:
       repeating-linear-gradient(45deg, transparent, transparent 1px, rgba(0,0,0,0.04) 1px, rgba(0,0,0,0.04) 2px),
       repeating-linear-gradient(-45deg, transparent, transparent 1px, rgba(0,0,0,0.04) 1px, rgba(0,0,0,0.04) 2px),
@@ -353,22 +331,20 @@
 
   /* Search bar */
   #search-bar-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    flex: 1;
-    min-height: 0;
-    width: 100%;
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
     z-index: 199;
+    width: 500px;
+    max-width: 90vw;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.3s ease;
-    gap: 1rem;
-    padding-top: 1rem;
+    transition: opacity 0.3s ease, top 0.3s ease;
   }
   #search-bar-container.visible {
     opacity: 1;
-    pointer-events: auto;
+    pointer-events: all;
   }
   
   /* Category buttons below search bar */
@@ -377,13 +353,12 @@
     gap: 0.8rem;
     justify-content: center;
     align-items: flex-start;
+    margin-top: 4rem;
     padding: 0;
-    width: 100%;
+    width: 500px;
+    max-width: 90vw;
     position: relative;
     z-index: 1;
-    flex: 1;
-    min-height: 0;
-    transition: margin-top 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   }
   
   /* Wrapper controls width */
@@ -518,17 +493,61 @@
     transition: none !important;
   }
   
-  /* Can colors driven by --can-color custom property (set from data.js) */
-  .category-btn-overlay,
-  .category-btn-overlay::before,
-  .category-btn-overlay::after,
-  .category-btn:hover .category-btn-overlay,
-  .category-btn.active .category-btn-overlay,
-  .category-btn:hover .category-btn-overlay::before,
-  .category-btn:hover .category-btn-overlay::after,
-  .category-btn.active .category-btn-overlay::before,
-  .category-btn.active .category-btn-overlay::after {
-    background: var(--can-color) !important;
+  /* Left can = Darker Blue - NEVER CHANGES */
+  .category-btn[data-cat="main"] .category-btn-overlay {
+    background: rgb(47, 72, 142) !important;
+  }
+  .category-btn[data-cat="main"] .category-btn-overlay::before,
+  .category-btn[data-cat="main"] .category-btn-overlay::after {
+    background: rgb(47, 72, 142) !important;
+  }
+  .category-btn[data-cat="main"]:hover .category-btn-overlay,
+  .category-btn[data-cat="main"].active .category-btn-overlay {
+    background: rgb(47, 72, 142) !important;
+  }
+  .category-btn[data-cat="main"]:hover .category-btn-overlay::before,
+  .category-btn[data-cat="main"]:hover .category-btn-overlay::after,
+  .category-btn[data-cat="main"].active .category-btn-overlay::before,
+  .category-btn[data-cat="main"].active .category-btn-overlay::after {
+    background: rgb(47, 72, 142) !important;
+  }
+  
+  /* Middle can = Bright White - NEVER CHANGES */
+  .category-btn[data-cat="portraits"] .category-btn-overlay {
+    background: rgb(191, 191, 191) !important;
+  }
+  .category-btn[data-cat="portraits"] .category-btn-overlay::before,
+  .category-btn[data-cat="portraits"] .category-btn-overlay::after {
+    background: rgb(191, 191, 191) !important;
+  }
+  .category-btn[data-cat="portraits"]:hover .category-btn-overlay,
+  .category-btn[data-cat="portraits"].active .category-btn-overlay {
+    background: rgb(191, 191, 191) !important;
+  }
+  .category-btn[data-cat="portraits"]:hover .category-btn-overlay::before,
+  .category-btn[data-cat="portraits"]:hover .category-btn-overlay::after,
+  .category-btn[data-cat="portraits"].active .category-btn-overlay::before,
+  .category-btn[data-cat="portraits"].active .category-btn-overlay::after {
+    background: rgb(191, 191, 191) !important;
+  }
+  
+  /* Right can = Darker Orange - NEVER CHANGES */
+  .category-btn[data-cat="landscapes"] .category-btn-overlay {
+    background: rgb(110, 55, 16) !important;
+  }
+  .category-btn[data-cat="landscapes"] .category-btn-overlay::before,
+  .category-btn[data-cat="landscapes"] .category-btn-overlay::after {
+    background: rgb(110, 55, 16) !important;
+  }
+  .category-btn[data-cat="landscapes"]:hover .category-btn-overlay,
+  .category-btn[data-cat="landscapes"].active .category-btn-overlay {
+    background: rgb(110, 55, 16) !important;
+  }
+  .category-btn[data-cat="landscapes"]:hover .category-btn-overlay::before,
+  .category-btn[data-cat="landscapes"]:hover .category-btn-overlay::after,
+  .category-btn[data-cat="landscapes"].active .category-btn-overlay::before,
+  .category-btn[data-cat="landscapes"].active .category-btn-overlay::after {
+    background: rgb(110, 55, 16) !important;
   }
   .film-panel {
     position: relative;
@@ -563,9 +582,16 @@
     mix-blend-mode: screen;
   }
   
-  /* Strip color driven by --strip-color custom property (set from data.js) */
-  .film-content::before {
-    background: var(--strip-color);
+  #film-panel-main .film-content::before {
+    background: rgb(80, 140, 255);
+  }
+  
+  #film-panel-portraits .film-content::before {
+    background: rgb(200, 200, 200);
+  }
+  
+  #film-panel-landscapes .film-content::before {
+    background: rgb(255, 140, 60);
   }
   
   .category-btn-label {
@@ -573,17 +599,21 @@
     font-size: calc(0.6rem * var(--size-scale));
     font-weight: 300;
     letter-spacing: 0.15em;
-    color: var(--label-color, rgba(255, 255, 255, 0.9));
+    color: rgba(255, 255, 255, 0.9);
     text-transform: none;
     user-select: none;
     position: relative;
     z-index: 2;
   }
   
+  /* Dark text on white can */
+  .category-btn[data-cat="portraits"] .category-btn-label {
+    color: rgba(0, 0, 0, 0.9);
+  }
+  
   .search-wrapper {
     position: relative;
     z-index: 200;
-    width: 100%;
   }
   #search-bar {
     width: 100%;
@@ -629,26 +659,20 @@
 
   /* Search results dropdown */
   #search-results {
-    width: 100%;
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
     background: rgba(25, 25, 25, 0.98);
     border: 2px solid rgba(150, 150, 150, 0.3);
-    border-top: 1px solid rgba(150, 150, 150, 0.15);
-    border-radius: 0 0 8px 8px;
-    max-height: 0;
-    overflow: hidden;
-    opacity: 0;
+    border-radius: 8px;
+    max-height: 70vh;
+    overflow-y: auto;
+    display: none;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
-    transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
   }
   #search-results.visible {
-    max-height: 50vh;
-    overflow-y: auto;
-    opacity: 1;
-  }
-  /* Connect search bar to results when results are visible */
-  .search-wrapper:has(#search-results.visible) #search-bar {
-    border-radius: 8px 8px 0 0;
-    border-bottom-color: rgba(150, 150, 150, 0.15);
+    display: block;
   }
   #search-results::-webkit-scrollbar {
     width: 8px;
@@ -823,6 +847,12 @@
       max-width: 50vw;
       padding: 0.5rem 1rem;
     }
+    
+    /* Adjust category buttons for mobile - move down to accommodate about section */
+    #category-buttons {
+      margin-top: 6rem !important; /* Right below about when collapsed */
+      transition: margin-top 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
   }
   #settings-popup.open {
     opacity: 1; pointer-events: auto; transform: translateY(0);
@@ -858,8 +888,6 @@
     transition: all 0.2s ease;
   }
   .setting-btn:hover { color: #fff; border-color: rgba(255,255,255,0.3); }
-  .setting-btn:disabled { opacity: 0.3; pointer-events: none; cursor: default; }
-  .setting-row.disabled-row .setting-label { opacity: 0.3; }
   .setting-btn.active {
     color: #fff;
     background: rgba(255,255,255,0.12);
@@ -1007,67 +1035,104 @@
     color: #fff; user-select: none;
   }
 
-  /* ══════ ABOUT WINDOW (collapsible card) ══════ */
+  /* ══════ LOREM IPSUM WINDOW ══════ */
   #lorem-window {
-    flex-shrink: 0;
-    z-index: 200;
-    width: 100%;
-    max-height: 58px;
-    padding: 0;
-    background: rgba(30, 30, 30, 0.95);
-    border: 2px solid rgba(150, 150, 150, 0.3);
-    border-radius: 8px;
-    overflow: hidden;
-    transition: max-height 0.5s cubic-bezier(0.16, 1, 0.3, 1), padding-bottom 0.4s ease;
-    cursor: pointer;
+    position: fixed;
+    top: 5rem; left: 2rem;
+    z-index: 152;
+    width: 22rem;
+    max-height: 60vh;
+    background: rgba(15,15,15,0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 0.5rem;
+    padding: 1.2rem 1.4rem;
+    border: 1px solid rgba(255,255,255,0.08);
+    opacity: 0; pointer-events: none;
+    transform: translateY(0.5rem);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    overflow-y: auto;
   }
-  #lorem-window.open {
-    /* parent container handles visibility */
+  @media (max-width: 768px) {
+    #lorem-window {
+      position: fixed;
+      top: 140px;          /* Below search bar */
+      left: 50%;
+      transform: translateX(-50%) !important;
+      right: auto;
+      width: 500px;
+      max-width: 90vw;
+      max-height: 58px;  /* Taller to prevent text clipping */
+      padding: 0;
+      background: rgba(30, 30, 30, 0.95);
+      border: 2px solid rgba(150, 150, 150, 0.3);
+      border-radius: 8px;
+      overflow: hidden;
+      transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+      cursor: pointer;
+      pointer-events: none;
+      opacity: 0;
+      z-index: 200;
+    }
+    #lorem-window.open {
+      transform: translateX(-50%) !important;
+      opacity: 1 !important;
+      pointer-events: auto !important;
+    }
+    #lorem-window.expanded {
+      max-height: 400px;  /* Expanded state */
+      overflow-y: auto;
+      padding-bottom: 12px;  /* Add padding at bottom when expanded */
+    }
+    #lorem-window h2 {
+      font-size: calc(0.7rem * var(--size-scale));
+      margin-bottom: 0;
+      padding: 14px 16px;
+      user-select: none;
+      color: rgba(255,255,255,0.9);
+      transition: color 0.2s ease;
+    }
+    #lorem-window:hover h2 {
+      color: rgba(255,255,255,1);
+    }
+    #lorem-window h2::after {
+      content: ' ▼';
+      font-size: 0.6em;
+      opacity: 0.6;
+      margin-left: 0.5em;
+    }
+    #lorem-window.expanded h2::after {
+      content: ' ▲';
+    }
+    #lorem-window p {
+      font-size: calc(0.48rem * var(--size-scale));
+      line-height: 1.6;
+      margin-bottom: 0.5rem;
+      padding: 0 16px;
+      display: none;
+    }
+    #lorem-window.expanded p {
+      display: block;
+    }
+    #lorem-window.expanded h2 {
+      border-bottom: 1px solid rgba(150, 150, 150, 0.2);
+      margin-bottom: 0.8rem;
+    }
   }
-  #lorem-window.expanded {
-    max-height: 600px;
-    padding-bottom: 12px;
-  }
+  #lorem-window.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
   #lorem-window h2 {
-    font-size: calc(0.7rem * var(--size-scale));
+    font-size: calc(1rem * var(--size-scale));
     font-weight: 300;
     letter-spacing: 0.15em;
-    margin-bottom: 0;
-    padding: 14px 16px;
-    user-select: none;
-    color: rgba(255,255,255,0.9);
-    transition: color 0.2s ease;
-  }
-  #lorem-window:hover h2 {
-    color: rgba(255,255,255,1);
-  }
-  #lorem-window h2::after {
-    content: ' ▼';
-    font-size: 0.6em;
-    opacity: 0.6;
-    margin-left: 0.5em;
-    transition: transform 0.3s ease;
-    display: inline-block;
-  }
-  #lorem-window.expanded h2::after {
-    content: ' ▲';
+    margin-bottom: 0.6rem;
+    color: rgba(255,255,255,0.8);
   }
   #lorem-window p {
-    font-size: calc(0.48rem * var(--size-scale));
+    font-size: calc(0.52rem * var(--size-scale));
     font-weight: 300;
-    line-height: 1.6;
+    line-height: 1.7;
     color: rgba(255,255,255,0.5);
     margin-bottom: 0.5rem;
-    padding: 0 16px;
-    opacity: 0;
-    transition: opacity 0.3s ease 0.1s;
-  }
-  #lorem-window.expanded p {
-    opacity: 1;
-  }
-  #lorem-window.expanded h2 {
-    border-bottom: 1px solid rgba(150, 150, 150, 0.2);
-    margin-bottom: 0.8rem;
   }
 
   /* ══════ RESIZE HINT + PREVIEW ══════ */
@@ -1217,9 +1282,8 @@
 
 <div id="counter" class="ui-element">1 / 5</div>
 
-<div id="top-menu">
 <div id="leather-tab" class="ui-element">
-  <div class="tab-title"></div>
+  <div class="tab-title">Val's Photofolio</div>
   <div class="tab-sub">tap to open menu</div>
 </div>
 
@@ -1238,16 +1302,12 @@
     <div id="search-results"></div>
   </div>
   
-  <div id="lorem-window">
-    <h2>about</h2>
-  </div>
-
   <!-- Category buttons -->
   <div id="category-buttons">
     <div class="can-wrapper">
       <div class="category-btn active" data-cat="main">
         <div class="category-btn-overlay">
-          <span class="category-btn-label"></span>
+          <span class="category-btn-label">main</span>
         </div>
         <div class="category-extension">
           <!-- Main film strip inside extension -->
@@ -1268,7 +1328,7 @@
     <div class="can-wrapper">
       <div class="category-btn" data-cat="portraits">
         <div class="category-btn-overlay">
-          <span class="category-btn-label"></span>
+          <span class="category-btn-label">portraits</span>
         </div>
         <div class="category-extension">
           <!-- Portraits film strip inside extension -->
@@ -1289,7 +1349,7 @@
     <div class="can-wrapper">
       <div class="category-btn" data-cat="landscapes">
         <div class="category-btn-overlay">
-          <span class="category-btn-label"></span>
+          <span class="category-btn-label">landscapes</span>
         </div>
         <div class="category-extension">
           <!-- Landscapes film strip inside extension -->
@@ -1309,7 +1369,6 @@
     </div>
   </div>
 </div>
-</div><!-- end #top-menu -->
 
 <div id="sound-btn" class="ui-element">
   <svg viewBox="0 0 24 24">
@@ -1331,9 +1390,9 @@
   <div class="setting-row">
     <span class="setting-label">font</span>
     <div class="setting-options">
-      <button class="setting-btn active" data-setting="font" data-val="default">Cormorant</button>
-      <button class="setting-btn" data-setting="font" data-val="atkinson">Atkinson Hyperlegible</button>
-      <button class="setting-btn" data-setting="font" data-val="dyslexic">OpenDyslexic</button>
+      <button class="setting-btn active" data-setting="font" data-val="default">cormorant garamond</button>
+      <button class="setting-btn" data-setting="font" data-val="atkinson">atkinson</button>
+      <button class="setting-btn" data-setting="font" data-val="dyslexic">opendyslexic</button>
     </div>
   </div>
   <div class="setting-row">
@@ -1341,7 +1400,22 @@
     <div class="setting-options">
       <button class="setting-btn" data-setting="fontsize" data-val="small">small</button>
       <button class="setting-btn active" data-setting="fontsize" data-val="medium">medium</button>
-      <button class="setting-btn" data-setting="fontsize" data-val="big">big</button>
+      <button class="setting-btn" data-setting="fontsize" data-val="large">large</button>
+    </div>
+  </div>
+  <div class="setting-row">
+    <span class="setting-label">language</span>
+    <div class="setting-options">
+      <button class="setting-btn active" data-setting="lang" data-val="en">english</button>
+      <button class="setting-btn" data-setting="lang" data-val="pt">portugu&#234;s</button>
+    </div>
+  </div>
+  <div class="setting-row">
+    <span class="setting-label">photo resolution</span>
+    <div class="setting-options">
+      <button class="setting-btn" data-setting="res" data-val="low">low</button>
+      <button class="setting-btn active" data-setting="res" data-val="default">default</button>
+      <button class="setting-btn" data-setting="res" data-val="high">high</button>
     </div>
   </div>
   <div class="setting-row">
@@ -1351,26 +1425,18 @@
       <button class="setting-btn" data-setting="snapping" data-val="off">off</button>
     </div>
   </div>
-  <div class="setting-row disabled-row">
-    <span class="setting-label">language</span>
-    <div class="setting-options">
-      <button class="setting-btn active" data-setting="lang" data-val="en" disabled>english</button>
-      <button class="setting-btn" data-setting="lang" data-val="pt" disabled>portugu&#234;s</button>
-    </div>
-  </div>
-  <div class="setting-row disabled-row">
-    <span class="setting-label">photo resolution</span>
-    <div class="setting-options">
-      <button class="setting-btn" data-setting="res" data-val="low" disabled>low</button>
-      <button class="setting-btn active" data-setting="res" data-val="default" disabled>default</button>
-      <button class="setting-btn" data-setting="res" data-val="high" disabled>high</button>
-    </div>
-  </div>
 </div>
 
 <!-- Film overlay -->
 <div id="film-overlay">
   <div class="backdrop" id="film-backdrop"></div>
+</div>
+
+<div id="lorem-window">
+  <h2>about</h2>
+  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+  <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+  <p>Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris.</p>
 </div>
 
 <div id="resize-group" class="ui-element">
@@ -1518,16 +1584,6 @@
   var openSound = document.getElementById('open-sound');
   var closeSound = document.getElementById('close-sound');
   var selectSound = document.getElementById('select-sound');
-  
-  function closeSearch() {
-    searchResults.classList.remove('visible');
-    searchBar.value = '';
-  }
-
-  function closeAbout() {
-    loremWindow.classList.remove('expanded');
-  }
-
       /* ══════ STATE ══════ */
   var currentCat = 'main';
   var slides = [], slideImages = [], total = 0;
@@ -1538,29 +1594,6 @@
   var sw = screen.width;
   var snappingEnabled = true; // Toggle for snapping behavior
   var soundsEnabled = true; // Toggle for sound effects
-
-  /* ══════ APPLY DATA.JS CONFIG ══════ */
-  // Site title
-  document.title = siteTitle;
-  leatherTab.querySelector('.tab-title').textContent = siteTitle;
-
-  // About text
-  aboutText.forEach(function(text) {
-    var p = document.createElement('p');
-    p.textContent = text;
-    loremWindow.appendChild(p);
-  });
-
-  // Category can colors, strip colors, and labels
-  categoryConfig.forEach(function(cat) {
-    var btn = document.querySelector('.category-btn[data-cat="' + cat.key + '"]');
-    if (!btn) return;
-    btn.style.setProperty('--can-color', cat.canColor);
-    btn.style.setProperty('--strip-color', cat.stripColor);
-    btn.style.setProperty('--label-color', cat.labelColor);
-    var label = btn.querySelector('.category-btn-label');
-    if (label) label.textContent = cat.label;
-  });
 
   /* ══════ SOUND HELPER ══════ */
   function playSound(audioElement) {
@@ -1635,7 +1668,7 @@
       hero.appendChild(vig);
       var heroText = document.createElement('div');
       heroText.className = 'hero-text';
-      heroText.innerHTML = '<h1>' + heroTitle + '</h1><p>' + heroSubtitle + '</p>';
+      heroText.innerHTML = '<h1>portfolio</h1><p>photography collection</p>';
       hero.appendChild(heroText);
       slidesContainer.appendChild(hero);
     }
@@ -1666,7 +1699,6 @@ for (var i = 0; i < photos.length; i++) {
   // Get lens and camera data from definitions
   var lensData = lenses[p.lens] || { name: p.lens, image: 'media/f095.png', extra: '' };
   var cameraData = cameras[p.camera] || { name: p.camera, image: 'media/a6400.png', extra: '' };
-  var stockData = stocks[p.stock] || null;
   
   // Calculate EV (Exposure Value) from aperture and shutter speed
   function calculateEV(aperture, shutter) {
@@ -1734,13 +1766,8 @@ for (var i = 0; i < photos.length; i++) {
   
   // Line 4: Stock + ISO (only if ISO exists)
   if (p.iso) {
-    var stockName = stockData ? stockData.name : p.stock;
-    var stockIsoLine = (stockName ? stockName + ' ' : '') + '@ ' + p.iso + ' ISO';
-    if (stockData) {
-      infoLines += '<div class="info-line hoverable" data-hover="stock">' + stockIsoLine + '</div>';
-    } else {
-      infoLines += '<div class="info-line">' + stockIsoLine + '</div>';
-    }
+    var stockIsoLine = (p.stock ? p.stock + ' ' : '') + '@ ' + p.iso + ' ISO';
+    infoLines += '<div class="info-line">' + stockIsoLine + '</div>';
   }
   
   // Line 4.5: Developing (only if developing exists) - NEW!
@@ -1760,7 +1787,6 @@ for (var i = 0; i < photos.length; i++) {
   info.innerHTML =
     '<img class="hover-photo" src="' + lensData.image + '" data-for="lens" />' +
     '<img class="hover-photo" src="' + cameraData.image + '" data-for="sensor" />' +
-    (stockData ? '<img class="hover-photo" src="' + stockData.image + '" data-for="stock" />' : '') +
     infoLines;
   
   slide.appendChild(info);
@@ -2066,10 +2092,6 @@ function buildFilmFrames(catKey) {
         // Stop event from bubbling to can button
         e.stopPropagation();
         
-        // Close search results
-        closeSearch();
-        closeAbout();
-        
         // Play click sound
         playSound(tapSound);
         
@@ -2107,10 +2129,6 @@ function buildFilmFrames(catKey) {
           // Stop event from bubbling to can button
           e.stopPropagation();
           
-          // Close search results
-          closeSearch();
-          closeAbout();
-          
           // Play click sound
           playSound(tapSound);
           
@@ -2125,6 +2143,43 @@ function buildFilmFrames(catKey) {
       })(i, heroOffset, catKey));
       filmFramesEl.appendChild(f);
     }
+    
+    // Add ending frame
+    var endFrame = document.createElement('div'); 
+    endFrame.className = 'film-frame ending-frame';
+    var endIcon = document.createElement('div');
+    endIcon.style.cssText = 'width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: rgba(255,255,255,0.5);';
+    endIcon.textContent = '→';
+    endFrame.appendChild(endIcon);
+    var endNum = document.createElement('span'); 
+    endNum.className = 'frame-num';
+    endNum.textContent = '→'; 
+    endFrame.appendChild(endNum);
+    
+    // Add hover sound
+    endFrame.addEventListener('mouseenter', function() {
+      playSound(hoverSound);
+    });
+    
+    endFrame.addEventListener('click', (function(cat) {
+      return function(e) {
+        // Stop event from bubbling to can button
+        e.stopPropagation();
+        
+        // Play click sound
+        playSound(tapSound);
+        
+        // Switch to this category if not already there
+        if (currentCat !== cat) {
+          buildSlides(cat);
+        }
+        
+        // Scroll to ending slide
+        var endingSlideIndex = categories[cat].length + (cat === 'main' ? 1 : 0);
+        window.scrollTo({ top: window.innerHeight * endingSlideIndex, behavior: 'smooth' });
+      };
+    })(catKey));
+    filmFramesEl.appendChild(endFrame);
     
     if (filmMenuOpen) updateFilmHighlight();
   }
@@ -2157,30 +2212,35 @@ function buildPeekFrames(catKey) {
     spacer.style.flexShrink = '0';
     peekFrames.appendChild(spacer);
 
-    // Frame 0: hero thumbnail for main only
-    if (isMain) {
-      var hf = document.createElement('div'); hf.className = 'film-frame hero-thumb';
-      var ht = document.createElement('img');
-      ht.src = thumbUrl(heroPhotoUrls[0]);
-      ht.alt = 'hero';
-      ht.style.filter = 'grayscale(1)';
-      hf.appendChild(ht);
-      var hn = document.createElement('span'); hn.className = 'frame-num';
-      hn.textContent = '0'; hf.appendChild(hn);
+    // Frame 0: hero for main, back button for others
+    var hf = document.createElement('div'); hf.className = 'film-frame hero-thumb';
+    var ht = document.createElement('img');
+    ht.src = isMain ? thumbUrl(heroPhotoUrls[0]) : 'media/back.jpg';
+    ht.alt = isMain ? 'hero' : 'back to main';
+    if (isMain) ht.style.filter = 'grayscale(1)';
+    hf.appendChild(ht);
+    var hn = document.createElement('span'); hn.className = 'frame-num';
+    hn.textContent = '0'; hf.appendChild(hn);
+    
+    // Add hover sound
+    hf.addEventListener('mouseenter', function() {
+      playSound(hoverSound);
+    });
+    
+    hf.addEventListener('click', function(e) {
+      e.stopPropagation();
+      // Play click sound
+      playSound(tapSound);
       
-      // Add hover sound
-      hf.addEventListener('mouseenter', function() {
-        playSound(hoverSound);
-      });
-      
-      hf.addEventListener('click', function(e) {
-        e.stopPropagation();
-        // Play click sound
-        playSound(tapSound);
+      if (!isMain) {
+        document.querySelectorAll('.cat-frame').forEach(function(c) { c.classList.remove('active'); });
+        document.querySelector('.cat-frame[data-cat="main"]').classList.add('active');
+        buildSlides('main');
+      } else {
         window.scrollTo({ top: 0, behavior: 'smooth' });
-      });
-      peekFrames.appendChild(hf);
-    }
+      }
+    });
+    peekFrames.appendChild(hf);
 
     var heroOffset = isMain ? 1 : 0;
     for (var i = 0; i < photos.length; i++) {
@@ -2214,11 +2274,10 @@ function buildPeekFrames(catKey) {
     // Add ending frame
     var endFrame = document.createElement('div'); 
     endFrame.className = 'film-frame ending-frame';
-    var endImg = document.createElement('img');
-    endImg.src = 'media/more.jpg';
-    endImg.alt = 'view more';
-    endImg.style.cssText = 'width: 100%; height: 100%; object-fit: cover;';
-    endFrame.appendChild(endImg);
+    var endIcon = document.createElement('div');
+    endIcon.style.cssText = 'width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: rgba(255,255,255,0.5);';
+    endIcon.textContent = '→';
+    endFrame.appendChild(endIcon);
     var endNum = document.createElement('span'); 
     endNum.className = 'frame-num';
     endNum.textContent = '→'; 
@@ -2241,9 +2300,15 @@ function buildPeekFrames(catKey) {
   }
   function updatePeekHighlight(idx) {
     var frames = peekFrames.querySelectorAll('.film-frame');
+    var isMain = (currentCat === 'main');
     var currentIdx = (idx !== undefined) ? idx : activeIndex; // Use provided index or activeIndex
     for (var i = 0; i < frames.length; i++) {
-      frames[i].classList.toggle('current', i === currentIdx);
+      if (isMain) {
+        frames[i].classList.toggle('current', i === currentIdx);
+      } else {
+        // frame 0 = back button, frame 1+ = photos
+        frames[i].classList.toggle('current', i === currentIdx + 1);
+      }
     }
   }
 
@@ -2347,6 +2412,12 @@ function buildPeekFrames(catKey) {
   function toggleFilmMenu() {
     filmMenuOpen = !filmMenuOpen;
     filmOvl.classList.toggle('open', filmMenuOpen);
+    loremWindow.classList.toggle('open', filmMenuOpen);
+    
+    // Only toggle settings popup on desktop
+    if (!isMobile) {
+      settingsPopup.classList.toggle('open', filmMenuOpen);
+    }
     
     searchBarContainer.classList.toggle('visible', filmMenuOpen);
     tabSub.textContent = filmMenuOpen ? 'tap to close' : 'tap to open menu';
@@ -2354,9 +2425,6 @@ function buildPeekFrames(catKey) {
     if (filmMenuOpen) {
       // Play open sound
       playSound(openSound);
-      
-      // Close settings popup if open (they overlap)
-      settingsPopup.classList.remove('open');
       
       // Auto-open the can matching the current category
       var currentCanBtn = document.querySelector('.category-btn[data-cat="' + currentCat + '"]');
@@ -2374,9 +2442,6 @@ function buildPeekFrames(catKey) {
     } else {
       // Play close sound
       playSound(closeSound);
-      
-      // Reset about window expanded state
-      loremWindow.classList.remove('expanded');
       
       // Close all active cans
       document.querySelectorAll('.category-btn.active').forEach(function(btn) {
@@ -2399,7 +2464,14 @@ function buildPeekFrames(catKey) {
   
   settingsBtn.addEventListener('click', function(e) {
     e.stopPropagation();
-    settingsPopup.classList.toggle('open');
+    
+    if (isMobile) {
+      // On mobile: only toggle settings popup, not the menu
+      settingsPopup.classList.toggle('open');
+    } else {
+      // On desktop: toggle full menu
+      toggleFilmMenu();
+    }
   });
   
   // Sound toggle button
@@ -2416,9 +2488,9 @@ function buildPeekFrames(catKey) {
   
   filmBkdp.addEventListener('click', function() { if (filmMenuOpen) toggleFilmMenu(); });
 
-  // Close settings popup when clicking outside
+  // Close settings popup on mobile when clicking outside
   document.addEventListener('click', function(e) {
-    if (settingsPopup.classList.contains('open')) {
+    if (isMobile && settingsPopup.classList.contains('open')) {
       if (!settingsPopup.contains(e.target) && !settingsBtn.contains(e.target)) {
         settingsPopup.classList.remove('open');
       }
@@ -2428,7 +2500,6 @@ function buildPeekFrames(catKey) {
   // Search bar functionality - instant photo search + clickable tags
   searchBar.addEventListener('focus', function() {
     playSound(selectSound);
-    closeAbout();
     // Show tag categories on focus
     if (!searchBar.value.trim()) {
       buildTagCategories();
@@ -2624,10 +2695,7 @@ function buildPeekFrames(catKey) {
         groups['Lens'][lensName] = (groups['Lens'][lensName] || 0) + 1;
       }
       
-      if (p.stock) {
-        var sName = (stocks[p.stock] ? stocks[p.stock].name : p.stock);
-        groups['Film Stock'][sName] = (groups['Film Stock'][sName] || 0) + 1;
-      }
+      if (p.stock) groups['Film Stock'][p.stock] = (groups['Film Stock'][p.stock] || 0) + 1;
       if (p.place) groups['Place'][p.place] = (groups['Place'][p.place] || 0) + 1;
       if (p.city) groups['City'][p.city] = (groups['City'][p.city] || 0) + 1;
       if (p.country) groups['Country'][p.country] = (groups['Country'][p.country] || 0) + 1;
@@ -2732,7 +2800,7 @@ function buildPeekFrames(catKey) {
         if (category === 'Shutter Speed' && p.shutter === value) matches = true;
         if (category === 'Camera' && p.camera && cameras[p.camera] && cameras[p.camera].name === value) matches = true;
         if (category === 'Lens' && p.lens && lenses[p.lens] && lenses[p.lens].name === value) matches = true;
-        if (category === 'Film Stock' && p.stock && (stocks[p.stock] ? stocks[p.stock].name : p.stock) === value) matches = true;
+        if (category === 'Film Stock' && p.stock === value) matches = true;
         if (category === 'Place' && p.place === value) matches = true;
         if (category === 'City' && p.city === value) matches = true;
         if (category === 'Country' && p.country === value) matches = true;
@@ -2783,7 +2851,6 @@ function buildPeekFrames(catKey) {
       thumb.addEventListener('click', function(e) {
         e.stopPropagation();
         playSound(tapSound);
-        closeAbout();
         
         var index = parseInt(thumb.getAttribute('data-index'));
         var photoCat = thumb.getAttribute('data-category');
@@ -2824,7 +2891,7 @@ function buildPeekFrames(catKey) {
     if (photo.aperture) text.push(photo.aperture.toLowerCase());
     if (photo.iso) text.push(photo.iso.toLowerCase());
     if (photo.shutter) text.push(photo.shutter.toLowerCase());
-    if (photo.stock) text.push((stocks[photo.stock] ? stocks[photo.stock].name : photo.stock).toLowerCase());
+    if (photo.stock) text.push(photo.stock.toLowerCase());
     if (photo.date) text.push(photo.date.toLowerCase());
     if (photo.place) text.push(photo.place.toLowerCase());
     if (photo.city) text.push(photo.city.toLowerCase());
@@ -2877,10 +2944,6 @@ function buildPeekFrames(catKey) {
     btn.addEventListener('click', function() {
       var cat = btn.getAttribute('data-cat');
       var wasActive = btn.classList.contains('active');
-      
-      // Close search results
-      closeSearch();
-      closeAbout();
       
       // Play click sound
       playSound(tapSound);
@@ -2937,12 +3000,22 @@ function buildPeekFrames(catKey) {
     });
   });
 
-  /* ══════ ABOUT TOGGLE ══════ */
-  // Make entire about window clickable to expand/collapse
-  loremWindow.addEventListener('click', function() {
-    closeSearch();
-    loremWindow.classList.toggle('expanded');
-  });
+  /* ══════ MOBILE ABOUT TOGGLE ══════ */
+  if (isMobile) {
+    var categoryButtons = document.getElementById('category-buttons');
+    
+    // Make entire about window clickable on mobile
+    loremWindow.addEventListener('click', function() {
+      loremWindow.classList.toggle('expanded');
+      
+      // Adjust can position dynamically
+      if (loremWindow.classList.contains('expanded')) {
+        categoryButtons.style.marginTop = '18rem';  // Pushed down when expanded
+      } else {
+        categoryButtons.style.marginTop = '6rem';   // Close when collapsed
+      }
+    });
+  }
 
   /* ══════ RESIZE HINT + CROP PREVIEW ══════ */
   var TOLERANCE = 0.06;
@@ -3115,9 +3188,9 @@ function buildPeekFrames(catKey) {
       clearTimeout(hideTimeout);
     }
     
-    // Set new timeout to hide UI after 2 seconds (but not when menu is open)
+    // Set new timeout to hide UI after 2 seconds
     hideTimeout = setTimeout(function() {
-      if (!filmMenuOpen) hideUI();
+      hideUI();
     }, 2000);
   }
 

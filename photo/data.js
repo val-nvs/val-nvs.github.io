@@ -24,32 +24,32 @@ var categoryConfig = [
 // Lens definitions - define once, use everywhere
 var lenses = {
   '7artf095': {
-    name: '"35mm f/0.95"',
+    name: '[35mm f/0.95]',
     image: 'media/7artf095.png',
     extra: ' 7artisans 35mm f/0.95'
   },
   'sonykit': {
-    name: '"16-50mm f/3.5-5.6"',
+    name: '[16-50mm f/3.5-5.6]',
     image: 'media/sonykit.png',
     extra: ' Sony 16-50mm f/3.5-5.6'
   },
   'telephoto': {
-    name: '"55-210mm f/4.5-6.3"',
+    name: '[55-210mm f/4.5-6.3]',
     image: 'media/telephoto.png',
     extra: ' Sony 55-210mm f/4.5-6.3'
   },
   'pentaxf4': {
-    name: '"35-80mm f/4"',
+    name: '[35-80mm f/4]',
     image: 'media/pentaxf4.png',
     extra: ' Pentax 35-80mm f/4'
   },
   'cctv': {
-    name: '"3.6-10mm f/1.4"',
+    name: '[3.6-10mm f/1.4]',
     image: 'media/pentaxf4.png',
     extra: ' CCTV 3.6-10mm f/1.4'
   },
   'fisheye': {
-    name: '"7.5mm f/2.8"',
+    name: '[7.5mm f/2.8]',
     image: 'media/pentaxf4.png',
     extra: ' 7artisans 7.5mm f/2.8'
   }
@@ -69,13 +69,37 @@ var cameras = {
   }
 };
 
+// Film stock definitions - define once, use everywhere
+var stocks = {
+  'kodacolor200': {
+    name: 'Kodak Kodacolor 200',
+    image: 'media/oldkodacolor.png',
+    extra: ' Kodak Kodacolor 200'
+  },
+  'ultramax400': {
+    name: 'Kodak Ultramax 400',
+    image: 'media/ultramax.png',
+    extra: ' Kodak Ultramax 400'
+  },
+  'portra800': {
+    name: 'Kodak Portra 800',
+    image: 'media/portra800.png',
+    extra: ' Kodak Portra 800'
+  },
+  'lucky50': {
+    name: 'Lucky SHD50',
+    image: 'media/lucky50.png',
+    extra: ' Lucky SHD50'
+  }
+};
+
 var categories = {
   main: [
     { 
       base: 'beach.jpg',
       lens: 'pentaxf4',
       camera: 'p30t',
-      stock: 'Kodak Kodacolor 200',
+      stock: 'kodacolor200',
       date: '2021',
       focal: '',
       aperture: '',
@@ -122,6 +146,40 @@ var categories = {
       developing: '',
       description: 'Ponte 25 de Abril'
     },
+    { 
+      base: 'recife.jpg',
+      lens: '',
+      camera: '',
+      stock: '',
+      date: '',
+      focal: '',
+      aperture: '',
+      iso: '',
+      shutter: '',
+      place: 'Recife',
+      city: 'Recife',
+      country: 'Brazil',
+      subject: '',
+      developing: '',
+      description: 'Coastal view of Recife'
+    },
+    { 
+      base: 'golden-gate.jpg',
+      lens: '',
+      camera: '',
+      stock: '',
+      date: '',
+      focal: '',
+      aperture: '',
+      iso: '',
+      shutter: '',
+      place: 'Gpolden Gate',
+      city: 'SF',
+      country: 'USA',
+      subject: '',
+      developing: '',
+      description: ''
+    },
   ],
   
   portraits: [
@@ -129,7 +187,7 @@ var categories = {
       base: 'fairy.jpg',
       lens: 'pentaxf4',
       camera: 'p30t',
-      stock: 'Kodak Ultramax 400',
+      stock: 'ultramax400',
       date: '2025-10-31',
       focal: '',
       aperture: '',
@@ -152,12 +210,29 @@ var categories = {
       aperture: 'f/4.5',
       iso: '1250',
       shutter: '1/40s',
-      place: 'Galveston',
+      place: 'Moody Gardens',
       city: 'Galveston',
       country: 'USA',
       subject: '',
       developing: '',
-      description: 'Portrait in Galveston'
+      description: ''
+    },
+    { 
+      base: 'cctv.jpg',
+      lens: '',
+      camera: 'a6400',
+      stock: '',
+      date: '2000-01-01',
+      focal: '',
+      aperture: '',
+      iso: '',
+      shutter: '',
+      place: 'EPI ETIC',
+      city: 'Lisboa',
+      country: 'Portugal',
+      subject: 'Charlie',
+      developing: '',
+      description: ''
     },
     { 
       base: 'charlie.jpg',
@@ -174,7 +249,7 @@ var categories = {
       country: 'Portugal',
       subject: 'Charlie',
       developing: '',
-      description: 'Charlie at EPI ETIC'
+      description: ''
     },
     { 
       base: 'aquarium.jpg',
@@ -186,12 +261,12 @@ var categories = {
       aperture: 'f/4',
       iso: '2000',
       shutter: '1/30s',
-      place: 'Galveston',
+      place: 'Moody Gardens',
       city: 'Galveston',
       country: 'USA',
       subject: '',
       developing: '',
-      description: 'Night photography in Galveston'
+      description: ''
     },
   ],
   
@@ -217,7 +292,7 @@ var categories = {
       base: 'kreatori.jpg',
       lens: 'pentaxf4',
       camera: 'p30t',
-      stock: 'Kodak Ultramax 400',
+      stock: 'ultramax400',
       date: '2025-11-27',
       focal: '',
       aperture: '',
@@ -229,23 +304,6 @@ var categories = {
       subject: '',
       developing: 'Carmencita Lisboa',
       description: 'Club Benares x Cinecore at Kreatori'
-    },
-    { 
-      base: 'c2.jpg',
-      lens: '',
-      camera: '',
-      stock: '',
-      date: '',
-      focal: '',
-      aperture: '',
-      iso: '',
-      shutter: '',
-      place: 'Recife',
-      city: 'Recife',
-      country: 'Brazil',
-      subject: '',
-      developing: '',
-      description: 'Coastal view of Recife'
     },
     { 
       base: 'narrativa.jpg',
@@ -263,6 +321,40 @@ var categories = {
       subject: 'Jiani',
       developing: '',
       description: 'Kalabongó exhibition by Jorge Panchoaga'
+    },
+    { 
+      base: 'pcb.jpg',
+      lens: 'pentaxf4',
+      camera: 'p30t',
+      stock: 'kodacolor200',
+      date: '2021',
+      focal: '',
+      aperture: '',
+      iso: '200',
+      shutter: '',
+      place: '',
+      city: '',
+      country: 'Brazil',
+      subject: '',
+      developing: 'C-41 at home',
+      description: 'C-41 film developed at home'
+    },
+    { 
+      base: 'lucky.jpg',
+      lens: 'pentaxf4',
+      camera: 'p30t',
+      stock: 'lucky50',
+      date: '2026',
+      focal: '',
+      aperture: '',
+      iso: '50',
+      shutter: '',
+      place: '',
+      city: '',
+      country: 'Portugal',
+      subject: '',
+      developing: 'Rodinal at Atelier de Lisboa',
+      description: '100ft of 35mm film bulk loaded into used cans'
     },
   ]
 };
