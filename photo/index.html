@@ -164,7 +164,7 @@
     font-family: var(--font-active);
     font-size: calc(4rem * var(--size-scale));
     font-weight: 300;
-    letter-spacing: 0.3em;
+    letter-spacing: -.07em;
     text-transform: none;
     color: #fff;
     margin-bottom: 0.4rem;
@@ -200,8 +200,8 @@
     cursor: default;
     position: relative;
   }
-  .photo-info .info-line.hoverable { cursor: default; }
-  .photo-info .info-line.hoverable:hover { text-decoration: underline; }
+  .photo-info .info-line.hoverable { cursor: default; border-radius: 3px; padding: 1px 4px; margin-left: -4px; transition: background 0.15s ease; }
+  .photo-info .info-line.hoverable:hover { background: rgba(255,255,255,0.15); }
   .photo-info .info-line .extra-text { display: none; }
   .photo-info .info-line.hovered .extra-text { display: inline; }
   .photo-info .hover-photo {
@@ -338,7 +338,7 @@
   #leather-tab .tab-title {
     font-size: calc(0.7rem * var(--size-scale));
     font-weight: 300;
-    letter-spacing: 0.25em;
+    letter-spacing: 0em;
     text-transform: none;
     color: #fff;
   }
@@ -371,7 +371,9 @@
     pointer-events: auto;
   }
   
-  /* Category buttons below search bar */
+  #menu-window.expanded ~ #category-buttons .category-btn:not(.active) .category-extension {
+    display: none;
+  }
   #category-buttons {
     display: flex;
     gap: 0.8rem;
@@ -389,7 +391,7 @@
   /* Wrapper controls width */
   .can-wrapper {
     width: 4rem; /* Closed - narrow */
-    height: 9rem;
+    height: 3.5rem;
     flex-shrink: 0;
     display: flex;
     align-items: center;
@@ -414,7 +416,7 @@
     flex-shrink: 0;
     overflow: visible;
     transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.2s !important;
-    transform: rotate(-90deg);
+    transform: translateY(2.5rem) rotate(-90deg);
     transform-origin: center;
   }
   .category-btn.active {
@@ -657,12 +659,13 @@
     border-radius: 0 0 8px 8px;
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.5s cubic-bezier(0.16, 1, 0.3, 1), padding 0.4s ease;
     padding: 0 12px;
+    transition: max-height 0.15s ease-out, padding 0.15s ease-out;
   }
   #menu-window.expanded .menu-body {
     max-height: 60vh;
     padding: 12px;
+    transition: max-height 0.2s ease-out, padding 0.15s ease-out;
   }
 
   /* Panels */
@@ -677,20 +680,63 @@
   }
 
   /* Search panel */
-  #search-bar {
+  #search-input-wrapper {
     width: 100%;
     background: rgba(0, 0, 0, 0.4);
     border: 1px solid rgba(150, 150, 150, 0.2);
     border-radius: 6px;
-    padding: 10px 12px;
+    padding: 6px 8px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px;
+    cursor: text;
+    transition: border-color 0.2s ease;
+  }
+  #search-input-wrapper:focus-within {
+    border-color: rgba(200, 200, 200, 0.4);
+  }
+  .search-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(110, 65, 20, 0.85);
+    border: 1px solid rgba(180, 120, 60, 0.6);
+    border-radius: 4px;
+    padding: 3px 8px;
+    font-family: var(--font-active);
+    font-size: calc(12px * var(--size-scale));
+    color: rgba(255, 255, 255, 0.9);
+    user-select: none;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease;
+    animation: chipIn 0.15s ease forwards;
+  }
+  @keyframes chipIn {
+    from { opacity: 0; transform: scale(0.85); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  .search-chip:hover {
+    background: rgba(160, 40, 40, 0.85);
+    border-color: rgba(200, 60, 60, 0.7);
+  }
+  .search-chip-label {
+    opacity: 0.55;
+    font-size: 0.85em;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  #search-bar {
+    flex: 1;
+    min-width: 80px;
+    background: transparent;
+    border: none;
+    padding: 4px 4px;
     font-family: var(--font-active);
     font-size: calc(14px * var(--size-scale));
     color: #fff;
     outline: none;
-    transition: border-color 0.2s ease;
-  }
-  #search-bar:focus {
-    border-color: rgba(200, 200, 200, 0.4);
   }
   #search-bar::placeholder {
     color: rgba(255, 255, 255, 0.3);
@@ -702,7 +748,7 @@
     max-height: 0;
     overflow: hidden;
     opacity: 0;
-    transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+    transition: max-height 0.15s ease-out, opacity 0.15s ease;
   }
   #search-results.visible {
     max-height: 45vh;
@@ -726,8 +772,8 @@
     padding: 12px 16px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
-  .tag-category:last-child {
-    border-bottom: none;
+  .tag-category.single-tag {
+    opacity: 0.3;
   }
   .tag-category-title {
     font-size: calc(11px * var(--size-scale));
@@ -1068,6 +1114,29 @@
   }
 
   /* ══════ ABOUT PANEL (inside menu window) ══════ */
+  #about-panel {
+    user-select: none;
+    cursor: pointer;
+  }
+  #about-panel a {
+    color: rgba(255,255,255,0.7);
+    text-decoration: none;
+    background: rgba(255,255,255,0.1);
+    padding: 1px 4px;
+    border-radius: 3px;
+    pointer-events: auto;
+    user-select: text;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  #about-panel a:hover {
+    color: rgba(255,255,255,0.9);
+    background: rgba(255,255,255,0.2);
+  }
+  #about-panel a:active,
+  #about-panel a.clicked {
+    background: rgba(80, 140, 255, 0.35);
+    color: rgba(180, 210, 255, 0.95);
+  }
   #about-panel p {
     font-size: calc(0.48rem * var(--size-scale));
     font-weight: 300;
@@ -1241,7 +1310,9 @@
     </div>
     <div class="menu-body">
       <div class="menu-panel" id="search-panel" data-tab="search">
-        <input type="text" id="search-bar" placeholder="type to filter tags..." autocomplete="off" />
+        <div id="search-input-wrapper">
+          <input type="text" id="search-bar" placeholder="type to filter tags..." autocomplete="off" />
+        </div>
         <div id="search-results"></div>
       </div>
       <div class="menu-panel" id="about-panel" data-tab="about">
@@ -1519,6 +1590,8 @@
   var searchBarContainer = document.getElementById('search-bar-container');
   var searchBar = document.getElementById('search-bar');
   var searchResults = document.getElementById('search-results');
+  var searchInputWrapper = document.getElementById('search-input-wrapper');
+  var activeTagFilters = []; // Array of {category, value} objects
 
   // Sound elements
   var hoverSound = document.getElementById('hover-sound');
@@ -1531,6 +1604,9 @@
     searchResults.classList.remove('visible');
     searchBar.value = '';
     searchBar.blur();
+    activeTagFilters = [];
+    var chips = searchInputWrapper.querySelectorAll('.search-chip');
+    for (var i = 0; i < chips.length; i++) chips[i].remove();
   }
 
   function closeAbout() {
@@ -1557,9 +1633,11 @@
     if (tabName === 'search') {
       setTimeout(function() {
         searchBar.focus();
-        if (!searchBar.value.trim()) {
+        if (!searchBar.value.trim() && activeTagFilters.length === 0) {
           buildTagCategories();
           searchResults.classList.add('visible');
+        } else {
+          runCombinedSearch();
         }
       }, 150);
     } else {
@@ -1586,7 +1664,7 @@
   // About text
   aboutText.forEach(function(text) {
     var p = document.createElement('p');
-    p.textContent = text;
+    p.innerHTML = text;
     loremWindow.appendChild(p);
   });
 
@@ -2156,8 +2234,11 @@ function buildFilmFrames(catKey) {
             buildSlides(cat);
           }
           
-          // Navigate to the photo
-          window.scrollTo({ top: window.innerHeight * (idx + off), behavior: 'smooth' });
+          // Delay scroll so buildSlides DOM reset settles first
+          var scrollTarget = window.innerHeight * (idx + off);
+          setTimeout(function() {
+            window.scrollTo({ top: scrollTarget, behavior: 'smooth' });
+          }, 50);
         };
       })(i, heroOffset, catKey));
       filmFramesEl.appendChild(f);
@@ -2403,6 +2484,9 @@ function buildPeekFrames(catKey) {
       // Play open sound
       playSound(openSound);
       
+      // Auto-open the about tab
+      openMenuTab('about');
+      
       // Close settings popup if open (they overlap)
       settingsPopup.classList.remove('open');
       
@@ -2496,19 +2580,50 @@ function buildPeekFrames(catKey) {
     e.stopPropagation();
   });
 
+  // Clicking anywhere in about panel closes the menu (except links)
+  document.getElementById('about-panel').addEventListener('click', function(e) {
+    var link = e.target.closest('a');
+    if (link) {
+      var copyText = link.getAttribute('data-copy');
+      if (copyText) {
+        e.preventDefault();
+        navigator.clipboard.writeText(copyText);
+        var original = link.innerHTML;
+        link.innerHTML = 'Copied to clipboard!';
+        link.classList.add('clicked');
+        setTimeout(function() {
+          link.innerHTML = original;
+          link.classList.remove('clicked');
+        }, 1500);
+      } else {
+        link.classList.add('clicked');
+      }
+      return;
+    }
+    closeMenuWindow();
+  });
+
   searchBar.addEventListener('input', function(e) {
     // Play type sound on each character typed
     playSound(tapSound);
-    
-    var query = searchBar.value.toLowerCase().trim();
-    
-    if (!query) {
-      // Empty search - show all tags
-      buildTagCategories();
-      searchResults.classList.add('visible');
-    } else {
-      // Show matching photos AND filtered tags
-      showSearchResults(query);
+    runCombinedSearch();
+  });
+
+  // Click on wrapper focuses the input
+  searchInputWrapper.addEventListener('click', function() {
+    searchBar.focus();
+  });
+
+  // Backspace on empty input removes last chip
+  searchBar.addEventListener('keydown', function(e) {
+    if (e.key === 'Backspace' && searchBar.value === '' && activeTagFilters.length > 0) {
+      var chips = searchInputWrapper.querySelectorAll('.search-chip');
+      var lastChip = chips[chips.length - 1];
+      if (lastChip) {
+        var cat = lastChip.getAttribute('data-category');
+        var val = lastChip.getAttribute('data-value');
+        removeTagChip(lastChip, cat, val);
+      }
     }
   });
   
@@ -2592,18 +2707,27 @@ function buildPeekFrames(catKey) {
   
   // Build tag categories (for showing all tags or filtered tags)
   function buildTagCategories(filterQuery) {
-    var html = buildTagCategoriesHTML(filterQuery);
+    var excludeCats = activeTagFilters.map(function(f) { return f.category; });
+    var html = buildTagCategoriesHTML(filterQuery, excludeCats);
     searchResults.innerHTML = html;
     searchResults.classList.add('visible');
     addTagHandlers();
   }
   
   // Build tag categories HTML
-  function buildTagCategoriesHTML(filterQuery) {
-    // Get all photos from all categories
-    var allPhotos = [];
-    for (var cat in categories) {
-      allPhotos = allPhotos.concat(categories[cat]);
+  function buildTagCategoriesHTML(filterQuery, excludeCategories, filteredPhotos) {
+    // Use provided photos or fall back to all photos
+    var allPhotos;
+    if (filteredPhotos && filteredPhotos.length > 0) {
+      allPhotos = filteredPhotos;
+    } else if (filteredPhotos && filteredPhotos.length === 0 && (excludeCategories && excludeCategories.length > 0)) {
+      // Active filters but zero matches — no tags to show
+      allPhotos = [];
+    } else {
+      allPhotos = [];
+      for (var cat in categories) {
+        allPhotos = allPhotos.concat(categories[cat]);
+      }
     }
     
     var tagGroups = extractTagGroups(allPhotos);
@@ -2617,27 +2741,47 @@ function buildPeekFrames(catKey) {
       }
     }
     
+    // Build set of excluded category names
+    var excluded = {};
+    if (excludeCategories) {
+      for (var i = 0; i < excludeCategories.length; i++) {
+        excluded[excludeCategories[i]] = true;
+      }
+    }
+    
     var html = '';
     var categoryOrder = searchCategories;
     
-    for (var i = 0; i < categoryOrder.length; i++) {
-      var catName = categoryOrder[i];
-      var tags = tagGroups[catName];
-      
-      if (tags && tags.length > 0) {
-        html += '<div class="tag-category">';
-        html += '<div class="tag-category-title">' + catName + '</div>';
-        html += '<div class="tag-list">';
+    // Two passes: first categories with 2+ tags, then single-tag categories
+    for (var pass = 0; pass < 2; pass++) {
+      for (var i = 0; i < categoryOrder.length; i++) {
+        var catName = categoryOrder[i];
         
-        for (var j = 0; j < tags.length; j++) {
-          var tag = tags[j];
-          html += '<div class="tag-item" data-category="' + catName + '" data-value="' + tag.value + '">';
-          html += tag.value;
-          html += '<span class="tag-count">(' + tag.count + ')</span>';
-          html += '</div>';
+        // Skip categories that already have a chip
+        if (excluded[catName]) continue;
+        
+        var tags = tagGroups[catName];
+        
+        if (tags && tags.length > 0) {
+          var isSingle = tags.length === 1;
+          if (pass === 0 && isSingle) continue;
+          if (pass === 1 && !isSingle) continue;
+          
+          var singleClass = isSingle ? ' single-tag' : '';
+          html += '<div class="tag-category' + singleClass + '">';
+          html += '<div class="tag-category-title">' + catName + '</div>';
+          html += '<div class="tag-list">';
+          
+          for (var j = 0; j < tags.length; j++) {
+            var tag = tags[j];
+            html += '<div class="tag-item" data-category="' + catName + '" data-value="' + tag.value + '">';
+            html += tag.value;
+            html += '<span class="tag-count">(' + tag.count + ')</span>';
+            html += '</div>';
+          }
+          
+          html += '</div></div>';
         }
-        
-        html += '</div></div>';
       }
     }
     
@@ -2725,53 +2869,166 @@ function buildPeekFrames(catKey) {
       tagEl.addEventListener('click', function(e) {
         e.stopPropagation();
         
+        var category = tagEl.getAttribute('data-category');
         var value = tagEl.getAttribute('data-value');
         
-        // Type the tag text into search bar character by character
-        typeIntoSearch(value);
+        // Don't add duplicate
+        for (var i = 0; i < activeTagFilters.length; i++) {
+          if (activeTagFilters[i].category === category && activeTagFilters[i].value === value) return;
+        }
+        
+        addTagChip(category, value);
       });
     });
   }
   
-  // Type text into search bar with animation
-  var typingInProgress = false;
-  function typeIntoSearch(textToType) {
-    if (typingInProgress) return; // Don't start new typing if already typing
+  // Add a tag chip to the search bar
+  function addTagChip(category, value) {
+    playSound(tapSound);
     
-    typingInProgress = true;
+    activeTagFilters.push({ category: category, value: value });
     
-    // Get current search value
-    var currentText = searchBar.value.trim();
+    var chip = document.createElement('span');
+    chip.className = 'search-chip';
+    chip.setAttribute('data-category', category);
+    chip.setAttribute('data-value', value);
+    chip.innerHTML = '<span class="search-chip-label">' + category + ':</span> ' + value;
     
-    // Add space if there's already text
-    var finalText = currentText ? currentText + ' ' + textToType : textToType;
+    // Insert before the input
+    searchInputWrapper.insertBefore(chip, searchBar);
     
-    // Start from current position
-    var startPos = currentText.length + (currentText ? 1 : 0);
-    var currentPos = 0;
+    // Clicking the chip removes it
+    chip.addEventListener('click', function(e) {
+      e.stopPropagation();
+      removeTagChip(chip, category, value);
+    });
     
-    // Clear search bar and set to current text
-    searchBar.value = currentText ? currentText + ' ' : '';
+    // Update results
+    runCombinedSearch();
     searchBar.focus();
+  }
+  
+  // Remove a tag chip
+  function removeTagChip(chipEl, category, value) {
+    playSound(tapSound);
     
-    // Type character by character
-    var typeInterval = setInterval(function() {
-      if (currentPos < textToType.length) {
-        searchBar.value += textToType[currentPos];
-        currentPos++;
+    // Remove from active filters
+    activeTagFilters = activeTagFilters.filter(function(f) {
+      return !(f.category === category && f.value === value);
+    });
+    
+    chipEl.remove();
+    runCombinedSearch();
+    searchBar.focus();
+  }
+  
+  // Combined search: chip filters AND free-text
+  function runCombinedSearch() {
+    var query = searchBar.value.toLowerCase().trim();
+    
+    if (activeTagFilters.length === 0 && !query) {
+      // No filters - show all tags
+      buildTagCategories();
+      searchResults.classList.add('visible');
+      return;
+    }
+    
+    var matchedPhotos = [];
+    var terms = query ? query.split(/\s+/).filter(function(t) { return t.length > 0; }) : [];
+    
+    // Search through ALL categories
+    for (var cat in categories) {
+      var photos = categories[cat];
+      
+      for (var i = 0; i < photos.length; i++) {
+        var p = photos[i];
         
-        // Play hover sound
-        playSound(hoverSound);
+        // Check all chip filters (AND logic)
+        var passesChips = true;
+        for (var f = 0; f < activeTagFilters.length; f++) {
+          if (!photoMatchesTag(p, activeTagFilters[f].category, activeTagFilters[f].value)) {
+            passesChips = false;
+            break;
+          }
+        }
+        if (!passesChips) continue;
         
-        // Trigger input event to update search results
-        var event = new Event('input', { bubbles: true });
-        searchBar.dispatchEvent(event);
-      } else {
-        // Typing complete
-        clearInterval(typeInterval);
-        typingInProgress = false;
+        // Check free-text terms (AND logic)
+        if (terms.length > 0) {
+          var searchText = buildSearchableText(p);
+          var matchesAll = true;
+          for (var t = 0; t < terms.length; t++) {
+            if (searchText.indexOf(terms[t]) === -1) {
+              matchesAll = false;
+              break;
+            }
+          }
+          if (!matchesAll) continue;
+        }
+        
+        matchedPhotos.push({ photo: p, index: i, category: cat });
       }
-    }, 100); // 100ms between characters for typing effect
+    }
+    
+    // Build result description
+    var filterDesc = [];
+    for (var f = 0; f < activeTagFilters.length; f++) {
+      filterDesc.push(activeTagFilters[f].category + ': ' + activeTagFilters[f].value);
+    }
+    if (query) filterDesc.push('"' + query + '"');
+    var desc = filterDesc.join(' + ');
+    
+    var html = '';
+    if (matchedPhotos.length > 0) {
+      html += '<div class="tag-category">';
+      html += '<div class="tag-category-title">' + matchedPhotos.length + ' photo' + (matchedPhotos.length === 1 ? '' : 's') + ' matching ' + desc + '</div>';
+      html += '</div>';
+      
+      html += '<div class="search-thumbnails">';
+      for (var i = 0; i < matchedPhotos.length; i++) {
+        var result = matchedPhotos[i];
+        var photo = result.photo;
+        var photoIndex = result.index;
+        var photoCat = result.category;
+        
+        html += '<div class="search-thumb" data-index="' + photoIndex + '" data-category="' + photoCat + '">';
+        html += '<img src="' + thumbUrl(photo.base) + '" alt="' + photo.base + '" />';
+        html += '<div class="search-thumb-number">' + photoCat + ' #' + (photoIndex + 1) + '</div>';
+        html += '</div>';
+      }
+      html += '</div>';
+    } else {
+      html += '<div style="padding: 20px; text-align: center; color: rgba(255,255,255,0.5);">No photos match ' + desc + '</div>';
+    }
+    
+    // Append tags below results, filtered by text query, excluding chipped categories
+    // Use only matched photos for tag counts so tags reflect current filters
+    var excludeCats = activeTagFilters.map(function(f) { return f.category; });
+    var filteredPhotos = matchedPhotos.map(function(m) { return m.photo; });
+    html += buildTagCategoriesHTML(query || null, excludeCats, filteredPhotos);
+    
+    searchResults.innerHTML = html;
+    searchResults.classList.add('visible');
+    addThumbnailHandlers();
+    addTagHandlers();
+  }
+  
+  // Check if a photo matches a specific tag category+value
+  function photoMatchesTag(p, category, value) {
+    if (category === 'ISO') return p.iso === value;
+    if (category === 'Aperture') return p.aperture === value;
+    if (category === 'Focal Length') return p.focal === value;
+    if (category === 'Shutter Speed') return p.shutter === value;
+    if (category === 'Camera') return p.camera && cameras[p.camera] && cameras[p.camera].name === value;
+    if (category === 'Lens') return p.lens && lenses[p.lens] && lenses[p.lens].name === value;
+    if (category === 'Film Stock') return p.stock && (stocks[p.stock] ? stocks[p.stock].name : p.stock) === value;
+    if (category === 'Place') return p.place === value;
+    if (category === 'City') return p.city === value;
+    if (category === 'Country') return p.country === value;
+    if (category === 'Subject') return p.subject === value;
+    if (category === 'Developing') return p.developing === value;
+    if (category === 'Date') return p.date && p.date.split('-')[0] === value;
+    return false;
   }
   
   // Show photos matching a specific tag
@@ -2856,18 +3113,22 @@ function buildPeekFrames(catKey) {
         
         // Switch to the photo's category if needed
         if (photoCat !== currentCat) {
-          document.querySelectorAll('.cat-frame').forEach(function(c) { c.classList.remove('active'); });
-          document.querySelector('.cat-frame[data-cat="' + photoCat + '"]').classList.add('active');
+          var catFrames = document.querySelectorAll('.cat-frame');
+          catFrames.forEach(function(c) { c.classList.remove('active'); });
+          var targetFrame = document.querySelector('.cat-frame[data-cat="' + photoCat + '"]');
+          if (targetFrame) targetFrame.classList.add('active');
           buildSlides(photoCat);
         }
         
         // Calculate scroll position with correct hero offset
         var isMain = (photoCat === 'main');
         var heroOffset = isMain ? 1 : 0;
-        var scrollTo = window.innerHeight * (index + heroOffset);
+        var target = window.innerHeight * (index + heroOffset);
         
-        // Navigate to photo
-        window.scrollTo({ top: scrollTo, behavior: 'smooth' });
+        // Delay scroll so buildSlides DOM reset settles first
+        setTimeout(function() {
+          window.scrollTo({ top: target, behavior: 'smooth' });
+        }, 50);
       });
     });
   }

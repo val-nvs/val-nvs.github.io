@@ -4,14 +4,17 @@
 
 // Site branding
 var siteTitle = "Val's Photofolio";
-var heroTitle = 'portfolio';
-var heroSubtitle = 'photography collection';
+var heroTitle = "Photo Portfolio";
+var heroSubtitle = "by Valdir Neves";
 
 // About section paragraphs
 var aboutText = [
-  'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-  'Aaaaaaaaaaaaaaaaaaaaaa.',
-  ':)'
+  'Brazilian living in Lisbon, Portugal.',
+  'Passionate about filmmaking, photography, optics, architecture and engineering.',
+  'Fluent in English & Portuguese.',
+  'Looking to collaborate or share ideas? Drop me a message — I\'d love to connect.',
+  '<a href="#" data-copy="valdir.nvs@outlook.com">valdir.nvs@outlook.com</a> · <a href="tel:+351930946697" data-copy="(+351) 930 946 697">(+351) 930 946 697</a>',
+  '<a href="https://instagram.com/val.nevs" target="_blank">Instagram @val.nevs</a> · <a href="https://linkedin.com/in/valdir-neves/" target="_blank">LinkedIn profile</a>'
 ];
 
 // Category cans - order determines left-to-right display
