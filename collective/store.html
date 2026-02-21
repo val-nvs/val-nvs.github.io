@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Accessories Store — COLECTIVO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #0a0a0a;
+  --fg: #f0ede8;
+  --accent: #6abf8a;
+  --accent2: #4a9f6a;
+  --muted: #6b6560;
+  --card-bg: #131312;
+  --border: rgba(240, 237, 232, 0.1);
+  --serif: 'Instrument Serif', Georgia, serif;
+  --sans: 'DM Sans', system-ui, sans-serif;
+}
+
+html { font-size: 100%; scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--sans);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* NAV */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: clamp(1rem, 2vw, 1.5rem) clamp(1.5rem, 5vw, 4rem);
+  background: rgba(10,10,10,0.85);
+  backdrop-filter: blur(1.5rem);
+  border-bottom: 0.0625rem solid var(--border);
+}
+.nav-logo { font-family: var(--serif); font-size: clamp(1.25rem, 2.5vw, 1.75rem); letter-spacing: 0.15em; text-transform: uppercase; color: var(--fg); text-decoration: none; }
+.nav-links { display: flex; gap: clamp(1.25rem, 3vw, 2.5rem); list-style: none; }
+.nav-links a { color: var(--muted); text-decoration: none; font-size: clamp(0.75rem, 1.2vw, 0.9rem); letter-spacing: 0.1em; text-transform: uppercase; transition: color 0.3s; font-weight: 500; }
+.nav-links a:hover { color: var(--fg); }
+.nav-burger { display: none; flex-direction: column; gap: 0.35rem; background: none; border: none; cursor: pointer; padding: 0.5rem; }
+.nav-burger span { display: block; width: 1.5rem; height: 0.1rem; background: var(--fg); transition: transform 0.3s, opacity 0.3s; }
+.nav-burger.active span:nth-child(1) { transform: translateY(0.45rem) rotate(45deg); }
+.nav-burger.active span:nth-child(2) { opacity: 0; }
+.nav-burger.active span:nth-child(3) { transform: translateY(-0.45rem) rotate(-45deg); }
+.mobile-menu { display: none; position: fixed; inset: 0; z-index: 99; background: rgba(10,10,10,0.97); flex-direction: column; align-items: center; justify-content: center; gap: 2rem; }
+.mobile-menu.active { display: flex; }
+.mobile-menu a { color: var(--fg); text-decoration: none; font-family: var(--serif); font-size: clamp(2rem, 6vw, 3.5rem); }
+@media (max-width: 48em) { .nav-links { display: none; } .nav-burger { display: flex; } }
+
+/* HERO */
+.hero {
+  padding: clamp(8rem, 14vw, 12rem) clamp(1.5rem, 5vw, 4rem) clamp(3rem, 6vw, 4rem);
+  text-align: center;
+}
+.hero h1 { font-family: var(--serif); font-size: clamp(2.5rem, 8vw, 6rem); line-height: 1; font-weight: 400; margin-bottom: 0.5em; }
+.hero h1 em { font-style: italic; color: var(--accent); }
+.hero p { color: var(--muted); font-size: clamp(0.85rem, 1.4vw, 1rem); max-width: 35em; margin: 0 auto; line-height: 1.7; }
+
+/* FILTERS */
+.filters {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0 clamp(1.5rem, 5vw, 4rem) clamp(2rem, 4vw, 3rem);
+}
+
+.filter-btn {
+  padding: 0.5em 1.25em;
+  border: 0.0625rem solid var(--border);
+  border-radius: 2rem;
+  background: none;
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: clamp(0.65rem, 1vw, 0.8rem);
+  cursor: pointer;
+  transition: all 0.3s;
+  letter-spacing: 0.05em;
+}
+
+.filter-btn:hover { border-color: var(--accent); color: var(--fg); }
+.filter-btn.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+
+/* PRODUCTS */
+.products-section {
+  padding: 0 clamp(1.5rem, 5vw, 4rem) clamp(4rem, 8vw, 6rem);
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr));
+  gap: clamp(1rem, 2vw, 1.5rem);
+}
+
+.product-card {
+  background: var(--card-bg);
+  border: 0.0625rem solid var(--border);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  transition: border-color 0.3s, transform 0.3s;
+}
+
+.product-card:hover {
+  border-color: rgba(106, 191, 138, 0.3);
+  transform: translateY(-0.15rem);
+}
+
+.product-img {
+  width: 100%;
+  aspect-ratio: 1/1;
+  background: linear-gradient(135deg, #1a1f1a, #1a2520);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  position: relative;
+}
+
+.product-badge {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  background: var(--accent);
+  color: var(--bg);
+  font-size: 0.55rem;
+  font-weight: 700;
+  padding: 0.25em 0.6em;
+  border-radius: 0.2rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.product-info {
+  padding: clamp(1rem, 2vw, 1.25rem);
+}
+
+.product-name {
+  font-family: var(--serif);
+  font-size: clamp(1.1rem, 1.8vw, 1.25rem);
+  margin-bottom: 0.25rem;
+}
+
+.product-desc {
+  font-size: clamp(0.7rem, 1vw, 0.8rem);
+  color: var(--muted);
+  line-height: 1.5;
+  margin-bottom: 0.75rem;
+}
+
+.product-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 0.75rem;
+}
+
+.product-tag {
+  font-size: clamp(0.5rem, 0.7vw, 0.6rem);
+  padding: 0.25em 0.6em;
+  background: rgba(106, 191, 138, 0.08);
+  border-radius: 0.2rem;
+  color: var(--accent);
+}
+
+.product-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.product-price {
+  font-size: clamp(1rem, 1.5vw, 1.15rem);
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.product-buy {
+  padding: 0.5em 1.25em;
+  background: none;
+  border: 0.0625rem solid var(--accent);
+  color: var(--accent);
+  font-family: var(--sans);
+  font-size: clamp(0.6rem, 0.9vw, 0.7rem);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 0.2rem;
+  transition: background 0.3s, color 0.3s;
+}
+
+.product-buy:hover {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+/* INFO SECTION */
+.info-section {
+  padding: clamp(4rem, 8vw, 6rem) clamp(1.5rem, 5vw, 4rem);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr));
+  gap: clamp(2rem, 4vw, 3rem);
+  border-top: 0.0625rem solid var(--border);
+}
+
+.info-card h3 {
+  font-family: var(--serif);
+  font-size: clamp(1.2rem, 2vw, 1.4rem);
+  margin-bottom: 0.5rem;
+}
+
+.info-card p {
+  font-size: clamp(0.8rem, 1.1vw, 0.88rem);
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+/* FOOTER */
+footer {
+  border-top: 0.0625rem solid var(--border);
+  padding: clamp(2rem, 4vw, 3rem) clamp(1.5rem, 5vw, 4rem);
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem;
+}
+footer span { font-size: 0.75rem; color: var(--muted); }
+.footer-links { display: flex; gap: 1.5rem; list-style: none; }
+.footer-links a { font-size: 0.75rem; color: var(--muted); text-decoration: none; transition: color 0.3s; }
+.footer-links a:hover { color: var(--fg); }
+
+.reveal { opacity: 0; transform: translateY(1.5rem); transition: opacity 0.8s ease, transform 0.8s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">Colectivo</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="artist-marco.html">Marco</a></li>
+    <li><a href="artist-luna.html">Luna</a></li>
+    <li><a href="services.html">Services</a></li>
+  </ul>
+  <button class="nav-burger" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+<div class="mobile-menu">
+  <a href="index.html">Home</a>
+  <a href="artist-marco.html">Marco</a>
+  <a href="artist-luna.html">Luna</a>
+  <a href="services.html">Services</a>
+</div>
+
+<section class="hero">
+  <h1>3D <em>Accessories</em></h1>
+  <p>Camera accessories designed and 3D printed in Lisbon. Every piece is functional, beautiful, and made to last. PLA and PETG, no compromises.</p>
+</section>
+
+<div class="filters">
+  <button class="filter-btn active" data-filter="all">All</button>
+  <button class="filter-btn" data-filter="lens">Lens</button>
+  <button class="filter-btn" data-filter="mount">Mounts</button>
+  <button class="filter-btn" data-filter="grip">Grips</button>
+  <button class="filter-btn" data-filter="other">Other</button>
+</div>
+
+<section class="products-section">
+  <div class="products-grid" id="productsGrid">
+
+    <div class="product-card reveal" data-category="lens">
+      <div class="product-img">
+        Lens Cap — 49mm
+        <span class="product-badge">Popular</span>
+      </div>
+      <div class="product-info">
+        <div class="product-name">Universal Lens Cap</div>
+        <div class="product-desc">Snap-fit lens cap compatible with 49mm filter threads. Secure grip, satisfying click.</div>
+        <div class="product-meta">
+          <span class="product-tag">49mm</span>
+          <span class="product-tag">PLA</span>
+          <span class="product-tag">Snap-fit</span>
+        </div>
+        <div class="product-bottom">
+          <span class="product-price">€8</span>
+          <button class="product-buy">Buy →</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card reveal" data-category="lens">
+      <div class="product-img">Lens Cap — 52mm</div>
+      <div class="product-info">
+        <div class="product-name">Universal Lens Cap</div>
+        <div class="product-desc">Same design, 52mm filter thread. Fits most vintage lenses. Matte black finish.</div>
+        <div class="product-meta">
+          <span class="product-tag">52mm</span>
+          <span class="product-tag">PLA</span>
+        </div>
+        <div class="product-bottom">
+          <span class="product-price">€8</span>
+          <button class="product-buy">Buy →</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card reveal" data-category="mount">
+      <div class="product-img">
+        Tripod Quick-Release
+        <span class="product-badge">New</span>
+      </div>
+      <div class="product-info">
+        <div class="product-name">Tripod Quick-Release Plate</div>
+        <div class="product-desc">Arca-Swiss compatible plate. PETG for extra strength. Standard ¼"-20 thread insert.</div>
+        <div class="product-meta">
+          <span class="product-tag">Arca-Swiss</span>
+          <span class="product-tag">PETG</span>
+        </div>
+        <div class="product-bottom">
+          <span class="product-price">€12</span>
+          <button class="product-buy">Buy →</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card reveal" data-category="grip">
+      <div class="product-img">Half-Case Grip</div>
+      <div class="product-info">
+        <div class="product-name">Leica M6 Half-Case Grip</div>
+        <div class="product-desc">Ergonomic grip that clips onto the base of a Leica M6. TPU rubber contact points.</div>
+        <div class="product-meta">
+          <span class="product-tag">Leica M6</span>
+          <span class="product-tag">PLA + TPU</span>
+        </div>
+        <div class="product-bottom">
+          <span class="product-price">€18</span>
+          <button class="product-buy">Buy →</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card reveal" data-category="other">
+      <div class="product-img">Film Canister Holder</div>
+      <div class="product-info">
+        <div class="product-name">Film Canister Belt Clip</div>
+        <div class="product-desc">Holds two 35mm film canisters. Clips to belt or bag strap. Never lose a roll again.</div>
+        <div class="product-meta">
+          <span class="product-tag">35mm</span>
+          <span class="product-tag">PETG</span>
+        </div>
+        <div class="product-bottom">
+          <span class="product-price">€6</span>
+          <button class="product-buy">Buy →</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card reveal" data-category="mount">
+      <div class="product-img">Cold Shoe Flash Mount</div>
+      <div class="product-info">
+        <div class="product-name">Cold Shoe Flash Adapter</div>
+        <div class="product-desc">Mount a small flash or mic to any cold shoe camera. Universal fit with locking screw.</div>
+        <div class="product-meta">
+          <span class="product-tag">Universal</span>
+          <span class="product-tag">PLA</span>
+        </div>
+        <div class="product-bottom">
+          <span class="product-price">€10</span>
+          <button class="product-buy">Buy →</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section class="info-section">
+  <div class="info-card reveal">
+    <h3>Materials</h3>
+    <p>We print with PLA for standard parts and PETG for anything that needs extra durability. All prints use 40% infill or higher for structural integrity.</p>
+  </div>
+  <div class="info-card reveal">
+    <h3>Custom Orders</h3>
+    <p>Need something specific? We design and print custom camera accessories. Book a consultation through our services page and we'll make it happen.</p>
+  </div>
+  <div class="info-card reveal">
+    <h3>Shipping</h3>
+    <p>Free shipping within Portugal via CTT. EU shipping from €3.50. All orders ship within 3-5 business days. Printed fresh for each order.</p>
+  </div>
+</section>
+
+<footer>
+  <span>© 2026 Colectivo — Lisbon, Portugal</span>
+  <ul class="footer-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="privacy.html">Privacy</a></li>
+    <li><a href="services.html">Services</a></li>
+  </ul>
+</footer>
+
+<script>
+// Nav
+const burger = document.querySelector('.nav-burger');
+const mm = document.querySelector('.mobile-menu');
+burger.addEventListener('click', () => {
+  burger.classList.toggle('active');
+  mm.classList.toggle('active');
+  document.body.style.overflow = mm.classList.contains('active') ? 'hidden' : '';
+});
+mm.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+  burger.classList.remove('active'); mm.classList.remove('active'); document.body.style.overflow = '';
+}));
+
+// Reveal
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+// Filters
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const filter = btn.dataset.filter;
+    document.querySelectorAll('.product-card').forEach(card => {
+      if (filter === 'all' || card.dataset.category === filter) {
+        card.style.display = '';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  });
+});
+
+// Buy buttons (Stripe mock)
+document.querySelectorAll('.product-buy').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const card = btn.closest('.product-card');
+    const name = card.querySelector('.product-name').textContent;
+    const price = card.querySelector('.product-price').textContent;
+    alert(`Stripe Checkout would open for:\n\n${name} — ${price}\n\n→ Supports Visa, Mastercard, MB WAY, and Multibanco.`);
+  });
+});
+</script>
+
+</body>
+</html>

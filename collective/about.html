@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — COLECTIVO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --bg: #0a0a0a; --fg: #f0ede8; --accent: #c8b89a; --muted: #6b6560;
+  --card-bg: #131312; --border: rgba(240,237,232,0.1);
+  --serif: 'Instrument Serif', Georgia, serif; --sans: 'DM Sans', system-ui, sans-serif;
+}
+html { font-size: 100%; scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--fg); font-family: var(--sans); line-height: 1.6; overflow-x: hidden; }
+
+nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: clamp(1rem,2vw,1.5rem) clamp(1.5rem,5vw,4rem); background: rgba(10,10,10,0.85); backdrop-filter: blur(1.5rem); border-bottom: 0.0625rem solid var(--border); }
+.nav-logo { font-family: var(--serif); font-size: clamp(1.25rem,2.5vw,1.75rem); letter-spacing: 0.15em; text-transform: uppercase; color: var(--fg); text-decoration: none; }
+.nav-links { display: flex; gap: clamp(1.25rem,3vw,2.5rem); list-style: none; }
+.nav-links a { color: var(--muted); text-decoration: none; font-size: clamp(0.75rem,1.2vw,0.9rem); letter-spacing: 0.1em; text-transform: uppercase; transition: color 0.3s; font-weight: 500; }
+.nav-links a:hover { color: var(--fg); }
+.nav-burger { display: none; flex-direction: column; gap: 0.35rem; background: none; border: none; cursor: pointer; padding: 0.5rem; }
+.nav-burger span { display: block; width: 1.5rem; height: 0.1rem; background: var(--fg); transition: transform 0.3s, opacity 0.3s; }
+.nav-burger.active span:nth-child(1) { transform: translateY(0.45rem) rotate(45deg); }
+.nav-burger.active span:nth-child(2) { opacity: 0; }
+.nav-burger.active span:nth-child(3) { transform: translateY(-0.45rem) rotate(-45deg); }
+.mobile-menu { display: none; position: fixed; inset: 0; z-index: 99; background: rgba(10,10,10,0.97); flex-direction: column; align-items: center; justify-content: center; gap: 2rem; }
+.mobile-menu.active { display: flex; }
+.mobile-menu a { color: var(--fg); text-decoration: none; font-family: var(--serif); font-size: clamp(2rem,6vw,3.5rem); }
+@media (max-width: 48em) { .nav-links { display: none; } .nav-burger { display: flex; } }
+
+.section { padding: clamp(4rem,10vw,8rem) clamp(1.5rem,5vw,4rem); }
+
+.hero {
+  padding: clamp(8rem,14vw,12rem) clamp(1.5rem,5vw,4rem) clamp(3rem,6vw,4rem);
+  text-align: center;
+}
+.hero h1 { font-family: var(--serif); font-size: clamp(2.5rem,8vw,6rem); line-height: 1; font-weight: 400; margin-bottom: 0.5em; }
+.hero h1 em { font-style: italic; color: var(--accent); }
+
+.story {
+  max-width: 42em;
+  margin: 0 auto;
+}
+.story p {
+  font-size: clamp(0.9rem,1.4vw,1.1rem);
+  color: var(--muted);
+  line-height: 1.9;
+  margin-bottom: 1.5rem;
+  font-weight: 300;
+}
+.story p:first-of-type::first-letter {
+  font-family: var(--serif);
+  font-size: 3.5em;
+  float: left;
+  line-height: 0.8;
+  margin-right: 0.1em;
+  margin-top: 0.05em;
+  color: var(--accent);
+}
+
+.group-photo {
+  width: 100%;
+  aspect-ratio: 21/9;
+  background: linear-gradient(135deg, #1a1816, #2a2520);
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin: clamp(3rem,6vw,5rem) 0;
+}
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr));
+  gap: clamp(2rem,4vw,3rem);
+}
+
+.team-card {
+  text-align: center;
+}
+
+.team-avatar {
+  width: clamp(8rem,15vw,12rem);
+  height: clamp(8rem,15vw,12rem);
+  border-radius: 50%;
+  margin: 0 auto clamp(1rem,2vw,1.5rem);
+  background: linear-gradient(135deg, #1a1816, #2a2520);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  font-size: 0.7rem;
+  border: 0.0625rem solid var(--border);
+}
+
+.team-card h3 {
+  font-family: var(--serif);
+  font-size: clamp(1.5rem,2.5vw,2rem);
+  margin-bottom: 0.25rem;
+}
+
+.team-role {
+  font-size: clamp(0.7rem,1vw,0.8rem);
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+
+.team-bio {
+  font-size: clamp(0.8rem,1.1vw,0.9rem);
+  color: var(--muted);
+  line-height: 1.7;
+  max-width: 25em;
+  margin: 0 auto;
+}
+
+.team-link {
+  display: inline-block;
+  margin-top: 1rem;
+  color: var(--accent);
+  text-decoration: none;
+  font-size: clamp(0.7rem,1vw,0.8rem);
+  letter-spacing: 0.1em;
+  transition: opacity 0.3s;
+  border-bottom: 0.0625rem solid transparent;
+}
+.team-link:hover { border-bottom-color: var(--accent); }
+
+footer { border-top: 0.0625rem solid var(--border); padding: clamp(2rem,4vw,3rem) clamp(1.5rem,5vw,4rem); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; }
+footer span { font-size: 0.75rem; color: var(--muted); }
+.footer-links { display: flex; gap: 1.5rem; list-style: none; }
+.footer-links a { font-size: 0.75rem; color: var(--muted); text-decoration: none; transition: color 0.3s; }
+.footer-links a:hover { color: var(--fg); }
+
+.reveal { opacity: 0; transform: translateY(1.5rem); transition: opacity 0.8s ease, transform 0.8s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">Colectivo</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="services.html">Services</a></li>
+    <li><a href="store.html">Store</a></li>
+  </ul>
+  <button class="nav-burger" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+<div class="mobile-menu"><a href="index.html">Home</a><a href="services.html">Services</a><a href="store.html">Store</a></div>
+
+<section class="hero">
+  <h1>About <em>us.</em></h1>
+</section>
+
+<section class="section">
+  <div class="story reveal">
+    <p>We met in a darkroom in Alfama in 2022. It was an accident — two strangers developing film at 2am, arguing about push-processing Tri-X. That conversation turned into a collaboration, and the collaboration turned into Colectivo.</p>
+    <p>We're a small group of photographers, filmmakers, and makers based in Lisbon and the surrounding coast. We shoot on film because we believe in the process — the patience, the imperfection, the magic of chemistry and light.</p>
+    <p>We sell our prints because we think analog photography belongs on walls, not just on screens. We build camera accessories because the tools should be as personal as the work. And we shoot for clients because we love making beautiful things with other people.</p>
+    <p>Everything we do is rooted in craft. We develop our own film, print in our own darkroom, and design our 3D-printed accessories from scratch. No shortcuts, no compromises. Just the work.</p>
+  </div>
+
+  <div class="group-photo reveal">Group photo — the collective</div>
+</section>
+
+<section class="section">
+  <div class="team-grid">
+    <div class="team-card reveal">
+      <div class="team-avatar">Marco</div>
+      <h3>Marco Oliveira</h3>
+      <div class="team-role">Photographer · Filmmaker</div>
+      <p class="team-bio">Street photography and documentary work. Shoots on Leica M6 with Tri-X. Edits video on vintage Super 8 and digital. The collective's dark side.</p>
+      <a href="artist-marco.html" class="team-link">View prints →</a>
+    </div>
+    <div class="team-card reveal">
+      <div class="team-avatar">Luna</div>
+      <h3>Luna Ferreira</h3>
+      <div class="team-role">Photographer · 3D Designer</div>
+      <p class="team-bio">Nature and golden-hour light. Shoots on Pentax 67 with Portra 400. Also designs and prints all of the collective's 3D camera accessories.</p>
+      <a href="artist-luna.html" class="team-link">View prints →</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>© 2026 Colectivo — Lisbon, Portugal</span>
+  <ul class="footer-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="privacy.html">Privacy</a></li>
+  </ul>
+</footer>
+
+<script>
+const burger = document.querySelector('.nav-burger');
+const mm = document.querySelector('.mobile-menu');
+burger.addEventListener('click', () => { burger.classList.toggle('active'); mm.classList.toggle('active'); document.body.style.overflow = mm.classList.contains('active') ? 'hidden' : ''; });
+mm.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { burger.classList.remove('active'); mm.classList.remove('active'); document.body.style.overflow = ''; }));
+const obs = new IntersectionObserver(entries => { entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }); }, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+</script>
+
+</body>
+</html>
