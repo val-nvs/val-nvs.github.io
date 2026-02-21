@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Luna Ferreira — Warm Analog Prints | COLECTIVO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Nunito:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --bg: #f5f0e8; --fg: #2c2418; --accent: #c4713b; --warm: #d4a26a; --muted: #8a7e6e; --card-bg: #fffcf5; --border: rgba(44,36,24,0.1); --shadow: rgba(44,36,24,0.08);
+  --serif: 'Playfair Display', Georgia, serif; --sans: 'Nunito', system-ui, sans-serif;
+}
+html { font-size: 100%; scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--fg); font-family: var(--sans); line-height: 1.6; overflow-x: hidden; }
+body::before { content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 9999; opacity: 0.035; background: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E"); }
+
+/* NAV */
+nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: clamp(0.85rem,1.8vw,1.25rem) clamp(1.5rem,5vw,4rem); background: rgba(245,240,232,0.9); backdrop-filter: blur(1.5rem); border-bottom: 0.0625rem solid var(--border); }
+.nav-logo { font-family: var(--serif); font-size: clamp(1.15rem,2.2vw,1.5rem); color: var(--fg); text-decoration: none; font-style: italic; }
+.nav-links { display: flex; gap: clamp(1rem,2.5vw,2rem); list-style: none; }
+.nav-links a { color: var(--muted); text-decoration: none; font-size: clamp(0.65rem,1vw,0.8rem); letter-spacing: 0.08em; transition: color 0.3s; }
+.nav-links a:hover { color: var(--accent); }
+.nav-links a.active { color: rgba(44,36,24,0.2); pointer-events: none; }
+.nav-burger { display: none; flex-direction: column; gap: 0.3rem; background: none; border: none; cursor: pointer; padding: 0.5rem; }
+.nav-burger span { display: block; width: 1.4rem; height: 0.1rem; background: var(--fg); transition: transform 0.3s, opacity 0.3s; }
+.nav-burger.open span:nth-child(1){transform:translateY(.4rem) rotate(45deg)} .nav-burger.open span:nth-child(2){opacity:0} .nav-burger.open span:nth-child(3){transform:translateY(-.4rem) rotate(-45deg)}
+.mobile-menu { display: none; position: fixed; inset: 0; z-index: 99; background: rgba(245,240,232,0.98); flex-direction: column; align-items: center; justify-content: center; gap: 1.75rem; }
+.mobile-menu.open { display: flex; }
+.mobile-menu a { color: var(--fg); text-decoration: none; font-family: var(--serif); font-size: clamp(1.8rem,5vw,3rem); font-style: italic; }
+.mobile-menu a.active { color: rgba(44,36,24,0.2); }
+@media (max-width: 48em) { .nav-links { display: none; } .nav-burger { display: flex; } }
+
+/* HERO */
+.hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: clamp(6rem,12vw,10rem) clamp(1.5rem,5vw,4rem); position: relative; }
+.hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 60%, rgba(196,113,59,0.08) 0%, transparent 60%); pointer-events: none; }
+.hero h1 { font-family: var(--serif); font-size: clamp(3rem,10vw,7rem); line-height: 1; font-weight: 400; position: relative; z-index: 1; }
+.hero h1 em { font-style: italic; color: var(--accent); display: block; font-size: 0.7em; }
+.hero-divider { width: 3rem; height: 0.0625rem; background: var(--accent); margin: clamp(1rem,2vw,1.5rem) auto; }
+.hero-meta { font-size: clamp(0.68rem,0.95vw,0.8rem); color: var(--muted); letter-spacing: 0.15em; display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem; }
+.hero-bio { margin-top: clamp(1.5rem,3vw,2.5rem); font-size: clamp(0.88rem,1.3vw,1.05rem); color: var(--muted); max-width: 30em; line-height: 1.8; font-weight: 300; }
+
+.section { padding: clamp(3rem,8vw,6rem) clamp(1.5rem,5vw,4rem); }
+.section-title { font-family: var(--serif); font-size: clamp(1.5rem,3vw,2rem); text-align: center; margin-bottom: 0.5em; font-weight: 400; }
+.section-title em { font-style: italic; color: var(--accent); }
+.section-sub { text-align: center; font-size: clamp(0.72rem,1vw,0.82rem); color: var(--muted); margin-bottom: clamp(2rem,4vw,3rem); }
+
+/* POLAROID PRINTS */
+.prints-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(15rem,100%),1fr)); gap: clamp(2rem,4vw,3rem); justify-items: center; }
+.polaroid { background: var(--card-bg); padding: clamp(0.5rem,1vw,0.7rem); padding-bottom: clamp(2.5rem,5vw,3.5rem); box-shadow: 0 0.125rem 0.5rem var(--shadow), 0 0.5rem 2rem rgba(44,36,24,0.05); transform: rotate(var(--rot,0deg)); transition: transform 0.5s cubic-bezier(0.16,1,0.3,1), box-shadow 0.4s; cursor: grab; user-select: none; position: relative; max-width: 18rem; width: 100%; }
+.polaroid:nth-child(1){--rot:-2deg} .polaroid:nth-child(2){--rot:1.5deg} .polaroid:nth-child(3){--rot:-1deg} .polaroid:nth-child(4){--rot:2.5deg} .polaroid:nth-child(5){--rot:-1.5deg} .polaroid:nth-child(6){--rot:0.5deg}
+.polaroid:hover { transform: rotate(0deg) translateY(-0.5rem); box-shadow: 0 0.5rem 1.5rem var(--shadow), 0 1rem 3rem rgba(44,36,24,0.08); }
+.polaroid:active { cursor: grabbing; }
+.polaroid.dragging { opacity: 0.45; transform: scale(0.92) rotate(0deg); }
+.polaroid img { width: 100%; aspect-ratio: 1/1; object-fit: cover; display: block; }
+.drag-hint-warm { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 0.55rem; color: var(--card-bg); background: rgba(44,36,24,0.6); padding: 0.3em 0.7em; border-radius: 2rem; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+.polaroid:hover .drag-hint-warm { opacity: 1; }
+.polaroid-add { position: absolute; top: clamp(0.7rem,1.2vw,0.9rem); right: clamp(0.7rem,1.2vw,0.9rem); background: var(--card-bg); border: 0.0625rem solid var(--border); width: 1.8rem; height: 1.8rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; color: var(--accent); cursor: pointer; transition: background 0.3s, transform 0.3s; opacity: 0; z-index: 2; }
+.polaroid:hover .polaroid-add { opacity: 1; }
+.polaroid-add:hover { background: var(--accent); color: var(--card-bg); transform: scale(1.1); }
+.polaroid-caption { position: absolute; bottom: clamp(0.4rem,0.9vw,0.65rem); left: clamp(0.7rem,1.2vw,0.9rem); right: clamp(0.7rem,1.2vw,0.9rem); display: flex; justify-content: space-between; align-items: flex-end; }
+.polaroid-title { font-family: var(--serif); font-size: clamp(0.82rem,1.3vw,0.95rem); font-style: italic; }
+.polaroid-price { font-size: clamp(0.78rem,1.1vw,0.9rem); font-weight: 600; color: var(--accent); }
+.polaroid-meta { font-size: clamp(0.5rem,0.75vw,0.6rem); color: var(--muted); margin-top: 0.1rem; }
+
+/* CART */
+.cart-zone { position: fixed; bottom: clamp(1rem,3vw,2rem); right: clamp(1rem,3vw,2rem); z-index: 50; background: var(--card-bg); border: 0.125rem dashed var(--border); border-radius: 1rem; padding: clamp(0.75rem,1.5vw,1rem) clamp(1rem,2vw,1.5rem); min-width: clamp(13rem,22vw,17rem); box-shadow: 0 0.5rem 2rem rgba(44,36,24,0.1); transition: border-color 0.3s, transform 0.3s; }
+.cart-zone.drag-over { border-color: var(--accent); background: rgba(196,113,59,0.05); transform: scale(1.03); }
+.cart-header { display: flex; align-items: center; gap: 0.5rem; font-size: clamp(0.65rem,0.95vw,0.75rem); color: var(--muted); margin-bottom: 0.5rem; font-weight: 600; }
+.cart-items { display: flex; flex-direction: column; gap: 0.2rem; max-height: 10rem; overflow-y: auto; }
+.cart-item { display: flex; justify-content: space-between; align-items: center; font-size: clamp(0.6rem,0.85vw,0.7rem); padding: 0.3em 0; border-bottom: 0.0625rem solid var(--border); animation: slideIn 0.3s ease; }
+@keyframes slideIn { from{opacity:0;transform:translateX(.5rem)} to{opacity:1;transform:translateX(0)} }
+.cart-item-rm { background: none; border: none; color: var(--accent); cursor: pointer; font-size: 0.7rem; padding: 0.2em; }
+.cart-total { margin-top: 0.5rem; padding-top: 0.5rem; border-top: 0.0625rem solid var(--border); display: flex; justify-content: space-between; font-size: clamp(0.7rem,1vw,0.82rem); font-weight: 600; }
+.cart-checkout { margin-top: 0.75rem; width: 100%; padding: 0.6em; background: var(--accent); color: var(--card-bg); border: none; font-family: var(--sans); font-size: clamp(0.6rem,0.85vw,0.7rem); font-weight: 600; letter-spacing: 0.1em; cursor: pointer; border-radius: 2rem; transition: opacity 0.3s; }
+.cart-checkout:hover { opacity: 0.85; }
+.cart-empty { font-size: clamp(0.55rem,0.82vw,0.65rem); color: var(--muted); text-align: center; padding: 0.5rem 0; font-style: italic; }
+.cart-toggle-mobile { display: none; position: fixed; bottom: clamp(1rem,3vw,2rem); right: clamp(1rem,3vw,2rem); z-index: 51; width: 3rem; height: 3rem; border-radius: 50%; background: var(--accent); border: none; color: var(--card-bg); font-size: 1rem; cursor: pointer; box-shadow: 0 0.25rem 1rem rgba(44,36,24,0.3); align-items: center; justify-content: center; }
+.cart-badge { position: absolute; top: -0.25rem; right: -0.25rem; background: var(--fg); color: var(--bg); font-size: 0.55rem; width: 1.1em; height: 1.1em; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+@media (max-width: 48em) { .cart-zone { display: none; bottom: 4.5rem; right: .75rem; left: .75rem; min-width: auto; } .cart-zone.mobile-open { display: block; } .cart-toggle-mobile { display: flex; } }
+
+/* ABOUT */
+.about-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(17rem,100%),1fr)); gap: clamp(2rem,4vw,4rem); align-items: center; }
+.about-photo { width: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 1rem; box-shadow: 0 1rem 3rem rgba(44,36,24,0.1); display: block; }
+.about-text h2 { font-family: var(--serif); font-size: clamp(1.8rem,3.5vw,2.5rem); font-weight: 400; margin-bottom: 1rem; }
+.about-text h2 em { font-style: italic; color: var(--accent); }
+.about-text p { font-size: clamp(0.82rem,1.15vw,0.92rem); color: var(--muted); line-height: 1.8; margin-bottom: 1rem; font-weight: 300; }
+.gear-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1.25rem; }
+.gear-tag { font-size: clamp(0.55rem,0.82vw,0.65rem); padding: 0.35em 0.7em; border: 0.0625rem solid var(--border); border-radius: 2rem; color: var(--muted); background: rgba(196,113,59,0.04); }
+
+footer { border-top: 0.0625rem solid var(--border); padding: clamp(2rem,4vw,3rem) clamp(1.5rem,5vw,4rem); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; }
+footer span { font-size: 0.7rem; color: var(--muted); }
+.footer-links { display: flex; gap: 1.5rem; list-style: none; }
+.footer-links a { font-size: 0.7rem; color: var(--muted); text-decoration: none; transition: color 0.3s; }
+.footer-links a:hover { color: var(--accent); }
+
+.reveal { opacity: 0; transform: translateY(1.5rem); transition: opacity 0.8s ease, transform 0.8s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.touch-ghost { position: fixed; z-index: 200; pointer-events: none; opacity: 0.9; transform: rotate(2deg) scale(0.55); background: var(--card-bg); border: 0.125rem solid var(--accent); border-radius: 0.5rem; padding: 0.5rem 0.75rem; font-family: var(--serif); font-size: 0.75rem; font-style: italic; color: var(--fg); white-space: nowrap; box-shadow: 0 0.5rem 2rem rgba(44,36,24,0.3); }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">Colectivo</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="services.html">Services</a></li>
+    <li><a href="artist-luna.html" class="active">Luna</a></li>
+    <li><a href="artist-bob.html">Bob</a></li>
+    <li><a href="artist-marco.html">Marco</a></li>
+    <li><a href="index.html#about">About</a></li>
+  </ul>
+  <button class="nav-burger" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+<div class="mobile-menu">
+  <a href="index.html">Home</a><a href="services.html">Services</a><a href="artist-luna.html" class="active">Luna</a><a href="artist-bob.html">Bob</a><a href="artist-marco.html">Marco</a><a href="index.html#about">About</a>
+</div>
+
+<section class="hero">
+  <h1>Luna<br><em>Ferreira</em></h1>
+  <div class="hero-divider"></div>
+  <div class="hero-meta"><span>Cascais, PT</span><span>Pentax 67</span><span>Portra 400</span></div>
+  <p class="hero-bio">Golden light on the Portuguese coast. The warmth of a summer that never quite ends. Analog prints made with love, patience, and the softest light.</p>
+</section>
+
+<section class="section">
+  <h2 class="section-title reveal"><em>Available</em> Prints</h2>
+  <p class="section-sub reveal">Each print is lab-scanned from medium format negatives and printed on archival matte paper. Editions of 20.</p>
+  <div class="prints-grid" id="printsGrid">
+    <div class="polaroid reveal" draggable="true" data-id="l1" data-title="Cascais Sunrise" data-price="55">
+      <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500&q=80" alt="Cascais sunrise" loading="lazy">
+      <span class="drag-hint-warm">drag to cart ♡</span>
+      <button class="polaroid-add" data-id="l1">+</button>
+      <div class="polaroid-caption"><div><div class="polaroid-title">Cascais Sunrise</div><div class="polaroid-meta">6x7 · Portra 400</div></div><span class="polaroid-price">€55</span></div>
+    </div>
+    <div class="polaroid reveal" draggable="true" data-id="l2" data-title="Sintra Morning Mist" data-price="60">
+      <img src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=500&q=80" alt="Misty forest" loading="lazy">
+      <span class="drag-hint-warm">drag to cart ♡</span>
+      <button class="polaroid-add" data-id="l2">+</button>
+      <div class="polaroid-caption"><div><div class="polaroid-title">Sintra Morning Mist</div><div class="polaroid-meta">6x7 · Portra 160</div></div><span class="polaroid-price">€60</span></div>
+    </div>
+    <div class="polaroid reveal" draggable="true" data-id="l3" data-title="Praia do Guincho" data-price="50">
+      <img src="https://images.unsplash.com/photo-1476673160081-cf065607f449?w=500&q=80" alt="Beach waves" loading="lazy">
+      <span class="drag-hint-warm">drag to cart ♡</span>
+      <button class="polaroid-add" data-id="l3">+</button>
+      <div class="polaroid-caption"><div><div class="polaroid-title">Praia do Guincho</div><div class="polaroid-meta">6x7 · Portra 400</div></div><span class="polaroid-price">€50</span></div>
+    </div>
+    <div class="polaroid reveal" draggable="true" data-id="l4" data-title="Arrábida Cove" data-price="65">
+      <img src="https://images.unsplash.com/photo-1519046904884-53103b34b206?w=500&q=80" alt="Cove" loading="lazy">
+      <span class="drag-hint-warm">drag to cart ♡</span>
+      <button class="polaroid-add" data-id="l4">+</button>
+      <div class="polaroid-caption"><div><div class="polaroid-title">Arrábida Cove</div><div class="polaroid-meta">6x7 · Ektar 100</div></div><span class="polaroid-price">€65</span></div>
+    </div>
+    <div class="polaroid reveal" draggable="true" data-id="l5" data-title="Alentejo Fields" data-price="55">
+      <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=500&q=80" alt="Golden fields" loading="lazy">
+      <span class="drag-hint-warm">drag to cart ♡</span>
+      <button class="polaroid-add" data-id="l5">+</button>
+      <div class="polaroid-caption"><div><div class="polaroid-title">Alentejo Fields</div><div class="polaroid-meta">6x7 · Portra 400</div></div><span class="polaroid-price">€55</span></div>
+    </div>
+    <div class="polaroid reveal" draggable="true" data-id="l6" data-title="Comporta Dunes" data-price="50">
+      <img src="https://images.unsplash.com/photo-1509233725247-49e657c54213?w=500&q=80" alt="Sand dunes" loading="lazy">
+      <span class="drag-hint-warm">drag to cart ♡</span>
+      <button class="polaroid-add" data-id="l6">+</button>
+      <div class="polaroid-caption"><div><div class="polaroid-title">Comporta Dunes</div><div class="polaroid-meta">6x7 · Portra 160</div></div><span class="polaroid-price">€50</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="cart-zone" id="cartZone">
+  <div class="cart-header">☀ Drop prints here</div>
+  <div class="cart-items" id="cartItems"><div class="cart-empty">Drag a polaroid to add it</div></div>
+  <div class="cart-total" id="cartTotal" style="display:none"><span>Total</span><span id="cartTotalValue">€0</span></div>
+  <button class="cart-checkout" id="cartCheckout" style="display:none">Checkout via Stripe →</button>
+</div>
+<button class="cart-toggle-mobile" id="cartToggle">☀<span class="cart-badge" id="cartBadge" style="display:none">0</span></button>
+
+<section class="section">
+  <div class="about-grid">
+    <img class="about-photo reveal" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&q=80" alt="Luna" loading="lazy">
+    <div class="about-text reveal">
+      <h2>About <em>Luna</em></h2>
+      <p>Luna grew up chasing light along the Linha de Cascais. She picked up her father's Pentax 67 at 19 and fell in love with the slow, meditative rhythm of medium format film.</p>
+      <p>Her prints are warm, golden, and endlessly nostalgic — like looking through a window into summer. All images are lab-processed and printed on archival Hahnemühle Photo Rag.</p>
+      <div class="gear-tags"><span class="gear-tag">Pentax 67</span><span class="gear-tag">SMC 105mm f/2.4</span><span class="gear-tag">Kodak Portra 400</span><span class="gear-tag">Kodak Portra 160</span><span class="gear-tag">Kodak Ektar 100</span><span class="gear-tag">Hahnemühle Photo Rag</span></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>© 2026 Luna Ferreira / Colectivo</span>
+  <ul class="footer-links"><li><a href="index.html">Home</a></li><li><a href="privacy.html">Privacy</a></li></ul>
+</footer>
+
+<script>
+const burger=document.querySelector('.nav-burger'),mm=document.querySelector('.mobile-menu');
+burger.addEventListener('click',()=>{burger.classList.toggle('open');mm.classList.toggle('open');document.body.style.overflow=mm.classList.contains('open')?'hidden':'';});
+mm.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{burger.classList.remove('open');mm.classList.remove('open');document.body.style.overflow='';}));
+const obs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible');});},{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+const cart=[];
+const cartZone=document.getElementById('cartZone'),cartItems=document.getElementById('cartItems'),cartTotal=document.getElementById('cartTotal'),cartTotalValue=document.getElementById('cartTotalValue'),cartCheckout=document.getElementById('cartCheckout'),cartToggle=document.getElementById('cartToggle'),cartBadge=document.getElementById('cartBadge');
+function addToCart(id,title,price){if(cart.find(i=>i.id===id))return;cart.push({id,title,price:parseFloat(price)});renderCart();}
+function removeFromCart(id){const i=cart.findIndex(x=>x.id===id);if(i>-1)cart.splice(i,1);renderCart();}
+function renderCart(){if(!cart.length){cartItems.innerHTML='<div class="cart-empty">Drag a polaroid to add it</div>';cartTotal.style.display='none';cartCheckout.style.display='none';cartBadge.style.display='none';return;}cartItems.innerHTML=cart.map(i=>`<div class="cart-item"><span>${i.title}</span><span>€${i.price}</span><button class="cart-item-rm" onclick="removeFromCart('${i.id}')">✕</button></div>`).join('');const t=cart.reduce((s,i)=>s+i.price,0);cartTotalValue.textContent='€'+t;cartTotal.style.display='flex';cartCheckout.style.display='block';cartBadge.style.display='flex';cartBadge.textContent=cart.length;}
+
+document.querySelectorAll('.polaroid').forEach(c=>{c.addEventListener('dragstart',e=>{c.classList.add('dragging');e.dataTransfer.setData('text/plain',JSON.stringify({id:c.dataset.id,title:c.dataset.title,price:c.dataset.price}));});c.addEventListener('dragend',()=>c.classList.remove('dragging'));});
+cartZone.addEventListener('dragover',e=>{e.preventDefault();cartZone.classList.add('drag-over');});
+cartZone.addEventListener('dragleave',()=>cartZone.classList.remove('drag-over'));
+cartZone.addEventListener('drop',e=>{e.preventDefault();cartZone.classList.remove('drag-over');try{const d=JSON.parse(e.dataTransfer.getData('text/plain'));addToCart(d.id,d.title,d.price);}catch(err){}});
+
+let td=null,tg=null;
+document.querySelectorAll('.polaroid').forEach(c=>{
+  c.addEventListener('touchstart',e=>{const t=e.touches[0];td={id:c.dataset.id,title:c.dataset.title,price:c.dataset.price,sx:t.clientX,sy:t.clientY,dragging:false,card:c};},{passive:true});
+  c.addEventListener('touchmove',e=>{if(!td)return;const t=e.touches[0];if(!td.dragging&&(Math.abs(t.clientX-td.sx)>10||Math.abs(t.clientY-td.sy)>10)){td.dragging=true;td.card.classList.add('dragging');tg=document.createElement('div');tg.className='touch-ghost';tg.textContent=td.title;document.body.appendChild(tg);}if(td.dragging){e.preventDefault();tg.style.left=t.clientX/16+'rem';tg.style.top=(t.clientY/16-2)+'rem';const r=cartZone.getBoundingClientRect();cartZone.classList.toggle('drag-over',t.clientX>=r.left&&t.clientX<=r.right&&t.clientY>=r.top&&t.clientY<=r.bottom);}},{passive:false});
+  c.addEventListener('touchend',e=>{if(!td)return;td.card.classList.remove('dragging');if(td.dragging){const t=e.changedTouches[0];const r=cartZone.getBoundingClientRect();if(t.clientX>=r.left&&t.clientX<=r.right&&t.clientY>=r.top&&t.clientY<=r.bottom)addToCart(td.id,td.title,td.price);cartZone.classList.remove('drag-over');if(tg){tg.remove();tg=null;}}td=null;});
+});
+document.querySelectorAll('.polaroid-add').forEach(b=>{b.addEventListener('click',e=>{e.stopPropagation();const c=b.closest('.polaroid');addToCart(c.dataset.id,c.dataset.title,c.dataset.price);});});
+cartToggle.addEventListener('click',()=>cartZone.classList.toggle('mobile-open'));
+cartCheckout.addEventListener('click',()=>{alert('Stripe Checkout:\n\n'+cart.map(i=>`${i.title} — €${i.price}`).join('\n')+'\n\nTotal: €'+cart.reduce((s,i)=>s+i.price,0));});
+</script>
+</body>
+</html>

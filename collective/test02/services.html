@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Book a Session — COLECTIVO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --bg: #0a0a0a; --bg2: #111110; --fg: #f0ede8; --accent: #c8b89a; --accent2: #a89070;
+  --green: #6abf8a; --red: #d4442a; --yellow: #d4a26a; --blue: #4dc9f6;
+  --muted: #6b6560; --card-bg: #161514; --border: rgba(240,237,232,0.1);
+  --serif: 'Instrument Serif', Georgia, serif; --sans: 'DM Sans', system-ui, sans-serif;
+}
+html { font-size: 100%; scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--fg); font-family: var(--sans); line-height: 1.6; overflow-x: hidden; }
+
+/* NAV */
+nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: clamp(0.85rem,1.8vw,1.25rem) clamp(1.5rem,5vw,4rem); background: rgba(10,10,10,0.85); backdrop-filter: blur(1.5rem); border-bottom: 0.0625rem solid var(--border); }
+.nav-logo { font-family: var(--serif); font-size: clamp(1.15rem,2.2vw,1.5rem); letter-spacing: 0.15em; text-transform: uppercase; color: var(--fg); text-decoration: none; }
+.nav-links { display: flex; gap: clamp(1rem,2.5vw,2rem); list-style: none; }
+.nav-links a { color: var(--muted); text-decoration: none; font-size: clamp(0.65rem,1vw,0.8rem); letter-spacing: 0.12em; text-transform: uppercase; transition: color 0.3s; font-weight: 500; }
+.nav-links a:hover { color: var(--fg); }
+.nav-links a.active { color: rgba(240,237,232,0.22); pointer-events: none; }
+.nav-burger { display: none; flex-direction: column; gap: 0.3rem; background: none; border: none; cursor: pointer; padding: 0.5rem; }
+.nav-burger span { display: block; width: 1.4rem; height: 0.1rem; background: var(--fg); transition: transform 0.3s, opacity 0.3s; }
+.nav-burger.open span:nth-child(1){transform:translateY(.4rem) rotate(45deg)} .nav-burger.open span:nth-child(2){opacity:0} .nav-burger.open span:nth-child(3){transform:translateY(-.4rem) rotate(-45deg)}
+.mobile-menu { display: none; position: fixed; inset: 0; z-index: 99; background: rgba(10,10,10,0.97); flex-direction: column; align-items: center; justify-content: center; gap: 1.75rem; }
+.mobile-menu.open { display: flex; }
+.mobile-menu a { color: var(--fg); text-decoration: none; font-family: var(--serif); font-size: clamp(1.8rem,5vw,3rem); }
+.mobile-menu a.active { color: rgba(240,237,232,0.2); }
+@media (max-width: 48em) { .nav-links { display: none; } .nav-burger { display: flex; } }
+
+/* HERO */
+.hero { padding: clamp(8rem,14vw,12rem) clamp(1.5rem,5vw,4rem) clamp(3rem,6vw,4rem); text-align: center; }
+.hero h1 { font-family: var(--serif); font-size: clamp(2.5rem,8vw,6rem); line-height: 1; font-weight: 400; margin-bottom: 0.5em; }
+.hero h1 em { font-style: italic; color: var(--accent); }
+.hero p { color: var(--muted); font-size: clamp(0.82rem,1.3vw,0.98rem); max-width: 35em; margin: 0 auto; line-height: 1.7; }
+
+.instructions { display: flex; justify-content: center; flex-wrap: wrap; gap: clamp(1.5rem,3vw,2.5rem); padding: 0 clamp(1.5rem,5vw,4rem) clamp(3rem,6vw,4rem); }
+.instruction { display: flex; align-items: center; gap: 0.65rem; font-size: clamp(0.65rem,0.95vw,0.78rem); color: var(--muted); }
+.instruction-num { width: 1.8rem; height: 1.8rem; border-radius: 50%; border: 0.0625rem solid var(--accent); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: var(--accent); flex-shrink: 0; }
+
+/* LAYOUT */
+.booking-layout { display: grid; grid-template-columns: 1fr clamp(18rem,30vw,24rem); gap: clamp(1.5rem,3vw,2rem); padding: 0 clamp(1.5rem,5vw,4rem) clamp(4rem,8vw,6rem); align-items: start; }
+@media (max-width: 60em) { .booking-layout { grid-template-columns: 1fr; } }
+
+.panel { margin-bottom: clamp(2rem,4vw,3rem); }
+.panel-label { font-size: clamp(0.55rem,0.85vw,0.68rem); letter-spacing: 0.25em; text-transform: uppercase; color: var(--muted); margin-bottom: clamp(1rem,2vw,1.5rem); display: flex; align-items: center; gap: 0.75rem; }
+.panel-label::after { content: ''; flex: 1; height: 0.0625rem; background: var(--border); }
+
+/* SERVICE CARDS */
+.services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(14rem,100%),1fr)); gap: clamp(0.75rem,1.5vw,1rem); }
+.service-card { background: var(--card-bg); border: 0.0625rem solid var(--border); border-radius: 0.5rem; padding: clamp(1rem,2vw,1.5rem); cursor: grab; user-select: none; transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s; overflow: hidden; }
+.service-card:active { cursor: grabbing; }
+.service-card:hover { border-color: var(--accent); transform: translateY(-0.15rem); box-shadow: 0 0.5rem 1.5rem rgba(0,0,0,0.2); }
+.service-card.dragging { opacity: 0.4; transform: scale(0.95); }
+.service-card.selected { border-color: var(--accent); background: rgba(200,184,154,0.06); }
+.service-card-photo { width: 100%; aspect-ratio: 16/9; border-radius: 0.35rem; margin-bottom: clamp(0.65rem,1.2vw,0.85rem); overflow: hidden; }
+.service-card-photo img { width: 100%; height: 100%; object-fit: cover; display: block; filter: grayscale(0.3); transition: filter 0.4s; }
+.service-card:hover .service-card-photo img { filter: grayscale(0); }
+.service-card-icon { font-size: clamp(1.1rem,1.8vw,1.4rem); margin-bottom: 0.3rem; }
+.service-card h3 { font-family: var(--serif); font-size: clamp(1.05rem,1.8vw,1.25rem); margin-bottom: 0.2rem; }
+.service-card p { font-size: clamp(0.65rem,0.95vw,0.76rem); color: var(--muted); line-height: 1.6; margin-bottom: 0.6rem; }
+.service-card-price { font-size: clamp(0.72rem,1.05vw,0.82rem); color: var(--accent); font-weight: 500; }
+.service-crew-dots { display: flex; gap: 0.3rem; margin-top: 0.65rem; }
+.crew-dot { width: 1.6rem; height: 1.6rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.45rem; font-weight: 700; text-transform: uppercase; border: 0.0625rem solid var(--border); transition: border-color 0.3s, transform 0.3s; }
+.crew-dot.marco { background: rgba(212,68,42,0.15); color: #d4442a; }
+.crew-dot.luna { background: rgba(196,113,59,0.15); color: #c4713b; }
+.crew-dot.bob { background: rgba(77,201,246,0.15); color: #4dc9f6; }
+.crew-dot.highlight { transform: scale(1.2); border-color: var(--accent); box-shadow: 0 0 0.5rem rgba(200,184,154,0.3); }
+
+/* CREW CARDS */
+.crew-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(14rem,100%),1fr)); gap: clamp(0.75rem,1.5vw,1rem); }
+.crew-card { background: var(--card-bg); border: 0.0625rem solid var(--border); border-radius: 0.5rem; padding: clamp(0.85rem,1.6vw,1.15rem); cursor: grab; user-select: none; transition: border-color 0.3s, transform 0.3s; display: flex; gap: clamp(0.65rem,1.2vw,0.85rem); align-items: center; }
+.crew-card:active { cursor: grabbing; }
+.crew-card:hover { border-color: var(--accent); transform: translateY(-0.15rem); }
+.crew-card.dragging { opacity: 0.4; transform: scale(0.95); }
+.crew-card.selected { border-color: var(--accent); background: rgba(200,184,154,0.06); }
+.crew-card.hl-marco { border-color: #d4442a; box-shadow: 0 0 1rem rgba(212,68,42,0.15); }
+.crew-card.hl-luna { border-color: #c4713b; box-shadow: 0 0 1rem rgba(196,113,59,0.15); }
+.crew-card.hl-bob { border-color: #4dc9f6; box-shadow: 0 0 1rem rgba(77,201,246,0.15); }
+.crew-avatar { width: clamp(2.8rem,4.5vw,3.5rem); height: clamp(2.8rem,4.5vw,3.5rem); border-radius: 50%; flex-shrink: 0; object-fit: cover; }
+.crew-info h3 { font-family: var(--serif); font-size: clamp(0.95rem,1.4vw,1.1rem); margin-bottom: 0.1rem; }
+.crew-info p { font-size: clamp(0.6rem,0.85vw,0.7rem); color: var(--muted); }
+.crew-tags { display: flex; flex-wrap: wrap; gap: 0.25rem; margin-top: 0.3rem; }
+.crew-tag { font-size: clamp(0.45rem,0.65vw,0.55rem); padding: 0.15em 0.45em; background: rgba(200,184,154,0.08); border-radius: 0.2rem; color: var(--accent2); }
+
+/* BOOKING ZONE */
+.booking-zone { position: sticky; top: 5rem; background: var(--card-bg); border: 0.125rem dashed var(--border); border-radius: 0.75rem; padding: clamp(1.15rem,2.2vw,1.5rem); transition: border-color 0.3s, background 0.3s; }
+.booking-zone.drag-over { border-color: var(--accent); background: rgba(200,184,154,0.04); }
+.bz-title { font-family: var(--serif); font-size: clamp(1.15rem,1.8vw,1.35rem); margin-bottom: 0.2rem; }
+.bz-sub { font-size: clamp(0.6rem,0.85vw,0.7rem); color: var(--muted); margin-bottom: clamp(1rem,2vw,1.25rem); }
+.bz-section { margin-bottom: clamp(0.85rem,1.6vw,1.1rem); }
+.bz-label { font-size: clamp(0.5rem,0.75vw,0.6rem); letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.4rem; }
+.bz-empty { font-size: clamp(0.6rem,0.85vw,0.7rem); color: var(--muted); font-style: italic; padding: clamp(0.65rem,1.2vw,0.85rem); border: 0.0625rem dashed var(--border); border-radius: 0.3rem; text-align: center; }
+.bz-item { display: flex; justify-content: space-between; align-items: center; padding: 0.4rem 0; border-bottom: 0.0625rem solid var(--border); animation: fadeIn 0.3s ease; font-size: clamp(0.65rem,0.95vw,0.76rem); }
+@keyframes fadeIn { from{opacity:0;transform:translateY(.2rem)} to{opacity:1;transform:translateY(0)} }
+.bz-item-rm { background: none; border: none; color: var(--red); cursor: pointer; font-size: 0.7rem; padding: 0.2em; }
+
+/* TIME/DATE */
+.date-row { display: flex; gap: 0.3rem; overflow-x: auto; padding-bottom: 0.4rem; margin-bottom: 0.6rem; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+.date-chip { flex-shrink: 0; padding: clamp(0.35rem,0.7vw,0.45rem) clamp(0.5rem,1vw,0.7rem); border: 0.0625rem solid var(--border); border-radius: 0.3rem; text-align: center; cursor: pointer; transition: all 0.3s; font-size: clamp(0.55rem,0.8vw,0.65rem); }
+.date-chip:hover { border-color: var(--accent); }
+.date-chip.selected { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+.date-chip-day { font-weight: 700; font-size: 1.1em; }
+.date-chip-label { font-size: 0.8em; color: var(--muted); }
+.date-chip.selected .date-chip-label { color: var(--bg); opacity: 0.7; }
+
+.time-slots { display: grid; grid-template-columns: repeat(auto-fill, minmax(4.5rem,1fr)); gap: 0.3rem; }
+.time-slot { padding: clamp(0.35rem,0.7vw,0.45rem); border: 0.0625rem solid var(--border); border-radius: 0.2rem; text-align: center; font-size: clamp(0.55rem,0.8vw,0.65rem); cursor: pointer; transition: border-color 0.3s, background 0.3s, color 0.3s; }
+.time-slot.available { border-color: rgba(106,191,138,0.3); color: var(--green); }
+.time-slot.available:hover { background: rgba(106,191,138,0.1); border-color: var(--green); }
+.time-slot.partial { border-color: rgba(212,162,106,0.3); color: var(--yellow); }
+.time-slot.partial:hover { background: rgba(212,162,106,0.08); }
+.time-slot.unavailable { color: var(--muted); opacity: 0.35; cursor: not-allowed; text-decoration: line-through; }
+.time-slot.selected { background: var(--accent); color: var(--bg); border-color: var(--accent); font-weight: 700; }
+.time-slot-crew { display: flex; justify-content: center; gap: 0.12rem; margin-top: 0.15rem; }
+.mini-dot { width: 0.35rem; height: 0.35rem; border-radius: 50%; }
+.mini-dot.marco-dot { background: #d4442a; }
+.mini-dot.luna-dot { background: #c4713b; }
+.mini-dot.bob-dot { background: #4dc9f6; }
+
+.legend { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 0.6rem; font-size: clamp(0.48rem,0.72vw,0.55rem); color: var(--muted); }
+.legend-item { display: flex; align-items: center; gap: 0.25rem; }
+.legend-dot { width: 0.4rem; height: 0.4rem; border-radius: 50%; }
+.legend-dot.green { background: var(--green); }
+.legend-dot.yellow { background: var(--yellow); }
+.legend-dot.grey { background: var(--muted); opacity: 0.4; }
+
+.bz-summary { margin-top: clamp(0.85rem,1.6vw,1.15rem); padding-top: clamp(0.85rem,1.6vw,1.15rem); border-top: 0.0625rem solid var(--border); }
+.bz-total { display: flex; justify-content: space-between; font-size: clamp(0.8rem,1.15vw,0.92rem); font-weight: 500; margin-bottom: 0.6rem; }
+.bz-total .price { color: var(--accent); font-weight: 700; }
+.btn-book { width: 100%; padding: clamp(0.65rem,1.2vw,0.85rem); background: var(--accent); color: var(--bg); border: none; font-family: var(--sans); font-size: clamp(0.65rem,0.95vw,0.76rem); font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; border-radius: 0.2rem; transition: opacity 0.3s; }
+.btn-book:hover { opacity: 0.85; }
+.btn-book:disabled { opacity: 0.3; cursor: not-allowed; }
+
+/* GALLERY */
+.gallery-section { padding: clamp(4rem,8vw,6rem) clamp(1.5rem,5vw,4rem); }
+.gallery-masonry { columns: 3; column-gap: clamp(0.75rem,1.5vw,1rem); }
+@media (max-width: 48em) { .gallery-masonry { columns: 2; } }
+.gallery-photo { break-inside: avoid; margin-bottom: clamp(0.75rem,1.5vw,1rem); border-radius: 0.3rem; overflow: hidden; position: relative; }
+.gallery-photo img { width: 100%; display: block; }
+.gallery-photo img.tall { aspect-ratio: 3/4; object-fit: cover; }
+.gallery-photo img.wide { aspect-ratio: 4/3; object-fit: cover; }
+.gallery-photo img.square { aspect-ratio: 1/1; object-fit: cover; }
+.gallery-tag { position: absolute; bottom: 0.4rem; left: 0.4rem; font-size: 0.5rem; padding: 0.2em 0.5em; background: rgba(10,10,10,0.75); border-radius: 0.2rem; backdrop-filter: blur(0.5rem); letter-spacing: 0.1em; text-transform: uppercase; }
+
+footer { border-top: 0.0625rem solid var(--border); padding: clamp(2rem,4vw,3rem) clamp(1.5rem,5vw,4rem); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; }
+footer span { font-size: 0.7rem; color: var(--muted); }
+.footer-links { display: flex; gap: 1.5rem; list-style: none; }
+.footer-links a { font-size: 0.7rem; color: var(--muted); text-decoration: none; transition: color 0.3s; }
+.footer-links a:hover { color: var(--fg); }
+
+.reveal { opacity: 0; transform: translateY(1.5rem); transition: opacity 0.8s ease, transform 0.8s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.touch-ghost { position: fixed; z-index: 200; pointer-events: none; opacity: 0.85; transform: scale(0.65); background: var(--card-bg); border: 0.125rem solid var(--accent); border-radius: 0.3rem; padding: 0.5rem 0.75rem; font-size: 0.65rem; color: var(--fg); white-space: nowrap; box-shadow: 0 0.5rem 2rem rgba(0,0,0,0.5); }
+
+@media (max-width: 60em) {
+  .booking-zone { position: fixed; bottom: 0; left: 0; right: 0; border-radius: 1rem 1rem 0 0; z-index: 50; max-height: 70vh; overflow-y: auto; transform: translateY(calc(100% - 3.2rem)); transition: transform 0.4s cubic-bezier(0.16,1,0.3,1); border: 0.0625rem solid var(--border); border-bottom: none; }
+  .booking-zone.expanded { transform: translateY(0); }
+  .bz-pull { display: flex; justify-content: center; padding: 0.4rem 0; cursor: pointer; }
+  .bz-pull::after { content: ''; width: 2rem; height: 0.2rem; background: var(--muted); border-radius: 0.1rem; }
+}
+@media (min-width: 60.0625em) { .bz-pull { display: none; } }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">Colectivo</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="services.html" class="active">Services</a></li>
+    <li><a href="artist-luna.html">Luna</a></li>
+    <li><a href="artist-bob.html">Bob</a></li>
+    <li><a href="artist-marco.html">Marco</a></li>
+    <li><a href="index.html#about">About</a></li>
+  </ul>
+  <button class="nav-burger" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+<div class="mobile-menu">
+  <a href="index.html">Home</a><a href="services.html" class="active">Services</a><a href="artist-luna.html">Luna</a><a href="artist-bob.html">Bob</a><a href="artist-marco.html">Marco</a><a href="index.html#about">About</a>
+</div>
+
+<section class="hero">
+  <h1>Book <em>us.</em></h1>
+  <p>Drag a service or crew member into the booking zone. Pick a date and time. We'll take care of the rest.</p>
+</section>
+
+<div class="instructions reveal">
+  <div class="instruction"><span class="instruction-num">1</span><span>Drag a service or crew member</span></div>
+  <div class="instruction"><span class="instruction-num">2</span><span>Choose a date and available time</span></div>
+  <div class="instruction"><span class="instruction-num">3</span><span>Submit your booking request</span></div>
+</div>
+
+<div class="booking-layout">
+  <div class="left-panel">
+    <div class="panel reveal">
+      <div class="panel-label">Our Services</div>
+      <div class="services-grid">
+        <div class="service-card" draggable="true" data-type="service" data-id="photography" data-name="Photography Session" data-price="150" data-crew="marco,luna">
+          <div class="service-card-photo"><img src="https://images.unsplash.com/photo-1554048612-b6a482bc67e5?w=400&q=80" alt="Photography" loading="lazy"></div>
+          <div class="service-card-icon">◎</div><h3>Photography</h3>
+          <p>Portraits, events, editorial. Film or digital. Intimate golden-hour sessions to full-day event coverage.</p>
+          <div class="service-card-price">From €150</div>
+          <div class="service-crew-dots"><span class="crew-dot marco" title="Marco">MO</span><span class="crew-dot luna" title="Luna">LF</span></div>
+        </div>
+        <div class="service-card" draggable="true" data-type="service" data-id="videography" data-name="Videography" data-price="250" data-crew="marco">
+          <div class="service-card-photo"><img src="https://images.unsplash.com/photo-1579187707643-35646d22b596?w=400&q=80" alt="Video" loading="lazy"></div>
+          <div class="service-card-icon">▶</div><h3>Videography</h3>
+          <p>Short films, brand promos, music videos. Cinematic storytelling shot on Super 8 or digital.</p>
+          <div class="service-card-price">From €250</div>
+          <div class="service-crew-dots"><span class="crew-dot marco" title="Marco">MO</span></div>
+        </div>
+        <div class="service-card" draggable="true" data-type="service" data-id="printing3d" data-name="3D Print Consultation" data-price="50" data-crew="bob">
+          <div class="service-card-photo"><img src="https://images.unsplash.com/photo-1617575521317-d2974f3b56d2?w=400&q=80" alt="3D printing" loading="lazy"></div>
+          <div class="service-card-icon">⬡</div><h3>3D Accessories</h3>
+          <p>Custom camera accessories — consultation to design your perfect piece, printed in PLA or PETG.</p>
+          <div class="service-card-price">From €50</div>
+          <div class="service-crew-dots"><span class="crew-dot bob" title="Bob">BS</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel reveal">
+      <div class="panel-label">The Crew</div>
+      <div class="crew-grid">
+        <div class="crew-card" draggable="true" data-type="crew" data-id="marco" data-name="Marco Oliveira" data-services="photography,videography">
+          <img class="crew-avatar" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&q=80" alt="Marco">
+          <div class="crew-info"><h3>Marco Oliveira</h3><p>Street & documentary. Moody, cinematic, raw.</p><div class="crew-tags"><span class="crew-tag">Photo</span><span class="crew-tag">Video</span></div></div>
+        </div>
+        <div class="crew-card" draggable="true" data-type="crew" data-id="luna" data-name="Luna Ferreira" data-services="photography">
+          <img class="crew-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&q=80" alt="Luna">
+          <div class="crew-info"><h3>Luna Ferreira</h3><p>Nature & light. Warm, nostalgic, golden.</p><div class="crew-tags"><span class="crew-tag">Photo</span></div></div>
+        </div>
+        <div class="crew-card" draggable="true" data-type="crew" data-id="bob" data-name="Bob Santos" data-services="printing3d">
+          <img class="crew-avatar" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&q=80" alt="Bob">
+          <div class="crew-info"><h3>Bob Santos</h3><p>The maker. 3D design & printing.</p><div class="crew-tags"><span class="crew-tag">3D Print</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="booking-zone" id="bookingZone">
+    <div class="bz-pull" id="bzPull"></div>
+    <div class="bz-title">Your Session</div>
+    <div class="bz-sub">Drag services or crew here</div>
+    <div class="bz-section"><div class="bz-label">Service</div><div id="bzService"><div class="bz-empty">Drop a service here</div></div></div>
+    <div class="bz-section"><div class="bz-label">Crew</div><div id="bzCrew"><div class="bz-empty">Drop crew members here</div></div></div>
+    <div class="bz-section"><div class="bz-label">Date</div><div class="date-row" id="dateRow"></div></div>
+    <div class="bz-section"><div class="bz-label">Available Times</div><div class="time-slots" id="timeSlots"><div class="bz-empty" style="grid-column:1/-1">Select a service and date first</div></div>
+      <div class="legend"><div class="legend-item"><span class="legend-dot green"></span> All available</div><div class="legend-item"><span class="legend-dot yellow"></span> Partial</div><div class="legend-item"><span class="legend-dot grey"></span> Unavailable</div></div>
+    </div>
+    <div class="bz-summary" id="bzSummary" style="display:none"><div class="bz-total"><span>Estimated total</span><span class="price" id="bzTotalPrice">€0</span></div><button class="btn-book" id="btnBook" disabled>Select a time to continue</button></div>
+  </div>
+</div>
+
+<section class="gallery-section">
+  <div class="panel-label reveal">Our Work</div>
+  <div class="gallery-masonry">
+    <div class="gallery-photo reveal"><img class="tall" src="https://images.unsplash.com/photo-1555952517-2e8e729e0b44?w=400&q=80" alt="Street" loading="lazy"><span class="gallery-tag">Photography</span></div>
+    <div class="gallery-photo reveal"><img class="wide" src="https://images.unsplash.com/photo-1579187707643-35646d22b596?w=400&q=80" alt="Video" loading="lazy"><span class="gallery-tag">Video</span></div>
+    <div class="gallery-photo reveal"><img class="square" src="https://images.unsplash.com/photo-1617575521317-d2974f3b56d2?w=400&q=80" alt="3D" loading="lazy"><span class="gallery-tag">3D Print</span></div>
+    <div class="gallery-photo reveal"><img class="wide" src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&q=80" alt="Coast" loading="lazy"><span class="gallery-tag">Photography</span></div>
+    <div class="gallery-photo reveal"><img class="tall" src="https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=400&q=80" alt="Tram" loading="lazy"><span class="gallery-tag">Photography</span></div>
+    <div class="gallery-photo reveal"><img class="square" src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400&q=80" alt="Fields" loading="lazy"><span class="gallery-tag">Photography</span></div>
+  </div>
+</section>
+
+<footer>
+  <span>© 2026 Colectivo — Lisbon, Portugal</span>
+  <ul class="footer-links"><li><a href="privacy.html">Privacy</a></li><li><a href="index.html#about">About</a></li></ul>
+</footer>
+
+<script>
+const burger=document.querySelector('.nav-burger'),mmenu=document.querySelector('.mobile-menu');
+burger.addEventListener('click',()=>{burger.classList.toggle('open');mmenu.classList.toggle('open');document.body.style.overflow=mmenu.classList.contains('open')?'hidden':'';});
+mmenu.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{burger.classList.remove('open');mmenu.classList.remove('open');document.body.style.overflow='';}));
+const obs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible');});},{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+const bzPull=document.getElementById('bzPull'),bZone=document.getElementById('bookingZone');
+if(bzPull)bzPull.addEventListener('click',()=>bZone.classList.toggle('expanded'));
+
+// STATE
+const state={service:null,crew:[],date:null,time:null};
+const availability={
+  marco:{0:['09:00','10:00','11:00','14:00','15:00','16:00'],1:['10:00','11:00','14:00','15:00'],2:['09:00','10:00','11:00','14:00','15:00','16:00','17:00'],3:[],4:['09:00','10:00','14:00','15:00','16:00'],5:['10:00','11:00'],6:[]},
+  luna:{0:['10:00','11:00','14:00','15:00','16:00','17:00'],1:['09:00','10:00','11:00'],2:['14:00','15:00','16:00','17:00'],3:['09:00','10:00','11:00','14:00','15:00'],4:[],5:['09:00','10:00','11:00','14:00','15:00','16:00'],6:['10:00','11:00']},
+  bob:{0:['09:00','10:00','11:00'],1:['09:00','10:00','11:00','14:00','15:00'],2:['09:00','10:00'],3:['14:00','15:00','16:00','17:00'],4:['09:00','10:00','11:00','14:00','15:00','16:00'],5:[],6:['14:00','15:00','16:00']}
+};
+const allSlots=['09:00','10:00','11:00','12:00','14:00','15:00','16:00','17:00'];
+const svcData={photography:{name:'Photography Session',price:150,crew:['marco','luna']},videography:{name:'Videography',price:250,crew:['marco']},printing3d:{name:'3D Print Consultation',price:50,crew:['bob']}};
+const crewNames={marco:'Marco Oliveira',luna:'Luna Ferreira',bob:'Bob Santos'};
+
+// Dates
+const dateRow=document.getElementById('dateRow');
+const today=new Date();
+for(let i=0;i<14;i++){const d=new Date(today);d.setDate(today.getDate()+i);const c=document.createElement('div');c.className='date-chip';c.dataset.dayIndex=d.getDay();c.innerHTML=`<div class="date-chip-day">${d.getDate()}</div><div class="date-chip-label">${d.toLocaleDateString('en',{weekday:'short'})}</div>`;c.addEventListener('click',()=>{document.querySelectorAll('.date-chip').forEach(x=>x.classList.remove('selected'));c.classList.add('selected');state.date={dayIndex:d.getDay()};state.time=null;renderSlots();updateSummary();});dateRow.appendChild(c);}
+
+function renderSlots(){
+  const c=document.getElementById('timeSlots');
+  if(!state.date||(!state.service&&!state.crew.length)){c.innerHTML='<div class="bz-empty" style="grid-column:1/-1">Select a service and date first</div>';return;}
+  const rel=state.crew.length?state.crew:(state.service?svcData[state.service].crew:[]);
+  c.innerHTML=allSlots.map(t=>{const ca=rel.map(cr=>({id:cr,ok:(availability[cr][state.date.dayIndex]||[]).includes(t)}));const all=ca.every(x=>x.ok),some=ca.some(x=>x.ok);const cls=all?'available':(some?'partial':'unavailable');const dots=ca.map(x=>`<span class="mini-dot ${x.id}-dot" style="opacity:${x.ok?1:0.2}"></span>`).join('');return`<div class="time-slot ${cls}" data-time="${t}" ${cls!=='unavailable'?`onclick="pickTime(this,'${t}')"`:''}>${t}<div class="time-slot-crew">${dots}</div></div>`;}).join('');
+}
+
+function pickTime(el,t){document.querySelectorAll('.time-slot').forEach(s=>s.classList.remove('selected'));el.classList.add('selected');state.time=t;updateSummary();}
+
+function setService(id){
+  state.service=id;const s=svcData[id];
+  document.querySelectorAll('.service-card').forEach(c=>c.classList.toggle('selected',c.dataset.id===id));
+  document.getElementById('bzService').innerHTML=`<div class="bz-item"><span>${s.name} — €${s.price}</span><button class="bz-item-rm" onclick="clearService()">✕</button></div>`;
+  hlCrew(s.crew);
+  if(!state.crew.length){s.crew.forEach(c=>{if(!state.crew.includes(c))state.crew.push(c);});renderCrew();}
+  renderSlots();updateSummary();bZone.classList.add('expanded');
+}
+function clearService(){state.service=null;document.querySelectorAll('.service-card').forEach(c=>c.classList.remove('selected'));document.getElementById('bzService').innerHTML='<div class="bz-empty">Drop a service here</div>';hlCrew([]);renderSlots();updateSummary();}
+function addCrew(id){if(state.crew.includes(id))return;state.crew.push(id);document.querySelectorAll('.crew-card').forEach(c=>c.classList.toggle('selected',state.crew.includes(c.dataset.id)));renderCrew();renderSlots();updateSummary();bZone.classList.add('expanded');}
+function removeCrew(id){state.crew=state.crew.filter(c=>c!==id);document.querySelectorAll('.crew-card').forEach(c=>c.classList.toggle('selected',state.crew.includes(c.dataset.id)));renderCrew();renderSlots();updateSummary();}
+function renderCrew(){const c=document.getElementById('bzCrew');if(!state.crew.length){c.innerHTML='<div class="bz-empty">Drop crew here</div>';return;}c.innerHTML=state.crew.map(x=>`<div class="bz-item"><span>${crewNames[x]}</span><button class="bz-item-rm" onclick="removeCrew('${x}')">✕</button></div>`).join('');}
+function hlCrew(ids){document.querySelectorAll('.crew-card').forEach(c=>{c.classList.remove('hl-marco','hl-luna','hl-bob');if(ids.includes(c.dataset.id))c.classList.add('hl-'+c.dataset.id);});}
+function updateSummary(){const s=document.getElementById('bzSummary'),btn=document.getElementById('btnBook'),p=document.getElementById('bzTotalPrice');if(state.service||state.crew.length){s.style.display='block';const base=state.service?svcData[state.service].price:0;const extra=state.crew.length>1?(state.crew.length-1)*50:0;p.textContent='€'+(base+extra);if(state.time&&state.date){btn.disabled=false;btn.textContent='Request booking →';}else{btn.disabled=true;btn.textContent=state.date?'Select a time':'Select a date';}}else s.style.display='none';}
+
+// DRAG
+document.querySelectorAll('.service-card,.crew-card').forEach(c=>{
+  c.addEventListener('dragstart',e=>{c.classList.add('dragging');e.dataTransfer.setData('text/plain',JSON.stringify({type:c.dataset.type,id:c.dataset.id,name:c.dataset.name}));});
+  c.addEventListener('dragend',()=>c.classList.remove('dragging'));
+  c.addEventListener('click',()=>{if(c.dataset.type==='service')setService(c.dataset.id);else addCrew(c.dataset.id);});
+});
+bZone.addEventListener('dragover',e=>{e.preventDefault();bZone.classList.add('drag-over');});
+bZone.addEventListener('dragleave',e=>{if(!bZone.contains(e.relatedTarget))bZone.classList.remove('drag-over');});
+bZone.addEventListener('drop',e=>{e.preventDefault();bZone.classList.remove('drag-over');try{const d=JSON.parse(e.dataTransfer.getData('text/plain'));if(d.type==='service')setService(d.id);else addCrew(d.id);}catch(err){}});
+
+// Touch
+let td=null,tg=null;
+document.querySelectorAll('.service-card,.crew-card').forEach(c=>{
+  c.addEventListener('touchstart',e=>{const t=e.touches[0];td={type:c.dataset.type,id:c.dataset.id,name:c.dataset.name,sx:t.clientX,sy:t.clientY,dragging:false,card:c};},{passive:true});
+  c.addEventListener('touchmove',e=>{if(!td)return;const t=e.touches[0];if(!td.dragging&&(Math.abs(t.clientX-td.sx)>10||Math.abs(t.clientY-td.sy)>10)){td.dragging=true;td.card.classList.add('dragging');tg=document.createElement('div');tg.className='touch-ghost';tg.textContent=td.name||td.id;document.body.appendChild(tg);}if(td.dragging){e.preventDefault();tg.style.left=t.clientX/16+'rem';tg.style.top=(t.clientY/16-2)+'rem';const r=bZone.getBoundingClientRect();bZone.classList.toggle('drag-over',t.clientX>=r.left&&t.clientX<=r.right&&t.clientY>=r.top&&t.clientY<=r.bottom);}},{passive:false});
+  c.addEventListener('touchend',e=>{if(!td)return;td.card.classList.remove('dragging');if(td.dragging){const t=e.changedTouches[0];const r=bZone.getBoundingClientRect();if(t.clientX>=r.left&&t.clientX<=r.right&&t.clientY>=r.top&&t.clientY<=r.bottom){if(td.type==='service')setService(td.id);else addCrew(td.id);}bZone.classList.remove('drag-over');if(tg){tg.remove();tg=null;}}td=null;});
+});
+
+// Hover highlight
+document.querySelectorAll('.service-card').forEach(c=>{
+  c.addEventListener('mouseenter',()=>{const cl=c.dataset.crew?c.dataset.crew.split(','):[];document.querySelectorAll('.crew-card').forEach(x=>{if(cl.includes(x.dataset.id))x.classList.add('hl-'+x.dataset.id);});});
+  c.addEventListener('mouseleave',()=>{document.querySelectorAll('.crew-card').forEach(x=>x.classList.remove('hl-marco','hl-luna','hl-bob'));if(state.service)hlCrew(svcData[state.service].crew);});
+});
+
+document.getElementById('btnBook').addEventListener('click',()=>{const svc=state.service?svcData[state.service].name:'No service';const crew=state.crew.map(c=>crewNames[c]).join(', ')||'None';const dc=document.querySelector('.date-chip.selected');alert(`Booking Request:\n\nService: ${svc}\nCrew: ${crew}\nDate: ${dc?dc.textContent.trim():'—'}\nTime: ${state.time}\n\n→ Would submit to Formspree/Web3Forms`);});
+</script>
+</body>
+</html>
