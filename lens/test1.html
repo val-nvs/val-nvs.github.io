@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Desktop Environment</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #2a3a5c;
+    --bg-light: #354a72;
+    --dot: rgba(160, 185, 225, 0.18);
+    --win-bg: rgba(22, 30, 50, 0.88);
+    --win-border: rgba(120, 155, 210, 0.25);
+    --win-header: rgba(30, 42, 68, 0.95);
+    --accent: #7eaadc;
+    --accent-glow: rgba(126, 170, 220, 0.3);
+    --text: #c8d8f0;
+    --text-dim: #7a90b5;
+    --close: #e06070;
+    --minimize: #e0b860;
+    --maximize: #60c080;
+  }
+
+  body {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background-color: var(--bg);
+    background-image: radial-gradient(circle, var(--dot) 1px, transparent 1px);
+    background-size: 28px 28px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    user-select: none;
+  }
+
+  .taskbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 48px;
+    background: rgba(16, 22, 40, 0.92);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid var(--win-border);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 8px;
+    z-index: 9999;
+  }
+
+  .taskbar-item {
+    padding: 6px 16px;
+    background: rgba(126, 170, 220, 0.1);
+    border: 1px solid rgba(126, 170, 220, 0.15);
+    border-radius: 8px;
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .taskbar-item:hover {
+    background: rgba(126, 170, 220, 0.18);
+    color: var(--text);
+  }
+
+  .taskbar-item.active {
+    background: rgba(126, 170, 220, 0.2);
+    color: var(--accent);
+    border-color: rgba(126, 170, 220, 0.35);
+  }
+
+  .taskbar-clock {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+    letter-spacing: 0.5px;
+  }
+
+  .window {
+    position: absolute;
+    min-width: 320px;
+    min-height: 240px;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid var(--win-border);
+    box-shadow:
+      0 8px 40px rgba(0, 0, 0, 0.4),
+      0 0 1px rgba(126, 170, 220, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.3s;
+  }
+
+  .window.focused {
+    z-index: 100;
+    box-shadow:
+      0 12px 60px rgba(0, 0, 0, 0.55),
+      0 0 0 1px rgba(126, 170, 220, 0.3),
+      0 0 40px var(--accent-glow),
+      inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  }
+
+  .window-header {
+    height: 40px;
+    background: var(--win-header);
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    cursor: grab;
+    flex-shrink: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  }
+
+  .window-header:active { cursor: grabbing; }
+
+  .window-controls {
+    display: flex;
+    gap: 7px;
+    margin-right: 12px;
+  }
+
+  .window-btn {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    transition: filter 0.2s;
+  }
+
+  .window-btn:hover { filter: brightness(1.3); }
+  .btn-close { background: var(--close); }
+  .btn-min { background: var(--minimize); }
+  .btn-max { background: var(--maximize); }
+
+  .window-title {
+    font-size: 12.5px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    color: var(--text-dim);
+    letter-spacing: 0.3px;
+  }
+
+  .window-body {
+    flex: 1;
+    background: var(--win-bg);
+    backdrop-filter: blur(30px);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .window-body canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .resize-handle {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 18px;
+    height: 18px;
+    cursor: nwse-resize;
+    z-index: 10;
+  }
+
+  .resize-handle::after {
+    content: '';
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    width: 8px;
+    height: 8px;
+    border-right: 2px solid rgba(126, 170, 220, 0.3);
+    border-bottom: 2px solid rgba(126, 170, 220, 0.3);
+  }
+
+  .notes-body {
+    padding: 16px;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text-dim);
+    font-family: 'JetBrains Mono', monospace;
+    overflow-y: auto;
+    height: 100%;
+  }
+
+  .note-line { padding: 2px 0; border-bottom: 1px solid rgba(126, 170, 220, 0.05); }
+  .note-accent { color: var(--accent); }
+  .note-dim { color: rgba(122, 144, 181, 0.5); }
+
+  .overlay-info {
+    position: absolute;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    color: var(--text-dim);
+    pointer-events: none;
+    line-height: 1.6;
+    opacity: 0.7;
+  }
+
+  .lens-info { bottom: 10px; left: 12px; }
+  .mesh-info { top: 10px; right: 12px; text-align: right; }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: -200px;
+    left: -200px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(100, 150, 220, 0.06) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: -300px;
+    right: -200px;
+    width: 800px;
+    height: 800px;
+    background: radial-gradient(circle, rgba(80, 120, 200, 0.04) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+</style>
+</head>
+<body>
+
+<!-- Lens Window -->
+<div class="window focused" id="win-lens" style="left: 60px; top: 50px; width: 560px; height: 480px;">
+  <div class="window-header" data-window="win-lens">
+    <div class="window-controls">
+      <button class="window-btn btn-close"></button>
+      <button class="window-btn btn-min"></button>
+      <button class="window-btn btn-max"></button>
+    </div>
+    <span class="window-title">◉ lens_simulation.app</span>
+  </div>
+  <div class="window-body">
+    <canvas id="lensCanvas"></canvas>
+    <div class="overlay-info lens-info">
+      <div>focal_length: <span id="focalVal">120</span>px</div>
+      <div>refraction_index: 1.52</div>
+      <div>scroll to adjust focus</div>
+    </div>
+  </div>
+  <div class="resize-handle" data-window="win-lens"></div>
+</div>
+
+<!-- 3D Wireframe Window -->
+<div class="window" id="win-mesh" style="left: 480px; top: 180px; width: 540px; height: 460px;">
+  <div class="window-header" data-window="win-mesh">
+    <div class="window-controls">
+      <button class="window-btn btn-close"></button>
+      <button class="window-btn btn-min"></button>
+      <button class="window-btn btn-max"></button>
+    </div>
+    <span class="window-title">△ mesh_viewer.app</span>
+  </div>
+  <div class="window-body">
+    <canvas id="meshCanvas"></canvas>
+    <div class="overlay-info mesh-info">
+      <div id="meshVertCount">vertices: 0</div>
+      <div id="meshEdgeCount">edges: 0</div>
+      <div>drag to rotate</div>
+    </div>
+  </div>
+  <div class="resize-handle" data-window="win-mesh"></div>
+</div>
+
+<!-- Notes Window -->
+<div class="window" id="win-notes" style="left: 140px; top: 380px; width: 340px; height: 240px;">
+  <div class="window-header" data-window="win-notes">
+    <div class="window-controls">
+      <button class="window-btn btn-close"></button>
+      <button class="window-btn btn-min"></button>
+      <button class="window-btn btn-max"></button>
+    </div>
+    <span class="window-title">✎ notes.txt</span>
+  </div>
+  <div class="window-body">
+    <div class="notes-body">
+      <div class="note-line"><span class="note-dim">01</span>  <span class="note-accent">// desktop environment</span></div>
+      <div class="note-line"><span class="note-dim">02</span>  optics simulation running</div>
+      <div class="note-line"><span class="note-dim">03</span>  wireframe mesh loaded</div>
+      <div class="note-line"><span class="note-dim">04</span></div>
+      <div class="note-line"><span class="note-dim">05</span>  <span class="note-accent">TODO:</span></div>
+      <div class="note-line"><span class="note-dim">06</span>  - adjust focal length</div>
+      <div class="note-line"><span class="note-dim">07</span>  - rotate 3d model</div>
+      <div class="note-line"><span class="note-dim">08</span>  - drag windows around</div>
+      <div class="note-line"><span class="note-dim">09</span></div>
+      <div class="note-line"><span class="note-dim">10</span>  <span class="note-accent">scroll</span> on lens to change focus</div>
+      <div class="note-line"><span class="note-dim">11</span>  <span class="note-accent">drag</span> on mesh to orbit view</div>
+    </div>
+  </div>
+  <div class="resize-handle" data-window="win-notes"></div>
+</div>
+
+<!-- Taskbar -->
+<div class="taskbar">
+  <div class="taskbar-item active" data-target="win-lens">◉ Lens</div>
+  <div class="taskbar-item" data-target="win-mesh">△ Mesh</div>
+  <div class="taskbar-item" data-target="win-notes">✎ Notes</div>
+  <div class="taskbar-clock" id="clock"></div>
+</div>
+
+<script>
+// ─── Window Management ────────────────────────────────────
+let topZ = 100;
+const allWindows = document.querySelectorAll('.window');
+
+function focusWindow(win) {
+  allWindows.forEach(w => w.classList.remove('focused'));
+  win.classList.add('focused');
+  win.style.zIndex = ++topZ;
+  document.querySelectorAll('.taskbar-item').forEach(t => {
+    t.classList.toggle('active', t.dataset.target === win.id);
+  });
+}
+
+document.querySelectorAll('.taskbar-item[data-target]').forEach(item => {
+  item.addEventListener('click', () => {
+    const win = document.getElementById(item.dataset.target);
+    if (win) focusWindow(win);
+  });
+});
+
+allWindows.forEach(win => {
+  win.addEventListener('mousedown', () => focusWindow(win));
+});
+
+// Dragging
+document.querySelectorAll('.window-header').forEach(header => {
+  header.addEventListener('mousedown', e => {
+    if (e.target.classList.contains('window-btn')) return;
+    const win = header.closest('.window');
+    focusWindow(win);
+    const startX = e.clientX, startY = e.clientY;
+    const origX = win.offsetLeft, origY = win.offsetTop;
+    const onMove = ev => {
+      win.style.left = (origX + ev.clientX - startX) + 'px';
+      win.style.top = (origY + ev.clientY - startY) + 'px';
+    };
+    const onUp = () => { document.removeEventListener('mousemove', onMove); document.removeEventListener('mouseup', onUp); };
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+  });
+});
+
+// Resizing
+document.querySelectorAll('.resize-handle').forEach(handle => {
+  handle.addEventListener('mousedown', e => {
+    e.stopPropagation();
+    const win = handle.closest('.window');
+    const startX = e.clientX, startY = e.clientY;
+    const startW = win.offsetWidth, startH = win.offsetHeight;
+    const onMove = ev => {
+      win.style.width = Math.max(320, startW + ev.clientX - startX) + 'px';
+      win.style.height = Math.max(240, startH + ev.clientY - startY) + 'px';
+      resizeCanvases();
+    };
+    const onUp = () => { document.removeEventListener('mousemove', onMove); document.removeEventListener('mouseup', onUp); };
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+  });
+});
+
+// Clock
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+}
+updateClock();
+setInterval(updateClock, 1000);
+
+// ─── Lens Simulation ──────────────────────────────────────
+const lensCanvas = document.getElementById('lensCanvas');
+const lCtx = lensCanvas.getContext('2d');
+let focalLength = 120;
+let lensTime = 0;
+
+lensCanvas.parentElement.addEventListener('wheel', e => {
+  e.preventDefault();
+  focalLength = Math.max(40, Math.min(300, focalLength - e.deltaY * 0.3));
+  document.getElementById('focalVal').textContent = Math.round(focalLength);
+}, { passive: false });
+
+function drawLens() {
+  const dpr = devicePixelRatio;
+  const w = lensCanvas.width / dpr;
+  const h = lensCanvas.height / dpr;
+  lCtx.clearRect(0, 0, w, h);
+  lensTime += 0.008;
+
+  const cx = w / 2, cy = h / 2;
+  const lensR = Math.min(w, h) * 0.28;
+
+  // Background grid
+  lCtx.strokeStyle = 'rgba(126, 170, 220, 0.08)';
+  lCtx.lineWidth = 0.5;
+  for (let x = 0; x < w; x += 32) { lCtx.beginPath(); lCtx.moveTo(x, 0); lCtx.lineTo(x, h); lCtx.stroke(); }
+  for (let y = 0; y < h; y += 32) { lCtx.beginPath(); lCtx.moveTo(0, y); lCtx.lineTo(w, y); lCtx.stroke(); }
+
+  // Floating light sources
+  const sources = [
+    { x: cx - 160, y: cy - 80, r: 6, color: '#7eaadc' },
+    { x: cx + 140, y: cy - 60, r: 5, color: '#a080d0' },
+    { x: cx - 80, y: cy + 100, r: 7, color: '#60c0a0' },
+    { x: cx + 100, y: cy + 80, r: 4, color: '#e0b860' },
+    { x: cx, y: cy - 140, r: 5, color: '#e06070' },
+  ];
+
+  sources.forEach((s, i) => {
+    const sx = s.x + Math.sin(lensTime * 0.7 + i * 1.3) * 30;
+    const sy = s.y + Math.cos(lensTime * 0.5 + i * 0.9) * 20;
+
+    // Source dot
+    lCtx.beginPath();
+    lCtx.arc(sx, sy, s.r, 0, Math.PI * 2);
+    lCtx.fillStyle = s.color;
+    lCtx.fill();
+
+    // Glow
+    const grad = lCtx.createRadialGradient(sx, sy, 0, sx, sy, s.r * 5);
+    grad.addColorStop(0, s.color + '40');
+    grad.addColorStop(1, 'transparent');
+    lCtx.fillStyle = grad;
+    lCtx.beginPath();
+    lCtx.arc(sx, sy, s.r * 5, 0, Math.PI * 2);
+    lCtx.fill();
+
+    // Rays through lens
+    const dx = cx - sx, dy = cy - sy;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist > lensR * 0.5) {
+      const nx = dx / dist, ny = dy / dist;
+      const hitX = cx - nx * lensR * 0.95;
+      const hitY = cy - ny * lensR * 0.95;
+
+      // Incoming ray
+      lCtx.strokeStyle = s.color + '20';
+      lCtx.lineWidth = 1;
+      lCtx.beginPath();
+      lCtx.moveTo(sx, sy);
+      lCtx.lineTo(hitX, hitY);
+      lCtx.stroke();
+
+      // Refracted ray
+      const focalX = cx + nx * focalLength;
+      const focalY = cy + ny * focalLength;
+      lCtx.strokeStyle = s.color + '30';
+      lCtx.lineWidth = 1.2;
+      lCtx.beginPath();
+      lCtx.moveTo(hitX, hitY);
+      lCtx.lineTo(focalX, focalY);
+      lCtx.stroke();
+
+      // Focal dot
+      lCtx.beginPath();
+      lCtx.arc(focalX, focalY, 2.5, 0, Math.PI * 2);
+      lCtx.fillStyle = s.color + '50';
+      lCtx.fill();
+    }
+  });
+
+  // Lens body
+  lCtx.beginPath();
+  lCtx.arc(cx, cy, lensR, 0, Math.PI * 2);
+  lCtx.strokeStyle = 'rgba(126, 170, 220, 0.4)';
+  lCtx.lineWidth = 2;
+  lCtx.stroke();
+
+  const lensGrad = lCtx.createRadialGradient(cx - lensR * 0.3, cy - lensR * 0.3, 0, cx, cy, lensR);
+  lensGrad.addColorStop(0, 'rgba(160, 200, 255, 0.1)');
+  lensGrad.addColorStop(0.5, 'rgba(126, 170, 220, 0.05)');
+  lensGrad.addColorStop(1, 'rgba(80, 120, 200, 0.02)');
+  lCtx.fillStyle = lensGrad;
+  lCtx.beginPath();
+  lCtx.arc(cx, cy, lensR, 0, Math.PI * 2);
+  lCtx.fill();
+
+  // Concentric rings
+  for (let i = 1; i <= 3; i++) {
+    lCtx.beginPath();
+    lCtx.arc(cx, cy, lensR * (0.3 + i * 0.22), 0, Math.PI * 2);
+    lCtx.strokeStyle = `rgba(126, 170, 220, ${0.08 - i * 0.02})`;
+    lCtx.lineWidth = 0.5;
+    lCtx.stroke();
+  }
+
+  // Crosshair
+  lCtx.strokeStyle = 'rgba(126, 170, 220, 0.15)';
+  lCtx.lineWidth = 0.5;
+  lCtx.beginPath(); lCtx.moveTo(cx - lensR, cy); lCtx.lineTo(cx + lensR, cy); lCtx.stroke();
+  lCtx.beginPath(); lCtx.moveTo(cx, cy - lensR); lCtx.lineTo(cx, cy + lensR); lCtx.stroke();
+
+  // Optical axis
+  lCtx.strokeStyle = 'rgba(126, 170, 220, 0.1)';
+  lCtx.setLineDash([4, 6]);
+  lCtx.beginPath(); lCtx.moveTo(0, cy); lCtx.lineTo(w, cy); lCtx.stroke();
+  lCtx.setLineDash([]);
+
+  // Focal markers on axis
+  lCtx.fillStyle = 'rgba(126, 170, 220, 0.5)';
+  [cx + focalLength, cx - focalLength].forEach(fx => {
+    if (fx > 0 && fx < w) {
+      lCtx.beginPath(); lCtx.arc(fx, cy, 3, 0, Math.PI * 2); lCtx.fill();
+    }
+  });
+
+  lCtx.fillStyle = 'rgba(126, 170, 220, 0.35)';
+  lCtx.font = '10px JetBrains Mono, monospace';
+  if (cx + focalLength < w) lCtx.fillText('F', cx + focalLength - 3, cy - 10);
+  if (cx - focalLength > 0) lCtx.fillText("F'", cx - focalLength - 6, cy - 10);
+
+  // Shimmer
+  const shimmer = Math.sin(lensTime * 2) * 0.03 + 0.05;
+  const shimGrad = lCtx.createRadialGradient(cx + lensR * 0.2, cy - lensR * 0.2, 0, cx, cy, lensR);
+  shimGrad.addColorStop(0, `rgba(200, 220, 255, ${shimmer})`);
+  shimGrad.addColorStop(1, 'transparent');
+  lCtx.fillStyle = shimGrad;
+  lCtx.beginPath(); lCtx.arc(cx, cy, lensR, 0, Math.PI * 2); lCtx.fill();
+
+  requestAnimationFrame(drawLens);
+}
+
+// ─── 3D Wireframe Mesh ────────────────────────────────────
+const meshCanvas = document.getElementById('meshCanvas');
+const mCtx = meshCanvas.getContext('2d');
+let rotX = 0.5, rotY = 0.3;
+let autoRotate = true;
+let meshDragging = false, meshLastX, meshLastY;
+
+function generateTorusKnot(R, r, p, q, segments, tubeSegs) {
+  const vertices = [], edges = [];
+  for (let i = 0; i <= segments; i++) {
+    const t = (i / segments) * Math.PI * 2 * p;
+    const cosTp = Math.cos(q * t / p), sinTp = Math.sin(q * t / p);
+    const cosT = Math.cos(t), sinT = Math.sin(t);
+    const cx = (R + r * cosTp) * cosT;
+    const cy = (R + r * cosTp) * sinT;
+    const cz = r * sinTp;
+
+    // Approximate tangent for Frenet frame
+    const dt = 0.001;
+    const t2 = t + dt;
+    const cosTp2 = Math.cos(q * t2 / p), sinTp2 = Math.sin(q * t2 / p);
+    const cx2 = (R + r * cosTp2) * Math.cos(t2);
+    const cy2 = (R + r * cosTp2) * Math.sin(t2);
+    const cz2 = r * sinTp2;
+    const T = [cx2 - cx, cy2 - cy, cz2 - cz];
+    const tLen = Math.sqrt(T[0]**2 + T[1]**2 + T[2]**2) || 1;
+    T[0] /= tLen; T[1] /= tLen; T[2] /= tLen;
+
+    // Normal and binormal
+    const up = Math.abs(T[2]) < 0.99 ? [0, 0, 1] : [1, 0, 0];
+    const N = [T[1]*up[2]-T[2]*up[1], T[2]*up[0]-T[0]*up[2], T[0]*up[1]-T[1]*up[0]];
+    const nLen = Math.sqrt(N[0]**2+N[1]**2+N[2]**2)||1;
+    N[0]/=nLen; N[1]/=nLen; N[2]/=nLen;
+    const B = [T[1]*N[2]-T[2]*N[1], T[2]*N[0]-T[0]*N[2], T[0]*N[1]-T[1]*N[0]];
+
+    const tubeR = 0.35;
+    for (let j = 0; j < tubeSegs; j++) {
+      const th = (j / tubeSegs) * Math.PI * 2;
+      const c = Math.cos(th), s = Math.sin(th);
+      vertices.push([
+        cx + tubeR * (c * N[0] + s * B[0]),
+        cy + tubeR * (c * N[1] + s * B[1]),
+        cz + tubeR * (c * N[2] + s * B[2])
+      ]);
+    }
+  }
+
+  for (let i = 0; i < segments; i++) {
+    for (let j = 0; j < tubeSegs; j++) {
+      const cur = i * tubeSegs + j;
+      const next = i * tubeSegs + (j + 1) % tubeSegs;
+      const below = (i + 1) * tubeSegs + j;
+      edges.push([cur, next]);
+      edges.push([cur, below]);
+    }
+  }
+  return { vertices, edges };
+}
+
+const mesh = generateTorusKnot(1.8, 0.8, 2, 3, 80, 8);
+document.getElementById('meshVertCount').textContent = `vertices: ${mesh.vertices.length}`;
+document.getElementById('meshEdgeCount').textContent = `edges: ${mesh.edges.length}`;
+
+meshCanvas.addEventListener('mousedown', e => {
+  meshDragging = true;
+  autoRotate = false;
+  meshLastX = e.clientX;
+  meshLastY = e.clientY;
+});
+
+document.addEventListener('mousemove', e => {
+  if (!meshDragging) return;
+  rotY += (e.clientX - meshLastX) * 0.008;
+  rotX += (e.clientY - meshLastY) * 0.008;
+  meshLastX = e.clientX;
+  meshLastY = e.clientY;
+});
+
+document.addEventListener('mouseup', () => {
+  if (meshDragging) {
+    meshDragging = false;
+    setTimeout(() => autoRotate = true, 2000);
+  }
+});
+
+function project(v, w, h) {
+  const fov = 4, z = v[2] + 5;
+  const scale = fov / z * Math.min(w, h) * 0.22;
+  return [w / 2 + v[0] * scale, h / 2 + v[1] * scale, z];
+}
+
+function rotateVert(v) {
+  let [x, y, z] = v;
+  let c = Math.cos(rotX), s = Math.sin(rotX);
+  let ny = y*c - z*s, nz = y*s + z*c; y = ny; z = nz;
+  c = Math.cos(rotY); s = Math.sin(rotY);
+  let nx = x*c + z*s; nz = -x*s + z*c; x = nx; z = nz;
+  return [x, y, z];
+}
+
+function drawMesh() {
+  const dpr = devicePixelRatio;
+  const w = meshCanvas.width / dpr;
+  const h = meshCanvas.height / dpr;
+  mCtx.clearRect(0, 0, w, h);
+
+  if (autoRotate) { rotY += 0.004; rotX += 0.001; }
+
+  const projected = mesh.vertices.map(v => project(rotateVert(v), w, h));
+
+  // Draw edges
+  mesh.edges.forEach(([a, b]) => {
+    if (a >= projected.length || b >= projected.length) return;
+    const pa = projected[a], pb = projected[b];
+    const avgZ = (pa[2] + pb[2]) / 2;
+    const alpha = Math.max(0.04, Math.min(0.5, 1 - (avgZ - 3) / 5));
+    mCtx.strokeStyle = `rgba(126, 170, 220, ${alpha})`;
+    mCtx.lineWidth = alpha > 0.25 ? 1 : 0.5;
+    mCtx.beginPath();
+    mCtx.moveTo(pa[0], pa[1]);
+    mCtx.lineTo(pb[0], pb[1]);
+    mCtx.stroke();
+  });
+
+  // Draw vertices
+  projected.forEach(p => {
+    const alpha = Math.max(0.05, Math.min(0.6, 1 - (p[2] - 3) / 5));
+    if (alpha > 0.2) {
+      mCtx.fillStyle = `rgba(180, 210, 255, ${alpha * 0.5})`;
+      mCtx.beginPath();
+      mCtx.arc(p[0], p[1], 0.8, 0, Math.PI * 2);
+      mCtx.fill();
+    }
+  });
+
+  requestAnimationFrame(drawMesh);
+}
+
+// ─── Canvas Sizing ────────────────────────────────────────
+function resizeCanvases() {
+  const dpr = devicePixelRatio;
+  [lensCanvas, meshCanvas].forEach(c => {
+    const ctx = c.getContext('2d');
+    const rect = c.parentElement.getBoundingClientRect();
+    c.width = rect.width * dpr;
+    c.height = rect.height * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  });
+}
+
+window.addEventListener('resize', resizeCanvases);
+resizeCanvases();
+drawLens();
+drawMesh();
+</script>
+</body>
+</html>

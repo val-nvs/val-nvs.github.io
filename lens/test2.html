@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Desktop Environment</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #2a3a5c; --dot: rgba(160,185,225,0.18);
+    --win-bg: rgba(22,30,50,0.88); --win-border: rgba(120,155,210,0.25);
+    --win-header: rgba(30,42,68,0.95); --accent: #7eaadc;
+    --accent-glow: rgba(126,170,220,0.3); --text: #c8d8f0;
+    --text-dim: #7a90b5; --close: #e06070; --minimize: #e0b860; --maximize: #60c080;
+  }
+  body {
+    width:100vw; height:100vh; overflow:hidden;
+    background-color: var(--bg);
+    background-image: radial-gradient(circle, var(--dot) 1px, transparent 1px);
+    background-size: 28px 28px;
+    font-family: 'DM Sans', sans-serif; color: var(--text); user-select: none;
+  }
+  .taskbar {
+    position:fixed; bottom:0; left:0; right:0; height:48px;
+    background: rgba(16,22,40,0.92); backdrop-filter: blur(20px);
+    border-top: 1px solid var(--win-border);
+    display:flex; align-items:center; padding:0 16px; gap:8px; z-index:9999;
+  }
+  .taskbar-item {
+    padding:6px 16px; background:rgba(126,170,220,0.1);
+    border:1px solid rgba(126,170,220,0.15); border-radius:8px;
+    font-size:12px; font-family:'JetBrains Mono',monospace;
+    color:var(--text-dim); cursor:pointer; transition:all 0.2s;
+  }
+  .taskbar-item:hover { background:rgba(126,170,220,0.18); color:var(--text); }
+  .taskbar-item.active { background:rgba(126,170,220,0.2); color:var(--accent); border-color:rgba(126,170,220,0.35); }
+  .taskbar-clock { margin-left:auto; font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--text-dim); }
+  .window {
+    position:absolute; min-width:360px; min-height:260px;
+    border-radius:14px; overflow:hidden; border:1px solid var(--win-border);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.04);
+    display:flex; flex-direction:column; transition: box-shadow 0.3s;
+  }
+  .window.focused { z-index:100; box-shadow: 0 12px 60px rgba(0,0,0,0.55), 0 0 0 1px rgba(126,170,220,0.3), 0 0 40px var(--accent-glow); }
+  .window-header {
+    height:40px; background:var(--win-header); display:flex; align-items:center;
+    padding:0 14px; cursor:grab; flex-shrink:0; border-bottom:1px solid rgba(255,255,255,0.04);
+  }
+  .window-header:active { cursor:grabbing; }
+  .window-controls { display:flex; gap:7px; margin-right:12px; }
+  .window-btn { width:12px; height:12px; border-radius:50%; border:none; cursor:pointer; transition:filter 0.2s; }
+  .window-btn:hover { filter:brightness(1.3); }
+  .btn-close { background:var(--close); } .btn-min { background:var(--minimize); } .btn-max { background:var(--maximize); }
+  .window-title { font-size:12.5px; font-family:'JetBrains Mono',monospace; font-weight:500; color:var(--text-dim); }
+  .window-body { flex:1; background:var(--win-bg); backdrop-filter:blur(30px); overflow:hidden; position:relative; }
+  .window-body canvas { display:block; width:100%; height:100%; }
+  .resize-handle { position:absolute; bottom:0; right:0; width:18px; height:18px; cursor:nwse-resize; z-index:10; }
+  .resize-handle::after { content:''; position:absolute; bottom:4px; right:4px; width:8px; height:8px; border-right:2px solid rgba(126,170,220,0.3); border-bottom:2px solid rgba(126,170,220,0.3); }
+  .overlay-info { position:absolute; font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--text-dim); pointer-events:none; line-height:1.6; opacity:0.7; }
+  .lens-info { bottom:10px; left:12px; }
+  .mesh-info { top:10px; right:12px; text-align:right; }
+  .notes-body { padding:16px; font-size:13px; line-height:1.7; color:var(--text-dim); font-family:'JetBrains Mono',monospace; overflow-y:auto; height:100%; }
+  .note-line { padding:2px 0; border-bottom:1px solid rgba(126,170,220,0.05); }
+  .note-accent { color:var(--accent); } .note-dim { color:rgba(122,144,181,0.5); }
+  body::before { content:''; position:fixed; top:-200px; left:-200px; width:600px; height:600px; background:radial-gradient(circle,rgba(100,150,220,0.06)0%,transparent 70%); pointer-events:none; }
+</style>
+</head>
+<body>
+
+<div class="window focused" id="win-lens" style="left:40px;top:40px;width:720px;height:440px;">
+  <div class="window-header"><div class="window-controls"><button class="window-btn btn-close"></button><button class="window-btn btn-min"></button><button class="window-btn btn-max"></button></div><span class="window-title">◉ spherical_lens.app — log | linear</span></div>
+  <div class="window-body">
+    <canvas id="lensCanvas"></canvas>
+    <div class="overlay-info lens-info">
+      <div>f = <span id="focalVal">50</span>mm · d<sub>obj</sub> = <span id="objDistVal">3.0</span>m</div>
+      <div>sensor 36×24mm full-frame</div>
+      <div>scroll = focal · shift+scroll = object dist</div>
+    </div>
+  </div>
+  <div class="resize-handle"></div>
+</div>
+
+<div class="window" id="win-mesh" style="left:420px;top:160px;width:580px;height:480px;">
+  <div class="window-header"><div class="window-controls"><button class="window-btn btn-close"></button><button class="window-btn btn-min"></button><button class="window-btn btn-max"></button></div><span class="window-title">△ sensor_view.app — infinite road</span></div>
+  <div class="window-body">
+    <canvas id="meshCanvas"></canvas>
+    <div class="overlay-info mesh-info">
+      <div>sensor POV · <span id="roadFovVal">39</span>° hFOV</div>
+      <div>drag to look around</div>
+    </div>
+  </div>
+  <div class="resize-handle"></div>
+</div>
+
+<div class="window" id="win-notes" style="left:80px;top:380px;width:340px;height:240px;">
+  <div class="window-header"><div class="window-controls"><button class="window-btn btn-close"></button><button class="window-btn btn-min"></button><button class="window-btn btn-max"></button></div><span class="window-title">✎ notes.txt</span></div>
+  <div class="window-body">
+    <div class="notes-body">
+      <div class="note-line"><span class="note-dim">01</span>  <span class="note-accent">// optical bench</span></div>
+      <div class="note-line"><span class="note-dim">02</span>  left of lens: <span class="note-accent">log scale</span> (world)</div>
+      <div class="note-line"><span class="note-dim">03</span>  right of lens: <span class="note-accent">linear</span> (sensor)</div>
+      <div class="note-line"><span class="note-dim">04</span>  both share focal length</div>
+      <div class="note-line"><span class="note-dim">05</span></div>
+      <div class="note-line"><span class="note-dim">06</span>  <span class="note-accent">scroll</span> = change focal length</div>
+      <div class="note-line"><span class="note-dim">07</span>  <span class="note-accent">shift+scroll</span> = move subject</div>
+      <div class="note-line"><span class="note-dim">08</span>  <span class="note-accent">drag</span> road view to pan camera</div>
+    </div>
+  </div>
+  <div class="resize-handle"></div>
+</div>
+
+<div class="taskbar">
+  <div class="taskbar-item active" data-target="win-lens">◉ Lens</div>
+  <div class="taskbar-item" data-target="win-mesh">△ Road</div>
+  <div class="taskbar-item" data-target="win-notes">✎ Notes</div>
+  <div class="taskbar-clock" id="clock"></div>
+</div>
+
+<script>
+// ─── Window Management ────────────────────────────────────
+let topZ = 100;
+const allWin = document.querySelectorAll('.window');
+function focusW(w){ allWin.forEach(x=>x.classList.remove('focused')); w.classList.add('focused'); w.style.zIndex=++topZ; document.querySelectorAll('.taskbar-item').forEach(t=>t.classList.toggle('active',t.dataset.target===w.id)); }
+document.querySelectorAll('.taskbar-item[data-target]').forEach(i=>i.addEventListener('click',()=>{const w=document.getElementById(i.dataset.target);if(w)focusW(w);}));
+allWin.forEach(w=>w.addEventListener('mousedown',()=>focusW(w)));
+document.querySelectorAll('.window-header').forEach(hdr=>{
+  hdr.addEventListener('mousedown',e=>{
+    if(e.target.classList.contains('window-btn'))return;
+    const w=hdr.closest('.window'); focusW(w);
+    const sx=e.clientX,sy=e.clientY,ox=w.offsetLeft,oy=w.offsetTop;
+    const mv=ev=>{w.style.left=(ox+ev.clientX-sx)+'px';w.style.top=(oy+ev.clientY-sy)+'px';};
+    const up=()=>{document.removeEventListener('mousemove',mv);document.removeEventListener('mouseup',up);};
+    document.addEventListener('mousemove',mv);document.addEventListener('mouseup',up);
+  });
+});
+document.querySelectorAll('.resize-handle').forEach(h=>{
+  h.addEventListener('mousedown',e=>{
+    e.stopPropagation(); const w=h.closest('.window');
+    const sx=e.clientX,sy=e.clientY,sw=w.offsetWidth,sh=w.offsetHeight;
+    const mv=ev=>{w.style.width=Math.max(360,sw+ev.clientX-sx)+'px';w.style.height=Math.max(260,sh+ev.clientY-sy)+'px';resizeAll();};
+    const up=()=>{document.removeEventListener('mousemove',mv);document.removeEventListener('mouseup',up);};
+    document.addEventListener('mousemove',mv);document.addEventListener('mouseup',up);
+  });
+});
+function updateClock(){document.getElementById('clock').textContent=new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'});}
+updateClock();setInterval(updateClock,1000);
+
+// ─── Shared state ─────────────────────────────────────────
+let fMM = 50;          // focal length mm
+let objDistM = 3.0;    // object distance meters
+const sensorW = 36, sensorH = 24;
+const personH = 1.75;
+
+function getHFovDeg(){ return 2*Math.atan(sensorW/2/fMM)*180/Math.PI; }
+
+// ─── Lens Canvas ──────────────────────────────────────────
+const LC = document.getElementById('lensCanvas');
+const lc = LC.getContext('2d');
+
+LC.parentElement.addEventListener('wheel', e=>{
+  e.preventDefault();
+  if(e.shiftKey){
+    objDistM = Math.max(0.5, Math.min(500, objDistM * (1 + e.deltaY*0.003)));
+    document.getElementById('objDistVal').textContent = objDistM<10?objDistM.toFixed(1):Math.round(objDistM);
+  } else {
+    fMM = Math.max(8, Math.min(800, fMM * (1 - e.deltaY*0.003)));
+    document.getElementById('focalVal').textContent = Math.round(fMM);
+    document.getElementById('roadFovVal').textContent = Math.round(getHFovDeg());
+  }
+}, {passive:false});
+
+function drawLens(){
+  const dpr=devicePixelRatio, w=LC.width/dpr, h=LC.height/dpr;
+  lc.clearRect(0,0,w,h);
+
+  const cy=h/2, lensX=w*0.45;
+  const lensHH = h*0.36;
+
+  // Thin lens equation
+  const u = objDistM*1000; // mm
+  const v = 1/(1/fMM - 1/u); // image dist mm
+
+  // Right side: linear scale
+  const rightW = w - lensX - 30;
+  const rScale = rightW / Math.max(v*1.4, fMM*3); // px/mm
+
+  // Left side: log scale
+  const leftW = lensX - 20;
+  const logMin=80, logMax=600000;
+  function logPx(mm){ return lensX - 10 - Math.log(Math.max(mm,logMin)/logMin)/Math.log(logMax/logMin)*leftW; }
+  function linPx(mm){ return lensX + 15 + mm*rScale; }
+
+  // Optical axis
+  lc.strokeStyle='rgba(126,170,220,0.07)'; lc.lineWidth=0.5;
+  lc.beginPath(); lc.moveTo(0,cy); lc.lineTo(w,cy); lc.stroke();
+
+  // ─ Log scale ticks ─
+  lc.font='9px JetBrains Mono,monospace'; lc.textAlign='center';
+  [0.1,0.2,0.5,1,2,3,5,10,20,50,100,200,500].forEach(dm=>{
+    const x=logPx(dm*1000);
+    if(x<3||x>lensX-5)return;
+    lc.strokeStyle='rgba(126,170,220,0.05)'; lc.lineWidth=0.5;
+    lc.beginPath(); lc.moveTo(x,25); lc.lineTo(x,h-14); lc.stroke();
+    lc.fillStyle='rgba(126,170,220,0.22)';
+    lc.fillText(dm>=1?dm+'m':(dm*100)+'cm', x, 18);
+  });
+
+  // ─ Linear scale ticks ─
+  const mmStep = v>400?100:v>150?50:v>80?20:10;
+  for(let mm=mmStep; mm<v*1.5; mm+=mmStep){
+    const x=linPx(mm); if(x>w-10)break;
+    lc.strokeStyle='rgba(126,170,220,0.04)';
+    lc.beginPath(); lc.moveTo(x,cy-6); lc.lineTo(x,cy+6); lc.stroke();
+    lc.fillStyle='rgba(126,170,220,0.18)'; lc.font='8px JetBrains Mono,monospace';
+    lc.fillText(mm+'mm', x, cy+17);
+  }
+
+  // Scale labels
+  lc.fillStyle='rgba(126,170,220,0.3)'; lc.font='10px JetBrains Mono,monospace';
+  lc.textAlign='left'; lc.fillText('← LOG (scene)',6,h-5);
+  lc.textAlign='right'; lc.fillText('LINEAR (image) →',w-6,h-5);
+
+  // ─ Draw lens (biconvex) ─
+  const thick=16;
+  const R=(lensHH*lensHH+thick*thick)/(2*thick);
+  const asin=Math.asin(Math.min(1,lensHH/R));
+  lc.save();
+  lc.beginPath();
+  lc.arc(lensX-thick/2+R, cy, R, Math.PI-asin, Math.PI+asin);
+  lc.arc(lensX+thick/2-R, cy, R, -asin, asin);
+  lc.closePath();
+  const lg=lc.createLinearGradient(lensX-thick,0,lensX+thick,0);
+  lg.addColorStop(0,'rgba(130,180,240,0.08)');
+  lg.addColorStop(0.5,'rgba(170,210,255,0.15)');
+  lg.addColorStop(1,'rgba(130,180,240,0.08)');
+  lc.fillStyle=lg; lc.fill();
+  lc.strokeStyle='rgba(126,170,220,0.5)'; lc.lineWidth=1.5; lc.stroke();
+  lc.restore();
+
+  // Arrows at top/bottom of lens
+  lc.strokeStyle='rgba(126,170,220,0.3)'; lc.lineWidth=1;
+  [cy-lensHH, cy+lensHH].forEach(yy=>{
+    const dir = yy<cy?-1:1;
+    lc.beginPath(); lc.moveTo(lensX-5,yy+dir*8); lc.lineTo(lensX,yy); lc.lineTo(lensX+5,yy+dir*8); lc.stroke();
+  });
+
+  // Focal points
+  lc.fillStyle='rgba(126,170,220,0.5)';
+  const fRx=linPx(fMM), fLx=logPx(fMM);
+  if(fRx<w){lc.beginPath();lc.arc(fRx,cy,3,0,Math.PI*2);lc.fill();
+    lc.fillStyle='rgba(126,170,220,0.35)';lc.font='10px JetBrains Mono,monospace';lc.textAlign='center';lc.fillText('F',fRx,cy-10);}
+  lc.fillStyle='rgba(126,170,220,0.5)';
+  if(fLx>3){lc.beginPath();lc.arc(fLx,cy,3,0,Math.PI*2);lc.fill();
+    lc.fillStyle='rgba(126,170,220,0.35)';lc.textAlign='center';lc.fillText("F'",fLx,cy-10);}
+
+  // ─ Person (object) ─
+  const pX = logPx(u);
+  const pVH = Math.min(lensHH*1.8, Math.max(25, lensHH*(personH/(objDistM*0.6))));
+  const pTop=cy-pVH/2, pBot=cy+pVH/2;
+  const hr=pVH*0.1;
+
+  lc.strokeStyle='rgba(96,192,160,0.65)'; lc.lineWidth=1.5;
+  // head
+  lc.beginPath(); lc.arc(pX, pTop+hr, hr, 0, Math.PI*2); lc.stroke();
+  // torso
+  lc.beginPath(); lc.moveTo(pX,pTop+hr*2); lc.lineTo(pX,pBot-pVH*0.3); lc.stroke();
+  // arms
+  const shY=pTop+hr*2+pVH*0.05;
+  lc.beginPath(); lc.moveTo(pX-pVH*0.15,shY+pVH*0.12); lc.lineTo(pX,shY); lc.lineTo(pX+pVH*0.15,shY+pVH*0.12); lc.stroke();
+  // legs
+  const hipY=pBot-pVH*0.3;
+  lc.beginPath(); lc.moveTo(pX-pVH*0.12,pBot); lc.lineTo(pX,hipY); lc.lineTo(pX+pVH*0.12,pBot); lc.stroke();
+
+  lc.fillStyle='rgba(96,192,160,0.45)'; lc.font='9px JetBrains Mono,monospace'; lc.textAlign='center';
+  lc.fillText('1.75m', pX, pBot+13);
+  lc.fillText((objDistM<10?objDistM.toFixed(1):Math.round(objDistM))+'m', pX, pBot+24);
+
+  // ─ Rays ─
+  if(v>0){
+    const mag = -v/u;
+    const imgVH = Math.min(lensHH*0.95, Math.max(3, personH*1000*Math.abs(mag)*rScale));
+    const sX = linPx(v);
+
+    // Ray points from person
+    const pts = [{oy:pTop+hr, rel:-1},{oy:cy, rel:0},{oy:pBot, rel:1}];
+    const colors=['rgba(96,192,160,','rgba(126,170,220,','rgba(224,184,96,'];
+
+    pts.forEach((p,i)=>{
+      const relNorm = (p.oy-cy)/(pVH/2);
+      const imgY = cy - relNorm * imgVH; // inverted
+      const lensHitY = Math.max(cy-lensHH+2, Math.min(cy+lensHH-2, p.oy));
+
+      // incoming
+      lc.strokeStyle=colors[i]+'0.25)'; lc.lineWidth=1;
+      lc.beginPath(); lc.moveTo(pX,p.oy); lc.lineTo(lensX,lensHitY); lc.stroke();
+
+      // outgoing
+      if(sX<w+60){
+        lc.strokeStyle=colors[i]+'0.35)'; lc.lineWidth=1.2;
+        lc.beginPath(); lc.moveTo(lensX,lensHitY); lc.lineTo(sX,imgY); lc.stroke();
+      }
+    });
+
+    // ─ Sensor ─
+    if(sX<w+30){
+      const sVH = Math.min(lensHH*0.9, sensorH*rScale);
+      const sVW = Math.max(3, Math.min(14, sensorW*rScale*0.2));
+
+      lc.fillStyle='rgba(220,100,110,0.12)';
+      lc.strokeStyle='rgba(220,100,110,0.45)'; lc.lineWidth=1.5;
+      lc.fillRect(sX-sVW/2, cy-sVH, sVW, sVH*2);
+      lc.strokeRect(sX-sVW/2, cy-sVH, sVW, sVH*2);
+
+      lc.fillStyle='rgba(220,100,110,0.55)'; lc.font='9px JetBrains Mono,monospace'; lc.textAlign='center';
+      lc.fillText('SENSOR', sX, cy-sVH-16);
+      lc.fillText('36×24mm', sX, cy-sVH-6);
+      lc.fillStyle='rgba(220,100,110,0.35)';
+      lc.fillText(Math.round(v)+'mm', sX, cy+sVH+14);
+
+      // Inverted person on sensor
+      if(imgVH>6){
+        lc.save(); lc.translate(sX,cy); lc.scale(1,-1);
+        const m=imgVH/2, mhr=m*0.1;
+        lc.strokeStyle='rgba(96,192,160,0.45)'; lc.lineWidth=1;
+        lc.beginPath(); lc.arc(0,-m+mhr,Math.max(1,mhr),0,Math.PI*2); lc.stroke();
+        lc.beginPath(); lc.moveTo(0,-m+mhr*2); lc.lineTo(0,m*0.4); lc.stroke();
+        lc.beginPath(); lc.moveTo(-m*0.15,-m*0.4); lc.lineTo(0,-m*0.55); lc.lineTo(m*0.15,-m*0.4); lc.stroke();
+        lc.beginPath(); lc.moveTo(-m*0.12,m); lc.lineTo(0,m*0.4); lc.lineTo(m*0.12,m); lc.stroke();
+        lc.restore();
+      }
+    }
+  }
+
+  requestAnimationFrame(drawLens);
+}
+
+// ─── Road Wireframe View ──────────────────────────────────
+const MC = document.getElementById('meshCanvas');
+const mc = MC.getContext('2d');
+let camYaw=0, camPitch=0.08, roadDrag=false, rdLX, rdLY, roadT=0;
+
+MC.addEventListener('mousedown',e=>{roadDrag=true;rdLX=e.clientX;rdLY=e.clientY;});
+document.addEventListener('mousemove',e=>{if(!roadDrag)return; camYaw+=(e.clientX-rdLX)*0.003; camPitch=Math.max(-0.3,Math.min(0.5,camPitch+(e.clientY-rdLY)*0.003)); rdLX=e.clientX;rdLY=e.clientY;});
+document.addEventListener('mouseup',()=>{roadDrag=false;});
+
+function drawRoad(){
+  const dpr=devicePixelRatio, w=MC.width/dpr, h=MC.height/dpr;
+  mc.clearRect(0,0,w,h);
+  roadT+=0.004;
+
+  const cx=w/2, cy=h/2;
+  const hfov = getHFovDeg()*Math.PI/180;
+  const fPx = (w/2)/Math.tan(hfov/2);
+
+  function proj(x,y,z){
+    // yaw
+    let rx=x,ry=y,rz=z;
+    const cyw=Math.cos(camYaw),syw=Math.sin(camYaw);
+    let nx=rx*cyw-rz*syw, nz=rx*syw+rz*cyw; rx=nx;rz=nz;
+    // pitch
+    const cp=Math.cos(camPitch),sp=Math.sin(camPitch);
+    let ny=ry*cp-rz*sp, nz2=ry*sp+rz*cp; ry=ny;rz=nz2;
+    if(rz<0.3)return null;
+    return {x:cx+(rx/rz)*fPx, y:cy-(ry/rz)*fPx, z:rz};
+  }
+
+  function line3(x1,y1,z1,x2,y2,z2,col,lw){
+    const a=proj(x1,y1,z1),b=proj(x2,y2,z2);
+    if(!a||!b)return;
+    if(a.x<-300||a.x>w+300||b.x<-300||b.x>w+300)return;
+    const az=(a.z+b.z)/2, fade=Math.max(0.02,Math.min(1,10/az));
+    mc.strokeStyle=col.replace('A',fade.toFixed(3));
+    mc.lineWidth=Math.max(0.2,lw*Math.min(1,4/az));
+    mc.beginPath(); mc.moveTo(a.x,a.y); mc.lineTo(b.x,b.y); mc.stroke();
+  }
+
+  const maxZ=400, rW=4;
+
+  // Road edges
+  for(let z=0;z<maxZ;z+=1.5){
+    line3(-rW,0,z,-rW,0,z+1.5,'rgba(126,170,220,A)',1.2);
+    line3(rW,0,z,rW,0,z+1.5,'rgba(126,170,220,A)',1.2);
+  }
+
+  // Center dashes
+  for(let z=0;z<maxZ;z+=4){
+    line3(-0.08,0.01,z,-0.08,0.01,z+2,'rgba(224,184,96,A)',0.9);
+    line3(0.08,0.01,z,0.08,0.01,z+2,'rgba(224,184,96,A)',0.9);
+  }
+
+  // Lane lines
+  [-2,2].forEach(x=>{for(let z=0;z<maxZ;z+=6){line3(x,0,z,x,0,z+3,'rgba(126,170,220,A)',0.5);}});
+
+  // Cross lines
+  for(let z=0;z<maxZ;z+=10){line3(-rW,0,z,rW,0,z,'rgba(126,170,220,A)',0.2);}
+
+  // Sidewalk
+  [-6,6].forEach(x=>{for(let z=0;z<maxZ;z+=2){line3(x,0,z,x,0,z+2,'rgba(126,170,220,A)',0.35);}});
+
+  // ─ Light Posts ─
+  const pSp=22, pH=7, armL=2.5, pOff=5.5;
+
+  for(let z=8;z<maxZ;z+=pSp){
+    [-pOff, pOff].forEach(px=>{
+      const dir=px>0?-1:1;
+      // pole
+      line3(px,0,z,px,pH,z,'rgba(160,185,220,A)',1.8);
+      // arm
+      line3(px,pH,z,px+dir*armL,pH+0.15,z,'rgba(160,185,220,A)',1.1);
+      // brace
+      line3(px,pH*0.55,z,px+dir*armL*0.55,pH-0.2,z,'rgba(140,165,200,A)',0.6);
+      // fixture
+      const lx=px+dir*armL, ly=pH+0.15;
+      line3(lx-0.2,ly,z,lx+0.2,ly,z,'rgba(180,200,230,A)',1);
+      line3(lx-0.18,ly,z,lx-0.12,ly-0.35,z,'rgba(160,185,220,A)',0.7);
+      line3(lx+0.18,ly,z,lx+0.12,ly-0.35,z,'rgba(160,185,220,A)',0.7);
+
+      // glow
+      const lp=proj(lx,ly-0.15,z);
+      if(lp&&lp.z<100){
+        const gr=Math.max(2,35/lp.z);
+        const ga=Math.min(0.35,4/lp.z);
+        const pulse=0.88+0.12*Math.sin(roadT*3+z*0.4);
+        const grd=mc.createRadialGradient(lp.x,lp.y,0,lp.x,lp.y,gr*3.5);
+        grd.addColorStop(0,`rgba(255,235,170,${ga*pulse})`);
+        grd.addColorStop(0.4,`rgba(255,215,120,${ga*0.3*pulse})`);
+        grd.addColorStop(1,'transparent');
+        mc.fillStyle=grd; mc.beginPath(); mc.arc(lp.x,lp.y,gr*3.5,0,Math.PI*2); mc.fill();
+
+        // ground pool
+        const gp=proj(lx,0,z);
+        if(gp){
+          const cr=Math.max(1,20/gp.z);
+          const cg=mc.createRadialGradient(gp.x,gp.y,0,gp.x,gp.y,cr*2.5);
+          cg.addColorStop(0,`rgba(255,235,170,${ga*0.12*pulse})`);
+          cg.addColorStop(1,'transparent');
+          mc.fillStyle=cg; mc.beginPath(); mc.arc(gp.x,gp.y,cr*2.5,0,Math.PI*2); mc.fill();
+        }
+      }
+    });
+  }
+
+  // Sensor frame brackets
+  const fm=14, cl=22;
+  mc.strokeStyle='rgba(220,100,110,0.2)'; mc.lineWidth=1;
+  [[fm,fm,fm+cl,fm,fm,fm+cl],[w-fm-cl,fm,w-fm,fm,w-fm,fm+cl],[fm,h-fm,fm+cl,h-fm,fm,h-fm-cl],[w-fm,h-fm,w-fm-cl,h-fm,w-fm,h-fm-cl]].forEach(c=>{
+    mc.beginPath(); mc.moveTo(c[0],c[1]); mc.lineTo(c[2],c[3]); mc.stroke();
+    mc.beginPath(); mc.moveTo(c[0],c[1]); mc.lineTo(c[4],c[5]); mc.stroke();
+  });
+
+  // Center crosshair
+  mc.strokeStyle='rgba(126,170,220,0.06)'; mc.lineWidth=0.5;
+  mc.beginPath(); mc.moveTo(cx-18,cy); mc.lineTo(cx+18,cy); mc.stroke();
+  mc.beginPath(); mc.moveTo(cx,cy-18); mc.lineTo(cx,cy+18); mc.stroke();
+
+  requestAnimationFrame(drawRoad);
+}
+
+// ─── Canvas Resize ────────────────────────────────────────
+function resizeAll(){
+  const dpr=devicePixelRatio;
+  [LC,MC].forEach(c=>{
+    const r=c.parentElement.getBoundingClientRect();
+    c.width=r.width*dpr; c.height=r.height*dpr;
+    c.getContext('2d').setTransform(dpr,0,0,dpr,0,0);
+  });
+}
+window.addEventListener('resize',resizeAll);
+resizeAll(); drawLens(); drawRoad();
+</script>
+</body>
+</html>
