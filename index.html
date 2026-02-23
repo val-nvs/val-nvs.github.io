@@ -288,16 +288,6 @@
 		/* ========================================
 		   CARD COMPONENTS
 		   ======================================== */
-		button {
-			background: none;
-			border: none;
-			padding: 0;
-			margin: 0;
-			cursor: pointer;
-			appearance: none;
-			-webkit-appearance: none;
-		}
-
 		.card {
 			background: var(--bg-secondary);
 			border-radius: 0.375rem;
@@ -330,12 +320,83 @@
 			outline: none;
 		}
 
+		.card:hover .wrap-overlay,
+		.card:focus .wrap-overlay {
+			opacity: 0;
+		}
+
+		.wrap-overlay {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			mix-blend-mode: screen;
+			pointer-events: none;
+			opacity: 0.3;
+			transition: opacity 1.5s ease-in-out;
+		}
+
 		.card img {
 			display: block;
 			width: 100%;
 			height: auto;
 			object-fit: cover;
 			border-radius: inherit;
+		}
+
+		.card-placeholder {
+			aspect-ratio: 2 / 3;
+			background: #111;
+			border-radius: inherit;
+		}
+
+		.card img.loading {
+			display: none;
+		}
+
+		.card .wrap-overlay {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			mix-blend-mode: screen;
+			opacity: 0.5;
+			pointer-events: none;
+			border-radius: inherit;
+		}
+
+		/* ========================================
+		   TEXT CARD (spans 3 columns in a 4-col grid)
+		   ======================================== */
+		.text-card {
+			grid-column: span 3;
+			padding: 0.5rem;
+			display: flex;
+			align-items: center;
+			color: var(--text-primary);
+			font-size: 1rem;
+			line-height: 1.5;
+		}
+
+		/* ========================================
+		   DATE STRIP
+		   ======================================== */
+		.date-strip {
+			background: rgba(100, 112, 123, 0.25);
+			padding: 0.2rem var(--content-padding);
+			font-size: 0.75rem;
+			font-weight: 500;
+			letter-spacing: 0.05em;
+			color: var(--text-primary);
+			text-transform: uppercase;
+		}
+
+		.date-strip + .section {
+			border-top: none;
 		}
 
 		/* ========================================
@@ -657,33 +718,33 @@
 			<section class="section">
 				<div class="section-title" data-translate="home.videography">Videography Portfolio <span class="material-symbols-outlined">open_in_new</span></div>
 				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
-					<button class="card" onclick="window.open('https://val-nvs.com/portfolio/', '_blank')">
+					<a class="card" href="https://val-nvs.com/portfolio/" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/film.gif" alt="">
-					</button>
+					</a>
 				</div>
 			</section>
 
 			<section class="section">
 				<div class="section-title" data-translate="home.photography">Photography Portfolios</div>
 				<div class="content-grid" style="grid-template-columns: repeat(2, 1fr);">
-					<button class="card" onclick="window.open('https://valdirneves.mypixieset.com/', '_blank')">
+					<a class="card" href="https://valdirneves.mypixieset.com/" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/pixieset2.jpg" alt="">
-					</button>
-					<button class="card" onclick="window.open('https://val-nvs.com/photo/', '_blank')">
+					</a>
+					<a class="card" href="https://val-nvs.com/photo/" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/photofolio.jpg" alt="">
-					</button>
+					</a>
 				</div>
 			</section>
 
 			<section class="section">
-				<div class="section-title">PROFILES</div>
+				<div class="section-title" data-translate="home.profiles">PROFILES</div>
 				<div class="content-grid" style="grid-template-columns: repeat(2, 1fr);">
-					<button class="card" onclick="window.open('https://www.linkedin.com/in/valdir-neves/', '_blank')">
+					<a class="card" href="https://www.linkedin.com/in/valdir-neves/" target="_blank" rel="noopener">
 						<img src="media/linkedin.jpg" alt="LinkedIn">
-					</button>
-					<button class="card" onclick="window.open('https://www.instagram.com/val.nevs/', '_blank')">
+					</a>
+					<a class="card" href="https://www.instagram.com/val.nevs/" target="_blank" rel="noopener">
 						<img src="media/instagram.jpg" alt="Instagram">
-					</button>
+					</a>
 				</div>
 			</section>
 		</div>
@@ -693,193 +754,210 @@
 			<section class="section">
 				<div class="section-title">3D PRINTED FILM CAMERA 📌</div>
 				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
-					<button class="card" onclick="window.open('https://cad.onshape.com/documents/5c2b9c47264034ac5c1a5ddc/w/cf712b211e6f3dfb560adac5/e/8d057c5d33a5d1feb3ac213e?renderMode=0&uiState=6925435e636df3628be2911a', '_blank')">
+					<a class="card" href="https://cad.onshape.com/documents/5c2b9c47264034ac5c1a5ddc/w/cf712b211e6f3dfb560adac5/e/8d057c5d33a5d1feb3ac213e?renderMode=0&uiState=6925435e636df3628be2911a" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/v19.gif" alt="">
-					</button>
-					<button class="card" onclick="window.open('https://github.com/val-nvs/film-camera', '_blank')">
+					</a>
+					<a class="card" href="https://github.com/val-nvs/film-camera" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/github.png" alt="">
-					</button>
+					</a>
 				</div>
 			</section>
 
 			<section class="section">
 				<div class="section-title">LENS SIMULATION WIP</div>
 				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
-					<button class="card" onclick="window.open('https://val-nvs.com/lens/test5.html', '_blank')">
+					<a class="card" href="https://val-nvs.com/lens/test5.html" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/lens.jpg" alt="">
-					</button>
+					</a>
 				</div>
 			</section>
 
 			<section class="section">
 				<div class="section-title">LOGIC GATE SIMULATION</div>
-				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
-					<button class="card" onclick="window.open('https://val-nvs.com/logic/game.html', '_blank')">
+				<div class="content-grid" style="grid-template-columns: repeat(4, 1fr);">
+					<a class="card" href="https://val-nvs.com/logic/game.html" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/logic.png" alt="">
-					</button>
+					</a>
+					<div class="text-card">A digital logic gate simulator built from scratch. Drag, connect and test gates in real time.</div>
 				</div>
 			</section>
+
+			<div class="date-strip">August 2025</div>
 
 			<section class="section">
 				<div class="section-title">CLUB BENARES WEBSITE '25/8</div>
 				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
-					<button class="card" onclick="window.open('https://thebenaresclub.com', '_blank')">
+					<a class="card" href="https://thebenaresclub.com" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/benares.png" alt="">
-					</button>
+					</a>
 				</div>
 			</section>
 
+			<div class="date-strip">May 2025</div>
 
 			<section class="section">
 				<div class="section-title">DUOTONE TECHNICOLOR FILTER '25/5</div>
-				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
-					<button class="card" onclick="window.open('https://val-nvs.com/colors/', '_blank')">
+				<div class="content-grid" style="grid-template-columns: repeat(4, 1fr);">
+					<a class="card" href="https://val-nvs.com/colors/" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/mex.jpg" alt="">
-					</button>
+					</a>
+					<div class="text-card">Upload any photo and split it into two-tone colour channels, inspired by early Technicolor processes.</div>
 				</div>
 			</section>
 
+			<div class="date-strip">November 2025</div>
+
 			<section class="section">
 				<div class="section-title">LISBON METRO ENTRANCES '25/11</div>
-				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
-					<button class="card" onclick="window.open('https://val-nvs.com/lisbon', '_blank')">
+				<div class="content-grid" style="grid-template-columns: repeat(4, 1fr);">
+					<a class="card" href="https://val-nvs.com/lisbon" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/lisboa.jpg" alt="">
-					</button>
+					</a>
+					<div class="text-card">An interactive map of every Lisbon metro station entrance with photos, coordinates and accessibility info.</div>
 				</div>
 			</section>
 
 			<section class="section">
 				<div class="section-title">PORTFOLIO WEBSITES</div>
 				<div class="content-grid" style="grid-template-columns: repeat(2, 1fr);">
-					<button class="card" onclick="window.open('https://val-nvs.com/portflio.html', '_blank')">
+					<a class="card" href="https://val-nvs.com/portflio.html" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/film.jpg" alt="">
-					</button>
-					<button class="card" onclick="window.open('https://val-nvs.com/photo.html', '_blank')">
+					</a>
+					<a class="card" href="https://val-nvs.com/photo.html" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/photofolio.jpg" alt="">
-					</button>
+					</a>
 				</div>
 			</section>
 
+			<div class="date-strip">October 2025</div>
+
 			<section class="section">
 				<div class="section-title">CHAT ROOM '25/10</div>
-				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
-					<button class="card" onclick="window.open('https://val-nvs.com/chat/', '_blank')">
+				<div class="content-grid" style="grid-template-columns: repeat(4, 1fr);">
+					<a class="card" href="https://val-nvs.com/chat/" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/chat.png" alt="">
-					</button>
-					<button class="card" onclick="window.open('https://val-nvs.com/irc/', '_blank')">
+					</a>
+					<a class="card" href="https://val-nvs.com/irc/" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/irc.png" alt="">
-					</button>
+					</a>
+					<div class="text-card" style="grid-column: span 2;">Real-time chat rooms — a modern web version and a retro IRC-style client.</div>
 				</div>
 			</section>
+
+			<div class="date-strip">June 2024</div>
 
 			<section class="section">
 				<div class="section-title">BLENDER 3D PRE-VIS & PHOTOGRAMMETRY '24/6</div>
 				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
-					<button class="card" onclick="window.open('https://val-nvs.com/portfolio/', '_blank')">
+					<a class="card" href="https://val-nvs.com/portfolio/" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/previs.png" alt="">
-					</button>
-					<button class="card" onclick="window.open('https://www.youtube.com/watch?v=5LlSdajis7g', '_blank')">
+					</a>
+					<a class="card" href="https://www.youtube.com/watch?v=5LlSdajis7g" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/ytlogo.png" alt="">
-					</button>
+					</a>
 				</div>
 			</section>
 
 			<section class="section">
 				<div class="section-title">DEVELOPMENT TIMES '25/11</div>
 				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
-					<button class="card" onclick="window.open('https://val-nvs.com/rodinal/', '_blank')">
+					<a class="card" href="https://val-nvs.com/rodinal/" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/times.png" alt="">
-					</button>
+					</a>
 				</div>
 			</section>
+
+			<div class="date-strip">September 2025</div>
 
 			<section class="section">
 				<div class="section-title">BROADCAST TABLE '25/9</div>
 				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
-					<button class="card" onclick="window.open('https://val-nvs.com/tv/', '_blank')">
+					<a class="card" href="https://val-nvs.com/tv/" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/switcher.gif" alt="">
-					</button>
+					</a>
 				</div>
 			</section>
 
 			<section class="section">
 				<div class="section-title">BLENDER GUIDE '25/5</div>
 				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
-					<button class="card" onclick="window.open('https://val-nvs.com/blender-guide/', '_blank')">
+					<a class="card" href="https://val-nvs.com/blender-guide/" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/pan.gif" alt="">
-					</button>
+					</a>
 				</div>
 			</section>
 
 			<section class="section">
 				<div class="section-title">FAVORITE FILMS '25/9</div>
 				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
-					<button class="card" onclick="window.open('https://val-nvs.com/favorites/', '_blank')">
+					<a class="card" href="https://val-nvs.com/favorites/" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/films.jpg" alt="">
-					</button>
+					</a>
 				</div>
 			</section>
 
 			<section class="section">
 				<div class="section-title">ENGINE '25/8</div>
 				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
-					<button class="card" onclick="window.open('https://val-nvs.com/game-engine/', '_blank')">
+					<a class="card" href="https://val-nvs.com/game-engine/" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/engine.jpg" alt="">
-					</button>
+					</a>
 				</div>
 			</section>
+
+			<div class="date-strip">2020</div>
 
 			<section class="section">
 				<div class="section-title">BLENDER NODES '20</div>
 				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
-					<button class="card" style="cursor: not-allowed;" aria-disabled="true">
+					<span class="card" style="cursor: not-allowed;" aria-disabled="true">
 						<img loading="lazy" src="media/nodes.png" alt="">
-					</button>
+					</span>
 				</div>
 			</section>
 
 			<section class="section">
 				<div class="section-title">STATS '25/11</div>
 				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
-					<button class="card" onclick="window.open('https://val-nvs.com/stats/', '_blank')">
+					<a class="card" href="https://val-nvs.com/stats/" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/stats.png" alt="">
-					</button>
+					</a>
 				</div>
 			</section>
 
 			<section class="section">
 				<div class="section-title">OTHER WEBSITES</div>
 				<div class="content-grid" style="grid-template-columns: repeat(2, 1fr);">
-					<button class="card" onclick="window.open('https://val-nvs.com/klotski.html', '_blank')">
+					<a class="card" href="https://val-nvs.com/klotski.html" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/klotski.png" alt="Klotski puzzle game">
-					</button>
-					<button class="card" onclick="window.open('https://val-nvs.com/calc.html', '_blank')">
+					</a>
+					<a class="card" href="https://val-nvs.com/calc.html" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/calc.png" alt="Custom calculator">
-					</button>
-					<button class="card" onclick="window.open('https://val-nvs.com/portfolio/old.html', '_blank')">
+					</a>
+					<a class="card" href="https://val-nvs.com/portfolio/old.html" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/old.png" alt="">
-					</button>
-					<button class="card" onclick="window.open('https://val-nvs.com/404', '_blank')">
+					</a>
+					<a class="card" href="https://val-nvs.com/404" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/404.png" alt="404 error page">
-					</button>
+					</a>
 				</div>
 			</section>
 
 			<section class="section">
 				<div class="section-title">OLD LANDER</div>
 				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
-					<button class="card" onclick="window.open('https://val-nvs.com/OLDindex.html', '_blank')">
+					<a class="card" href="https://val-nvs.com/OLDindex.html" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/pic1.jpg" alt="Original landing page">
-					</button>
+					</a>
 				</div>
 			</section>
 
 			<section class="section">
 				<div class="section-title">GITHUB PROFILE</div>
 				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
-					<button class="card" onclick="window.open('https://github.com/val-nvs', '_blank')">
+					<a class="card" href="https://github.com/val-nvs" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/github.png" alt="GitHub profile">
-					</button>
+					</a>
 				</div>
 			</section>
 		</div>
@@ -898,80 +976,80 @@
 
 			<section class="section about-content">
 				<div class="section-title" data-translate="about.title">ABOUT ME</div>
-				<h1>Brazilian living in Lisbon, Portugal.</h1>
-				<h1>Passionate about filmmaking, photography, optics, architecture and engineering.</h1>
-				<h1>Fluent in English & Portuguese.</h1>
+				<h1 data-translate="about.bio1">Brazilian living in Lisbon, Portugal.</h1>
+				<h1 data-translate="about.bio2">Passionate about filmmaking, photography, optics, architecture and engineering.</h1>
+				<h1 data-translate="about.bio3">Fluent in English & Portuguese.</h1>
 			</section>
 
 			<section class="section">
-				<div class="section-title">CONTACT</div>
+				<div class="section-title" data-translate="about.contact">CONTACT</div>
 				<p data-translate="about.collaborate">Looking to collaborate or share ideas?<br>Drop me a message- I'd love to connect.</p><br>
-				<h1>Email: valdir.nvs@outlook.com</h1>
+				<h1>Email: <a href="mailto:valdir.nvs@outlook.com">valdir.nvs@outlook.com</a></h1>
 				<h1>Phone: (+351) 930 946 697</h1>
-				<h1>Instagram: <a href="https://www.instagram.com/val.nevs" target="_blank">@val.nevs</a></h1>
-				<h1>LinkedIn: <a href="https://www.linkedin.com/in/valdir-neves/" target="_blank">/valdir-neves/</a></h1>
+				<h1>Instagram: <a href="https://www.instagram.com/val.nevs" target="_blank" rel="noopener">@val.nevs</a></h1>
+				<h1>LinkedIn: <a href="https://www.linkedin.com/in/valdir-neves/" target="_blank" rel="noopener">/valdir-neves/</a></h1>
 
 				<div class="content-grid" style="grid-template-columns: repeat(4, 1fr);">
-					<button class="card" onclick="window.open('https://www.linkedin.com/in/valdir-neves/', '_blank')">
+					<a class="card" href="https://www.linkedin.com/in/valdir-neves/" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/linkedin.jpg" alt="LinkedIn">
-					</button>
-					<button class="card" onclick="window.open('https://www.instagram.com/val.nevs/', '_blank')">
+					</a>
+					<a class="card" href="https://www.instagram.com/val.nevs/" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/instagram.jpg" alt="Instagram">
-					</button>
-					<button class="card" onclick="window.open('https://github.com/val-nvs', '_blank')">
+					</a>
+					<a class="card" href="https://github.com/val-nvs" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/github.png" alt="GitHub">
-					</button>
-					<button class="card" onclick="window.open('https://letterboxd.com/eerom/', '_blank')">
+					</a>
+					<a class="card" href="https://letterboxd.com/eerom/" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/letterboxd.png" alt="Letterboxd">
-					</button>
+					</a>
 				</div>
 			</section>
 
 			<section class="section">
 				<div class="section-title">EDUCATION</div>
 				<div class="content-grid" style="grid-template-columns: repeat(3, 1fr);">
-					<button class="card" onclick="window.open('https://www.artecapital.net/entrevista-314-pedro-senna-nune', '_blank')">
+					<a class="card" href="https://www.artecapital.net/entrevista-314-pedro-senna-nune" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/switch.jpg" alt="">
-					</button>
-					<button class="card" onclick="window.open('https://www.artecapital.net/entrevista-314-pedro-senna-nune', '_blank')">
+					</a>
+					<a class="card" href="https://www.artecapital.net/entrevista-314-pedro-senna-nune" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/hall.jpg" alt="">
-					</button>
-					<button class="card" onclick="window.open('https://atelierdelisboa.pt/bruno-pelletier-sequeira', '_blank')">
+					</a>
+					<a class="card" href="https://atelierdelisboa.pt/bruno-pelletier-sequeira" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/negatives.jpg" alt="Atelier de Lisboa">
-					</button>
+					</a>
 				</div>
 				<br>
-				<h1>2023 — 2025:&nbsp;&nbsp;<a href="https://www.artecapital.net/entrevista-314-pedro-senna-nune" target="_blank">ETIC — Coord. Pedro Senna Nunes</a></h1>
-				<h1>2025 — 2026:&nbsp;&nbsp;<a href="https://atelierdelisboa.pt/bruno-pelletier-sequeira" target="_blank">Atelier de Lisboa — Coord. Bruno Pelletier Sequeira</a></h1>
+				<h1>2023 — 2025:&nbsp;&nbsp;<a href="https://www.artecapital.net/entrevista-314-pedro-senna-nune" target="_blank" rel="noopener">ETIC — Coord. Pedro Senna Nunes</a></h1>
+				<h1>2025 — 2026:&nbsp;&nbsp;<a href="https://atelierdelisboa.pt/bruno-pelletier-sequeira" target="_blank" rel="noopener">Atelier de Lisboa — Coord. Bruno Pelletier Sequeira</a></h1>
 			</section>
 
 			<section class="section">
 				<div class="section-title">FAVORITE FILMS</div>
 				<div class="content-grid" style="grid-template-columns: repeat(4, 1fr);">
-					<button class="card" onclick="window.open('https://letterboxd.com/film/everything-everywhere-all-at-once/', '_blank')">
+					<a class="card" href="https://letterboxd.com/film/everything-everywhere-all-at-once/" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/everything.jpg" alt="Everything Everywhere All at Once (2022)">
-					</button>
-					<button class="card" onclick="window.open('https://letterboxd.com/film/amelie/', '_blank')">
+					</a>
+					<a class="card" href="https://letterboxd.com/film/amelie/" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/amelie.jpg" alt="Amélie (2001)">
-					</button>
-					<button class="card" onclick="window.open('https://letterboxd.com/film/the-secret-life-of-walter-mitty-2013/', '_blank')">
+					</a>
+					<a class="card" href="https://letterboxd.com/film/the-secret-life-of-walter-mitty-2013/" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/mitty.jpg" alt="The Secret Life of Walter Mitty (2013)">
-					</button>
-					<button class="card" onclick="window.open('https://letterboxd.com/film/all-about-lily-chou-chou/', '_blank')">
+					</a>
+					<a class="card" href="https://letterboxd.com/film/all-about-lily-chou-chou/" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/lily.jpg" alt="All About Lily Chou-Chou (2001)">
-					</button>
-					<button class="card" onclick="window.open('https://boxd.it/hiVs', '_blank')">
+					</a>
+					<a class="card" href="https://boxd.it/hiVs" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/lazzaro.jpg" alt="Happy as Lazzaro (2018)">
-					</button>
-					<button class="card" onclick="window.open('https://boxd.it/1UkW', '_blank')">
+					</a>
+					<a class="card" href="https://boxd.it/1UkW" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/angels.jpg" alt="Fallen Angels (1995)">
-					</button>
-					<button class="card" onclick="window.open('https://boxd.it/5hII', '_blank')">
+					</a>
+					<a class="card" href="https://boxd.it/5hII" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/frank.jpg" alt="Frank (2014)">
-					</button>
-					<button class="card" onclick="window.open('https://boxd.it/1pDe', '_blank')">
+					</a>
+					<a class="card" href="https://boxd.it/1pDe" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/love.jpg" alt="Love Exposure (2008)">
-					</button>
+					</a>
 				</div>
 			</section>
 
@@ -1076,8 +1154,7 @@
 								<div class="equipment-specs"></div>
 							</div>
 						</div>
-						
-
+						<div class="item-list">
 							<div class="list-item">
 								<span class="item-bullet">Microphone</span>
 								<div>
@@ -1085,25 +1162,20 @@
 									<span class="item-description">BOYA BY-MM1 Cardioid cold-shoe 3.5mmTRS</span>
 								</div>
 							</div>
-							
 							<div class="list-item">
 								<span class="item-bullet">5W Light</span>
 								<div>
 									<span class="item-type">1</span>
 									<span class="item-description">5W RGB cold-shoe</span>
 								</div>
-							</div>			
-							
-						<div class="item-list">
+							</div>
 							<div class="list-item">
 								<span class="item-bullet">ND Filters</span>
 								<div>
 									<span class="item-type">0</span>
 									<span class="item-description"></span>
 								</div>
-							</div>			
-							
-						<div class="item-list">
+							</div>
 							<div class="list-item">
 								<span class="item-bullet">Polarizing Filter</span>
 								<div>
@@ -1111,8 +1183,6 @@
 									<span class="item-description">72ø</span>
 								</div>
 							</div>
-							
-						<div class="item-list">
 							<div class="list-item">
 								<span class="item-bullet">Star Filter</span>
 								<div>
@@ -1120,7 +1190,6 @@
 									<span class="item-description">X shape. 67ø / 72ø</span>
 								</div>
 							</div>
-							
 							<div class="list-item">
 								<span class="item-bullet">RGB Filters</span>
 								<div>
@@ -1128,7 +1197,6 @@
 									<span class="item-description">72ø</span>
 								</div>
 							</div>
-							
 							<div class="list-item">
 								<span class="item-bullet">Filter Adapters</span>
 								<div>
@@ -1136,7 +1204,6 @@
 									<span class="item-description">49ø->52ø / 52ø->62ø (film scanner) / 52ø->67ø / 3x 52ø->72ø</span>
 								</div>
 							</div>
-							
 							<div class="list-item">
 								<span class="item-bullet">Magnetic Filter Adapters</span>
 								<div>
@@ -1144,7 +1211,6 @@
 									<span class="item-description">72ø</span>
 								</div>
 							</div>
-							
 							<div class="list-item">
 								<span class="item-bullet">UV Filter</span>
 								<div>
@@ -1152,7 +1218,6 @@
 									<span class="item-description">52ø</span>
 								</div>
 							</div>
-							
 							<div class="list-item">
 								<span class="item-bullet">Reflector</span>
 								<div>
@@ -1160,7 +1225,6 @@
 									<span class="item-description">110cm White/Silver</span>
 								</div>
 							</div>
-							
 							<div class="list-item">
 								<span class="item-bullet">Macro Converter</span>
 								<div>
@@ -1168,7 +1232,6 @@
 									<span class="item-description">10+16mm AF E-Mount</span>
 								</div>
 							</div>
-
 							<div class="list-item">
 								<span class="item-bullet">Clapper</span>
 								<div>
@@ -1176,7 +1239,6 @@
 									<span class="item-description"></span>
 								</div>
 							</div>
-							
 						</div>
 					</div>
 				</div>
@@ -1186,7 +1248,7 @@
 
 	<!-- Background Music Footer -->
 	<footer>
-		<div class="section-title" style="margin-bottom: 0.5rem; font-size: 0.875rem;">BACKGROUND MUSIC</div>
+		<div class="section-title" data-translate="footer.music" style="margin-bottom: 0.5rem; font-size: 0.875rem;">BACKGROUND MUSIC</div>
 		<iframe style="border: 0; width: 100%; height: 42px;" src="https://bandcamp.com/EmbeddedPlayer/album=385726686/size=small/bgcol=333333/linkcol=2ebd35/artwork=none/track=3492351434/transparent=true/" seamless><a href="https://aphextwin.bandcamp.com/track/aisatsana-102">aisatsana [102] by Aphex Twin</a></iframe>
 		<iframe style="border: 0; width: 100%; height: 42px;" src="https://bandcamp.com/EmbeddedPlayer/album=1083983989/size=small/bgcol=333333/linkcol=e99708/artwork=none/track=1893697882/transparent=true/" seamless><a href="https://c418.bandcamp.com/album/life-changing-moments-seem-minor-in-pictures">life changing moments seem minor in pictures by C418</a></iframe>
 	</footer>
@@ -1217,8 +1279,14 @@ const translations = {
 		'nav.about': 'About',
 		'home.videography': 'VIDEOGRAPHY PORTFOLIO',
 		'home.photography': 'PHOTOGRAPHY PORTFOLIOS',
+		'home.profiles': 'PROFILES',
 		'about.title': 'ABOUT ME',
-		'about.collaborate': 'Looking to collaborate or share ideas?<br>Drop me a message- I\'d love to connect.'
+		'about.bio1': 'Brazilian living in Lisbon, Portugal.',
+		'about.bio2': 'Passionate about filmmaking, photography, optics, architecture and engineering.',
+		'about.bio3': 'Fluent in English & Portuguese.',
+		'about.collaborate': 'Looking to collaborate or share ideas?<br>Drop me a message- I\'d love to connect.',
+		'about.contact': 'CONTACT',
+		'footer.music': 'BACKGROUND MUSIC'
 	},
 	pt: {
 		'nav.home': 'Início',
@@ -1226,8 +1294,14 @@ const translations = {
 		'nav.about': 'Sobre',
 		'home.videography': 'PORTFÓLIO DE VIDEOGRAFIA',
 		'home.photography': 'PORTFÓLIOS DE FOTOGRAFIA',
+		'home.profiles': 'PERFIS',
 		'about.title': 'SOBRE MIM',
-		'about.collaborate': 'Quer colaborar ou compartilhar ideias?<br>Mande uma mensagem - adoraria conversar.'
+		'about.bio1': 'Brasileiro a viver em Lisboa, Portugal.',
+		'about.bio2': 'Apaixonado por cinema, fotografia, óptica, arquitetura e engenharia.',
+		'about.bio3': 'Fluente em Inglês e Português.',
+		'about.collaborate': 'Quer colaborar ou compartilhar ideias?<br>Mande uma mensagem - adoraria conversar.',
+		'about.contact': 'CONTACTO',
+		'footer.music': 'MÚSICA DE FUNDO'
 	},
 	es: {
 		'nav.home': 'Inicio',
@@ -1235,8 +1309,14 @@ const translations = {
 		'nav.about': 'Acerca',
 		'home.videography': 'PORTAFOLIO DE VIDEOGRAFÍA',
 		'home.photography': 'PORTAFOLIO DE FOTOGRAFÍA',
+		'home.profiles': 'PERFILES',
 		'about.title': 'ACERCA DE MÍ',
-		'about.collaborate': '¿Quieres colaborar o compartir ideas?<br>Envíame un mensaje - me encantaría conectar.'
+		'about.bio1': 'Brasileño viviendo en Lisboa, Portugal.',
+		'about.bio2': 'Apasionado por el cine, la fotografía, la óptica, la arquitectura y la ingeniería.',
+		'about.bio3': 'Fluido en Inglés y Portugués.',
+		'about.collaborate': '¿Quieres colaborar o compartir ideas?<br>Envíame un mensaje - me encantaría conectar.',
+		'about.contact': 'CONTACTO',
+		'footer.music': 'MÚSICA DE FONDO'
 	},
 	fr: {
 		'nav.home': 'Accueil',
@@ -1244,8 +1324,14 @@ const translations = {
 		'nav.about': 'À propos',
 		'home.videography': 'PORTFOLIO DE VIDÉOGRAPHIE',
 		'home.photography': 'PORTFOLIO DE PHOTOGRAPHIE',
+		'home.profiles': 'PROFILS',
 		'about.title': 'À PROPOS DE MOI',
-		'about.collaborate': 'Envie de collaborer ou partager des idées?<br>Envoyez-moi un message - j\'aimerais échanger.'
+		'about.bio1': 'Brésilien vivant à Lisbonne, Portugal.',
+		'about.bio2': 'Passionné par le cinéma, la photographie, l\'optique, l\'architecture et l\'ingénierie.',
+		'about.bio3': 'Bilingue en Anglais et Portugais.',
+		'about.collaborate': 'Envie de collaborer ou partager des idées?<br>Envoyez-moi un message - j\'aimerais échanger.',
+		'about.contact': 'CONTACT',
+		'footer.music': 'MUSIQUE DE FOND'
 	},
 	de: {
 		'nav.home': 'Startseite',
@@ -1253,8 +1339,14 @@ const translations = {
 		'nav.about': 'Über',
 		'home.videography': 'VIDEOGRAFIE-PORTFOLIO',
 		'home.photography': 'FOTOGRAFIE-PORTFOLIO',
+		'home.profiles': 'PROFILE',
 		'about.title': 'ÜBER MICH',
-		'about.collaborate': 'Möchten Sie zusammenarbeiten oder Ideen austauschen?<br>Schreiben Sie mir - ich würde mich freuen.'
+		'about.bio1': 'Brasilianer, wohnhaft in Lissabon, Portugal.',
+		'about.bio2': 'Leidenschaftlich für Filmemachen, Fotografie, Optik, Architektur und Ingenieurwesen.',
+		'about.bio3': 'Fließend in Englisch und Portugiesisch.',
+		'about.collaborate': 'Möchten Sie zusammenarbeiten oder Ideen austauschen?<br>Schreiben Sie mir - ich würde mich freuen.',
+		'about.contact': 'KONTAKT',
+		'footer.music': 'HINTERGRUNDMUSIK'
 	},
 	zh: {
 		'nav.home': '首页',
@@ -1262,8 +1354,14 @@ const translations = {
 		'nav.about': '关于',
 		'home.videography': '视频作品集',
 		'home.photography': '摄影作品集',
+		'home.profiles': '个人主页',
 		'about.title': '关于我',
-		'about.collaborate': '想要合作或分享想法？<br>给我发消息 - 我很乐意联系。'
+		'about.bio1': '巴西人，现居葡萄牙里斯本。',
+		'about.bio2': '热爱电影制作、摄影、光学、建筑和工程。',
+		'about.bio3': '精通英语和葡萄牙语。',
+		'about.collaborate': '想要合作或分享想法？<br>给我发消息 - 我很乐意联系。',
+		'about.contact': '联系方式',
+		'footer.music': '背景音乐'
 	},
 	ja: {
 		'nav.home': 'ホーム',
@@ -1271,8 +1369,14 @@ const translations = {
 		'nav.about': '概要',
 		'home.videography': 'ビデオグラフィーポートフォリオ',
 		'home.photography': '写真ポートフォリオ',
+		'home.profiles': 'プロフィール',
 		'about.title': '私について',
-		'about.collaborate': 'コラボレーションやアイデアの共有をご希望ですか？<br>メッセージをお送りください。'
+		'about.bio1': 'ブラジル出身、ポルトガル・リスボン在住。',
+		'about.bio2': '映画制作、写真、光学、建築、工学に情熱を注いでいます。',
+		'about.bio3': '英語とポルトガル語が堪能。',
+		'about.collaborate': 'コラボレーションやアイデアの共有をご希望ですか？<br>メッセージをお送りください。',
+		'about.contact': 'お問い合わせ',
+		'footer.music': 'BGM'
 	},
 	ar: {
 		'nav.home': 'الرئيسية',
@@ -1280,8 +1384,14 @@ const translations = {
 		'nav.about': 'حول',
 		'home.videography': 'معرض الفيديو',
 		'home.photography': 'معرض التصوير',
+		'home.profiles': 'الملفات الشخصية',
 		'about.title': 'نبذة عني',
-		'about.collaborate': 'تبحث عن التعاون أو مشاركة الأفكار؟<br>أرسل لي رسالة - يسعدني التواصل.'
+		'about.bio1': 'برازيلي مقيم في لشبونة، البرتغال.',
+		'about.bio2': 'شغوف بصناعة الأفلام والتصوير والبصريات والهندسة المعمارية والهندسة.',
+		'about.bio3': 'أتقن الإنجليزية والبرتغالية.',
+		'about.collaborate': 'تبحث عن التعاون أو مشاركة الأفكار؟<br>أرسل لي رسالة - يسعدني التواصل.',
+		'about.contact': 'تواصل معي',
+		'footer.music': 'موسيقى خلفية'
 	}
 };
 
@@ -1297,10 +1407,7 @@ function translatePage(lang) {
 		}
 	});
 	
-	// Store preference
 	localStorage.setItem('preferredLanguage', lang);
-	
-	// Update HTML lang attribute
 	document.documentElement.lang = lang;
 }
 
@@ -1309,7 +1416,6 @@ const savedLang = localStorage.getItem('preferredLanguage');
 if (savedLang && translations[savedLang]) {
 	currentLang = savedLang;
 	translatePage(savedLang);
-	// Update active language option
 	document.querySelectorAll('.language-option').forEach(opt => {
 		opt.classList.toggle('active', opt.dataset.lang === savedLang);
 	});
@@ -1319,7 +1425,6 @@ const languageIcon = document.getElementById('languageIcon');
 const languagePopup = document.getElementById('languagePopup');
 const languageOptions = document.querySelectorAll('.language-option');
 
-// Toggle popup
 function toggleLanguagePopup() {
 	const isActive = languagePopup.classList.toggle('active');
 	languageIcon.setAttribute('aria-expanded', isActive);
@@ -1330,7 +1435,6 @@ languageIcon.addEventListener('click', (e) => {
 	toggleLanguagePopup();
 });
 
-// Keyboard support for icon
 languageIcon.addEventListener('keydown', (e) => {
 	if (e.key === 'Enter' || e.key === ' ') {
 		e.preventDefault();
@@ -1338,7 +1442,6 @@ languageIcon.addEventListener('keydown', (e) => {
 	}
 });
 
-// Close on outside click
 document.addEventListener('click', (e) => {
 	if (!languagePopup.contains(e.target) && e.target !== languageIcon) {
 		languagePopup.classList.remove('active');
@@ -1346,7 +1449,6 @@ document.addEventListener('click', (e) => {
 	}
 });
 
-// Language option selection
 languageOptions.forEach(option => {
 	option.addEventListener('click', () => {
 		const lang = option.dataset.lang;
@@ -1357,7 +1459,6 @@ languageOptions.forEach(option => {
 		translatePage(lang);
 	});
 	
-	// Keyboard support for options
 	option.addEventListener('keydown', (e) => {
 		if (e.key === 'Enter' || e.key === ' ') {
 			e.preventDefault();
@@ -1436,15 +1537,73 @@ navButtons.forEach(button => {
 		this.classList.add('active');
 		
 		const selectedPage = this.dataset.page;
-		
 		document.querySelectorAll('.page').forEach(page => {
-			page.style.display = 'none';
+			page.style.display = page.id === selectedPage ? '' : 'none';
 		});
 		
-		document.getElementById(selectedPage).style.display = 'block';
+		window.scrollTo({ top: 0, behavior: 'smooth' });
 	});
 });
-</script>
+// ========================================
+// PLASTIC WRAP OVERLAY
+// ========================================
+const wrapFiles = [];
+for (let i = 1; i <= 68; i++) {
+	wrapFiles.push('media/wrap/' + String(i).padStart(2, '0') + '.jpg');
+}
 
+document.querySelectorAll('.card').forEach(card => {
+	const overlay = document.createElement('img');
+	overlay.className = 'wrap-overlay';
+	overlay.alt = '';
+	overlay.loading = 'lazy';
+	const pick = () => wrapFiles[Math.floor(Math.random() * wrapFiles.length)];
+	overlay.src = pick();
+	overlay.onerror = function() {
+		this.dataset.retries = (parseInt(this.dataset.retries || 0)) + 1;
+		if (this.dataset.retries < 5) this.src = pick();
+		else this.remove();
+	};
+	card.appendChild(overlay);
+});
+// ========================================
+// PLASTIC WRAP OVERLAY
+// ========================================
+const wrapCount = 50;
+document.querySelectorAll('.card').forEach(card => {
+	if (card.querySelector('.wrap-overlay')) return;
+	const img = card.querySelector('img');
+	if (!img) return;
+
+	// Add placeholder and hide image
+	const placeholder = document.createElement('div');
+	placeholder.classList.add('card-placeholder');
+	card.insertBefore(placeholder, img);
+	img.classList.add('loading');
+
+	// Create wrap
+	const wrap = document.createElement('img');
+	wrap.src = `media/wrap/${Math.floor(Math.random() * wrapCount) + 1}.jpg`;
+	wrap.alt = '';
+	wrap.loading = 'lazy';
+	wrap.classList.add('wrap-overlay', 'loading');
+	card.style.position = 'relative';
+	card.appendChild(wrap);
+
+	// Reveal once both are ready
+	let loaded = 0;
+	const reveal = () => {
+		loaded++;
+		if (loaded < 2) return;
+		placeholder.remove();
+		img.classList.remove('loading');
+		wrap.classList.remove('loading');
+	};
+
+	if (img.complete) loaded++; else img.addEventListener('load', reveal);
+	if (wrap.complete) loaded++; else wrap.addEventListener('load', reveal);
+	if (loaded === 2) reveal();
+});
+</script>
 </body>
 </html>
