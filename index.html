@@ -198,7 +198,7 @@
 
 		.nav-list {
 			display: grid;
-			grid-template-columns: repeat(3, 1fr);
+			grid-template-columns: repeat(4, 1fr);
 			background: #1D1F25;
 			list-style: none;
 			border-radius: 0.3125rem;
@@ -256,14 +256,10 @@
 			font-weight: 500;
 		}
 
-		.section h1 {
+		.section p {
 			font-size: 1rem;
 			font-weight: 400;
 			margin-bottom: 0.5rem;
-		}
-
-		.section p {
-			margin-top: 1rem;
 			line-height: 1.5;
 		}
 
@@ -284,6 +280,11 @@
 			width: 100%;
 			gap: 0.375rem;
 		}
+
+		.grid-1 { grid-template-columns: 1fr; }
+		.grid-2 { grid-template-columns: repeat(2, 1fr); }
+		.grid-3 { grid-template-columns: repeat(3, 1fr); }
+		.grid-4 { grid-template-columns: repeat(4, 1fr); }
 
 		/* ========================================
 		   CARD COMPONENTS
@@ -346,14 +347,36 @@
 			border-radius: inherit;
 		}
 
-		.card-placeholder {
-			aspect-ratio: 2 / 3;
-			background: #111;
-			border-radius: inherit;
+		.card.card-nolink {
+			cursor: default;
 		}
 
-		.card img.loading {
-			display: none;
+		.card.card-nolink::before {
+			border-color: rgba(161, 170, 179, 0.6);
+		}
+
+		.card.card-nolink:hover::before,
+		.card.card-nolink:focus::before {
+			border: 1px solid rgba(161, 170, 179, 0.6);
+		}
+
+		.card-tooltip {
+			position: absolute;
+			background: var(--bg-primary);
+			border: 1px solid var(--border-color);
+			border-radius: 0.25rem;
+			padding: 0.3rem 0.6rem;
+			font-size: 0.75rem;
+			color: var(--text-primary);
+			white-space: nowrap;
+			z-index: 5;
+			pointer-events: none;
+			opacity: 0;
+			transition: opacity 0.3s ease;
+		}
+
+		.card-tooltip.visible {
+			opacity: 1;
 		}
 
 		.card .wrap-overlay {
@@ -544,7 +567,7 @@
 			border-top: none;
 		}
 
-		.about-content h1 {
+		.about-content p {
 			text-align: center;
 		}
 
@@ -704,11 +727,12 @@
 	</div>
 	
 	<!-- Navigation -->
-	<nav class="site-nav">
-		<ul class="nav-list">
-			<li class="nav-item active" data-page="home" data-translate="nav.home">Home</li>
-			<li class="nav-item" data-page="projects" data-translate="nav.projects">Tech Projects</li>
-			<li class="nav-item" data-page="about" data-translate="nav.about">About</li>
+	<nav class="site-nav" aria-label="Main navigation">
+		<ul class="nav-list" role="tablist">
+			<li class="nav-item active" data-page="home" data-translate="nav.home" role="tab" aria-selected="true" tabindex="0">Home</li>
+			<li class="nav-item" data-page="projects" data-translate="nav.projects" role="tab" aria-selected="false" tabindex="0">Tech Projects</li>
+			<li class="nav-item" data-page="tools" data-translate="nav.tools" role="tab" aria-selected="false" tabindex="0">Tools</li>
+			<li class="nav-item" data-page="about" data-translate="nav.about" role="tab" aria-selected="false" tabindex="0">About</li>
 		</ul>
 	</nav>
 	
@@ -717,7 +741,7 @@
 		<div class="page" id="home">
 			<section class="section">
 				<div class="section-title" data-translate="home.videography">Videography Portfolio <span class="material-symbols-outlined">open_in_new</span></div>
-				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
+				<div class="content-grid grid-1">
 					<a class="card" href="https://val-nvs.com/portfolio/" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/film.gif" alt="">
 					</a>
@@ -726,7 +750,7 @@
 
 			<section class="section">
 				<div class="section-title" data-translate="home.photography">Photography Portfolios</div>
-				<div class="content-grid" style="grid-template-columns: repeat(2, 1fr);">
+				<div class="content-grid grid-2">
 					<a class="card" href="https://valdirneves.mypixieset.com/" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/pixieset2.jpg" alt="">
 					</a>
@@ -738,7 +762,7 @@
 
 			<section class="section">
 				<div class="section-title" data-translate="home.profiles">PROFILES</div>
-				<div class="content-grid" style="grid-template-columns: repeat(2, 1fr);">
+				<div class="content-grid grid-2">
 					<a class="card" href="https://www.linkedin.com/in/valdir-neves/" target="_blank" rel="noopener">
 						<img src="media/linkedin.jpg" alt="LinkedIn">
 					</a>
@@ -749,12 +773,16 @@
 			</section>
 		</div>
 
+
+
 		<!-- PROJECTS PAGE -->
 		<div class="page" id="projects" style="display: none;">
+
+
 			<section class="section">
 				<div class="section-title">3D PRINTED FILM CAMERA 📌</div>
-				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
-					<a class="card" href="https://cad.onshape.com/documents/5c2b9c47264034ac5c1a5ddc/w/cf712b211e6f3dfb560adac5/e/8d057c5d33a5d1feb3ac213e?renderMode=0&uiState=6925435e636df3628be2911a" target="_blank" rel="noopener">
+				<div class="content-grid grid-4">
+					<a class="card" href="https://cad.onshape.com/documents/5c2b9c47264034ac5c1a5ddc/w/cf712b211e6f3dfb560adac5/e/8d057c5d33a5d1feb3ac213e?renderMode=0&uiState=6925435e636df3628be2911a" target="_blank" rel="noopener" style="grid-column: span 3;">
 						<img loading="lazy" src="media/v19.gif" alt="">
 					</a>
 					<a class="card" href="https://github.com/val-nvs/film-camera" target="_blank" rel="noopener">
@@ -763,77 +791,20 @@
 				</div>
 			</section>
 
+			<div class="date-strip">August 2025 / Ongoing</div>
 			<section class="section">
-				<div class="section-title">LENS SIMULATION WIP</div>
-				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
-					<a class="card" href="https://val-nvs.com/lens/test5.html" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/lens.jpg" alt="">
-					</a>
-				</div>
-			</section>
-
-			<section class="section">
-				<div class="section-title">LOGIC GATE SIMULATION</div>
-				<div class="content-grid" style="grid-template-columns: repeat(4, 1fr);">
-					<a class="card" href="https://val-nvs.com/logic/game.html" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/logic.png" alt="">
-					</a>
-					<div class="text-card">A digital logic gate simulator built from scratch. Drag, connect and test gates in real time.</div>
-				</div>
-			</section>
-
-			<div class="date-strip">August 2025</div>
-
-			<section class="section">
-				<div class="section-title">CLUB BENARES WEBSITE '25/8</div>
-				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
+				<div class="section-title">CLUB BENARES WEBSITE</div>
+				<div class="content-grid grid-1">
 					<a class="card" href="https://thebenaresclub.com" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/benares.png" alt="">
 					</a>
 				</div>
 			</section>
 
-			<div class="date-strip">May 2025</div>
-
-			<section class="section">
-				<div class="section-title">DUOTONE TECHNICOLOR FILTER '25/5</div>
-				<div class="content-grid" style="grid-template-columns: repeat(4, 1fr);">
-					<a class="card" href="https://val-nvs.com/colors/" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/mex.jpg" alt="">
-					</a>
-					<div class="text-card">Upload any photo and split it into two-tone colour channels, inspired by early Technicolor processes.</div>
-				</div>
-			</section>
-
-			<div class="date-strip">November 2025</div>
-
-			<section class="section">
-				<div class="section-title">LISBON METRO ENTRANCES '25/11</div>
-				<div class="content-grid" style="grid-template-columns: repeat(4, 1fr);">
-					<a class="card" href="https://val-nvs.com/lisbon" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/lisboa.jpg" alt="">
-					</a>
-					<div class="text-card">An interactive map of every Lisbon metro station entrance with photos, coordinates and accessibility info.</div>
-				</div>
-			</section>
-
-			<section class="section">
-				<div class="section-title">PORTFOLIO WEBSITES</div>
-				<div class="content-grid" style="grid-template-columns: repeat(2, 1fr);">
-					<a class="card" href="https://val-nvs.com/portflio.html" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/film.jpg" alt="">
-					</a>
-					<a class="card" href="https://val-nvs.com/photo.html" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/photofolio.jpg" alt="">
-					</a>
-				</div>
-			</section>
-
 			<div class="date-strip">October 2025</div>
-
 			<section class="section">
-				<div class="section-title">CHAT ROOM '25/10</div>
-				<div class="content-grid" style="grid-template-columns: repeat(4, 1fr);">
+				<div class="section-title">CHAT ROOM</div>
+				<div class="content-grid grid-4">
 					<a class="card" href="https://val-nvs.com/chat/" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/chat.png" alt="">
 					</a>
@@ -845,80 +816,138 @@
 			</section>
 
 			<div class="date-strip">June 2024</div>
-
 			<section class="section">
-				<div class="section-title">BLENDER 3D PRE-VIS & PHOTOGRAMMETRY '24/6</div>
-				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
-					<a class="card" href="https://val-nvs.com/portfolio/" target="_blank" rel="noopener">
+				<div class="section-title">BLENDER 3D PRE-VIS & PHOTOGRAMMETRY</div>
+				<div class="content-grid grid-1">
+					<a class="card" href="https://www.youtube.com/watch?v=5LlSdajis7g" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/previs.png" alt="">
 					</a>
-					<a class="card" href="https://www.youtube.com/watch?v=5LlSdajis7g" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/ytlogo.png" alt="">
+				</div>
+			</section>
+
+			<div class="date-strip">November 2025</div>
+			<section class="section">
+				<div class="section-title">PORTFOLIO WEBSITES</div>
+				<div class="content-grid grid-2">
+					<a class="card" href="https://val-nvs.com/portfolio/" target="_blank" rel="noopener">
+						<img loading="lazy" src="media/film.jpg" alt="">
+					</a>
+					<a class="card" href="https://val-nvs.com/photo/" target="_blank" rel="noopener">
+						<img loading="lazy" src="media/photofolio.jpg" alt="">
 					</a>
 				</div>
 			</section>
 
+			<div class="date-strip">May 2024</div>
 			<section class="section">
-				<div class="section-title">DEVELOPMENT TIMES '25/11</div>
-				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
-					<a class="card" href="https://val-nvs.com/rodinal/" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/times.png" alt="">
-					</a>
+				<div class="section-title">FULL ADDER</div>
+				<div class="content-grid grid-4">
+					<span class="card card-nolink" aria-disabled="true">
+						<img loading="lazy" src="" alt="">
+					</span>
+					<div class="text-card" style="grid-column: span 2;">Full added made out of NORS (11 NOR, 3 NOT, 2 OR).</div>
 				</div>
 			</section>
+
+			<div class="date-strip">April 2024</div>
+			<section class="section">
+				<div class="section-title">LED COUNTER</div>
+				<div class="content-grid grid-4">
+					<span class="card card-nolink" aria-disabled="true">
+						<img loading="lazy" src="" alt="">
+					</span>
+					<div class="text-card" style="grid-column: span 3;">LED counter CAD workshop at NOVA School of Science and Technology</div>
+				</div>
+			</section>
+
+			<div class="date-strip">April 2025</div>
+			<section class="section">
+				<div class="section-title">COMPUTER</div>
+				<div class="content-grid grid-4">
+					<span class="card card-nolink" aria-disabled="true">
+						<img loading="lazy" src="" alt="">
+					</span>
+					<div class="text-card" style="grid-column: span 3;">Computer in Minecraft and addition program.</div>
+				</div>
+			</section>
+
+			<div class="date-strip">April 2025</div>
+			<section class="section">
+				<div class="section-title">CALCULATOR</div>
+				<div class="content-grid grid-4">
+					<span class="card card-nolink" aria-disabled="true">
+						<img loading="lazy" src="" alt="">
+					</span>
+					<div class="text-card" style="grid-column: span 3;">Calculator in Minecraft capable of multiplication.</div>
+				</div>
+			</section>
+
 
 			<div class="date-strip">September 2025</div>
-
 			<section class="section">
-				<div class="section-title">BROADCAST TABLE '25/9</div>
-				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
+				<div class="section-title">BROADCAST TABLE</div>
+				<div class="content-grid grid-1">
 					<a class="card" href="https://val-nvs.com/tv/" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/switcher.gif" alt="">
 					</a>
 				</div>
 			</section>
 
+			<div class="date-strip">June 2025</div>
 			<section class="section">
-				<div class="section-title">BLENDER GUIDE '25/5</div>
-				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
+				<div class="section-title">BLENDER GUIDE</div>
+				<div class="content-grid grid-1">
 					<a class="card" href="https://val-nvs.com/blender-guide/" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/pan.gif" alt="">
 					</a>
 				</div>
 			</section>
 
+			<div class="date-strip">September 2025</div>
 			<section class="section">
-				<div class="section-title">FAVORITE FILMS '25/9</div>
-				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
+				<div class="section-title">FAVORITE FILMS</div>
+				<div class="content-grid grid-1">
 					<a class="card" href="https://val-nvs.com/favorites/" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/films.jpg" alt="">
 					</a>
 				</div>
 			</section>
 
+			<div class="date-strip">August 2025</div>
 			<section class="section">
-				<div class="section-title">ENGINE '25/8</div>
-				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
+				<div class="section-title">ENGINE</div>
+				<div class="content-grid grid-1">
 					<a class="card" href="https://val-nvs.com/game-engine/" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/engine.jpg" alt="">
 					</a>
 				</div>
 			</section>
 
-			<div class="date-strip">2020</div>
-
+			<div class="date-strip">January/March 2025</div>
 			<section class="section">
-				<div class="section-title">BLENDER NODES '20</div>
-				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
-					<span class="card" style="cursor: not-allowed;" aria-disabled="true">
+				<div class="section-title">DESMOS LENS</div>
+				<div class="content-grid grid-4">
+					<span class="card card-nolink" aria-disabled="true">
+						<img loading="lazy" src="" alt="">
+					</span>
+					<div class="text-card" style="grid-column: span 3;">2D Lens simulation in Desmos with bokeh simulation.</div>
+				</div>
+			</section>
+
+			<div class="date-strip">2020</div>
+			<section class="section">
+				<div class="section-title">BLENDER NODES</div>
+				<div class="content-grid grid-1">
+					<span class="card card-nolink" aria-disabled="true">
 						<img loading="lazy" src="media/nodes.png" alt="">
 					</span>
 				</div>
 			</section>
 
+			<div class="date-strip">November 2025</div>
 			<section class="section">
-				<div class="section-title">STATS '25/11</div>
-				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
+				<div class="section-title">STATS</div>
+				<div class="content-grid grid-1">
 					<a class="card" href="https://val-nvs.com/stats/" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/stats.png" alt="">
 					</a>
@@ -927,7 +956,7 @@
 
 			<section class="section">
 				<div class="section-title">OTHER WEBSITES</div>
-				<div class="content-grid" style="grid-template-columns: repeat(2, 1fr);">
+				<div class="content-grid grid-2">
 					<a class="card" href="https://val-nvs.com/klotski.html" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/klotski.png" alt="Klotski puzzle game">
 					</a>
@@ -945,7 +974,7 @@
 
 			<section class="section">
 				<div class="section-title">OLD LANDER</div>
-				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
+				<div class="content-grid grid-1">
 					<a class="card" href="https://val-nvs.com/OLDindex.html" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/pic1.jpg" alt="Original landing page">
 					</a>
@@ -954,13 +983,76 @@
 
 			<section class="section">
 				<div class="section-title">GITHUB PROFILE</div>
-				<div class="content-grid" style="grid-template-columns: repeat(1, 1fr);">
+				<div class="content-grid grid-1">
 					<a class="card" href="https://github.com/val-nvs" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/github.png" alt="GitHub profile">
 					</a>
 				</div>
 			</section>
+
 		</div>
+
+
+
+
+		<!-- TOOLS PAGE -->
+		<div class="page" id="tools" style="display: none;">
+
+			<div class="date-strip">February 2026</div>
+			<section class="section">
+				<div class="section-title">LENS SIMULATION WIP</div>
+				<div class="content-grid grid-1">
+					<a class="card" href="https://val-nvs.com/lens/test5.html" target="_blank" rel="noopener">
+						<img loading="lazy" src="media/lens.jpg" alt="">
+					</a>
+				</div>
+			</section>
+
+			<div class="date-strip">May 2025</div>
+			<section class="section">
+				<div class="section-title">DUOTONE TECHNICOLOR FILTER</div>
+				<div class="content-grid grid-4">
+					<a class="card" href="https://val-nvs.com/colors/" target="_blank" rel="noopener">
+						<img loading="lazy" src="media/mex.jpg" alt="">
+					</a>
+					<div class="text-card">Upload any photo and split it into two-tone colour channels, inspired by early Technicolor processes.</div>
+				</div>
+			</section>
+
+			<div class="date-strip">November 2025</div>
+			<section class="section">
+				<div class="section-title">DEVELOPMENT TIMES</div>
+				<div class="content-grid grid-1">
+					<a class="card" href="https://val-nvs.com/rodinal/" target="_blank" rel="noopener">
+						<img loading="lazy" src="media/times.png" alt="">
+					</a>
+				</div>
+			</section>
+
+			<div class="date-strip">Aug/Sep 2025</div>
+			<section class="section">
+				<div class="section-title">LOGIC GATE SIMULATION</div>
+				<div class="content-grid grid-4">
+					<a class="card" href="https://val-nvs.com/logic/game.html" target="_blank" rel="noopener">
+						<img loading="lazy" src="media/logic.png" alt="">
+					</a>
+					<div class="text-card">A digital logic gate simulator built from scratch. Drag, connect and test gates in real time.</div>
+				</div>
+			</section>
+
+			<section class="section">
+				<div class="section-title">LISBON METRO ENTRANCES</div>
+				<div class="content-grid grid-4">
+					<a class="card" href="https://val-nvs.com/lisbon" target="_blank" rel="noopener">
+						<img loading="lazy" src="media/lisboa.jpg" alt="">
+					</a>
+					<div class="text-card">An interactive map of every Lisbon metro station entrance with photos, coordinates and accessibility info.</div>
+				</div>
+			</section>
+
+		</div>
+
+
 
 		<!-- ABOUT PAGE -->
 		<div class="page" id="about" style="display: none;">
@@ -976,20 +1068,20 @@
 
 			<section class="section about-content">
 				<div class="section-title" data-translate="about.title">ABOUT ME</div>
-				<h1 data-translate="about.bio1">Brazilian living in Lisbon, Portugal.</h1>
-				<h1 data-translate="about.bio2">Passionate about filmmaking, photography, optics, architecture and engineering.</h1>
-				<h1 data-translate="about.bio3">Fluent in English & Portuguese.</h1>
+				<p data-translate="about.bio1">Brazilian living in Lisbon, Portugal.</p>
+				<p data-translate="about.bio2">Passionate about filmmaking, photography, optics, architecture and engineering.</p>
+				<p data-translate="about.bio3">Fluent in English & Portuguese.</p>
 			</section>
 
 			<section class="section">
 				<div class="section-title" data-translate="about.contact">CONTACT</div>
 				<p data-translate="about.collaborate">Looking to collaborate or share ideas?<br>Drop me a message- I'd love to connect.</p><br>
-				<h1>Email: <a href="mailto:valdir.nvs@outlook.com">valdir.nvs@outlook.com</a></h1>
-				<h1>Phone: (+351) 930 946 697</h1>
-				<h1>Instagram: <a href="https://www.instagram.com/val.nevs" target="_blank" rel="noopener">@val.nevs</a></h1>
-				<h1>LinkedIn: <a href="https://www.linkedin.com/in/valdir-neves/" target="_blank" rel="noopener">/valdir-neves/</a></h1>
+				<p>Email: <a href="mailto:valdir.nvs@outlook.com">valdir.nvs@outlook.com</a></p>
+				<p>Phone: (+351) 930 946 697</p>
+				<p>Instagram: <a href="https://www.instagram.com/val.nevs" target="_blank" rel="noopener">@val.nevs</a></p>
+				<p>LinkedIn: <a href="https://www.linkedin.com/in/valdir-neves/" target="_blank" rel="noopener">/valdir-neves/</a></p>
 
-				<div class="content-grid" style="grid-template-columns: repeat(4, 1fr);">
+				<div class="content-grid grid-4">
 					<a class="card" href="https://www.linkedin.com/in/valdir-neves/" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/linkedin.jpg" alt="LinkedIn">
 					</a>
@@ -1007,7 +1099,7 @@
 
 			<section class="section">
 				<div class="section-title">EDUCATION</div>
-				<div class="content-grid" style="grid-template-columns: repeat(3, 1fr);">
+				<div class="content-grid grid-3">
 					<a class="card" href="https://www.artecapital.net/entrevista-314-pedro-senna-nune" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/switch.jpg" alt="">
 					</a>
@@ -1019,13 +1111,13 @@
 					</a>
 				</div>
 				<br>
-				<h1>2023 — 2025:&nbsp;&nbsp;<a href="https://www.artecapital.net/entrevista-314-pedro-senna-nune" target="_blank" rel="noopener">ETIC — Coord. Pedro Senna Nunes</a></h1>
-				<h1>2025 — 2026:&nbsp;&nbsp;<a href="https://atelierdelisboa.pt/bruno-pelletier-sequeira" target="_blank" rel="noopener">Atelier de Lisboa — Coord. Bruno Pelletier Sequeira</a></h1>
+				<p>2023 — 2025:&nbsp;&nbsp;<a href="https://www.artecapital.net/entrevista-314-pedro-senna-nune" target="_blank" rel="noopener">ETIC — Coord. Pedro Senna Nunes</a></p>
+				<p>2025 — 2026:&nbsp;&nbsp;<a href="https://atelierdelisboa.pt/bruno-pelletier-sequeira" target="_blank" rel="noopener">Atelier de Lisboa — Coord. Bruno Pelletier Sequeira</a></p>
 			</section>
 
 			<section class="section">
 				<div class="section-title">FAVORITE FILMS</div>
-				<div class="content-grid" style="grid-template-columns: repeat(4, 1fr);">
+				<div class="content-grid grid-4">
 					<a class="card" href="https://letterboxd.com/film/everything-everywhere-all-at-once/" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/everything.jpg" alt="Everything Everywhere All at Once (2022)">
 					</a>
@@ -1495,34 +1587,40 @@ headerDisplay.addEventListener('click', () => {
 // ========================================
 // HEADER HOVER EFFECT
 // ========================================
+let rafPending = false;
 document.addEventListener('mousemove', (e) => {
-	const mouseX = e.clientX;
-	const mouseY = e.clientY;
-	
-	headerChars.forEach((span) => {
-		const rect = span.getBoundingClientRect();
-		const charX = rect.left + rect.width / 2;
-		const charY = rect.top + rect.height / 2;
+	if (rafPending) return;
+	rafPending = true;
+	requestAnimationFrame(() => {
+		const mouseX = e.clientX;
+		const mouseY = e.clientY;
 		
-		const dx = mouseX - charX;
-		const dy = mouseY - charY;
-		const distance = Math.sqrt(dx * dx + dy * dy);
-		const maxDistance = 300;
-		
-		if (distance < maxDistance) {
-			const intensity = 1 - (distance / maxDistance);
-			const weight = 200 + Math.round(intensity * 600);
+		headerChars.forEach((span) => {
+			const rect = span.getBoundingClientRect();
+			const charX = rect.left + rect.width / 2;
+			const charY = rect.top + rect.height / 2;
 			
-			const gray = 128;
-			const green = Math.round(intensity * 224);
-			const greenMid = Math.round(intensity * 80);
+			const dx = mouseX - charX;
+			const dy = mouseY - charY;
+			const distance = Math.sqrt(dx * dx + dy * dy);
+			const maxDistance = 300;
 			
-			span.style.fontWeight = weight;
-			span.style.color = `rgb(${Math.round(gray * (1 - intensity))}, ${gray + green}, ${gray * (1 - intensity) + greenMid})`;
-			span.style.animation = 'none';
-		} else {
-			span.style.animation = '';
-		}
+			if (distance < maxDistance) {
+				const intensity = 1 - (distance / maxDistance);
+				const weight = 200 + Math.round(intensity * 600);
+				
+				const gray = 128;
+				const green = Math.round(intensity * 224);
+				const greenMid = Math.round(intensity * 80);
+				
+				span.style.fontWeight = weight;
+				span.style.color = `rgb(${Math.round(gray * (1 - intensity))}, ${gray + green}, ${gray * (1 - intensity) + greenMid})`;
+				span.style.animation = 'none';
+			} else {
+				span.style.animation = '';
+			}
+		});
+		rafPending = false;
 	});
 });
 
@@ -1533,8 +1631,12 @@ const navButtons = document.querySelectorAll('.nav-item');
 
 navButtons.forEach(button => {
 	button.addEventListener('click', function() {
-		navButtons.forEach(btn => btn.classList.remove('active'));
+		navButtons.forEach(btn => {
+			btn.classList.remove('active');
+			btn.setAttribute('aria-selected', 'false');
+		});
 		this.classList.add('active');
+		this.setAttribute('aria-selected', 'true');
 		
 		const selectedPage = this.dataset.page;
 		document.querySelectorAll('.page').forEach(page => {
@@ -1543,66 +1645,51 @@ navButtons.forEach(button => {
 		
 		window.scrollTo({ top: 0, behavior: 'smooth' });
 	});
-});
-// ========================================
-// PLASTIC WRAP OVERLAY
-// ========================================
-const wrapFiles = [];
-for (let i = 1; i <= 68; i++) {
-	wrapFiles.push('media/wrap/' + String(i).padStart(2, '0') + '.jpg');
-}
 
-document.querySelectorAll('.card').forEach(card => {
-	const overlay = document.createElement('img');
-	overlay.className = 'wrap-overlay';
-	overlay.alt = '';
-	overlay.loading = 'lazy';
-	const pick = () => wrapFiles[Math.floor(Math.random() * wrapFiles.length)];
-	overlay.src = pick();
-	overlay.onerror = function() {
-		this.dataset.retries = (parseInt(this.dataset.retries || 0)) + 1;
-		if (this.dataset.retries < 5) this.src = pick();
-		else this.remove();
-	};
-	card.appendChild(overlay);
+	button.addEventListener('keydown', (e) => {
+		if (e.key === 'Enter' || e.key === ' ') {
+			e.preventDefault();
+			button.click();
+		}
+	});
 });
+
+// ========================================
+// NO-LINK CARD TOOLTIP
+// ========================================
+document.querySelectorAll('.card-nolink').forEach(card => {
+	card.addEventListener('click', (e) => {
+		const existing = card.querySelector('.card-tooltip');
+		if (existing) return;
+		const tip = document.createElement('div');
+		tip.classList.add('card-tooltip');
+		tip.textContent = 'No link available';
+		card.style.position = 'relative';
+		card.appendChild(tip);
+		const rect = card.getBoundingClientRect();
+		tip.style.left = `${e.clientX - rect.left}px`;
+		tip.style.top = `${e.clientY - rect.top - 30}px`;
+		requestAnimationFrame(() => tip.classList.add('visible'));
+		setTimeout(() => {
+			tip.classList.remove('visible');
+			setTimeout(() => tip.remove(), 300);
+		}, 1500);
+	});
+});
+
 // ========================================
 // PLASTIC WRAP OVERLAY
 // ========================================
 const wrapCount = 50;
 document.querySelectorAll('.card').forEach(card => {
 	if (card.querySelector('.wrap-overlay')) return;
-	const img = card.querySelector('img');
-	if (!img) return;
-
-	// Add placeholder and hide image
-	const placeholder = document.createElement('div');
-	placeholder.classList.add('card-placeholder');
-	card.insertBefore(placeholder, img);
-	img.classList.add('loading');
-
-	// Create wrap
 	const wrap = document.createElement('img');
 	wrap.src = `media/wrap/${Math.floor(Math.random() * wrapCount) + 1}.jpg`;
 	wrap.alt = '';
 	wrap.loading = 'lazy';
-	wrap.classList.add('wrap-overlay', 'loading');
+	wrap.classList.add('wrap-overlay');
 	card.style.position = 'relative';
 	card.appendChild(wrap);
-
-	// Reveal once both are ready
-	let loaded = 0;
-	const reveal = () => {
-		loaded++;
-		if (loaded < 2) return;
-		placeholder.remove();
-		img.classList.remove('loading');
-		wrap.classList.remove('loading');
-	};
-
-	if (img.complete) loaded++; else img.addEventListener('load', reveal);
-	if (wrap.complete) loaded++; else wrap.addEventListener('load', reveal);
-	if (loaded === 2) reveal();
 });
 </script>
 </body>
