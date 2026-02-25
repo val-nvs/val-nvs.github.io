@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>3D Lens Diagram</title>
+<style>
+  :root { font-size: clamp(12px, 1.4vw, 16px); }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #1a1a2e; display: flex; flex-direction: column; height: 100dvh; font-family: 'Courier New', monospace; color: #e0e0e0; overflow: hidden; user-select: none; -webkit-user-select: none; }
+
+  .dashboard {
+    width: 100%; background: #0d0d1a; border-bottom: 0.06rem solid #2a2a4a;
+    display: flex; align-items: center; justify-content: center; gap: 1.2rem;
+    flex-shrink: 0; padding: 0.4rem 0.6rem; flex-wrap: wrap;
+  }
+  .dash-item {
+    display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem;
+    border: 0.06rem solid #2a2a4a; border-radius: 0.4rem; padding: 0.3rem 0.7rem;
+    background: #12122a; white-space: nowrap;
+  }
+  .dash-item.draggable { cursor: ew-resize; }
+  .dash-item.draggable:hover { box-shadow: 0 0 0.5rem #ffffff22; }
+  .dash-item.active { border-color: #2a6a4a; background: #0d1f16; }
+  .dash-item.active .dash-value { color: #45e960; }
+  .dash-item.computed { border-color: #6a2a2a; background: #1f0d0d; cursor: default !important; }
+  .dash-item.computed .dash-value { color: #e94560; }
+
+  .dash-group {
+    display: flex; gap: 0.3rem;
+    border: 0.06rem solid #1a1a3a; border-radius: 0.5rem; padding: 0.15rem;
+    background: #0a0a1a;
+  }
+  .dash-label { color: #5a5a7a; text-transform: uppercase; letter-spacing: 0.06rem; font-size: 0.7rem; }
+  .dash-value { color: #00d2ff; font-size: 0.85rem; min-width: 2.8rem; }
+  .dash-value.pink { color: #e94560; }
+
+  .sensor-btn {
+    background: linear-gradient(135deg, #2a2a4a, #3a3a6a);
+    border: 0.06rem solid #5a5a8a; border-radius: 0.4rem;
+    color: #ccc; font-family: 'Courier New', monospace; font-size: 0.75rem;
+    padding: 0.3rem 0.8rem; cursor: pointer; letter-spacing: 0.06rem;
+    transition: all 0.2s; white-space: nowrap;
+  }
+  .sensor-btn:hover { background: linear-gradient(135deg, #3a3a5a, #4a4a7a); color: #fff; border-color: #7a7aaa; }
+
+  .panels { display: flex; flex: 1; min-height: 0; }
+  .panel-left { flex: 1; position: relative; overflow: hidden; }
+  .panel-right { flex: 1; background: #000; }
+
+  canvas { display: block; width: 100%; height: 100%; cursor: grab; touch-action: none; }
+  canvas:active { cursor: grabbing; }
+
+  .info {
+    position: absolute; bottom: 0.6rem; left: 50%; transform: translateX(-50%);
+    font-size: 0.7rem; color: #555580; text-align: center; white-space: nowrap;
+    pointer-events: none;
+  }
+  .angles {
+    position: absolute; bottom: 1.6rem; left: 50%; transform: translateX(-50%);
+    font-size: 0.8rem; color: #8888aa; text-align: center; white-space: nowrap;
+    pointer-events: none;
+  }
+
+  .orbit-btn {
+    position: absolute; top: 0.8rem; right: 0.8rem;
+    background: linear-gradient(135deg, #2a2a4a, #3a3a6a);
+    border: 0.06rem solid #5a5a8a; border-radius: 1.2rem;
+    color: #ccc; font-family: 'Courier New', monospace; font-size: 0.75rem;
+    padding: 0.5rem 1rem; cursor: pointer; letter-spacing: 0.06rem; text-transform: uppercase;
+    transition: all 0.2s;
+  }
+  .orbit-btn:hover { background: linear-gradient(135deg, #3a3a5a, #4a4a7a); color: #fff; border-color: #7a7aaa; }
+  .orbit-btn.active { background: linear-gradient(135deg, #e94560, #c73050); border-color: #ff6b8a; color: #fff; }
+
+  .shape-dropdown { position: absolute; top: 0.8rem; left: 0.8rem; }
+  .shape-btn {
+    background: linear-gradient(135deg, #2a2a4a, #3a3a6a);
+    border: 0.06rem solid #5a5a8a; border-radius: 1.2rem;
+    color: #ccc; font-family: 'Courier New', monospace; font-size: 0.75rem;
+    padding: 0.5rem 1rem; cursor: pointer; letter-spacing: 0.06rem; text-transform: uppercase;
+    transition: all 0.2s;
+  }
+  .shape-btn:hover { background: linear-gradient(135deg, #3a3a5a, #4a4a7a); color: #fff; border-color: #7a7aaa; }
+  .shape-menu {
+    display: none; position: absolute; top: 100%; left: 0; margin-top: 0.25rem;
+    background: #1a1a2e; border: 0.06rem solid #3a3a5a; border-radius: 0.5rem;
+    overflow: hidden; min-width: 100%; z-index: 10;
+  }
+  .shape-menu.open { display: block; }
+  .shape-option {
+    padding: 0.5rem 1rem; cursor: pointer; font-size: 0.75rem;
+    letter-spacing: 0.06rem; text-transform: uppercase; color: #888;
+    transition: all 0.15s;
+  }
+  .shape-option:hover { background: #2a2a4a; color: #fff; }
+  .shape-option.active { color: #00d2ff; }
+
+  @media (max-width: 40em) {
+    :root { font-size: clamp(11px, 3.2vw, 15px); }
+    .dashboard { gap: 0.5rem; padding: 0.3rem; }
+    .panels { flex-direction: column; }
+    .panel-right { display: none; }
+    .dash-item { padding: 0.25rem 0.5rem; }
+  }
+  @media (max-width: 25em) {
+    .dashboard { gap: 0.3rem; }
+    .info { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="dashboard">
+  <div class="dash-group">
+    <div class="dash-item draggable active" id="dashFocalItem">
+      <span class="dash-label">Focal</span>
+      <span class="dash-value" id="dashFocal">50mm</span>
+    </div>
+    <div class="dash-item draggable active" id="dashFstopItem">
+      <span class="dash-label">ƒ</span>
+      <span class="dash-value" id="dashFstop">1.8</span>
+    </div>
+    <div class="dash-item draggable computed" id="dashApertureItem">
+      <span class="dash-label">⌀</span>
+      <span class="dash-value" id="dashAperture">27.8mm</span>
+    </div>
+  </div>
+  <div class="dash-group">
+    <div class="dash-item draggable" id="dashTiltItem">
+      <span class="dash-label">Tilt</span>
+      <span class="dash-value pink" id="dashTilt">0.0°</span>
+    </div>
+    <div class="dash-item draggable" id="dashPanItem">
+      <span class="dash-label">Pan</span>
+      <span class="dash-value pink" id="dashPan">0.0°</span>
+    </div>
+  </div>
+  <button class="sensor-btn" id="sensorToggle">Full Frame</button>
+  <div class="dash-item draggable" id="dashFocusItem">
+    <span class="dash-label">Focus</span>
+    <span class="dash-value" id="dashFocus">+0mm</span>
+  </div>
+</div>
+
+<div class="panels">
+<div class="panel-left">
+  <canvas id="c"></canvas>
+  <button class="orbit-btn" id="orbitBtn">Orbit</button>
+  <div class="shape-dropdown" id="shapeDropdown">
+    <button class="shape-btn" id="shapeBtn">Lens ▾</button>
+    <div class="shape-menu" id="shapeMenu">
+      <div class="shape-option" data-shape="cuboid">Cuboid</div>
+      <div class="shape-option active" data-shape="lens">Lens</div>
+    </div>
+  </div>
+  <div class="angles" id="info"></div>
+  <div class="info">Drag to rotate · Drag dashboard values to adjust</div>
+</div>
+<div class="panel-right"></div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const canvas = $('c'), ctx = canvas.getContext('2d');
+const infoEl = $('info');
+const dashTilt = $('dashTilt'), dashPan = $('dashPan');
+const dashFocal = $('dashFocal'), dashFstop = $('dashFstop');
+const dashAperture = $('dashAperture'), dashFocus = $('dashFocus');
+const dashFocalItem = $('dashFocalItem'), dashFstopItem = $('dashFstopItem');
+const dashApertureItem = $('dashApertureItem');
+const dashTiltItem = $('dashTiltItem'), dashPanItem = $('dashPanItem');
+const dashFocusItem = $('dashFocusItem');
+const shapeBtn = $('shapeBtn'), shapeMenu = $('shapeMenu');
+const sensorToggle = $('sensorToggle'), orbitBtn = $('orbitBtn');
+
+let sensorW = 36, sensorH = 24, sensorName = 'Full Frame';
+let focusOffset = 0, showCube = false, showLens = true;
+let focalMM = 50, fstop = 1.8, apertureMM = focalMM / fstop;
+let activeParams = ['focal', 'fstop'];
+
+function getComputed() { for (let p of ['focal','fstop','aperture']) if (!activeParams.includes(p)) return p; }
+function updateParamStyles() {
+  let c = getComputed();
+  [{k:'focal',e:dashFocalItem},{k:'fstop',e:dashFstopItem},{k:'aperture',e:dashApertureItem}].forEach(({k,e}) => {
+    e.classList.toggle('active', k !== c);
+    e.classList.toggle('computed', k === c);
+  });
+}
+function selectParam(w) { if (activeParams.includes(w)) return; activeParams = [activeParams[1], w]; updateParamStyles(); }
+function recompute() {
+  let c = getComputed();
+  if (c === 'aperture') apertureMM = focalMM / fstop;
+  else if (c === 'fstop') fstop = Math.round(Math.max(0.7, Math.min(22, focalMM / apertureMM)) * 10) / 10;
+  else focalMM = Math.round(Math.max(10, Math.min(200, apertureMM * fstop)));
+}
+
+let W, H, CX, CY, U;
+function resizeCanvas() {
+  const p = canvas.parentElement, dpr = window.devicePixelRatio || 1;
+  canvas.width = p.clientWidth * dpr; canvas.height = p.clientHeight * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  W = p.clientWidth; H = p.clientHeight; CX = W / 2; CY = H / 2;
+  U = Math.min(W, H) / 500; // base unit, ~1 on a 500px canvas
+}
+resizeCanvas();
+window.addEventListener('resize', () => { resizeCanvas(); draw(); });
+
+const S = 3;
+let zoom = 1, yaw = 0, pitch = 0, camPitch = 0, lensPan = 0;
+
+// --- 3D math ---
+function rotate(x, y, z) {
+  let cY = Math.cos(yaw), sY = Math.sin(yaw), x1 = x*cY - z*sY, z1 = x*sY + z*cY;
+  let cP = Math.cos(pitch), sP = Math.sin(pitch);
+  return { x: x1, y: y*cP - z1*sP, z: y*sP + z1*cP };
+}
+function rotateLens(x, y, z) {
+  let cP = Math.cos(lensPan), sP = Math.sin(lensPan), x0 = x*cP - z*sP, z0 = x*sP + z*cP;
+  let cC = Math.cos(camPitch), sC = Math.sin(camPitch);
+  return rotate(x0*cC - y*sC, x0*sC + y*cC, z0);
+}
+function proj(p) { return { x: CX + p.x*zoom, y: CY - p.y*zoom }; }
+function project(x,y,z) { let r=rotate(x,y,z); return {x:CX+r.x*zoom, y:CY-r.y*zoom, s:zoom, z:r.z}; }
+
+// --- Draw helpers ---
+function _line(rf, ax,ay,az,bx,by,bz,col,w) {
+  let a=rf(ax,ay,az), b=rf(bx,by,bz), p0=proj(a), p1=proj(b);
+  ctx.strokeStyle=col; ctx.lineWidth=w*U;
+  ctx.beginPath(); ctx.moveTo(p0.x,p0.y); ctx.lineTo(p1.x,p1.y); ctx.stroke();
+}
+function _dashed(rf, ax,ay,az,bx,by,bz,col,w) {
+  let a=rf(ax,ay,az), b=rf(bx,by,bz), p0=proj(a), p1=proj(b);
+  ctx.strokeStyle=col; ctx.lineWidth=w*U; ctx.setLineDash([6*U,4*U]);
+  ctx.beginPath(); ctx.moveTo(p0.x,p0.y); ctx.lineTo(p1.x,p1.y); ctx.stroke(); ctx.setLineDash([]);
+}
+function _text(rf, str,x,y,z,col,sz) {
+  let r=rf(x,y,z), p=proj(r);
+  ctx.fillStyle=col; ctx.font=(sz*U)+'px Courier New';
+  ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(str,p.x,p.y);
+}
+const line3D = (a,b,c,d,e,f,g,h) => _line(rotate,a,b,c,d,e,f,g,h);
+const lensLine3D = (a,b,c,d,e,f,g,h) => _line(rotateLens,a,b,c,d,e,f,g,h);
+const lensDashedLine3D = (a,b,c,d,e,f,g,h) => _dashed(rotateLens,a,b,c,d,e,f,g,h);
+const lensText3D = (s,x,y,z,c,sz) => _text(rotateLens,s,x,y,z,c,sz);
+const lineYawOnly = lensLine3D;
+const textYawOnly = (s,x,y,z,c,sz) => _text(rotateLens,s,x,y,z,c,sz);
+
+// --- Cuboid ---
+function drawCube(cx,cy,cz,wx,wy,wz,color,fill) {
+  let hx=wx/2*S, hy=wy/2*S, hz=wz/2*S, ox=cx*S, oy=cy*S, oz=cz*S;
+  let c=[[ox-hx,oy-hy,oz-hz],[ox+hx,oy-hy,oz-hz],[ox+hx,oy+hy,oz-hz],[ox-hx,oy+hy,oz-hz],
+         [ox-hx,oy-hy,oz+hz],[ox+hx,oy-hy,oz+hz],[ox+hx,oy+hy,oz+hz],[ox-hx,oy+hy,oz+hz]];
+  let fs=[[0,1,2,3],[4,5,6,7],[0,1,5,4],[2,3,7,6],[0,3,7,4],[1,2,6,5]];
+  let rot=c.map(([x,y,z])=>rotateLens(x,y,z));
+  fs.map(f=>({i:f,z:f.reduce((s,i)=>s+rot[i].z,0)/4})).sort((a,b)=>a.z-b.z).forEach(face=>{
+    let p=face.i.map(i=>proj(rot[i]));
+    ctx.fillStyle=fill; ctx.strokeStyle=color; ctx.lineWidth=1.5*U;
+    ctx.beginPath(); ctx.moveTo(p[0].x,p[0].y);
+    for(let i=1;i<p.length;i++) ctx.lineTo(p[i].x,p[i].y);
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+  });
+}
+
+// --- Sensor ---
+function drawSensor(cx,cy,cz,w,h,color) {
+  let hw=w/2*S, hh=h/2*S, ox=cx*S;
+  let cs=[[ox,-hh,-hw],[ox,hh,-hw],[ox,hh,hw],[ox,-hh,hw]];
+  let rot=cs.map(([x,y,z])=>rotateLens(x,y,z)), pr=rot.map(v=>proj(v));
+  let n=rotateLens(cx*S+1,0,0), ce=rotateLens(cx*S,0,0);
+  ctx.fillStyle=(n.z-ce.z)<0?'#d4577a':'#111'; ctx.strokeStyle=color; ctx.lineWidth=2*U;
+  ctx.beginPath(); ctx.moveTo(pr[0].x,pr[0].y);
+  for(let i=1;i<pr.length;i++) ctx.lineTo(pr[i].x,pr[i].y);
+  ctx.closePath(); ctx.fill(); ctx.stroke();
+  rot.forEach(r=>{let p=proj(r);ctx.beginPath();ctx.arc(p.x,p.y,3*U,0,Math.PI*2);ctx.stroke();});
+}
+
+// --- Biconvex lens ---
+function drawLensShape(cx,cy,cz,apertureR,focalLen,color) {
+  let h=apertureR*S, seg=32, R=Math.max(focalLen*S, h);
+  let capA=Math.asin(h/R);
+  function makeCap(cX,dir) {
+    let pts=[];
+    for(let r=0;r<=seg/2;r++) {
+      let phi=r/(seg/2)*capA, capX=cX+dir*R*(Math.cos(phi)-Math.cos(capA));
+      let capR=R*Math.sin(phi), ring=[];
+      for(let i=0;i<=seg;i++) { let t=i/seg*Math.PI*2; ring.push([capX,capR*Math.cos(t),capR*Math.sin(t)]); }
+      pts.push(ring);
+    }
+    return pts;
+  }
+  let rc=makeCap(cx*S,1), lc=makeCap(cx*S,-1);
+  function drawC(cap,fa) {
+    ctx.strokeStyle=color; ctx.lineWidth=U;
+    cap.forEach(ring=>{
+      let p=ring.map(([x,y,z])=>proj(rotateLens(x,y,z)));
+      ctx.beginPath(); ctx.moveTo(p[0].x,p[0].y);
+      for(let i=1;i<p.length;i++) ctx.lineTo(p[i].x,p[i].y); ctx.stroke();
+    });
+    for(let i=0;i<seg;i+=4) {
+      ctx.beginPath();
+      cap.forEach((ring,ri)=>{let[x,y,z]=ring[i];let p=proj(rotateLens(x,y,z));ri===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y);});
+      ctx.stroke();
+    }
+    if(cap.length>0){
+      let e=cap[cap.length-1].map(([x,y,z])=>proj(rotateLens(x,y,z)));
+      ctx.fillStyle=`rgba(0,210,255,${fa})`; ctx.beginPath(); ctx.moveTo(e[0].x,e[0].y);
+      for(let i=1;i<e.length;i++) ctx.lineTo(e[i].x,e[i].y); ctx.closePath(); ctx.fill();
+    }
+  }
+  let sag=R-Math.sqrt(R*R-h*h);
+  let rC=rotateLens(cx*S+sag,0,0), lC=rotateLens(cx*S-sag,0,0);
+  if(rC.z>lC.z){drawC(rc,0.06);drawC(lc,0.06);}else{drawC(lc,0.06);drawC(rc,0.06);}
+}
+
+// --- Grid/Axes ---
+function drawGrid() {
+  for(let i=-200;i<=200;i+=50) {
+    lineYawOnly(i*S,-200*S,0,i*S,200*S,0,'#3a3a5a',0.5);
+    lineYawOnly(-200*S,i*S,0,200*S,i*S,0,'#3a3a5a',0.5);
+  }
+}
+function drawAxes() {
+  let l=200*S;
+  lineYawOnly(0,0,0,l,0,0,'#e9456055',1); textYawOnly('X',(200+10)*S,0,0,'#e9456088',14);
+  lineYawOnly(0,0,0,0,l,0,'#45e96055',1); textYawOnly('Y',0,(200+10)*S,0,'#45e96088',14);
+}
+function drawPivot() {
+  let p=project(0,0,0); ctx.strokeStyle='#e94560'; ctx.lineWidth=1.5*U;
+  ctx.beginPath(); ctx.arc(p.x,p.y,6*U,0,Math.PI*2); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(p.x-10*U,p.y); ctx.lineTo(p.x+10*U,p.y);
+  ctx.moveTo(p.x,p.y-10*U); ctx.lineTo(p.x,p.y+10*U); ctx.stroke();
+}
+
+// --- Main draw ---
+function draw() {
+  ctx.clearRect(0,0,W,H); ctx.fillStyle='#1a1a2e'; ctx.fillRect(0,0,W,H);
+  drawGrid(); drawAxes();
+  lensDashedLine3D(-200*S,0,0,200*S,0,0,'#666688',1);
+  let ap=apertureMM;
+  if(showCube) drawCube(0,0,0,4,ap,ap,'#00d2ff','rgba(26,26,46,0.88)');
+  if(showLens) drawLensShape(0,0,0,ap/2,focalMM,'#00d2ff');
+  lensText3D(Math.round(focalMM)+'mm ƒ/'+fstop.toFixed(1),0,(ap/2+8)*S,0,'#00d2ff',14);
+  let sp=focalMM+focusOffset;
+  drawSensor(sp,0,0,sensorW,sensorH,'#ff6b6b');
+  lensText3D('SENSOR '+sensorW+'×'+sensorH,sp*S,-20*S,0,'#ff6b6b',13);
+  lensDashedLine3D(0,-16*S,0,sp*S,-16*S,0,'#8888aa88',0.8);
+  lensText3D(focalMM+'mm'+(focusOffset!==0?(focusOffset>0?'+':'')+focusOffset:''),(sp/2)*S,-14*S,0,'#8888aa',12);
+  drawPivot();
+  let yD=(yaw*180/Math.PI).toFixed(1), pD=(pitch*180/Math.PI).toFixed(1);
+  let cD=(-camPitch*180/Math.PI).toFixed(1), panD=(lensPan*180/Math.PI).toFixed(1);
+  infoEl.textContent=`Yaw: ${yD}°  Pitch: ${pD}°  Tilt: ${cD}°  Pan: ${panD}°`;
+  dashTilt.textContent=cD+'°'; dashPan.textContent=panD+'°';
+  dashFocal.textContent=Math.round(focalMM)+'mm'; dashFstop.textContent=fstop.toFixed(1);
+  dashAperture.textContent=apertureMM.toFixed(1)+'mm';
+  dashFocus.textContent=(focusOffset>=0?'+':'')+focusOffset+'mm';
+}
+
+// --- Sensor toggle ---
+sensorToggle.addEventListener('click',()=>{
+  if(sensorName==='Full Frame'){sensorW=23.5;sensorH=15.6;sensorName='Half Frame';}
+  else{sensorW=36;sensorH=24;sensorName='Full Frame';}
+  sensorToggle.textContent=sensorName; draw();
+});
+
+// --- Shape dropdown ---
+let currentShape='lens';
+shapeBtn.addEventListener('click',()=>shapeMenu.classList.toggle('open'));
+document.addEventListener('click',e=>{if(!e.target.closest('.shape-dropdown'))shapeMenu.classList.remove('open');});
+shapeMenu.querySelectorAll('.shape-option').forEach(opt=>{
+  opt.addEventListener('click',()=>{
+    currentShape=opt.dataset.shape;
+    shapeMenu.querySelectorAll('.shape-option').forEach(o=>o.classList.remove('active'));
+    opt.classList.add('active');
+    shapeBtn.textContent=opt.textContent+' ▾';
+    showCube=currentShape==='cuboid'; showLens=currentShape==='lens';
+    shapeMenu.classList.remove('open'); draw();
+  });
+});
+
+// --- Pointer helpers ---
+function pX(e){return e.touches?e.touches[0].clientX:e.clientX;}
+
+// --- Dashboard drag controls ---
+function makeDragHandler(el,target,sens,min,max) {
+  let on=false,startX,startVal;
+  function down(e){
+    if(getComputed()===target){selectParam(target);recompute();draw();return;}
+    e.preventDefault(); on=true; startX=pX(e);
+    startVal=target==='focal'?focalMM:target==='fstop'?fstop:apertureMM;
+    el.style.borderColor='#45e960';
+  }
+  function move(e){if(!on)return;let v=Math.max(min,Math.min(max,startVal+(pX(e)-startX)*sens));
+    if(target==='focal')focalMM=Math.round(v);else if(target==='fstop')fstop=Math.round(v*10)/10;else apertureMM=Math.round(v*10)/10;
+    recompute();draw();}
+  function up(){if(on){on=false;el.style.borderColor='';}}
+  el.addEventListener('mousedown',down); el.addEventListener('touchstart',down,{passive:false});
+  window.addEventListener('mousemove',move); window.addEventListener('touchmove',move,{passive:false});
+  window.addEventListener('mouseup',up); window.addEventListener('touchend',up);
+}
+makeDragHandler(dashFocalItem,'focal',0.5,10,200);
+makeDragHandler(dashFstopItem,'fstop',0.02,0.7,22);
+makeDragHandler(dashApertureItem,'aperture',0.3,1,200);
+
+// --- Angle/value drag + click-to-zero ---
+let angleAnim=null;
+function animZero(get,set,dur){
+  if(angleAnim)cancelAnimationFrame(angleAnim.id);
+  let sv=get(); if(Math.abs(sv)<0.1)return; let st=performance.now();
+  function step(t){let p=Math.min((t-st)/dur,1),e=p<0.5?2*p*p:1-Math.pow(-2*p+2,2)/2;
+    set(sv*(1-e));draw();if(p<1)angleAnim={id:requestAnimationFrame(step)};else angleAnim=null;}
+  angleAnim={id:requestAnimationFrame(step)};
+}
+function makeValDrag(el,get,set,sens,mn,mx){
+  sens=sens||0.2;mn=mn!=null?mn:-60;mx=mx!=null?mx:60;
+  let on=false,startX,sv,moved;
+  function down(e){e.preventDefault();on=true;moved=false;startX=pX(e);sv=get();el.style.boxShadow='0 0 0.5rem #e9456066';}
+  function move(e){if(!on)return;let dx=pX(e)-startX;if(Math.abs(dx)>3)moved=true;
+    if(!moved)return;set(Math.max(mn,Math.min(mx,sv+dx*sens)));draw();}
+  function up(){if(on){if(!moved)animZero(get,set,400);on=false;el.style.boxShadow='';}}
+  el.addEventListener('mousedown',down); el.addEventListener('touchstart',down,{passive:false});
+  window.addEventListener('mousemove',move); window.addEventListener('touchmove',move,{passive:false});
+  window.addEventListener('mouseup',up); window.addEventListener('touchend',up);
+}
+makeValDrag(dashTiltItem,()=>-camPitch*180/Math.PI,d=>{camPitch=-d*Math.PI/180;});
+makeValDrag(dashPanItem,()=>lensPan*180/Math.PI,d=>{lensPan=d*Math.PI/180;});
+makeValDrag(dashFocusItem,()=>focusOffset,v=>{focusOffset=Math.round(v);},0.3,-100,100);
+
+// --- Orbit ---
+let orbiting=false,orbitPhase='idle',orbitStart=0,enterFromYaw=0,enterFromPitch=0;
+const OD=6000,PD=600,OR=15*Math.PI/180,EY=0,EP=OR;
+function ease(t){return t<0.5?2*t*t:1-Math.pow(-2*t+2,2)/2;}
+function orbitLoop(t){
+  if(!orbiting)return; let el=t-orbitStart;
+  if(orbitPhase==='toZero'){let p=Math.min(el/PD,1);yaw=enterFromYaw*(1-ease(p));pitch=enterFromPitch*(1-ease(p));if(p>=1){orbitPhase='toEntry';orbitStart=t;}}
+  else if(orbitPhase==='toEntry'){let p=Math.min(el/PD,1);yaw=EY*ease(p);pitch=EP*ease(p);if(p>=1){orbitPhase='looping';orbitStart=t;}}
+  else{let a=el/OD*Math.PI*2;yaw=Math.sin(a)*OR;pitch=Math.cos(a)*OR;}
+  draw();requestAnimationFrame(orbitLoop);
+}
+function stopOrbit(){orbiting=false;orbitPhase='idle';orbitBtn.classList.remove('active');orbitBtn.textContent='Orbit';}
+orbitBtn.addEventListener('click',()=>{
+  if(orbiting){stopOrbit();}else{
+    orbiting=true;orbitPhase='toZero';enterFromYaw=yaw;enterFromPitch=pitch;
+    orbitStart=performance.now();orbitBtn.classList.add('active');orbitBtn.textContent='Stop';
+    requestAnimationFrame(orbitLoop);}
+});
+
+// --- Canvas drag ---
+let cDrag=false,lastX,lastY,lastPinch=0;
+canvas.addEventListener('wheel',e=>{e.preventDefault();zoom*=e.deltaY>0?0.95:1.05;zoom=Math.max(0.2,Math.min(5,zoom));draw();},{passive:false});
+canvas.addEventListener('mousedown',e=>{if(orbiting)stopOrbit();cDrag=true;lastX=e.clientX;lastY=e.clientY;});
+window.addEventListener('mousemove',e=>{if(!cDrag)return;yaw-=(e.clientX-lastX)*0.005;pitch+=(e.clientY-lastY)*0.005;lastX=e.clientX;lastY=e.clientY;draw();});
+window.addEventListener('mouseup',()=>cDrag=false);
+
+canvas.addEventListener('touchstart',e=>{
+  e.preventDefault(); if(orbiting)stopOrbit();
+  if(e.touches.length===2){let dx=e.touches[1].clientX-e.touches[0].clientX,dy=e.touches[1].clientY-e.touches[0].clientY;lastPinch=Math.sqrt(dx*dx+dy*dy);}
+  cDrag=true;lastX=e.touches[0].clientX;lastY=e.touches[0].clientY;
+},{passive:false});
+canvas.addEventListener('touchmove',e=>{
+  e.preventDefault(); if(!cDrag)return;
+  if(e.touches.length===2){
+    let dx=e.touches[1].clientX-e.touches[0].clientX,dy=e.touches[1].clientY-e.touches[0].clientY,d=Math.sqrt(dx*dx+dy*dy);
+    if(lastPinch>0){zoom*=d/lastPinch;zoom=Math.max(0.2,Math.min(5,zoom));}lastPinch=d;
+  }else{yaw-=(e.touches[0].clientX-lastX)*0.005;pitch+=(e.touches[0].clientY-lastY)*0.005;}
+  lastX=e.touches[0].clientX;lastY=e.touches[0].clientY;draw();
+},{passive:false});
+canvas.addEventListener('touchend',e=>{if(e.touches.length===0)cDrag=false;lastPinch=0;});
+
+draw();
+</script>
+</body>
+</html>
