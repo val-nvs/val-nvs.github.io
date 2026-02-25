@@ -5,198 +5,564 @@
 	<title>lisbon subway entrances</title>
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<link rel="icon" type="image/png" href="/favicon.png">
 	
-	<link
-		rel="stylesheet"
-		href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-	/>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playwrite+CU:wght@400&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&display=swap" rel="stylesheet">
     
 	<style>
+		*, *::before, *::after { box-sizing: border-box; }
+
 		html, body {
-			background: #000;
+			background: #0a0a0f;
 			height: 100%;
 			width: 100%;
 			margin: 0;
 			padding: 0;
+			font-family: 'DM Sans', sans-serif;
 		}
+
 		#map { height: 100%; width: 100%; }
-		/* Custom style for the location button icon */
-		.leaflet-control-locate {
-			background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>');
-			background-size: 20px 20px;
-			background-repeat: no-repeat;
-			background-position: center;
+
+		/* ---- Bottom-Left Controls ---- */
+		.controls-panel {
+			position: fixed;
+			bottom: 24px;
+			left: 16px;
+			z-index: 1000;
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			background: rgba(12, 12, 18, 0.82);
+			backdrop-filter: blur(20px) saturate(1.4);
+			-webkit-backdrop-filter: blur(20px) saturate(1.4);
+			border: 1px solid rgba(255, 255, 255, 0.08);
+			border-radius: 16px;
+			padding: 8px 10px;
+			box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.03) inset;
+		}
+
+		.ctrl-btn {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 7px;
+			padding: 9px 16px;
+			border: none;
+			border-radius: 11px;
+			background: rgba(255, 255, 255, 0.06);
+			color: rgba(255, 255, 255, 0.55);
+			font-family: 'DM Sans', sans-serif;
+			font-size: 13px;
+			font-weight: 500;
 			cursor: pointer;
+			transition: all 0.2s ease;
+			white-space: nowrap;
+			user-select: none;
 		}
-		.leaflet-control-locate:hover {
-			background-color: #f4f4f4;
+		.ctrl-btn:hover { background: rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.85); }
+		.ctrl-btn:active { transform: scale(0.97); }
+		.ctrl-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+		.ctrl-divider {
+			width: 1px; height: 24px;
+			background: rgba(255, 255, 255, 0.08);
+			margin: 0 4px;
 		}
-        
-        /* Custom CSS for the station labels (Tooltips) */
-        .leaflet-tooltip.station-label {
-            /* Playwrite CU font and properties */
-            font-family: "Playwrite CU", cursive;
-            font-optical-sizing: auto;
-            font-weight: 400; 
-            font-style: normal;
-            
-            background-color: transparent;
-            border: none;
-            box-shadow: none;
-            /* Removed fixed font-size: 12px; to be set dynamically by JS */
-            color: #ffffff;
-            padding: 2px 4px;
-            white-space: nowrap;
-            text-shadow: 1px 1px 2px #000;
-            transition: font-size 0.3s ease-out; /* Optional: smooth transition for font size change */
-        }
-        
-        /* Remove the tooltip arrow/stem */
-        .leaflet-tooltip-bottom.no-arrow::before {
-            border-bottom-color: transparent !important;
-        }
-        .leaflet-tooltip.no-arrow::before {
-            display: none !important;
-        }
+
+		/* Toggle switch (used in controls panel and layers panel) */
+		.toggle-wrap {
+			display: flex;
+			align-items: center;
+			gap: 9px;
+			padding: 7px 14px 7px 12px;
+			border-radius: 11px;
+			background: rgba(255, 255, 255, 0.04);
+			cursor: pointer;
+			transition: background 0.2s;
+			user-select: none;
+		}
+		.toggle-wrap:hover { background: rgba(255, 255, 255, 0.08); }
+		.toggle-wrap.active { background: rgba(255, 0, 255, 0.1); }
+
+		.toggle-track {
+			width: 36px; height: 20px;
+			border-radius: 10px;
+			background: rgba(255, 255, 255, 0.12);
+			position: relative;
+			transition: background 0.25s ease;
+			flex-shrink: 0;
+		}
+		.toggle-wrap.active .toggle-track { background: rgba(255, 0, 255, 0.45); }
+
+		.toggle-thumb {
+			position: absolute; top: 2px; left: 2px;
+			width: 16px; height: 16px;
+			border-radius: 50%;
+			background: rgba(255, 255, 255, 0.5);
+			transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+		}
+		.toggle-wrap.active .toggle-thumb { left: 18px; background: #fff; }
+
+		.toggle-label {
+			font-family: 'DM Sans', sans-serif;
+			font-size: 13px; font-weight: 500;
+			color: rgba(255, 255, 255, 0.5);
+			transition: color 0.2s;
+		}
+		.toggle-wrap.active .toggle-label { color: #ff66ff; }
+
+		/* ---- Leaflet overrides ---- */
+		.leaflet-control-layers {
+			border: 1px solid rgba(255,255,255,0.08) !important;
+			border-radius: 12px !important;
+			background: rgba(12, 12, 18, 0.85) !important;
+			backdrop-filter: blur(16px) !important;
+			box-shadow: 0 4px 24px rgba(0,0,0,0.4) !important;
+			color: rgba(255,255,255,0.7) !important;
+			font-family: 'DM Sans', sans-serif !important;
+			font-size: 13px !important;
+			padding: 10px 14px !important;
+		}
+		.leaflet-control-layers-toggle {
+			width: 36px !important; height: 36px !important;
+			border-radius: 10px !important;
+			background-color: rgba(12, 12, 18, 0.85) !important;
+			backdrop-filter: blur(16px) !important;
+			border: 1px solid rgba(255,255,255,0.08) !important;
+			box-shadow: 0 4px 16px rgba(0,0,0,0.3) !important;
+		}
+		.leaflet-control-layers label { color: rgba(255,255,255,0.65) !important; }
+		.leaflet-control-layers label:hover { color: rgba(255,255,255,0.9) !important; }
+		.leaflet-control-layers-separator { border-top-color: rgba(255,255,255,0.08) !important; }
+
+		/* Vertices toggle injected into layers panel */
+		.layers-extra {
+			margin-top: 8px;
+			padding-top: 10px;
+			border-top: 1px solid rgba(255,255,255,0.08);
+		}
+		.layers-extra .toggle-wrap {
+			padding: 6px 10px 6px 8px;
+			border-radius: 8px;
+		}
+
+		.leaflet-control-zoom { border: none !important; border-radius: 12px !important; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.3) !important; }
+		.leaflet-control-zoom a {
+			background: rgba(12, 12, 18, 0.85) !important;
+			backdrop-filter: blur(16px) !important;
+			color: rgba(255,255,255,0.7) !important;
+			border-color: rgba(255,255,255,0.06) !important;
+			font-family: 'DM Sans', sans-serif !important;
+			width: 36px !important; height: 36px !important;
+			line-height: 36px !important; font-size: 16px !important;
+		}
+		.leaflet-control-zoom a:hover { background: rgba(25, 25, 35, 0.9) !important; color: #fff !important; }
+
+		.leaflet-popup-content-wrapper {
+			background: rgba(12, 12, 18, 0.92) !important;
+			backdrop-filter: blur(16px) !important;
+			border: 1px solid rgba(255,255,255,0.1) !important;
+			border-radius: 12px !important;
+			box-shadow: 0 8px 32px rgba(0,0,0,0.5) !important;
+			color: rgba(255,255,255,0.85) !important;
+			font-family: 'DM Sans', sans-serif !important;
+			font-size: 13px !important;
+		}
+		.leaflet-popup-tip { background: rgba(12, 12, 18, 0.92) !important; border: 1px solid rgba(255,255,255,0.1) !important; box-shadow: none !important; }
+		.leaflet-popup-close-button { color: rgba(255,255,255,0.4) !important; font-size: 18px !important; }
+		.leaflet-popup-close-button:hover { color: #fff !important; }
+		.leaflet-popup-content small {
+			color: rgba(255, 0, 255, 0.7);
+			font-family: 'DM Sans', sans-serif;
+			font-size: 11.5px;
+		}
+
+		.leaflet-control-attribution {
+			background: rgba(0,0,0,0.5) !important;
+			color: rgba(255,255,255,0.3) !important;
+			font-size: 10px !important;
+			border-radius: 6px 0 0 0 !important;
+		}
+		.leaflet-control-attribution a { color: rgba(255,255,255,0.4) !important; }
+
+		/* ---- Station Labels ---- */
+		.leaflet-tooltip.station-label {
+			font-family: 'DM Sans', sans-serif;
+			font-weight: 600;
+			background-color: transparent;
+			border: none; box-shadow: none;
+			color: #ffffff;
+			padding: 2px 4px;
+			white-space: nowrap;
+			text-shadow: 0 1px 4px rgba(0,0,0,0.8), 0 0 12px rgba(0,0,0,0.4);
+			transition: font-size 0.3s ease-out;
+		}
+		.leaflet-tooltip-bottom.no-arrow::before { border-bottom-color: transparent !important; }
+		.leaflet-tooltip.no-arrow::before { display: none !important; }
+
+		/* ---- Route info card ---- */
+		.route-card {
+			position: fixed;
+			top: 20px;
+			left: 50%;
+			transform: translateX(-50%) translateY(-8px);
+			z-index: 1000;
+			background: rgba(12, 12, 18, 0.88);
+			backdrop-filter: blur(20px) saturate(1.4);
+			-webkit-backdrop-filter: blur(20px) saturate(1.4);
+			border: 1px solid rgba(255, 255, 255, 0.08);
+			border-radius: 14px;
+			padding: 12px 20px;
+			box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+			display: flex;
+			align-items: center;
+			gap: 16px;
+			opacity: 0; visibility: hidden;
+			transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+			pointer-events: none;
+		}
+		.route-card.visible {
+			opacity: 1; visibility: visible;
+			transform: translateX(-50%) translateY(0);
+			pointer-events: auto;
+		}
+		.route-card .rc-icon {
+			width: 36px; height: 36px;
+			border-radius: 10px;
+			background: rgba(255, 0, 255, 0.12);
+			display: flex; align-items: center; justify-content: center;
+			flex-shrink: 0;
+		}
+		.route-card .rc-icon svg { width: 18px; height: 18px; color: #ff66ff; }
+		.route-card .rc-info { display: flex; flex-direction: column; gap: 2px; }
+		.route-card .rc-station {
+			font-family: 'DM Sans', sans-serif;
+			font-size: 14px; font-weight: 600;
+			color: rgba(255,255,255,0.9);
+			max-width: 220px;
+			overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+		}
+		.route-card .rc-details {
+			font-size: 12px; color: rgba(255,255,255,0.45);
+			display: flex; gap: 10px;
+		}
+		.route-card .rc-details span { display: flex; align-items: center; gap: 4px; }
+		.route-card .rc-close {
+			width: 28px; height: 28px;
+			border: none; border-radius: 8px;
+			background: rgba(255,255,255,0.06);
+			color: rgba(255,255,255,0.4);
+			cursor: pointer; display: flex;
+			align-items: center; justify-content: center;
+			transition: all 0.15s;
+			flex-shrink: 0; font-size: 16px;
+		}
+		.route-card .rc-close:hover { background: rgba(255,255,255,0.12); color: #fff; }
+
+		.route-hint {
+			position: fixed;
+			top: 20px;
+			left: 50%;
+			transform: translateX(-50%);
+			z-index: 999;
+			background: rgba(255, 0, 255, 0.12);
+			border: 1px solid rgba(255, 0, 255, 0.2);
+			border-radius: 10px;
+			padding: 8px 16px;
+			font-size: 12px; font-weight: 500;
+			color: #ff88ff;
+			opacity: 0; visibility: hidden;
+			transition: all 0.3s ease;
+			pointer-events: none;
+		}
+		.route-hint.visible { opacity: 1; visibility: visible; }
+
+		/* ---- Loading overlay ---- */
+		#loader {
+			position: fixed; inset: 0; z-index: 2000;
+			background: #0a0a0f;
+			display: flex; flex-direction: column;
+			align-items: center; justify-content: center;
+			gap: 16px;
+			transition: opacity 0.5s ease, visibility 0.5s ease;
+		}
+		#loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+		.loader-ring {
+			width: 40px; height: 40px;
+			border: 3px solid rgba(255,255,255,0.06);
+			border-top-color: rgba(255, 0, 255, 0.6);
+			border-radius: 50%;
+			animation: spin 0.9s linear infinite;
+		}
+		@keyframes spin { to { transform: rotate(360deg); } }
+
+		.loader-text {
+			font-family: 'DM Sans', sans-serif;
+			font-size: 13px;
+			color: rgba(255,255,255,0.35);
+			letter-spacing: 0.04em;
+		}
+
+		/* ---- Responsive ---- */
+		@media (max-width: 480px) {
+			.controls-panel { bottom: 16px; left: 10px; padding: 6px 8px; border-radius: 14px; }
+			.ctrl-btn { padding: 8px 12px; font-size: 12px; }
+			.toggle-label { font-size: 12px; }
+			.route-card { padding: 10px 14px; gap: 12px; }
+			.route-card .rc-station { font-size: 13px; max-width: 150px; }
+		}
 	</style>
 </head>
 
 <body>
+
+<div id="loader">
+	<div class="loader-ring"></div>
+	<div class="loader-text">loading metro data…</div>
+</div>
+
 <div id="map"></div>
+
+<div id="route-hint" class="route-hint">tap anywhere on the map to route</div>
+
+<div id="route-card" class="route-card">
+	<div class="rc-icon">
+		<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+			<circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 0 0-8 8c0 5.4 7 12 8 12s8-6.6 8-12a8 8 0 0 0-8-8z"/>
+		</svg>
+	</div>
+	<div class="rc-info">
+		<div class="rc-station" id="rc-station">—</div>
+		<div class="rc-details">
+			<span>🚶 <span id="rc-time">—</span></span>
+			<span>📏 <span id="rc-dist">—</span></span>
+		</div>
+	</div>
+	<button class="rc-close" id="rc-close" title="Dismiss">✕</button>
+</div>
+
+<!-- Bottom-left controls: Locate + Route toggle -->
+<div class="controls-panel">
+	<button class="ctrl-btn" id="btn-locate" title="Find my location">
+		<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+			<circle cx="12" cy="12" r="3"/><path d="M12 2v4m0 12v4m10-10h-4M6 12H2"/>
+		</svg>
+		Locate
+	</button>
+	<div class="ctrl-divider"></div>
+	<div class="toggle-wrap" id="toggle-route">
+		<div class="toggle-track"><div class="toggle-thumb"></div></div>
+		<span class="toggle-label">Route</span>
+	</div>
+</div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-const map = L.map('map').setView([38.715, -9.138], 16);
+const map = L.map('map', { zoomControl: true }).setView([38.715, -9.138], 16);
 
 // ------------------------------------------------------------------
-// 1. MAP STYLE SWITCHER (TOP RIGHT)
+// 1. TILE LAYERS + VERTICES TOGGLE INSIDE LAYERS PANEL
 // ------------------------------------------------------------------
-
-// Define the tile layers
 const positron = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/">OSM</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-    subdomains: 'abcd',
-    maxZoom: 20
+	attribution: '&copy; OSM &copy; CARTO', subdomains: 'abcd', maxZoom: 20
 });
-
 const darkMatter = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/">OSM</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-    subdomains: 'abcd',
-    maxZoom: 20
-}).addTo(map); // Added by default
-
+	attribution: '&copy; OSM &copy; CARTO', subdomains: 'abcd', maxZoom: 20
+}).addTo(map);
 const voyager = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/">OSM</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-    subdomains: 'abcd',
-    maxZoom: 20
+	attribution: '&copy; OSM &copy; CARTO', subdomains: 'abcd', maxZoom: 20
 });
 
-const baseMaps = {
-    "Dark Matter (Dark)": darkMatter,
-    "Positron (Light)": positron,
-    "Voyager (Color)": voyager
-};
+const layersControl = L.control.layers({ "Dark Matter": darkMatter, "Positron": positron, "Voyager": voyager }).addTo(map);
 
-// Add the Layer Control to the map (defaults to top right)
-L.control.layers(baseMaps).addTo(map);
+// Inject vertices toggle into the layers panel
+setTimeout(() => {
+	const layersContainer = layersControl.getContainer();
+	const form = layersContainer.querySelector('.leaflet-control-layers-list');
+	if (form) {
+		const extra = document.createElement('div');
+		extra.className = 'layers-extra';
+		extra.innerHTML = `
+			<div class="toggle-wrap" id="toggle-vertices">
+				<div class="toggle-track"><div class="toggle-thumb"></div></div>
+				<span class="toggle-label">Vertices</span>
+			</div>
+		`;
+		form.appendChild(extra);
 
+		// Prevent clicks inside from closing the panel or propagating to map
+		L.DomEvent.disableClickPropagation(extra);
+
+		document.getElementById('toggle-vertices').addEventListener('click', function() {
+			verticesOn = !verticesOn;
+			this.classList.toggle('active', verticesOn);
+			verticesOn ? vertexGroup.addTo(map) : map.removeLayer(vertexGroup);
+		});
+	}
+}, 100);
 
 // ------------------------------------------------------------------
-// 2. USER LOCATION LOGIC & UPDATE BUTTON (BOTTOM LEFT)
+// 2. USER LOCATION
 // ------------------------------------------------------------------
+let userMarker = null, userCircle = null;
 
-// Variables to hold user location visualization elements
-let userMarker = null;
-let userCircle = null;
-
-// Function to run when location is found
 function onLocationFound(e) {
-    const radius = e.accuracy / 2;
-
-    // Clear existing marker and circle if they exist
-    if (userMarker) {
-        map.removeLayer(userMarker);
-    }
-    if (userCircle) {
-        map.removeLayer(userCircle);
-    }
-
-    // Add new marker (pin)
-    userMarker = L.marker(e.latlng).addTo(map)
-        .bindPopup("You are within " + radius.toFixed(0) + " meters of this point");
-
-    // Add new circle (accuracy)
-    userCircle = L.circle(e.latlng, radius, {
-        color: '#1a75ff',
-        fillColor: '#1a75ff',
-        fillOpacity: 0.2,
-        weight: 1
-    }).addTo(map);
-    
-    // Open the popup, but DO NOT call map.setView() to keep the current map center
-    userMarker.openPopup();
+	const r = e.accuracy / 2;
+	if (userMarker) map.removeLayer(userMarker);
+	if (userCircle) map.removeLayer(userCircle);
+	userMarker = L.marker(e.latlng).addTo(map).bindPopup(`You are within ${r.toFixed(0)}m`);
+	userCircle = L.circle(e.latlng, r, { color: '#7c6bff', fillColor: '#7c6bff', fillOpacity: 0.15, weight: 1 }).addTo(map);
+	userMarker.openPopup();
 }
-
-// Function to run if location access fails
-function onLocationError(e) {
-    console.error("Location error:", e.message);
-    alert("Could not find your location. Please ensure location services are enabled.");
-}
-
-// Define the function that starts the location process
-function locateUser() {
-    // setView: false ensures the map does not automatically pan/zoom
-    map.locate({setView: false, maxZoom: 16});
-}
-
-// Set up event listeners for location success and failure
 map.on('locationfound', onLocationFound);
-map.on('locationerror', onLocationError);
+map.on('locationerror', () => alert("Could not find your location."));
+document.getElementById('btn-locate').addEventListener('click', () => map.locate({ setView: false, maxZoom: 16 }));
 
-// Create a custom control for the 'Update Location' button
-L.Control.LocationButton = L.Control.extend({
-    options: {
-        position: 'bottomleft' // Place the button in the bottom left
-    },
+// ------------------------------------------------------------------
+// 3. VERTEX LAYER GROUP
+// ------------------------------------------------------------------
+const vertexGroup = L.layerGroup();
+let verticesOn = false;
 
-    onAdd: function (map) {
-        const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom leaflet-control-locate');
-        container.style.backgroundColor = 'white';
-        container.style.width = '30px';
-        container.style.height = '30px';
-        container.title = 'Update Location';
+function addVertex(lat, lon, name, idx, color) {
+	const m = L.circleMarker([lat, lon], {
+		radius: 3, fillColor: color || '#fff',
+		color: 'rgba(0,0,0,0.5)', weight: 1,
+		opacity: 0.9, fillOpacity: 0.7
+	}).bindPopup(`${name} <span style="opacity:0.4">[v${idx}]</span><br><small>${lat}, ${lon}</small>`);
+	vertexGroup.addLayer(m);
+}
 
-        container.onclick = locateUser; // Assign the click action
+// ------------------------------------------------------------------
+// 4. ROUTE MODE (walking via FOSSGIS OSRM foot server)
+// ------------------------------------------------------------------
+const entrances = [];
+let routeMode = false;
+let routeLine = null;
+let routeClickMarker = null;
+let routeDestMarker = null;
 
-        // Prevent click events from propagating to the map
-        L.DomEvent.disableClickPropagation(container);
-        
-        return container;
-    }
+const routeHint = document.getElementById('route-hint');
+const routeCard = document.getElementById('route-card');
+
+document.getElementById('toggle-route').addEventListener('click', function() {
+	routeMode = !routeMode;
+	this.classList.toggle('active', routeMode);
+	routeHint.classList.toggle('visible', routeMode);
+	if (!routeMode) clearRoute();
 });
 
-// Add the control to the map
-L.control.locationButton = function(opts) {
-    return new L.Control.LocationButton(opts);
+document.getElementById('rc-close').addEventListener('click', () => clearRoute());
+
+function clearRoute() {
+	if (routeLine) { map.removeLayer(routeLine); routeLine = null; }
+	if (routeClickMarker) { map.removeLayer(routeClickMarker); routeClickMarker = null; }
+	if (routeDestMarker) { map.removeLayer(routeDestMarker); routeDestMarker = null; }
+	routeCard.classList.remove('visible');
 }
-L.control.locationButton().addTo(map);
 
-// NOTE: The automatic call to locateUser() on page load has been removed.
-// Location fetching now relies only on the user clicking the button.
+function haversine(lat1, lon1, lat2, lon2) {
+	const R = 6371000;
+	const toRad = d => d * Math.PI / 180;
+	const dLat = toRad(lat2 - lat1);
+	const dLon = toRad(lon2 - lon1);
+	const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon/2)**2;
+	return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
 
+function findNearest(lat, lon) {
+	let best = null, bestDist = Infinity;
+	entrances.forEach(e => {
+		const d = haversine(lat, lon, e.lat, e.lon);
+		if (d < bestDist) { bestDist = d; best = e; }
+	});
+	return { entrance: best, dist: bestDist };
+}
+
+function makePulseIcon(color) {
+	return L.divIcon({
+		className: '',
+		html: `<div style="
+			width:14px;height:14px;border-radius:50%;
+			background:${color};
+			border:2px solid #fff;
+			box-shadow:0 0 0 4px ${color}44, 0 2px 8px rgba(0,0,0,0.4);
+		"></div>`,
+		iconSize: [14, 14],
+		iconAnchor: [7, 7]
+	});
+}
+
+map.on('click', async function(e) {
+	if (!routeMode || entrances.length === 0) return;
+
+	const { lat, lng: lon } = e.latlng;
+	const { entrance, dist } = findNearest(lat, lon);
+	if (!entrance) return;
+
+	clearRoute();
+
+	routeClickMarker = L.marker([lat, lon], { icon: makePulseIcon('#7c6bff') }).addTo(map);
+	routeDestMarker = L.marker([entrance.lat, entrance.lon], { icon: makePulseIcon('#ff00ff') }).addTo(map);
+
+	document.getElementById('rc-station').textContent = entrance.name || 'Entrance';
+	document.getElementById('rc-time').textContent = '…';
+	document.getElementById('rc-dist').textContent = '…';
+	routeCard.classList.add('visible');
+	routeHint.classList.remove('visible');
+
+	try {
+		// FOSSGIS OSRM foot routing server (actual walking directions)
+		const url = `https://routing.openstreetmap.de/routed-foot/route/v1/foot/${lon},${lat};${entrance.lon},${entrance.lat}?overview=full&geometries=geojson`;
+		const res = await fetch(url);
+		const json = await res.json();
+
+		if (json.routes && json.routes.length > 0) {
+			const route = json.routes[0];
+			const coords = route.geometry.coordinates.map(c => [c[1], c[0]]);
+
+			routeLine = L.polyline(coords, {
+				color: '#ff00ff',
+				weight: 4,
+				opacity: 0.8,
+				dashArray: '8 6',
+				lineCap: 'round'
+			}).addTo(map);
+
+			const distM = route.distance;
+			const durS = route.duration;
+			const distStr = distM >= 1000 ? `${(distM/1000).toFixed(1)} km` : `${Math.round(distM)} m`;
+			const minStr = `${Math.ceil(durS / 60)} min`;
+
+			document.getElementById('rc-station').textContent = entrance.name || 'Nearest Entrance';
+			document.getElementById('rc-time').textContent = minStr;
+			document.getElementById('rc-dist').textContent = distStr;
+		}
+	} catch (err) {
+		console.error('Routing error:', err);
+		routeLine = L.polyline([[lat, lon], [entrance.lat, entrance.lon]], {
+			color: '#ff00ff', weight: 3, opacity: 0.5, dashArray: '6 8'
+		}).addTo(map);
+
+		const distStr = dist >= 1000 ? `${(dist/1000).toFixed(1)} km` : `${Math.round(dist)} m`;
+		document.getElementById('rc-time').textContent = `~${Math.ceil(dist / 80)} min`;
+		document.getElementById('rc-dist').textContent = `${distStr} (straight)`;
+	}
+});
 
 // ------------------------------------------------------------------
-// 3. EXISTING SUBWAY DATA CODE (MODIFIED FOR LABELS)
+// 5. SUBWAY DATA
 // ------------------------------------------------------------------
-
-// Create a dedicated pane for subway entrances
 map.createPane('subwayEntrances');
 map.getPane('subwayEntrances').style.zIndex = 650;
 
-// Metro line colors
+// Station labels always on top
+map.getPane('tooltipPane').style.zIndex = 9999;
+
 const lineColors = {
 	'red': 'rgba(238, 43, 115, 0.2)',
 	'blue': 'rgba(84, 136, 197, 0.2)',
@@ -204,199 +570,119 @@ const lineColors = {
 	'green': 'rgba(0, 168, 165, 0.2)'
 };
 
-// Function to calculate and apply font size based on zoom level
-// Base zoom is 16 (where we want 12px)
-// Size increases by 2px for every zoom level above 16
 function updateLabelFontSize() {
-    const currentZoom = map.getZoom();
-    const baseZoom = 16;
-    const baseSize = 12; // Starting font size at base zoom
-    
-    // Simple linear scaling: +2px for every zoom level increase
-    const newSize = Math.max(baseSize, baseSize + (currentZoom - baseZoom) * 2);
-    
-    // Select all tooltip elements with the 'station-label' class
-    const labels = document.querySelectorAll('.leaflet-tooltip.station-label');
-    
-    labels.forEach(label => {
-        // Apply the new font size directly as an inline style
-        label.style.fontSize = `${newSize}px`;
-    });
+	const s = Math.max(12, 12 + (map.getZoom() - 16) * 2);
+	document.querySelectorAll('.leaflet-tooltip.station-label').forEach(l => l.style.fontSize = `${s}px`);
 }
 
-
-// Overpass query
 const query = `
 [out:json][timeout:60];
-
-// --- Step 1: fetch ALL subway entrances in Lisbon area
 node["railway"="subway_entrance"](38.6,-9.3,38.9,-9.0)->.entrances;
-
-// --- Step 2: fetch ALL subway stations with station=subway tag
 (
   node["railway"="station"]["station"="subway"](38.6,-9.3,38.9,-9.0);
   way["railway"="station"]["station"="subway"](38.6,-9.3,38.9,-9.0);
   relation["railway"="station"]["station"="subway"](38.6,-9.3,38.9,-9.0);
 )->.stations;
-
-// --- Step 3: fetch ALL metro line relations
 relation["type"="route"]["route"="subway"](38.6,-9.3,38.9,-9.0)->.lines;
-
-// --- Step 4: combine everything
 (.entrances; .stations; .lines;);
 out geom;
 >;
 out skel qt;
 `;
 
-fetch('https://overpass-api.de/api/interpreter', {
-	method: 'POST',
-	body: query
-})
-.then(res => res.json())
+fetch('https://overpass-api.de/api/interpreter', { method: 'POST', body: query })
+.then(r => r.json())
 .then(data => {
-	// FIRST PASS: Load only MAGENTA dots (subway entrances)
-	const magentas = data.elements.filter(el => 
+	// Subway entrances (magenta)
+	data.elements.filter(el =>
 		el.type === "node" && el.lat && el.lon && el.tags?.railway === "subway_entrance"
-	);
-	
-	magentas.forEach(el => {
+	).forEach(el => {
+		entrances.push({ lat: el.lat, lon: el.lon, name: el.tags?.name || `Entrance ${el.id}` });
 		L.circleMarker([el.lat, el.lon], {
-			radius: 10,
-			fillColor: '#ff00ff',
-			color: '#000',
-			weight: 1,
-			opacity: 1,
-			fillOpacity: 0.6,
-			pane: 'subwayEntrances'
+			radius: 10, fillColor: '#ff00ff', color: '#000',
+			weight: 1, opacity: 1, fillOpacity: 0.6, pane: 'subwayEntrances'
 		}).addTo(map)
-		.bindPopup(el.tags?.name || el.id);
+		.bindPopup(`${el.tags?.name || el.id}<br><small>${el.lat}, ${el.lon}</small>`);
 	});
 
-	// SECOND PASS: Load everything else after magenta dots are done
 	setTimeout(() => {
+		// Station nodes
 		data.elements.forEach(el => {
-			// dots (subway stations)
-			if(el.type === "node" && el.lat && el.lon && el.tags?.station === "subway") {
-                const stationName = el.tags?.name; // Get the station name
-                
-				let fillColor = '#000000';
-				if(el.tags?.line) {
-					fillColor = lineColors[el.tags.line] || fillColor;
-				}
-				
+			if (el.type === "node" && el.lat && el.lon && el.tags?.station === "subway") {
+				const name = el.tags?.name;
+				let fillColor = '#000';
+				if (el.tags?.line) fillColor = lineColors[el.tags.line] || fillColor;
+
 				const marker = L.circleMarker([el.lat, el.lon], {
-					radius: 6,
-					fillColor,
-					color: '#000',
-					weight: 1,
-					opacity: 1,
-					fillOpacity: 0.6,
-					pane: 'subwayEntrances'
+					radius: 6, fillColor, color: '#000',
+					weight: 1, opacity: 1, fillOpacity: 0.6, pane: 'subwayEntrances'
 				}).addTo(map)
-				.bindPopup(stationName || el.id); // Keep the popup functionality
-                
-                // Add permanent tooltip if a name exists
-                if (stationName) {
-                    marker.bindTooltip(stationName, {
-                        permanent: true,
-                        direction: 'bottom',
-                        offset: [0, 8],
-                        className: 'station-label no-arrow' // Custom class for styling and no arrow
-                    });
-                }
+				.bindPopup(`${name || el.id}<br><small>${el.lat}, ${el.lon}</small>`);
+
+				if (name) marker.bindTooltip(name, {
+					permanent: true, direction: 'bottom', offset: [0, 8],
+					className: 'station-label no-arrow'
+				});
 			}
 		});
 
-		// Ways (station shapes and lines)
+		// Ways (station shapes / walls)
 		data.elements.forEach(el => {
-			if(el.type === "way" && el.geometry) {
-				let color = 'rgba(255,255,255,0.5)';
-				let weight = 3;
-				let opacity = 0.5;
-                const stationName = el.tags?.name; // Get name for Way
-
-				if(el.tags?.station === "subway") {
-					color = 'rgba(255,255,255,0.5)';
-					weight = 4;
-					opacity = 0.7;
-				} else if(el.tags?.line) {
-					color = lineColors[el.tags.line] || color;
-				}
+			if (el.type === "way" && el.geometry) {
+				let color = 'rgba(255,255,255,0.5)', weight = 3, opacity = 0.5;
+				const name = el.tags?.name;
+				if (el.tags?.station === "subway") { color = 'rgba(255,255,255,0.5)'; weight = 4; opacity = 0.7; }
+				else if (el.tags?.line) color = lineColors[el.tags.line] || color;
 
 				const latlngs = el.geometry.map(p => [p.lat, p.lon]);
-				const polyline = L.polyline(latlngs, {
-					color,
-					weight,
-					opacity
-				}).addTo(map)
-				.bindPopup(stationName || el.id);
-                
-                // Add permanent tooltip if it's a station and a name exists
-                if (el.tags?.station === "subway" && stationName) {
-                    polyline.bindTooltip(stationName, {
-                        permanent: true,
-                        direction: 'center', // Center the label on the polyline/shape
-                        className: 'station-label no-arrow',
-                        interactive: false
-                    });
-                }
+				L.polyline(latlngs, { color, weight, opacity }).addTo(map)
+					.bindPopup(`${name || el.id}<br><small>${latlngs[0][0]}, ${latlngs[0][1]}</small>`)
+					.bindTooltip(el.tags?.station === "subway" && name ? name : '', {
+						permanent: true, direction: 'center',
+						className: 'station-label no-arrow', interactive: false
+					});
+
+				el.geometry.forEach((p, i) => addVertex(p.lat, p.lon, name || el.id, i, '#ffffff'));
 			}
 		});
 
-		// Relations (metro lines) - Check members for station names
+		// Relations (metro lines / tracks)
 		data.elements.forEach(el => {
-			if(el.type === "relation" && el.members) {
-				const relationName = el.tags?.name || el.tags?.ref; // Use relation name
-				
-				el.members.forEach(m => {
-					if(m.type === "way" && m.geometry) {
-						let color = 'rgba(255,255,255,0.5)';
-						let weight = 2;
-						let opacity = 0.7;
+			if (el.type === "relation" && el.members) {
+				const relName = el.tags?.name || el.tags?.ref;
+				const relColor = el.tags?.colour || null;
 
-						if(el.tags?.colour) {
-							color = el.tags.colour;
-							weight = 3;
-							opacity = 0.8;
-						} else if(el.tags?.station === "subway") {
-							color = '#ffffff';
-							weight = 3;
-							opacity = 0.8;
-						} else if(el.tags?.line) {
-							color = lineColors[el.tags.line] || color;
-						}
+				el.members.forEach((m, mi) => {
+					if (m.type === "way" && m.geometry) {
+						let color = 'rgba(255,255,255,0.5)', weight = 2, opacity = 0.7;
+						if (relColor) { color = relColor; weight = 3; opacity = 0.8; }
+						else if (el.tags?.line) color = lineColors[el.tags.line] || color;
 
 						const latlngs = m.geometry.map(p => [p.lat, p.lon]);
-						const polyline = L.polyline(latlngs, {
-							color,
-							weight,
-							opacity
-						}).addTo(map)
-						.bindPopup(relationName || el.id);
+						const poly = L.polyline(latlngs, { color, weight, opacity }).addTo(map)
+							.bindPopup(`${relName || el.id}<br><small>${latlngs[0][0]}, ${latlngs[0][1]}</small>`);
 
-						// Add permanent tooltip if a name exists (for the line/relation itself)
-						// We only label the first segment of the relation to avoid clutter
-						if (relationName && m === el.members[0]) {
-							polyline.bindTooltip(relationName, {
-								permanent: true,
-								direction: 'center',
-								className: 'station-label no-arrow',
-								interactive: false
+						if (relName && mi === 0) {
+							poly.bindTooltip(relName, {
+								permanent: true, direction: 'center',
+								className: 'station-label no-arrow', interactive: false
 							});
 						}
+
+						m.geometry.forEach((p, i) => addVertex(p.lat, p.lon, relName || el.id, i, color));
 					}
 				});
 			}
 		});
-        
-        // Initial application of the font size
-        updateLabelFontSize();
-        
-        // Add event listener to update font size on zoom
-        map.on('zoomend', updateLabelFontSize);
 
+		updateLabelFontSize();
+		map.on('zoomend', updateLabelFontSize);
+		document.getElementById('loader').classList.add('hidden');
 	}, 100);
+})
+.catch(err => {
+	console.error(err);
+	document.querySelector('.loader-text').textContent = 'failed to load data';
 });
 </script>
 </body>
