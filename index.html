@@ -286,6 +286,11 @@
 		.grid-3 { grid-template-columns: repeat(3, 1fr); }
 		.grid-4 { grid-template-columns: repeat(4, 1fr); }
 
+		.span-1 { grid-column: span 1; }
+		.span-2 { grid-column: span 2; }
+		.span-3 { grid-column: span 3; }
+		.span-4 { grid-column: span 4; }
+
 		/* ========================================
 		   CARD COMPONENTS
 		   ======================================== */
@@ -390,6 +395,13 @@
 			opacity: 0.5;
 			pointer-events: none;
 			border-radius: inherit;
+		}
+
+		/* ========================================
+		   PAGE VISIBILITY
+		   ======================================== */
+		.page-hidden {
+			display: none;
 		}
 
 		/* ========================================
@@ -578,6 +590,16 @@
 			max-width: 100%;
 		}
 
+		.grid-1 .wrap-overlay {
+			display: none;
+		}
+
+		.bandcamp-embed {
+			border: 0;
+			width: 100%;
+			height: 42px;
+		}
+
 		/* ========================================
 		   FOOTER
 		   ======================================== */
@@ -589,6 +611,11 @@
 
 		footer .section-title {
 			text-align: center;
+		}
+
+		.footer-title {
+			margin-bottom: 0.5rem;
+			font-size: 0.875rem;
 		}
 
 		footer iframe {
@@ -742,8 +769,7 @@
 			<section class="section">
 				<div class="section-title" data-translate="home.videography">Videography Portfolio <span class="material-symbols-outlined">open_in_new</span></div>
 				<div class="content-grid grid-1">
-					<style>.grid-1 .wrap-overlay { display: none !important; }</style>
-					<a class="card" href="https://val-nvs.com/portfolio/" target="_blank" rel="noopener">
+						<a class="card" href="https://val-nvs.com/portfolio/" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/film.gif" alt="">
 					</a>
 				</div>
@@ -763,12 +789,18 @@
 
 			<section class="section">
 				<div class="section-title" data-translate="home.profiles">PROFILES</div>
-				<div class="content-grid grid-2">
+				<div class="content-grid grid-4">
 					<a class="card" href="https://www.linkedin.com/in/valdir-neves/" target="_blank" rel="noopener">
 						<img src="media/linkedin.jpg" alt="LinkedIn">
 					</a>
 					<a class="card" href="https://www.instagram.com/val.nevs/" target="_blank" rel="noopener">
 						<img src="media/instagram.jpg" alt="Instagram">
+					</a>
+					<a class="card" href="https://github.com/val-nvs" target="_blank" rel="noopener">
+						<img src="media/github.png" alt="GitHub">
+					</a>
+					<a class="card" href="https://letterboxd.com/eerom/" target="_blank" rel="noopener">
+						<img src="media/letterboxd.png" alt="Letterboxd">
 					</a>
 				</div>
 			</section>
@@ -777,13 +809,13 @@
 
 
 		<!-- PROJECTS PAGE -->
-		<div class="page" id="projects" style="display: none;">
+		<div class="page page-hidden" id="projects">
 
 
 			<section class="section">
 				<div class="section-title">3D PRINTED FILM CAMERA 📌</div>
 				<div class="content-grid grid-4">
-					<a class="card" href="https://github.com/val-nvs/film-camera" target="_blank" rel="noopener" style="grid-column: span 4;">
+					<a class="card span-4" href="https://github.com/val-nvs/film-camera" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/v19.gif" alt="">
 					</a>
 					<div class="text-card">Coming soon</div>
@@ -810,7 +842,7 @@
 					<a class="card" href="https://val-nvs.com/irc/" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/irc.png" alt="">
 					</a>
-					<div class="text-card" style="grid-column: span 2;">Real-time chat rooms — a modern web version and a retro IRC-style client.</div>
+					<div class="text-card span-2">Real-time chat rooms — a modern web version and a retro IRC-style client.</div>
 				</div>
 			</section>
 
@@ -832,11 +864,11 @@
 					<a class="card" href="https://val-nvs.com/portfolio/" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/film.jpg" alt="">
 					</a>
-					<div class="text-card" style="grid-column: span 1;">Film.</div>
+					<div class="text-card span-1">Film.</div>
 					<a class="card" href="https://val-nvs.com/photo/" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/photofolio.jpg" alt="">
 					</a>
-					<div class="text-card" style="grid-column: span 1;">Photo.</div>
+					<div class="text-card span-1">Photo.</div>
 				</div>
 			</section>
 
@@ -847,7 +879,7 @@
 					<span class="card card-nolink" aria-disabled="true">
 						<img loading="lazy" src="" alt="">
 					</span>
-					<div class="text-card" style="grid-column: span 2;">Full added made out of NORS (11 NOR, 3 NOT, 2 OR).</div>
+					<div class="text-card span-2">Full added made out of NORS (11 NOR, 3 NOT, 2 OR).</div>
 				</div>
 			</section>
 
@@ -858,7 +890,7 @@
 					<span class="card card-nolink" aria-disabled="true">
 						<img loading="lazy" src="" alt="">
 					</span>
-					<div class="text-card" style="grid-column: span 3;">LED counter CAD workshop at NOVA School of Science and Technology</div>
+					<div class="text-card">LED counter CAD workshop at NOVA School of Science and Technology</div>
 				</div>
 			</section>
 
@@ -869,7 +901,7 @@
 					<span class="card card-nolink" aria-disabled="true">
 						<img loading="lazy" src="" alt="">
 					</span>
-					<div class="text-card" style="grid-column: span 3;">Computer in Minecraft and addition program.</div>
+					<div class="text-card">Computer in Minecraft and addition program.</div>
 				</div>
 			</section>
 
@@ -880,7 +912,7 @@
 					<span class="card card-nolink" aria-disabled="true">
 						<img loading="lazy" src="" alt="">
 					</span>
-					<div class="text-card" style="grid-column: span 3;">Calculator in Minecraft capable of multiplication.</div>
+					<div class="text-card">Calculator in Minecraft capable of multiplication.</div>
 				</div>
 			</section>
 
@@ -892,7 +924,7 @@
 					<a class="card" href="https://val-nvs.com/tv/" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/switcher.gif" alt="">
 					</a>
-					<div class="text-card" style="grid-column: span 1;">Functional but not really.</div>
+					<div class="text-card span-1">Functional but not really.</div>
 				</div>
 			</section>
 
@@ -933,7 +965,7 @@
 					<span class="card card-nolink" aria-disabled="true">
 						<img loading="lazy" src="" alt="">
 					</span>
-					<div class="text-card" style="grid-column: span 3;">2D Lens simulation in Desmos with bokeh simulation.</div>
+					<div class="text-card">2D Lens simulation in Desmos with bokeh simulation.</div>
 				</div>
 			</section>
 
@@ -999,7 +1031,7 @@
 
 
 		<!-- TOOLS PAGE -->
-		<div class="page" id="tools" style="display: none;">
+		<div class="page page-hidden" id="tools">
 
 			<section class="section">
 				<div class="section-title">Film Production Software work in progress</div>
@@ -1070,7 +1102,7 @@
 
 
 		<!-- ABOUT PAGE -->
-		<div class="page" id="about" style="display: none;">
+		<div class="page page-hidden" id="about">
 			<section class="hero-section">
 				<div class="hero-image-container">
 					<img class="hero-image" src="media/cctv.jpg" alt="" loading="eager">
@@ -1356,9 +1388,9 @@
 
 	<!-- Background Music Footer -->
 	<footer>
-		<div class="section-title" data-translate="footer.music" style="margin-bottom: 0.5rem; font-size: 0.875rem;">BACKGROUND MUSIC</div>
-		<iframe style="border: 0; width: 100%; height: 42px;" src="https://bandcamp.com/EmbeddedPlayer/album=385726686/size=small/bgcol=333333/linkcol=2ebd35/artwork=none/track=3492351434/transparent=true/" seamless><a href="https://aphextwin.bandcamp.com/track/aisatsana-102">aisatsana [102] by Aphex Twin</a></iframe>
-		<iframe style="border: 0; width: 100%; height: 42px;" src="https://bandcamp.com/EmbeddedPlayer/album=1083983989/size=small/bgcol=333333/linkcol=e99708/artwork=none/track=1893697882/transparent=true/" seamless><a href="https://c418.bandcamp.com/album/life-changing-moments-seem-minor-in-pictures">life changing moments seem minor in pictures by C418</a></iframe>
+		<div class="section-title footer-title" data-translate="footer.music">BACKGROUND MUSIC</div>
+		<iframe class="bandcamp-embed" src="https://bandcamp.com/EmbeddedPlayer/album=385726686/size=small/bgcol=333333/linkcol=2ebd35/artwork=none/track=3492351434/transparent=true/" seamless><a href="https://aphextwin.bandcamp.com/track/aisatsana-102">aisatsana [102] by Aphex Twin</a></iframe>
+		<iframe class="bandcamp-embed" src="https://bandcamp.com/EmbeddedPlayer/album=1083983989/size=small/bgcol=333333/linkcol=e99708/artwork=none/track=1893697882/transparent=true/" seamless><a href="https://c418.bandcamp.com/album/life-changing-moments-seem-minor-in-pictures">life changing moments seem minor in pictures by C418</a></iframe>
 	</footer>
 </div>
 
@@ -1656,7 +1688,7 @@ navButtons.forEach(button => {
 		
 		const selectedPage = this.dataset.page;
 		document.querySelectorAll('.page').forEach(page => {
-			page.style.display = page.id === selectedPage ? '' : 'none';
+			page.classList.toggle('page-hidden', page.id !== selectedPage);
 		});
 		
 		window.scrollTo({ top: 0, behavior: 'smooth' });
