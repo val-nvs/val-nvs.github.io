@@ -340,8 +340,13 @@
 			object-fit: cover;
 			mix-blend-mode: screen;
 			pointer-events: none;
-			opacity: 0.3;
+			opacity: 0.5;
 			transition: opacity 1.5s ease-in-out;
+			border-radius: inherit;
+		}
+
+		.grid-1 .wrap-overlay {
+			display: none;
 		}
 
 		.card img {
@@ -350,6 +355,23 @@
 			height: auto;
 			object-fit: cover;
 			border-radius: inherit;
+		}
+
+		.card.card-noborder {
+			background: transparent;
+		}
+
+		.card.card-noborder img {
+			filter: drop-shadow(0 0 5px rgba(0, 0, 0, 1));
+		}
+
+		.card.card-noborder::before {
+			border: none;
+		}
+
+		.card.card-noborder:hover::before,
+		.card.card-noborder:focus::before {
+			border: none;
 		}
 
 		.card.card-nolink {
@@ -382,19 +404,6 @@
 
 		.card-tooltip.visible {
 			opacity: 1;
-		}
-
-		.card .wrap-overlay {
-			position: absolute;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-			object-fit: cover;
-			mix-blend-mode: screen;
-			opacity: 0.5;
-			pointer-events: none;
-			border-radius: inherit;
 		}
 
 		/* ========================================
@@ -588,10 +597,6 @@
 		   ======================================== */
 		iframe {
 			max-width: 100%;
-		}
-
-		.grid-1 .wrap-overlay {
-			display: none;
 		}
 
 		.bandcamp-embed {
@@ -790,16 +795,16 @@
 			<section class="section">
 				<div class="section-title" data-translate="home.profiles">PROFILES</div>
 				<div class="content-grid grid-4">
-					<a class="card" href="https://www.linkedin.com/in/valdir-neves/" target="_blank" rel="noopener">
+					<a class="card card-noborder" href="https://www.linkedin.com/in/valdir-neves/" target="_blank" rel="noopener">
 						<img src="media/linkedin.png" alt="LinkedIn">
 					</a>
-					<a class="card" href="https://www.instagram.com/val.nevs/" target="_blank" rel="noopener">
+					<a class="card card-noborder" href="https://www.instagram.com/val.nevs/" target="_blank" rel="noopener">
 						<img src="media/instagram.png" alt="Instagram">
 					</a>
-					<a class="card" href="https://github.com/val-nvs" target="_blank" rel="noopener">
+					<a class="card card-noborder" href="https://github.com/val-nvs" target="_blank" rel="noopener">
 						<img src="media/github.png" alt="GitHub">
 					</a>
-					<a class="card" href="https://letterboxd.com/eerom/" target="_blank" rel="noopener">
+					<a class="card card-noborder" href="https://letterboxd.com/eerom/" target="_blank" rel="noopener">
 						<img src="media/letterboxd.png" alt="Letterboxd">
 					</a>
 				</div>
@@ -1123,22 +1128,22 @@
 			<section class="section">
 				<div class="section-title" data-translate="about.contact">CONTACT</div>
 				<p data-translate="about.collaborate">Looking to collaborate or share ideas?<br>Drop me a message- I'd love to connect.</p><br>
-				<p>Email: <a href="mailto:valdir.nvs@outlook.com">valdir.nvs@outlook.com</a></p>
+				<p>Email: <a href="/cdn-cgi/l/email-protection#1a6c7b767e736834746c695a756f6e7675757134797577"><span class="__cf_email__" data-cfemail="8afcebe6eee3f8a4e4fcf9cae5fffee6e5e5e1a4e9e5e7">[email&#160;protected]</span></a></p>
 				<p>Phone: (+351) 930 946 697</p>
 				<p>Instagram: <a href="https://www.instagram.com/val.nevs" target="_blank" rel="noopener">@val.nevs</a></p>
 				<p>LinkedIn: <a href="https://www.linkedin.com/in/valdir-neves/" target="_blank" rel="noopener">/valdir-neves/</a></p>
 
 				<div class="content-grid grid-4">
-					<a class="card" href="https://www.linkedin.com/in/valdir-neves/" target="_blank" rel="noopener">
+					<a class="card card-noborder" href="https://www.linkedin.com/in/valdir-neves/" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/linkedin.png" alt="LinkedIn">
 					</a>
-					<a class="card" href="https://www.instagram.com/val.nevs/" target="_blank" rel="noopener">
+					<a class="card card-noborder" href="https://www.instagram.com/val.nevs/" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/instagram.png" alt="Instagram">
 					</a>
-					<a class="card" href="https://github.com/val-nvs" target="_blank" rel="noopener">
+					<a class="card card-noborder" href="https://github.com/val-nvs" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/github.png" alt="GitHub">
 					</a>
-					<a class="card" href="https://letterboxd.com/eerom/" target="_blank" rel="noopener">
+					<a class="card card-noborder" href="https://letterboxd.com/eerom/" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/letterboxd.png" alt="Letterboxd">
 					</a>
 				</div>
@@ -1394,7 +1399,7 @@
 	</footer>
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ========================================
 // HEADER ANIMATION
 // ========================================
@@ -1415,6 +1420,7 @@ headerChars.forEach(span => headerDisplay.appendChild(span));
 const translations = {
 	en: {
 		'nav.home': 'Home',
+		'nav.tools': 'Tools',
 		'nav.projects': 'Tech Projects',
 		'nav.about': 'About',
 		'home.videography': 'VIDEOGRAPHY PORTFOLIO',
@@ -1430,6 +1436,7 @@ const translations = {
 	},
 	pt: {
 		'nav.home': 'Início',
+		'nav.tools': 'Ferramentas',
 		'nav.projects': 'Projetos Tech',
 		'nav.about': 'Sobre',
 		'home.videography': 'PORTFÓLIO DE VIDEOGRAFIA',
@@ -1445,6 +1452,7 @@ const translations = {
 	},
 	es: {
 		'nav.home': 'Inicio',
+		'nav.tools': 'Herramientas',
 		'nav.projects': 'Proyectos Tech',
 		'nav.about': 'Acerca',
 		'home.videography': 'PORTAFOLIO DE VIDEOGRAFÍA',
@@ -1460,6 +1468,7 @@ const translations = {
 	},
 	fr: {
 		'nav.home': 'Accueil',
+		'nav.tools': 'Outils',
 		'nav.projects': 'Projets Tech',
 		'nav.about': 'À propos',
 		'home.videography': 'PORTFOLIO DE VIDÉOGRAPHIE',
@@ -1475,6 +1484,7 @@ const translations = {
 	},
 	de: {
 		'nav.home': 'Startseite',
+		'nav.tools': 'Werkzeuge',
 		'nav.projects': 'Tech-Projekte',
 		'nav.about': 'Über',
 		'home.videography': 'VIDEOGRAFIE-PORTFOLIO',
@@ -1490,6 +1500,7 @@ const translations = {
 	},
 	zh: {
 		'nav.home': '首页',
+		'nav.tools': '工具',
 		'nav.projects': '技术项目',
 		'nav.about': '关于',
 		'home.videography': '视频作品集',
@@ -1505,6 +1516,7 @@ const translations = {
 	},
 	ja: {
 		'nav.home': 'ホーム',
+		'nav.tools': 'ツール',
 		'nav.projects': 'テックプロジェクト',
 		'nav.about': '概要',
 		'home.videography': 'ビデオグラフィーポートフォリオ',
@@ -1520,6 +1532,7 @@ const translations = {
 	},
 	ar: {
 		'nav.home': 'الرئيسية',
+		'nav.tools': 'الأدوات',
 		'nav.projects': 'المشاريع التقنية',
 		'nav.about': 'حول',
 		'home.videography': 'معرض الفيديو',
@@ -1651,10 +1664,10 @@ document.addEventListener('mousemove', (e) => {
 			const dx = mouseX - charX;
 			const dy = mouseY - charY;
 			const distance = Math.sqrt(dx * dx + dy * dy);
-			const maxDistance = 300;
+			const maxDistance = 200;
 			
 			if (distance < maxDistance) {
-				const intensity = 1 - (distance / maxDistance);
+				const intensity = Math.pow(1 - (distance / maxDistance), 3);
 				const weight = 200 + Math.round(intensity * 600);
 				
 				const gray = 128;
@@ -1728,17 +1741,28 @@ document.querySelectorAll('.card-nolink').forEach(card => {
 // ========================================
 // PLASTIC WRAP OVERLAY
 // ========================================
-const wrapCount = 50;
+const wraps = [
+	1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+	12, 13, 15, 16, 17, 18, 19, 20,
+	21, 22, 23, 24, 27, 28, 36, 38, 39, 40,
+	41, 42, 48, 49
+];
 document.querySelectorAll('.card').forEach(card => {
+	if (card.classList.contains('card-noborder')) return;
 	if (card.querySelector('.wrap-overlay')) return;
 	const wrap = document.createElement('img');
-	wrap.src = `media/wrap/${Math.floor(Math.random() * wrapCount) + 1}.jpg`;
-	wrap.alt = '';
-	wrap.loading = 'lazy';
 	wrap.classList.add('wrap-overlay');
-	card.style.position = 'relative';
+	wrap.src = `media/wrap/${wraps[Math.floor(Math.random() * wraps.length)]}.jpg`;
 	card.appendChild(wrap);
+
+	/* DEBUG */
+	//const debug = document.createElement('div');
+	//debug.textContent = wrap.src.split('/').pop();
+	//debug.style.cssText = 'position:absolute;bottom:4px;left:4px;z-index:9;font-size:10px;color:white;background:rgba(0,0,0,0.6);padding:2px 4px;pointer-events:none';
+	//card.appendChild(debug);
+	/* END DEBUG */
 });
+
 </script>
 </body>
 </html>
