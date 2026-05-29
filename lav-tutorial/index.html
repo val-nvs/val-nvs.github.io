@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Document</title>
+    <style>
+        /* Barebones GitHub Dark Mode */
+        body {
+            background-color: #0d1117;
+            margin: 0;
+            padding: 3rem 2rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .markdown-body {
+            max-width: 760px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .zoomable-img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 6px;
+            border: 1px solid #30363d;
+            margin-bottom: 2.5rem;
+            cursor: zoom-in;
+            touch-action: manipulation;
+        }
+
+        /* Overlay Layout */
+        .zoom-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(13, 17, 23, 0.95);
+            z-index: 1000;
+            display: none;
+            overflow: hidden;
+            touch-action: none; /* Prevents mobile browser from fighting our custom zoom */
+        }
+
+        .zoom-overlay img {
+            position: absolute;
+            cursor: grab;
+            user-select: none;
+            max-width: none;
+            max-height: none;
+            will-change: transform;
+        }
+        
+        .zoom-overlay img:active {
+            cursor: grabbing;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="markdown-body">
+        <img class="zoomable-img" src="1.png" alt="Image 1">
+        <img class="zoomable-img" src="2.png" alt="Image 2">
+        <img class="zoomable-img" src="3.png" alt="Image 3">
+        <img class="zoomable-img" src="4.png" alt="Image 4">
+        <img class="zoomable-img" src="5.png" alt="Image 5">
+        <img class="zoomable-img" src="6.png" alt="Image 6">
+        <img class="zoomable-img" src="7.png" alt="Image 7">
+        <img class="zoomable-img" src="8.png" alt="Image 8">
+        <img class="zoomable-img" src="9.png" alt="Image 9">
+        <img class="zoomable-img" src="10.png" alt="Image 10">
+    </div>
+
+    <div id="zoomOverlay" class="zoom-overlay">
+        <img id="zoomedImg" src="" alt="Zoomed View">
+    </div>
+
+    <script>
+        const overlay = document.getElementById('zoomOverlay');
+        const img = document.getElementById('zoomedImg');
+        
+        let scale = 1, posX = 0, posY = 0;
+        let isDragging = false, startX = 0, startY = 0, hasDragged = false;
+        let startDist = 0; // Tracks multi-touch pinch distance
+
+        // Open Image (Works for both Click and Tap)
+        document.querySelectorAll('.zoomable-img').forEach(image => {
+            const openImage = (e) => {
+                isDragging = true;
+                hasDragged = false;
+                
+                img.src = image.src;
+                overlay.style.display = 'block';
+                
+                img.onload = () => {
+                    scale = Math.min(window.innerWidth / img.naturalWidth, window.innerHeight / img.naturalHeight);
+                    posX = (window.innerWidth - img.naturalWidth * scale) / 2;
+                    posY = (window.innerHeight - img.naturalHeight * scale) / 2;
+                    
+                    const clientX = e.clientX || e.touches[0].clientX;
+                    const clientY = e.clientY || e.touches[0].clientY;
+                    startX = clientX - posX;
+                    startY = clientY - posY;
+                    
+                    updateTransform();
+                };
+            };
+
+            image.addEventListener('mousedown', openImage);
+            image.addEventListener('touchstart', (e) => {
+                if (e.touches.length === 1) openImage(e);
+            }, { passive: true });
+        });
+
+        // Desktop Mouse Wheel Zooming
+        overlay.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            zoom(e.deltaY < 0 ? 1.1 : 1 / 1.1, e.clientX, e.clientY);
+        }, { passive: false });
+
+        // Core Zoom Calculation Logic
+        function zoom(factor, mouseX, mouseY) {
+            const nextScale = scale * factor;
+            if (nextScale < 0.1 || nextScale > 10) return;
+
+            const xs = (mouseX - posX) / scale;
+            const ys = (mouseY - posY) / scale;
+            
+            scale = nextScale;
+            posX = mouseX - xs * scale;
+            posY = mouseY - ys * scale;
+            
+            updateTransform();
+        }
+
+        // --- Dragging & Pinching Inputs (Desktop & Mobile) ---
+
+        const startGesture = (clientX, clientY) => {
+            isDragging = true;
+            hasDragged = false;
+            startX = clientX - posX;
+            startY = clientY - posY;
+        };
+
+        const moveGesture = (clientX, clientY) => {
+            if (!isDragging) return;
+            hasDragged = true;
+            posX = clientX - startX;
+            posY = clientY - startY;
+            updateTransform();
+        };
+
+        // Desktop Events
+        img.addEventListener('mousedown', (e) => {
+            startGesture(e.clientX, e.clientY);
+            e.stopPropagation();
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!startDist) moveGesture(e.clientX, e.clientY); 
+        });
+
+        // Mobile Touch Events
+        overlay.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 1) {
+                startGesture(e.touches[0].clientX, e.touches[0].clientY);
+            } else if (e.touches.length === 2) {
+                // Handle multi-touch pinch zoom setup
+                isDragging = false;
+                startDist = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+            }
+        }, { passive: true });
+
+        overlay.addEventListener('touchmove', (e) => {
+            if (e.touches.length === 1) {
+                moveGesture(e.touches[0].clientX, e.touches[0].clientY);
+            } else if (e.touches.length === 2 && startDist) {
+                hasDragged = true;
+                // Multi-touch pinch tracking
+                const dist = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+                const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+                const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+                
+                zoom(dist / startDist, midX, midY);
+                startDist = dist;
+            }
+        }, { passive: true });
+
+        window.addEventListener('mouseup', () => isDragging = false);
+        window.addEventListener('touchend', (e) => {
+            if (e.touches.length === 0) {
+                isDragging = false;
+                startDist = 0;
+            }
+        });
+
+        // Close on clean tap/click
+        overlay.addEventListener('click', () => {
+            if (!hasDragged) {
+                overlay.style.display = 'none';
+                img.src = '';
+            }
+        });
+
+        function updateTransform() {
+            img.style.transform = `translate(${posX}px, ${posY}px) scale(${scale})`;
+            img.style.transformOrigin = '0 0';
+        }
+    </script>
+</body>
+</html>
