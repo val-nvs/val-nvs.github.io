@@ -3,14 +3,57 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+	<title>Valdir Neves</title>
 	<meta name="description" content="Valdir Neves - Filmmaker, photographer, and developer based in Lisbon, Portugal. Portfolio featuring videography, photography, and technical projects.">
+	<meta name="author" content="Valdir Neves">
+	<link rel="canonical" href="https://val-nvs.com/">
+	<link rel="icon" href="media/favicon.png" type="image/png">
+
+	<!-- Open Graph -->
+	<meta property="og:type" content="website">
+	<meta property="og:url" content="https://val-nvs.com/">
+	<meta property="og:title" content="Valdir Neves">
+	<meta property="og:description" content="Filmmaker, photographer, and developer based in Lisbon, Portugal. Videography, photography, and technical projects.">
+	<meta property="og:image" content="https://val-nvs.com/media/linkedinOG.jpg">
+	<meta property="og:image:width" content="922">
+	<meta property="og:image:height" content="454">
+	<meta property="og:site_name" content="Valdir Neves">
+	<meta property="og:locale" content="en_US">
+
+	<!-- Twitter -->
+	<meta name="twitter:card" content="summary_large_image">
+	<meta name="twitter:title" content="Valdir Neves">
+	<meta name="twitter:description" content="Filmmaker, photographer, and developer based in Lisbon, Portugal. Videography, photography, and technical projects.">
+	<meta name="twitter:image" content="https://val-nvs.com/media/linkedinOG.jpg">
+
+	<!-- Fonts (trimmed to used weights, two text families combined into one request) -->
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-	<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono:wght@200..800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,100,0,200&icon_names=language,open_in_new" />
-	<title>Valdir Neves</title>
-	<link rel="icon" href="media/favicon.png" type="image/png">
+
+	<!-- Structured data -->
+	<script type="application/ld+json">
+	{
+	  "@context": "https://schema.org",
+	  "@type": "Person",
+	  "name": "Valdir Neves",
+	  "url": "https://val-nvs.com/",
+	  "image": "https://val-nvs.com/media/favicon.png",
+	  "jobTitle": "Filmmaker, Photographer & Developer",
+	  "address": {
+	    "@type": "PostalAddress",
+	    "addressLocality": "Lisbon",
+	    "addressCountry": "PT"
+	  },
+	  "sameAs": [
+	    "https://www.linkedin.com/in/valdir-neves/",
+	    "https://www.instagram.com/val.nevs/",
+	    "https://github.com/val-nvs",
+	    "https://letterboxd.com/eerom/"
+	  ]
+	}
+	</script>
 	<style>
 		/* ========================================
 		   CSS VARIABLES
@@ -349,12 +392,37 @@
 			display: none;
 		}
 
-		.card img {
+		.card img,
+		.card-media {
 			display: block;
 			width: 100%;
 			height: auto;
 			object-fit: cover;
 			border-radius: inherit;
+		}
+
+		/* Empty placeholder cards (projects with no image yet) */
+		.card-placeholder {
+			aspect-ratio: 4 / 3;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: #0d0f12;
+		}
+
+		.card-placeholder::after {
+			content: 'no image';
+			color: #4a5560;
+			font-size: 0.7rem;
+			letter-spacing: 0.08em;
+			text-transform: uppercase;
+			font-family: "Atkinson Hyperlegible Mono", monospace;
+		}
+
+		/* Not-yet-announced link placeholder */
+		.tba {
+			color: #808080;
+			font-style: italic;
 		}
 
 		.card.card-noborder {
@@ -761,21 +829,24 @@
 	<!-- Navigation -->
 	<nav class="site-nav" aria-label="Main navigation">
 		<ul class="nav-list" role="tablist">
-			<li class="nav-item active" data-page="home" data-translate="nav.home" role="tab" aria-selected="true" tabindex="0">Home</li>
-			<li class="nav-item" data-page="projects" data-translate="nav.projects" role="tab" aria-selected="false" tabindex="0">Tech Projects</li>
-			<li class="nav-item" data-page="tools" data-translate="nav.tools" role="tab" aria-selected="false" tabindex="0">Tools</li>
-			<li class="nav-item" data-page="about" data-translate="nav.about" role="tab" aria-selected="false" tabindex="0">About</li>
+			<li class="nav-item active" id="tab-home" data-page="home" data-translate="nav.home" role="tab" aria-selected="true" aria-controls="home" tabindex="0">Home</li>
+			<li class="nav-item" id="tab-projects" data-page="projects" data-translate="nav.projects" role="tab" aria-selected="false" aria-controls="projects" tabindex="-1">Tech Projects</li>
+			<li class="nav-item" id="tab-tools" data-page="tools" data-translate="nav.tools" role="tab" aria-selected="false" aria-controls="tools" tabindex="-1">Tools</li>
+			<li class="nav-item" id="tab-about" data-page="about" data-translate="nav.about" role="tab" aria-selected="false" aria-controls="about" tabindex="-1">About</li>
 		</ul>
 	</nav>
 	
 	<main>
 		<!-- HOME PAGE -->
-		<div class="page" id="home">
+		<div class="page" id="home" role="tabpanel" aria-labelledby="tab-home" tabindex="0">
 			<section class="section">
 				<div class="section-title" data-translate="home.videography">Videography Portfolio <span class="material-symbols-outlined">open_in_new</span></div>
 				<div class="content-grid grid-1">
 						<a class="card" href="https://val-nvs.com/portfolio/" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/film.gif" alt="">
+						<video class="card-media" autoplay muted loop playsinline width="438" height="214" poster="media/film-poster.jpg" aria-label="Videography portfolio reel">
+							<source src="media/film.webm" type="video/webm">
+							<source src="media/film.mp4" type="video/mp4">
+						</video>
 					</a>
 				</div>
 			</section>
@@ -784,10 +855,10 @@
 				<div class="section-title" data-translate="home.photography">Photography Portfolios</div>
 				<div class="content-grid grid-2">
 					<a class="card" href="https://valdirneves.mypixieset.com/" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/pixieset2.jpg" alt="">
+						<img loading="lazy" src="media/pixieset2.jpg" width="1647" height="903" alt="Photography portfolio on Pixieset">
 					</a>
 					<a class="card" href="https://val-nvs.com/photo/" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/photofolio.jpg" alt="">
+						<img loading="lazy" src="media/photofolio.jpg" width="1362" height="747" alt="Photography portfolio">
 					</a>
 				</div>
 			</section>
@@ -796,16 +867,16 @@
 				<div class="section-title" data-translate="home.profiles">PROFILES</div>
 				<div class="content-grid grid-4">
 					<a class="card card-noborder" href="https://www.linkedin.com/in/valdir-neves/" target="_blank" rel="noopener">
-						<img src="media/linkedin.png" alt="LinkedIn">
+						<img src="media/linkedin.png" width="263" height="263" alt="LinkedIn">
 					</a>
 					<a class="card card-noborder" href="https://www.instagram.com/val.nevs/" target="_blank" rel="noopener">
-						<img src="media/instagram.png" alt="Instagram">
+						<img src="media/instagram.png" width="300" height="300" alt="Instagram">
 					</a>
 					<a class="card card-noborder" href="https://github.com/val-nvs" target="_blank" rel="noopener">
-						<img src="media/github.png" alt="GitHub">
+						<img src="media/github.png" width="341" height="334" alt="GitHub">
 					</a>
 					<a class="card card-noborder" href="https://letterboxd.com/eerom/" target="_blank" rel="noopener">
-						<img src="media/letterboxd.png" alt="Letterboxd">
+						<img src="media/letterboxd.png" width="1024" height="1024" alt="Letterboxd">
 					</a>
 				</div>
 			</section>
@@ -814,14 +885,17 @@
 
 
 		<!-- PROJECTS PAGE -->
-		<div class="page page-hidden" id="projects">
+		<div class="page page-hidden" id="projects" role="tabpanel" aria-labelledby="tab-projects" tabindex="0">
 
 
 			<section class="section">
-				<div class="section-title">3D PRINTED FILM CAMERA 📌</div>
+				<div class="section-title" data-translate="t.filmcamera">3D PRINTED FILM CAMERA 📌</div>
 				<div class="content-grid grid-4">
 					<a class="card span-4" href="https://github.com/val-nvs/film-camera" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/v19.gif" alt="">
+						<video class="card-media" autoplay muted loop playsinline width="378" height="210" poster="media/v19-poster.jpg" aria-label="3D printed film camera animation">
+							<source src="media/v19.webm" type="video/webm">
+							<source src="media/v19.mp4" type="video/mp4">
+						</video>
 					</a>
 					<div class="text-card">Coming soon</div>
 				</div>
@@ -829,23 +903,23 @@
 
 			<div class="date-strip">August 2025 / Ongoing</div>
 			<section class="section">
-				<div class="section-title">CLUB BENARES WEBSITE</div>
+				<div class="section-title" data-translate="t.benares">CLUB BENARES WEBSITE</div>
 				<div class="content-grid grid-1">
 					<a class="card" href="https://thebenaresclub.com" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/benares.png" alt="">
+						<img loading="lazy" src="media/benares.png" width="818" height="354" alt="Club Benares website">
 					</a>
 				</div>
 			</section>
 
 			<div class="date-strip">October 2025</div>
 			<section class="section">
-				<div class="section-title">CHAT ROOM</div>
+				<div class="section-title" data-translate="t.chat">CHAT ROOM</div>
 				<div class="content-grid grid-4">
 					<a class="card" href="https://val-nvs.com/chat/" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/chat.png" alt="">
+						<img loading="lazy" src="media/chat.png" width="1450" height="628" alt="Web chat room">
 					</a>
 					<a class="card" href="https://val-nvs.com/irc/" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/irc.png" alt="">
+						<img loading="lazy" src="media/irc.png" width="1024" height="100" alt="IRC-style chat client">
 					</a>
 					<div class="text-card span-2">Real-time chat rooms — a modern web version and a retro IRC-style client.</div>
 				</div>
@@ -853,10 +927,10 @@
 
 			<div class="date-strip">June 2024</div>
 			<section class="section">
-				<div class="section-title">BLENDER 3D PRE-VIS & PHOTOGRAMMETRY</div>
+				<div class="section-title" data-translate="t.previs">BLENDER 3D PRE-VIS & PHOTOGRAMMETRY</div>
 				<div class="content-grid grid-1">
 					<a class="card" href="https://www.youtube.com/watch?v=5LlSdajis7g" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/previs.png" alt="">
+						<img loading="lazy" src="media/previs.png" width="1000" height="366" alt="Blender 3D pre-visualization">
 					</a>
 					<div class="text-card">test</div>
 				</div>
@@ -864,14 +938,14 @@
 
 			<div class="date-strip">November 2025</div>
 			<section class="section">
-				<div class="section-title">PORTFOLIO WEBSITES</div>
+				<div class="section-title" data-translate="t.portfolios">PORTFOLIO WEBSITES</div>
 				<div class="content-grid grid-4">
 					<a class="card" href="https://val-nvs.com/portfolio/" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/film.jpg" alt="">
+						<img loading="lazy" src="media/film.jpg" width="400" height="214" alt="Film portfolio">
 					</a>
 					<div class="text-card span-1">Film.</div>
 					<a class="card" href="https://val-nvs.com/photo/" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/photofolio.jpg" alt="">
+						<img loading="lazy" src="media/photofolio.jpg" width="1362" height="747" alt="Photography portfolio">
 					</a>
 					<div class="text-card span-1">Photo.</div>
 				</div>
@@ -879,44 +953,36 @@
 
 			<div class="date-strip">May 2024</div>
 			<section class="section">
-				<div class="section-title">FULL ADDER</div>
+				<div class="section-title" data-translate="t.fulladder">FULL ADDER</div>
 				<div class="content-grid grid-4">
-					<span class="card card-nolink" aria-disabled="true">
-						<img loading="lazy" src="" alt="">
-					</span>
+					<span class="card card-nolink card-placeholder" aria-disabled="true"></span>
 					<div class="text-card span-2">Full added made out of NORS (11 NOR, 3 NOT, 2 OR).</div>
 				</div>
 			</section>
 
 			<div class="date-strip">April 2024</div>
 			<section class="section">
-				<div class="section-title">LED COUNTER</div>
+				<div class="section-title" data-translate="t.ledcounter">LED COUNTER</div>
 				<div class="content-grid grid-4">
-					<span class="card card-nolink" aria-disabled="true">
-						<img loading="lazy" src="" alt="">
-					</span>
+					<span class="card card-nolink card-placeholder" aria-disabled="true"></span>
 					<div class="text-card">LED counter CAD workshop at NOVA School of Science and Technology</div>
 				</div>
 			</section>
 
 			<div class="date-strip">April 2025</div>
 			<section class="section">
-				<div class="section-title">COMPUTER</div>
+				<div class="section-title" data-translate="t.computer">COMPUTER</div>
 				<div class="content-grid grid-4">
-					<span class="card card-nolink" aria-disabled="true">
-						<img loading="lazy" src="" alt="">
-					</span>
+					<span class="card card-nolink card-placeholder" aria-disabled="true"></span>
 					<div class="text-card">Computer in Minecraft and addition program.</div>
 				</div>
 			</section>
 
 			<div class="date-strip">April 2025</div>
 			<section class="section">
-				<div class="section-title">CALCULATOR</div>
+				<div class="section-title" data-translate="t.calculator">CALCULATOR</div>
 				<div class="content-grid grid-4">
-					<span class="card card-nolink" aria-disabled="true">
-						<img loading="lazy" src="" alt="">
-					</span>
+					<span class="card card-nolink card-placeholder" aria-disabled="true"></span>
 					<div class="text-card">Calculator in Minecraft capable of multiplication.</div>
 				</div>
 			</section>
@@ -924,10 +990,13 @@
 
 			<div class="date-strip">September 2025</div>
 			<section class="section">
-				<div class="section-title">BROADCAST TABLE</div>
+				<div class="section-title" data-translate="t.broadcast">BROADCAST TABLE</div>
 				<div class="content-grid grid-1">
 					<a class="card" href="https://val-nvs.com/tv/" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/switcher.gif" alt="">
+						<video class="card-media" autoplay muted loop playsinline width="652" height="336" poster="media/switcher-poster.jpg" aria-label="Broadcast switcher table animation">
+							<source src="media/switcher.webm" type="video/webm">
+							<source src="media/switcher.mp4" type="video/mp4">
+						</video>
 					</a>
 					<div class="text-card span-1">Functional but not really.</div>
 				</div>
@@ -935,97 +1004,98 @@
 
 			<div class="date-strip">June 2025</div>
 			<section class="section">
-				<div class="section-title">BLENDER GUIDE</div>
+				<div class="section-title" data-translate="t.blenderguide">BLENDER GUIDE</div>
 				<div class="content-grid grid-1">
 					<a class="card" href="https://val-nvs.com/blender-guide/" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/pan.gif" alt="">
+						<video class="card-media" autoplay muted loop playsinline width="1208" height="574" poster="media/pan-poster.jpg" aria-label="Blender guide animation">
+							<source src="media/pan.webm" type="video/webm">
+							<source src="media/pan.mp4" type="video/mp4">
+						</video>
 					</a>
 				</div>
 			</section>
 
 			<div class="date-strip">September 2025</div>
 			<section class="section">
-				<div class="section-title">FAVORITE FILMS</div>
+				<div class="section-title" data-translate="t.favfilms">FAVORITE FILMS</div>
 				<div class="content-grid grid-1">
 					<a class="card" href="https://val-nvs.com/favorites/" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/films.jpg" alt="">
+						<img loading="lazy" src="media/films.jpg" width="1592" height="850" alt="Favorite films collection">
 					</a>
 				</div>
 			</section>
 
 			<div class="date-strip">August 2025</div>
 			<section class="section">
-				<div class="section-title">ENGINE</div>
+				<div class="section-title" data-translate="t.engine">ENGINE</div>
 				<div class="content-grid grid-1">
 					<a class="card" href="https://val-nvs.com/game-engine/" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/engine.jpg" alt="">
+						<img loading="lazy" src="media/engine.jpg" width="1592" height="850" alt="Game engine project">
 					</a>
 				</div>
 			</section>
 
 			<div class="date-strip">January/March 2025</div>
 			<section class="section">
-				<div class="section-title">DESMOS LENS</div>
+				<div class="section-title" data-translate="t.desmoslens">DESMOS LENS</div>
 				<div class="content-grid grid-4">
-					<span class="card card-nolink" aria-disabled="true">
-						<img loading="lazy" src="" alt="">
-					</span>
+					<span class="card card-nolink card-placeholder" aria-disabled="true"></span>
 					<div class="text-card">2D Lens simulation in Desmos with bokeh simulation.</div>
 				</div>
 			</section>
 
 			<div class="date-strip">2020</div>
 			<section class="section">
-				<div class="section-title">BLENDER NODES</div>
+				<div class="section-title" data-translate="t.blendernodes">BLENDER NODES</div>
 				<div class="content-grid grid-1">
 					<span class="card card-nolink" aria-disabled="true">
-						<img loading="lazy" src="media/nodes.png" alt="">
+						<img loading="lazy" src="media/nodes.png" width="1000" height="388" alt="Blender shader nodes">
 					</span>
 				</div>
 			</section>
 
 			<div class="date-strip">November 2025</div>
 			<section class="section">
-				<div class="section-title">STATS</div>
+				<div class="section-title" data-translate="t.stats">STATS</div>
 				<div class="content-grid grid-1">
 					<a class="card" href="https://val-nvs.com/stats/" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/stats.png" alt="">
+						<img loading="lazy" src="media/stats.png" width="670" height="255" alt="Letterboxd stats dashboard">
 					</a>
 				</div>
 			</section>
 
 			<section class="section">
-				<div class="section-title">OTHER WEBSITES</div>
+				<div class="section-title" data-translate="t.otherwebsites">OTHER WEBSITES</div>
 				<div class="content-grid grid-2">
 					<a class="card" href="https://val-nvs.com/klotski.html" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/klotski.png" alt="Klotski puzzle game">
+						<img loading="lazy" src="media/klotski.png" width="1592" height="850" alt="Klotski puzzle game">
 					</a>
 					<a class="card" href="https://val-nvs.com/calc.html" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/calc.png" alt="Custom calculator">
+						<img loading="lazy" src="media/calc.png" width="1592" height="850" alt="Custom calculator">
 					</a>
 					<a class="card" href="https://val-nvs.com/portfolio/old.html" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/old.png" alt="">
+						<img loading="lazy" src="media/old.png" width="1592" height="850" alt="Old portfolio website">
 					</a>
 					<a class="card" href="https://val-nvs.com/404" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/404.png" alt="404 error page">
+						<img loading="lazy" src="media/404.png" width="1592" height="850" alt="404 error page">
 					</a>
 				</div>
 			</section>
 
 			<section class="section">
-				<div class="section-title">OLD LANDER</div>
+				<div class="section-title" data-translate="t.oldlander">OLD LANDER</div>
 				<div class="content-grid grid-1">
 					<a class="card" href="https://val-nvs.com/OLDindex.html" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/pic1.jpg" alt="Original landing page">
+						<img loading="lazy" src="media/pic1.jpg" width="1000" height="388" alt="Original landing page">
 					</a>
 				</div>
 			</section>
 
 			<section class="section">
-				<div class="section-title">GITHUB PROFILE</div>
+				<div class="section-title" data-translate="t.github">GITHUB PROFILE</div>
 				<div class="content-grid grid-1">
 					<a class="card" href="https://github.com/val-nvs" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/github.png" alt="GitHub profile">
+						<img loading="lazy" src="media/github.png" width="341" height="334" alt="GitHub profile">
 					</a>
 				</div>
 			</section>
@@ -1036,23 +1106,23 @@
 
 
 		<!-- TOOLS PAGE -->
-		<div class="page page-hidden" id="tools">
+		<div class="page page-hidden" id="tools" role="tabpanel" aria-labelledby="tab-tools" tabindex="0">
 
 			<section class="section">
-				<div class="section-title">Film Production Software W.I.P</div>
+				<div class="section-title" data-translate="t.filmsoftware">Film Production Software W.I.P</div>
 				<div class="content-grid grid-4">
 					<a class="card" href="https://callsheet.studio" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/crew.jpg" alt="">
+						<img loading="lazy" src="media/crew.jpg" width="587" height="880" alt="Callsheet.studio production tool">
 					</a>
 					<div class="text-card"><a href="https://callsheet.studio" target="_blank" rel="noopener noreferrer">callsheet.studio</a></div>
 				</div>
 			</section>
 
 			<section class="section">
-				<div class="section-title">LISBON METRO ENTRANCES</div>
+				<div class="section-title" data-translate="t.metro">LISBON METRO ENTRANCES</div>
 				<div class="content-grid grid-4">
 					<a class="card" href="https://val-nvs.com/lisbon" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/lis.jpg" alt="">
+						<img loading="lazy" src="media/lis.jpg" width="642" height="963" alt="Lisbon metro entrances map">
 					</a>
 					<div class="text-card">Map of every Lisbon metro station entrance. Route mode will lead you to the nearest entrance.</div>
 				</div>
@@ -1060,10 +1130,10 @@
 
 			<div class="date-strip">February 2026</div>
 			<section class="section">
-				<div class="section-title">LENS SIMULATION work in progress</div>
+				<div class="section-title" data-translate="t.lenssim">LENS SIMULATION work in progress</div>
 				<div class="content-grid grid-4">
 					<a class="card" href="https://val-nvs.com/lens/test5.html" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/lens.jpg" alt="">
+						<img loading="lazy" src="media/lens.jpg" width="201" height="305" alt="Lens simulation">
 					</a>
 					<div class="text-card">work in progress</div>
 				</div>
@@ -1071,10 +1141,10 @@
 
 			<div class="date-strip">May 2025</div>
 			<section class="section">
-				<div class="section-title">DUOTONE TECHNICOLOR FILTER</div>
+				<div class="section-title" data-translate="t.duotone">DUOTONE TECHNICOLOR FILTER</div>
 				<div class="content-grid grid-4">
 					<a class="card" href="https://val-nvs.com/colors/" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/mex.jpg" alt="">
+						<img loading="lazy" src="media/mex.jpg" width="776" height="1163" alt="Duotone Technicolor filter">
 					</a>
 					<div class="text-card">Upload any photo and split it into two-tone colour channels, inspired by early Technicolor processes.</div>
 				</div>
@@ -1082,10 +1152,10 @@
 
 			<div class="date-strip">November 2025</div>
 			<section class="section">
-				<div class="section-title">DEVELOPMENT TIMES</div>
+				<div class="section-title" data-translate="t.devtimes">DEVELOPMENT TIMES</div>
 				<div class="content-grid grid-4">
 					<a class="card" href="https://val-nvs.com/rodinal/" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/times.jpg" alt="">
+						<img loading="lazy" src="media/times.jpg" width="744" height="1115" alt="Rodinal development times">
 					</a>
 					<div class="text-card">20°C Rodinal 1+25 Development Times for 35mm film.</div>
 				</div>
@@ -1093,10 +1163,10 @@
 
 			<div class="date-strip">Aug/Sep 2025</div>
 			<section class="section">
-				<div class="section-title">LOGIC GATE SIMULATION</div>
+				<div class="section-title" data-translate="t.logicgate">LOGIC GATE SIMULATION</div>
 				<div class="content-grid grid-4">
 					<a class="card" href="https://val-nvs.com/logic/game.html" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/logic.jpg" alt="">
+						<img loading="lazy" src="media/logic.jpg" width="751" height="1127" alt="Logic gate simulator">
 					</a>
 					<div class="text-card">A digital logic gate simulator where the most advanced gate is a NOT/NOR. That's all you need really.</div>
 				</div>
@@ -1107,13 +1177,13 @@
 
 
 		<!-- ABOUT PAGE -->
-		<div class="page page-hidden" id="about">
+		<div class="page page-hidden" id="about" role="tabpanel" aria-labelledby="tab-about" tabindex="0">
 			<section class="hero-section">
 				<div class="hero-image-container">
-					<img class="hero-image" src="media/cctv.jpg" alt="" loading="eager">
+					<img class="hero-image" src="media/cctv.jpg" width="1000" height="388" alt="" loading="eager">
 					<div class="hero-image-fade"></div>
 					<div class="profile-pic-container">
-						<img class="profile-pic" src="media/favicon.png" alt="" loading="eager">
+						<img class="profile-pic" src="media/favicon.png" width="249" height="249" alt="" loading="eager">
 					</div>
 				</div>
 			</section>
@@ -1135,71 +1205,71 @@
 
 				<div class="content-grid grid-4">
 					<a class="card card-noborder" href="https://www.linkedin.com/in/valdir-neves/" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/linkedin.png" alt="LinkedIn">
+						<img loading="lazy" src="media/linkedin.png" width="263" height="263" alt="LinkedIn">
 					</a>
 					<a class="card card-noborder" href="https://www.instagram.com/val.nevs/" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/instagram.png" alt="Instagram">
+						<img loading="lazy" src="media/instagram.png" width="300" height="300" alt="Instagram">
 					</a>
 					<a class="card card-noborder" href="https://github.com/val-nvs" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/github.png" alt="GitHub">
+						<img loading="lazy" src="media/github.png" width="341" height="334" alt="GitHub">
 					</a>
 					<a class="card card-noborder" href="https://letterboxd.com/eerom/" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/letterboxd.png" alt="Letterboxd">
+						<img loading="lazy" src="media/letterboxd.png" width="1024" height="1024" alt="Letterboxd">
 					</a>
 				</div>
 			</section>
 
 			<section class="section">
-				<div class="section-title">EDUCATION</div>
+				<div class="section-title" data-translate="t.education">EDUCATION</div>
 				<div class="content-grid grid-3">
 					<a class="card" href="https://www.artecapital.net/entrevista-314-pedro-senna-nune" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/switch.jpg" alt="">
+						<img loading="lazy" src="media/switch.jpg" width="600" height="400" alt="ETIC - Pedro Senna Nunes">
 					</a>
 					<a class="card" href="https://www.artecapital.net/entrevista-314-pedro-senna-nune" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/hall.jpg" alt="">
+						<img loading="lazy" src="media/hall.jpg" width="600" height="400" alt="ETIC - Pedro Senna Nunes">
 					</a>
 					<a class="card" href="https://atelierdelisboa.pt/bruno-pelletier-sequeira" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/negatives.jpg" alt="Atelier de Lisboa">
+						<img loading="lazy" src="media/negatives.jpg" width="600" height="400" alt="Atelier de Lisboa">
 					</a>
 				</div>
 				<br>
 				<p>2023 — 2025:&nbsp;&nbsp;<a href="https://www.artecapital.net/entrevista-314-pedro-senna-nune" target="_blank" rel="noopener">ETIC — Coord. Pedro Senna Nunes</a></p>
 				<p>2025 — 2026:&nbsp;&nbsp;<a href="https://atelierdelisboa.pt/bruno-pelletier-sequeira" target="_blank" rel="noopener">Atelier de Lisboa — Coord. Bruno Pelletier Sequeira</a></p>
-				<p>2026 — 2029:&nbsp;&nbsp;<a href="" target="_blank" rel="noopener"></a></p>
+				<p>2026 — 2029:&nbsp;&nbsp;<span class="tba">To be announced</span></p>
 			</section>
 
 			<section class="section">
-				<div class="section-title">FAVORITE FILMS</div>
+				<div class="section-title" data-translate="t.favfilms">FAVORITE FILMS</div>
 				<div class="content-grid grid-4">
 					<a class="card" href="https://letterboxd.com/film/everything-everywhere-all-at-once/" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/everything.jpg" alt="Everything Everywhere All at Once (2022)">
+						<img loading="lazy" src="media/everything.jpg" width="2000" height="3000" alt="Everything Everywhere All at Once (2022)">
 					</a>
 					<a class="card" href="https://letterboxd.com/film/amelie/" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/amelie.jpg" alt="Amélie (2001)">
+						<img loading="lazy" src="media/amelie.jpg" width="600" height="900" alt="Amélie (2001)">
 					</a>
 					<a class="card" href="https://letterboxd.com/film/the-secret-life-of-walter-mitty-2013/" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/mitty.jpg" alt="The Secret Life of Walter Mitty (2013)">
+						<img loading="lazy" src="media/mitty.jpg" width="1000" height="1500" alt="The Secret Life of Walter Mitty (2013)">
 					</a>
 					<a class="card" href="https://letterboxd.com/film/all-about-lily-chou-chou/" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/lily.jpg" alt="All About Lily Chou-Chou (2001)">
+						<img loading="lazy" src="media/lily.jpg" width="2000" height="3000" alt="All About Lily Chou-Chou (2001)">
 					</a>
 					<a class="card" href="https://boxd.it/hiVs" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/lazzaro.jpg" alt="Happy as Lazzaro (2018)">
+						<img loading="lazy" src="media/lazzaro.jpg" width="1050" height="1575" alt="Happy as Lazzaro (2018)">
 					</a>
 					<a class="card" href="https://boxd.it/1UkW" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/angels.jpg" alt="Fallen Angels (1995)">
+						<img loading="lazy" src="media/angels.jpg" width="1500" height="2250" alt="Fallen Angels (1995)">
 					</a>
 					<a class="card" href="https://boxd.it/5hII" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/frank.jpg" alt="Frank (2014)">
+						<img loading="lazy" src="media/frank.jpg" width="1400" height="2100" alt="Frank (2014)">
 					</a>
 					<a class="card" href="https://boxd.it/1pDe" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/love.jpg" alt="Love Exposure (2008)">
+						<img loading="lazy" src="media/love.jpg" width="1000" height="1500" alt="Love Exposure (2008)">
 					</a>
 				</div>
 			</section>
 
 			<section class="section">
-				<div class="section-title">EQUIPMENT</div>
+				<div class="section-title" data-translate="t.equipment">EQUIPMENT</div>
 				<div class="equipment-grid">
 					<div class="equipment-card">
 						<div class="equipment-header">
@@ -1419,6 +1489,33 @@ headerChars.forEach(span => headerDisplay.appendChild(span));
 // ========================================
 const translations = {
 	en: {
+		't.filmcamera': '3D PRINTED FILM CAMERA 📌',
+		't.benares': 'CLUB BENARES WEBSITE',
+		't.chat': 'CHAT ROOM',
+		't.previs': 'BLENDER 3D PRE-VIS & PHOTOGRAMMETRY',
+		't.portfolios': 'PORTFOLIO WEBSITES',
+		't.fulladder': 'FULL ADDER',
+		't.ledcounter': 'LED COUNTER',
+		't.computer': 'COMPUTER',
+		't.calculator': 'CALCULATOR',
+		't.broadcast': 'BROADCAST TABLE',
+		't.blenderguide': 'BLENDER GUIDE',
+		't.favfilms': 'FAVORITE FILMS',
+		't.engine': 'ENGINE',
+		't.desmoslens': 'DESMOS LENS',
+		't.blendernodes': 'BLENDER NODES',
+		't.stats': 'STATS',
+		't.otherwebsites': 'OTHER WEBSITES',
+		't.oldlander': 'OLD LANDER',
+		't.github': 'GITHUB PROFILE',
+		't.filmsoftware': 'Film Production Software W.I.P',
+		't.metro': 'LISBON METRO ENTRANCES',
+		't.lenssim': 'LENS SIMULATION work in progress',
+		't.duotone': 'DUOTONE TECHNICOLOR FILTER',
+		't.devtimes': 'DEVELOPMENT TIMES',
+		't.logicgate': 'LOGIC GATE SIMULATION',
+		't.education': 'EDUCATION',
+		't.equipment': 'EQUIPMENT',
 		'nav.home': 'Home',
 		'nav.tools': 'Tools',
 		'nav.projects': 'Tech Projects',
@@ -1435,6 +1532,33 @@ const translations = {
 		'footer.music': 'BACKGROUND MUSIC'
 	},
 	pt: {
+		't.filmcamera': 'CÂMARA DE FILME IMPRESSA EM 3D 📌',
+		't.benares': 'SITE DO CLUB BENARES',
+		't.chat': 'SALA DE CHAT',
+		't.previs': 'PRÉ-VIS 3D E FOTOGRAMETRIA NO BLENDER',
+		't.portfolios': 'SITES DE PORTFÓLIO',
+		't.fulladder': 'SOMADOR COMPLETO',
+		't.ledcounter': 'CONTADOR LED',
+		't.computer': 'COMPUTADOR',
+		't.calculator': 'CALCULADORA',
+		't.broadcast': 'MESA DE TRANSMISSÃO',
+		't.blenderguide': 'GUIA DO BLENDER',
+		't.favfilms': 'FILMES FAVORITOS',
+		't.engine': 'MOTOR',
+		't.desmoslens': 'LENTE NO DESMOS',
+		't.blendernodes': 'NÓS DO BLENDER',
+		't.stats': 'ESTATÍSTICAS',
+		't.otherwebsites': 'OUTROS SITES',
+		't.oldlander': 'PÁGINA ANTIGA',
+		't.github': 'PERFIL DO GITHUB',
+		't.filmsoftware': 'SOFTWARE DE PRODUÇÃO DE CINEMA (EM CURSO)',
+		't.metro': 'ENTRADAS DO METRO DE LISBOA',
+		't.lenssim': 'SIMULAÇÃO DE LENTE (em desenvolvimento)',
+		't.duotone': 'FILTRO DUOTONE TECHNICOLOR',
+		't.devtimes': 'TEMPOS DE REVELAÇÃO',
+		't.logicgate': 'SIMULAÇÃO DE PORTAS LÓGICAS',
+		't.education': 'EDUCAÇÃO',
+		't.equipment': 'EQUIPAMENTO',
 		'nav.home': 'Início',
 		'nav.tools': 'Ferramentas',
 		'nav.projects': 'Projetos Tech',
@@ -1451,6 +1575,33 @@ const translations = {
 		'footer.music': 'MÚSICA DE FUNDO'
 	},
 	es: {
+		't.filmcamera': 'CÁMARA DE CINE IMPRESA EN 3D 📌',
+		't.benares': 'SITIO WEB DE CLUB BENARES',
+		't.chat': 'SALA DE CHAT',
+		't.previs': 'PRE-VIS 3D Y FOTOGRAMETRÍA EN BLENDER',
+		't.portfolios': 'SITIOS DE PORTAFOLIO',
+		't.fulladder': 'SUMADOR COMPLETO',
+		't.ledcounter': 'CONTADOR LED',
+		't.computer': 'COMPUTADORA',
+		't.calculator': 'CALCULADORA',
+		't.broadcast': 'MESA DE TRANSMISIÓN',
+		't.blenderguide': 'GUÍA DE BLENDER',
+		't.favfilms': 'PELÍCULAS FAVORITAS',
+		't.engine': 'MOTOR',
+		't.desmoslens': 'LENTE EN DESMOS',
+		't.blendernodes': 'NODOS DE BLENDER',
+		't.stats': 'ESTADÍSTICAS',
+		't.otherwebsites': 'OTROS SITIOS',
+		't.oldlander': 'PÁGINA ANTIGUA',
+		't.github': 'PERFIL DE GITHUB',
+		't.filmsoftware': 'SOFTWARE DE PRODUCCIÓN DE CINE (EN CURSO)',
+		't.metro': 'ENTRADAS DEL METRO DE LISBOA',
+		't.lenssim': 'SIMULACIÓN DE LENTE (en desarrollo)',
+		't.duotone': 'FILTRO DUOTONO TECHNICOLOR',
+		't.devtimes': 'TIEMPOS DE REVELADO',
+		't.logicgate': 'SIMULACIÓN DE PUERTAS LÓGICAS',
+		't.education': 'EDUCACIÓN',
+		't.equipment': 'EQUIPO',
 		'nav.home': 'Inicio',
 		'nav.tools': 'Herramientas',
 		'nav.projects': 'Proyectos Tech',
@@ -1467,6 +1618,33 @@ const translations = {
 		'footer.music': 'MÚSICA DE FONDO'
 	},
 	fr: {
+		't.filmcamera': 'CAMÉRA ARGENTIQUE IMPRIMÉE EN 3D 📌',
+		't.benares': 'SITE WEB DU CLUB BENARES',
+		't.chat': 'SALON DE DISCUSSION',
+		't.previs': 'PRÉVIS 3D ET PHOTOGRAMMÉTRIE BLENDER',
+		't.portfolios': 'SITES PORTFOLIO',
+		't.fulladder': 'ADDITIONNEUR COMPLET',
+		't.ledcounter': 'COMPTEUR LED',
+		't.computer': 'ORDINATEUR',
+		't.calculator': 'CALCULATRICE',
+		't.broadcast': 'RÉGIE DE DIFFUSION',
+		't.blenderguide': 'GUIDE BLENDER',
+		't.favfilms': 'FILMS PRÉFÉRÉS',
+		't.engine': 'MOTEUR',
+		't.desmoslens': 'LENTILLE DESMOS',
+		't.blendernodes': 'NODES BLENDER',
+		't.stats': 'STATISTIQUES',
+		't.otherwebsites': 'AUTRES SITES',
+		't.oldlander': 'ANCIENNE PAGE',
+		't.github': 'PROFIL GITHUB',
+		't.filmsoftware': 'LOGICIEL DE PRODUCTION DE FILM (EN COURS)',
+		't.metro': 'ENTRÉES DU MÉTRO DE LISBONNE',
+		't.lenssim': 'SIMULATION DE LENTILLE (en cours)',
+		't.duotone': 'FILTRE DUOTONE TECHNICOLOR',
+		't.devtimes': 'TEMPS DE DÉVELOPPEMENT',
+		't.logicgate': 'SIMULATION DE PORTES LOGIQUES',
+		't.education': 'FORMATION',
+		't.equipment': 'ÉQUIPEMENT',
 		'nav.home': 'Accueil',
 		'nav.tools': 'Outils',
 		'nav.projects': 'Projets Tech',
@@ -1483,6 +1661,33 @@ const translations = {
 		'footer.music': 'MUSIQUE DE FOND'
 	},
 	de: {
+		't.filmcamera': '3D-GEDRUCKTE FILMKAMERA 📌',
+		't.benares': 'CLUB-BENARES-WEBSITE',
+		't.chat': 'CHATROOM',
+		't.previs': 'BLENDER 3D-PREVIS & FOTOGRAMMETRIE',
+		't.portfolios': 'PORTFOLIO-WEBSITES',
+		't.fulladder': 'VOLLADDIERER',
+		't.ledcounter': 'LED-ZÄHLER',
+		't.computer': 'COMPUTER',
+		't.calculator': 'TASCHENRECHNER',
+		't.broadcast': 'SENDEPULT',
+		't.blenderguide': 'BLENDER-LEITFADEN',
+		't.favfilms': 'LIEBLINGSFILME',
+		't.engine': 'ENGINE',
+		't.desmoslens': 'DESMOS-LINSE',
+		't.blendernodes': 'BLENDER-NODES',
+		't.stats': 'STATISTIKEN',
+		't.otherwebsites': 'WEITERE WEBSITES',
+		't.oldlander': 'ALTE STARTSEITE',
+		't.github': 'GITHUB-PROFIL',
+		't.filmsoftware': 'FILMPRODUKTIONS-SOFTWARE (IN ARBEIT)',
+		't.metro': 'EINGÄNGE DER METRO LISSABON',
+		't.lenssim': 'LINSENSIMULATION (in Arbeit)',
+		't.duotone': 'DUOTONE-TECHNICOLOR-FILTER',
+		't.devtimes': 'ENTWICKLUNGSZEITEN',
+		't.logicgate': 'LOGIKGATTER-SIMULATION',
+		't.education': 'AUSBILDUNG',
+		't.equipment': 'AUSRÜSTUNG',
 		'nav.home': 'Startseite',
 		'nav.tools': 'Werkzeuge',
 		'nav.projects': 'Tech-Projekte',
@@ -1499,6 +1704,33 @@ const translations = {
 		'footer.music': 'HINTERGRUNDMUSIK'
 	},
 	zh: {
+		't.filmcamera': '3D打印胶片相机 📌',
+		't.benares': 'Club Benares 网站',
+		't.chat': '聊天室',
+		't.previs': 'Blender 3D 预演与摄影测量',
+		't.portfolios': '作品集网站',
+		't.fulladder': '全加器',
+		't.ledcounter': 'LED 计数器',
+		't.computer': '计算机',
+		't.calculator': '计算器',
+		't.broadcast': '转播台',
+		't.blenderguide': 'Blender 指南',
+		't.favfilms': '最爱的电影',
+		't.engine': '引擎',
+		't.desmoslens': 'Desmos 镜头',
+		't.blendernodes': 'Blender 节点',
+		't.stats': '统计',
+		't.otherwebsites': '其他网站',
+		't.oldlander': '旧首页',
+		't.github': 'GitHub 主页',
+		't.filmsoftware': '影视制作软件（开发中）',
+		't.metro': '里斯本地铁入口',
+		't.lenssim': '镜头模拟（开发中）',
+		't.duotone': '双色 Technicolor 滤镜',
+		't.devtimes': '冲洗时间',
+		't.logicgate': '逻辑门模拟',
+		't.education': '教育',
+		't.equipment': '器材',
 		'nav.home': '首页',
 		'nav.tools': '工具',
 		'nav.projects': '技术项目',
@@ -1515,6 +1747,33 @@ const translations = {
 		'footer.music': '背景音乐'
 	},
 	ja: {
+		't.filmcamera': '3Dプリント フィルムカメラ 📌',
+		't.benares': 'Club Benares ウェブサイト',
+		't.chat': 'チャットルーム',
+		't.previs': 'Blender 3Dプレビズ＆フォトグラメトリ',
+		't.portfolios': 'ポートフォリオサイト',
+		't.fulladder': '全加算器',
+		't.ledcounter': 'LEDカウンター',
+		't.computer': 'コンピューター',
+		't.calculator': '電卓',
+		't.broadcast': '放送卓',
+		't.blenderguide': 'Blender ガイド',
+		't.favfilms': 'お気に入りの映画',
+		't.engine': 'エンジン',
+		't.desmoslens': 'Desmos レンズ',
+		't.blendernodes': 'Blender ノード',
+		't.stats': '統計',
+		't.otherwebsites': 'その他のサイト',
+		't.oldlander': '旧ランディングページ',
+		't.github': 'GitHub プロフィール',
+		't.filmsoftware': '映画制作ソフトウェア（開発中）',
+		't.metro': 'リスボン地下鉄の入口',
+		't.lenssim': 'レンズシミュレーション（開発中）',
+		't.duotone': 'デュオトーン Technicolor フィルター',
+		't.devtimes': '現像時間',
+		't.logicgate': '論理ゲートシミュレーション',
+		't.education': '学歴',
+		't.equipment': '機材',
 		'nav.home': 'ホーム',
 		'nav.tools': 'ツール',
 		'nav.projects': 'テックプロジェクト',
@@ -1531,6 +1790,33 @@ const translations = {
 		'footer.music': 'BGM'
 	},
 	ar: {
+		't.filmcamera': 'كاميرا فيلم مطبوعة ثلاثية الأبعاد 📌',
+		't.benares': 'موقع نادي بيناريس',
+		't.chat': 'غرفة الدردشة',
+		't.previs': 'التصور المسبق ثلاثي الأبعاد والقياس التصويري في Blender',
+		't.portfolios': 'مواقع المعرض',
+		't.fulladder': 'جامع كامل',
+		't.ledcounter': 'عداد LED',
+		't.computer': 'حاسوب',
+		't.calculator': 'آلة حاسبة',
+		't.broadcast': 'طاولة البث',
+		't.blenderguide': 'دليل Blender',
+		't.favfilms': 'الأفلام المفضلة',
+		't.engine': 'محرك',
+		't.desmoslens': 'عدسة Desmos',
+		't.blendernodes': 'عقد Blender',
+		't.stats': 'إحصاءات',
+		't.otherwebsites': 'مواقع أخرى',
+		't.oldlander': 'الصفحة القديمة',
+		't.github': 'ملف GitHub',
+		't.filmsoftware': 'برنامج إنتاج الأفلام (قيد العمل)',
+		't.metro': 'مداخل مترو لشبونة',
+		't.lenssim': 'محاكاة العدسة (قيد العمل)',
+		't.duotone': 'مرشح ثنائي اللون Technicolor',
+		't.devtimes': 'أوقات التحميض',
+		't.logicgate': 'محاكاة البوابات المنطقية',
+		't.education': 'التعليم',
+		't.equipment': 'المعدات',
 		'nav.home': 'الرئيسية',
 		'nav.tools': 'الأدوات',
 		'nav.projects': 'المشاريع التقنية',
@@ -1688,29 +1974,43 @@ document.addEventListener('mousemove', (e) => {
 // ========================================
 // NAVIGATION
 // ========================================
-const navButtons = document.querySelectorAll('.nav-item');
+const navButtons = Array.from(document.querySelectorAll('.nav-item'));
 
-navButtons.forEach(button => {
-	button.addEventListener('click', function() {
-		navButtons.forEach(btn => {
-			btn.classList.remove('active');
-			btn.setAttribute('aria-selected', 'false');
-		});
-		this.classList.add('active');
-		this.setAttribute('aria-selected', 'true');
-		
-		const selectedPage = this.dataset.page;
-		document.querySelectorAll('.page').forEach(page => {
-			page.classList.toggle('page-hidden', page.id !== selectedPage);
-		});
-		
-		window.scrollTo({ top: 0, behavior: 'smooth' });
+function activateTab(button) {
+	navButtons.forEach(btn => {
+		const selected = btn === button;
+		btn.classList.toggle('active', selected);
+		btn.setAttribute('aria-selected', selected ? 'true' : 'false');
+		btn.tabIndex = selected ? 0 : -1;
 	});
+
+	const selectedPage = button.dataset.page;
+	document.querySelectorAll('.page').forEach(page => {
+		page.classList.toggle('page-hidden', page.id !== selectedPage);
+	});
+
+	window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+navButtons.forEach((button, index) => {
+	button.addEventListener('click', () => activateTab(button));
 
 	button.addEventListener('keydown', (e) => {
 		if (e.key === 'Enter' || e.key === ' ') {
 			e.preventDefault();
-			button.click();
+			activateTab(button);
+			return;
+		}
+		// Roving-tabindex arrow navigation (WAI-ARIA tabs pattern)
+		let target = null;
+		if (e.key === 'ArrowRight') target = navButtons[(index + 1) % navButtons.length];
+		else if (e.key === 'ArrowLeft') target = navButtons[(index - 1 + navButtons.length) % navButtons.length];
+		else if (e.key === 'Home') target = navButtons[0];
+		else if (e.key === 'End') target = navButtons[navButtons.length - 1];
+		if (target) {
+			e.preventDefault();
+			target.focus();
+			activateTab(target);
 		}
 	});
 });
@@ -1741,6 +2041,8 @@ document.querySelectorAll('.card-nolink').forEach(card => {
 // ========================================
 // PLASTIC WRAP OVERLAY
 // ========================================
+// Available plastic-wrap overlay textures: filenames media/wrap/<n>.jpg
+// (non-contiguous — some numbers in the folder are intentionally skipped)
 const wraps = [
 	1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
 	12, 13, 15, 16, 17, 18, 19, 20,
@@ -1750,6 +2052,8 @@ const wraps = [
 document.querySelectorAll('.card').forEach(card => {
 	if (card.classList.contains('card-noborder')) return;
 	if (card.querySelector('.wrap-overlay')) return;
+	// Only overlay cards that have a base image (skip placeholders and <video> cards)
+	if (!card.querySelector('img')) return;
 	const wrap = document.createElement('img');
 	wrap.classList.add('wrap-overlay');
 	wrap.src = `media/wrap/${wraps[Math.floor(Math.random() * wraps.length)]}.jpg`;
