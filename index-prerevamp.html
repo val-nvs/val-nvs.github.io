@@ -30,7 +30,7 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono:wght@200..800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,100,0,200&icon_names=call,language,mail,open_in_new,person" />
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,100,0,200&icon_names=language,open_in_new" />
 
 	<!-- Structured data -->
 	<script type="application/ld+json">
@@ -241,7 +241,7 @@
 
 		.nav-list {
 			display: grid;
-			grid-template-columns: repeat(5, 1fr);
+			grid-template-columns: repeat(4, 1fr);
 			background: #1D1F25;
 			list-style: none;
 			border-radius: 0.3125rem;
@@ -425,404 +425,6 @@
 			font-style: italic;
 		}
 
-		.film-year {
-			color: #808080;
-			font-weight: 400;
-			font-size: 0.9em;
-		}
-
-		/* ========================================
-		   FILMS PAGE — poster + right column (desc + tab bar)
-		   ======================================== */
-		.film-layout {
-			display: grid;
-			grid-template-columns: 1fr 3fr;
-			gap: 0.75rem;
-			align-items: stretch;
-		}
-
-		.film-body {
-			display: flex;
-			flex-direction: column;
-			gap: 0.5rem;
-			min-width: 0;
-		}
-
-		.film-body .section-title {
-			margin-bottom: 0;
-		}
-
-		.film-desc {
-			font-size: 0.95rem;
-			line-height: 1.45;
-			color: var(--text-primary);
-			margin: 0;
-		}
-
-		/* Tab bar: identical box-model to .nav-list / .nav-item so the height matches the top nav */
-		.film-nav-list {
-			display: grid;
-			grid-template-columns: repeat(3, 1fr);
-			background: #0d0f12;
-			list-style: none;
-			border-radius: 0.3125rem;
-			padding: 0.125rem;
-			gap: 0.125rem;
-			margin: auto 0 0;
-		}
-
-		.film-tab {
-			text-align: center;
-			padding: 0.3rem 0.25rem;
-			border-radius: 0.3125rem;
-			font-weight: bold;
-			font-size: 0.875rem;
-			color: var(--text-primary);
-			cursor: pointer;
-			transition: all 0.2s ease;
-		}
-
-		.film-tab.active {
-			background: #728393;
-			color: #fff;
-		}
-
-		.film-tab:hover:not(.active) {
-			color: var(--accent-color);
-		}
-
-		.film-panel {
-			font-size: 0.9rem;
-			line-height: 1.5;
-			color: var(--text-primary);
-			margin-top: 0.6rem;
-			padding-top: 0.6rem;
-			border-top: 1px solid rgba(161, 170, 179, 0.15);
-		}
-
-		.film-panel.hidden {
-			display: none;
-		}
-
-		/* Cast / crew person rows (avatar + name + role, no chevron) */
-		.cast-list {
-			display: flex;
-			flex-direction: column;
-		}
-
-		.cast-row {
-			display: flex;
-			align-items: center;
-			gap: 0.75rem;
-			padding: 0.55rem 0;
-			border-top: 1px solid rgba(161, 170, 179, 0.12);
-		}
-
-		.cast-row:first-child {
-			border-top: none;
-		}
-
-		.cast-avatar {
-			width: 48px;
-			height: 48px;
-			flex: 0 0 auto;
-			border-radius: 0.6rem;
-			background: #222831;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			color: #5b6672;
-		}
-
-		.cast-avatar .material-symbols-outlined {
-			font-size: 1.6rem;
-		}
-
-		.cast-avatar img {
-			width: 100%;
-			height: 100%;
-			object-fit: cover;
-			border-radius: inherit;
-			display: block;
-		}
-
-		.cast-name {
-			color: #e8ecf0;
-			font-size: 1.05rem;
-			font-weight: 500;
-			line-height: 1.2;
-		}
-
-		.cast-role {
-			color: #808a94;
-			font-size: 0.85rem;
-			line-height: 1.2;
-			margin-top: 0.1rem;
-		}
-
-		/* ========================================
-		   HOME HUB
-		   ======================================== */
-		.hub-head {
-			padding-top: 80px;
-		}
-
-		.hub-name {
-			font-size: 1.6rem;
-			font-weight: 700;
-			color: #fff;
-			letter-spacing: 0.02em;
-			margin-bottom: 0.2rem;
-			line-height: 1.1;
-		}
-
-		.hub-tagline {
-			color: var(--accent-color);
-			font-family: "Atkinson Hyperlegible Mono", monospace;
-			font-size: 0.9rem;
-			letter-spacing: 0.03em;
-			margin-bottom: 0.1rem;
-		}
-
-		.hub-loc {
-			color: #808080;
-			font-family: "Atkinson Hyperlegible Mono", monospace;
-			font-size: 0.85rem;
-			margin-bottom: 0.75rem;
-		}
-
-		.hub-intro {
-			max-width: 34ch;
-			margin: 0 auto;
-		}
-
-		/* Compact home intro */
-		.hub-mini {
-			text-align: center;
-			padding-top: 1.25rem;
-			padding-bottom: 1.25rem;
-		}
-
-		.hub-mini .hub-tagline {
-			margin-bottom: 0.25rem;
-		}
-
-		.hub-desc {
-			color: var(--text-primary);
-			font-size: 0.9rem;
-			line-height: 1.5;
-			max-width: 44ch;
-			margin: 0.4rem auto 0;
-		}
-
-		/* Social icons with usernames */
-		.social-grid {
-			display: grid;
-			grid-template-columns: repeat(2, 1fr);
-			gap: 0.6rem 1rem;
-			margin-top: 0.75rem;
-		}
-
-		.social-link {
-			display: flex;
-			align-items: center;
-			gap: 0.6rem;
-			text-decoration: none;
-			color: var(--text-primary);
-			min-width: 0;
-		}
-
-		.social-link img {
-			width: 52px;
-			height: 52px;
-			object-fit: contain;
-			border-radius: 0.5rem;
-			flex: 0 0 auto;
-			display: block;
-		}
-
-		.social-handle {
-			font-size: 0.9rem;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			white-space: nowrap;
-		}
-
-		.social-link:hover .social-handle {
-			color: var(--accent-color);
-		}
-
-		.social-icon {
-			width: 52px;
-			height: 52px;
-			flex: 0 0 auto;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			background: #1D1F25;
-			border: 1px solid var(--border-color);
-			border-radius: 0.5rem;
-			color: var(--text-primary);
-		}
-
-		.social-icon .material-symbols-outlined {
-			font-size: 1.6rem;
-		}
-
-		.social-link:hover .social-icon {
-			border-color: var(--accent-color);
-			color: var(--accent-color);
-		}
-
-		/* Heavy vignette on work images */
-		.portfolio-card::after {
-			content: '';
-			position: absolute;
-			inset: 0;
-			border-radius: inherit;
-			pointer-events: none;
-			z-index: 2;
-			background: radial-gradient(78% 88% at 50% 44%, rgba(0, 0, 0, 0) 6%, rgba(0, 0, 0, 0.5) 34%, rgba(0, 0, 0, 0.88) 66%, rgba(0, 0, 0, 1) 100%);
-		}
-
-		.portfolio-card::before {
-			z-index: 4;
-		}
-
-		.portfolio-card .portfolio-tag {
-			position: absolute;
-			left: 0.5rem;
-			bottom: 0.5rem;
-			z-index: 5;
-			background: rgba(0, 0, 0, 0.7);
-			color: #fff;
-			font-family: "Atkinson Hyperlegible Mono", monospace;
-			font-size: 0.8rem;
-			letter-spacing: 0.03em;
-			padding: 0.2rem 0.55rem;
-			border-radius: 0.3rem;
-		}
-
-		.route-grid {
-			display: grid;
-			grid-template-columns: repeat(2, 1fr);
-			gap: 0.375rem;
-		}
-
-		.route-card {
-			display: flex;
-			flex-direction: column;
-			gap: 0.3rem;
-			padding: 1rem;
-			text-align: left;
-			background: var(--bg-secondary);
-			border: 1px solid var(--border-color);
-			border-radius: 0.5rem;
-			color: var(--text-primary);
-			font-family: inherit;
-			cursor: pointer;
-			transition: border-color 0.2s ease, transform 0.15s ease;
-		}
-
-		.route-card:hover,
-		.route-card:focus-visible {
-			border-color: var(--accent-color);
-			transform: translateY(-2px);
-			outline: none;
-		}
-
-		.route-title {
-			color: #fff;
-			font-weight: 600;
-			font-size: 1rem;
-		}
-
-		.route-desc {
-			color: #808080;
-			font-size: 0.8rem;
-			line-height: 1.35;
-		}
-
-		/* Work: offering label + its proof */
-		.work-item + .work-item {
-			margin-top: 1.25rem;
-		}
-
-		.work-head {
-			margin-bottom: 0.5rem;
-		}
-
-		.work-name {
-			display: block;
-			color: #fff;
-			font-weight: 600;
-			font-size: 1rem;
-			letter-spacing: 0.01em;
-		}
-
-		.work-note {
-			display: block;
-			color: #808080;
-			font-size: 0.8rem;
-			margin-top: 0.1rem;
-		}
-
-		/* Resume-style timeline (education / experience) */
-		.resume {
-			list-style: none;
-			margin-top: 1rem;
-			text-align: left;
-		}
-
-		.resume-item {
-			display: grid;
-			grid-template-columns: 6.5rem 1fr;
-			gap: 0.85rem;
-			padding: 0.7rem 0;
-			border-top: 1px solid rgba(161, 170, 179, 0.15);
-		}
-
-		.resume-item:first-child {
-			border-top: none;
-			padding-top: 0;
-		}
-
-		.resume-date {
-			color: var(--accent-color);
-			font-family: "Atkinson Hyperlegible Mono", monospace;
-			font-size: 0.8rem;
-			padding-top: 0.15rem;
-			white-space: nowrap;
-		}
-
-		.resume-role {
-			display: block;
-			color: #fff;
-			font-weight: 500;
-			font-size: 0.95rem;
-			line-height: 1.25;
-		}
-
-		.resume-org {
-			display: block;
-			font-size: 0.85rem;
-			line-height: 1.3;
-			margin-top: 0.1rem;
-		}
-
-		a.resume-org {
-			color: var(--accent-color);
-			text-decoration: none;
-		}
-
-		a.resume-org:hover {
-			text-decoration: underline;
-		}
-
-		.resume-muted {
-			color: #808080;
-		}
-
 		.card.card-noborder {
 			background: transparent;
 		}
@@ -912,116 +514,82 @@
 		/* ========================================
 		   EQUIPMENT SECTION
 		   ======================================== */
-		.gear {
-			display: flex;
-			flex-direction: column;
-			gap: 0.5rem;
+		.equipment-grid {
+			display: grid;
+			gap: 1rem;
 			margin-top: 0.5rem;
 		}
 
-		.gear-item {
+		.equipment-card {
 			background: var(--bg-secondary);
 			border: 1px solid rgba(161, 170, 179, 0.3);
 			border-radius: 0.5rem;
-			overflow: hidden;
+			padding: 1rem;
 			transition: border-color 0.2s ease;
 		}
 
-		.gear-item[open],
-		.gear-item:hover {
+		.equipment-card:hover {
 			border-color: var(--accent-color);
 		}
 
-		.gear-summary {
-			list-style: none;
-			cursor: pointer;
+		.equipment-header {
 			display: flex;
 			align-items: center;
 			gap: 0.5rem;
-			padding: 0.75rem 0.9rem;
-			user-select: none;
+			margin-bottom: 0.75rem;
+			padding-bottom: 0.75rem;
+			border-bottom: 1px solid rgba(161, 170, 179, 0.2);
 		}
 
-		.gear-summary::-webkit-details-marker {
-			display: none;
+		.equipment-icon {
+			font-size: 1.5rem;
+			line-height: 1;
 		}
 
-		.gear-summary:focus-visible {
-			outline: 2px solid var(--accent-color);
-			outline-offset: -2px;
-		}
-
-		.gear-name {
-			color: #fff;
-			font-weight: 600;
+		.equipment-name {
+			flex: 1;
 			font-size: 0.95rem;
+			font-weight: 500;
+			color: #fff;
+			line-height: 1.3;
 		}
 
-		.gear-tag {
+		.equipment-specs {
+			font-size: 0.75rem;
 			color: #808080;
 			font-family: "Atkinson Hyperlegible Mono", monospace;
-			font-size: 0.7rem;
-			text-transform: uppercase;
-			letter-spacing: 0.04em;
-			border: 1px solid rgba(161, 170, 179, 0.3);
-			padding: 0.05rem 0.35rem;
-			border-radius: 0.25rem;
 		}
 
-		.gear-summary::after {
-			content: '';
-			margin-left: auto;
-			width: 0.5rem;
-			height: 0.5rem;
-			border-right: 2px solid var(--text-primary);
-			border-bottom: 2px solid var(--text-primary);
-			transform: rotate(45deg);
-			transition: transform 0.2s ease;
-		}
-
-		.gear-item[open] .gear-summary::after {
-			transform: rotate(-135deg);
-		}
-
-		.gear-body {
-			padding: 0 0.9rem 0.85rem;
-		}
-
-		.gear-specs {
-			color: #808080;
-			font-family: "Atkinson Hyperlegible Mono", monospace;
-			font-size: 0.72rem;
-			line-height: 1.55;
-			margin: 0 0 0.6rem;
-		}
-
-		.gear-row {
+		.item-list {
 			display: flex;
-			flex-wrap: wrap;
-			align-items: baseline;
-			gap: 0.35rem 0.6rem;
-			padding: 0.4rem 0;
-			border-top: 1px solid rgba(161, 170, 179, 0.12);
-			font-size: 0.82rem;
+			flex-direction: column;
+			gap: 0.5rem;
+		}
+
+		.list-item {
+			display: flex;
+			align-items: flex-start;
+			gap: 0.5rem;
+			font-size: 0.875rem;
 			line-height: 1.4;
 		}
 
-		.gear-lens {
+		.item-bullet {
 			color: var(--accent-color);
-			font-weight: 600;
-			flex: 0 0 auto;
+			font-weight: bold;
+			flex-shrink: 0;
+			margin-top: 0.1rem;
 		}
 
-		.gear-badge {
+		.item-type {
 			color: #808080;
-			font-family: "Atkinson Hyperlegible Mono", monospace;
-			font-size: 0.68rem;
+			font-size: 0.75rem;
 			text-transform: uppercase;
-			letter-spacing: 0.04em;
-			margin-right: 0.4rem;
+			letter-spacing: 0.05em;
+			margin-right: 0.25rem;
 		}
 
-		.gear-detail {
+		.item-description {
 			color: var(--text-primary);
 		}
 
@@ -1262,82 +830,53 @@
 	<nav class="site-nav" aria-label="Main navigation">
 		<ul class="nav-list" role="tablist">
 			<li class="nav-item active" id="tab-home" data-page="home" data-translate="nav.home" role="tab" aria-selected="true" aria-controls="home" tabindex="0">Home</li>
-			<li class="nav-item" id="tab-projects" data-page="projects" data-translate="nav.projects" role="tab" aria-selected="false" aria-controls="projects" tabindex="-1">Projects</li>
+			<li class="nav-item" id="tab-projects" data-page="projects" data-translate="nav.projects" role="tab" aria-selected="false" aria-controls="projects" tabindex="-1">Tech Projects</li>
 			<li class="nav-item" id="tab-tools" data-page="tools" data-translate="nav.tools" role="tab" aria-selected="false" aria-controls="tools" tabindex="-1">Tools</li>
-			<li class="nav-item" id="tab-films" data-page="films" data-translate="nav.films" role="tab" aria-selected="false" aria-controls="films" tabindex="-1">Films</li>
 			<li class="nav-item" id="tab-about" data-page="about" data-translate="nav.about" role="tab" aria-selected="false" aria-controls="about" tabindex="-1">About</li>
 		</ul>
 	</nav>
 	
 	<main>
-		<!-- HOME PAGE (hub) -->
+		<!-- HOME PAGE -->
 		<div class="page" id="home" role="tabpanel" aria-labelledby="tab-home" tabindex="0">
-			<!-- Compact intro (full about lives on the About tab) -->
-			<section class="section hub-mini">
-				<h1 class="hub-name">Valdir Neves</h1>
-				<p class="hub-tagline">Filmmaker · Photographer · Engineering student</p>
-				<p class="hub-desc">Based in Lisbon — film direction &amp; camera, photography, and building tools and electronics.</p>
-			</section>
-
-			<!-- Work: each offering paired with its proof -->
 			<section class="section">
-				<div class="section-title">WORK</div>
-
-				<div class="work-item">
-					<div class="work-head">
-						<span class="work-name">Film — Direction &amp; Camera</span>
-						<span class="work-note">Directing, DP &amp; camera operation</span>
-					</div>
-					<div class="content-grid grid-1">
-						<a class="card portfolio-card" href="https://val-nvs.com/portfolio/" target="_blank" rel="noopener">
-							<video class="card-media" autoplay muted loop playsinline width="438" height="214" poster="media/film-poster.jpg" aria-label="Film portfolio reel">
-								<source src="media/film.webm" type="video/webm">
-								<source src="media/film.mp4" type="video/mp4">
-							</video>
-							<span class="portfolio-tag">Reel ↗</span>
-						</a>
-					</div>
-				</div>
-
-				<div class="work-item">
-					<div class="work-head">
-						<span class="work-name">Photography</span>
-						<span class="work-note">Portraits, events &amp; editorial</span>
-					</div>
-					<div class="content-grid grid-2">
-						<a class="card portfolio-card" href="https://valdirneves.mypixieset.com/" target="_blank" rel="noopener">
-							<img loading="lazy" src="media/pixieset2.jpg" width="1647" height="903" alt="Photography portfolio on Pixieset">
-							<span class="portfolio-tag">Pixieset ↗</span>
-						</a>
-						<a class="card portfolio-card" href="https://val-nvs.com/photo/" target="_blank" rel="noopener">
-							<img loading="lazy" src="media/photofolio.jpg" width="1362" height="747" alt="Photography site">
-							<span class="portfolio-tag">Photo site ↗</span>
-						</a>
-					</div>
+				<div class="section-title" data-translate="home.videography">Videography Portfolio <span class="material-symbols-outlined">open_in_new</span></div>
+				<div class="content-grid grid-1">
+						<a class="card" href="https://val-nvs.com/portfolio/" target="_blank" rel="noopener">
+						<video class="card-media" autoplay muted loop playsinline width="438" height="214" poster="media/film-poster.jpg" aria-label="Videography portfolio reel">
+							<source src="media/film.webm" type="video/webm">
+							<source src="media/film.mp4" type="video/mp4">
+						</video>
+					</a>
 				</div>
 			</section>
 
-			<!-- Contact -->
 			<section class="section">
-				<div class="section-title">CONTACT</div>
-				<div class="social-grid">
-					<a class="social-link" href="/cdn-cgi/l/email-protection#1a6c7b767e736834746c695a756f6e7675757134797577" aria-label="Email">
-						<span class="social-icon"><span class="material-symbols-outlined">mail</span></span><span class="social-handle"><span class="__cf_email__" data-cfemail="8afcebe6eee3f8a4e4fcf9cae5fffee6e5e5e1a4e9e5e7">[email&#160;protected]</span></span>
+				<div class="section-title" data-translate="home.photography">Photography Portfolios</div>
+				<div class="content-grid grid-2">
+					<a class="card" href="https://valdirneves.mypixieset.com/" target="_blank" rel="noopener">
+						<img loading="lazy" src="media/pixieset2.jpg" width="1647" height="903" alt="Photography portfolio on Pixieset">
 					</a>
-					<a class="social-link" href="tel:+351930946697" aria-label="Phone">
-						<span class="social-icon"><span class="material-symbols-outlined">call</span></span><span class="social-handle">(+351) 930 946 697</span>
+					<a class="card" href="https://val-nvs.com/photo/" target="_blank" rel="noopener">
+						<img loading="lazy" src="media/photofolio.jpg" width="1362" height="747" alt="Photography portfolio">
 					</a>
-					<a class="social-link" href="https://www.linkedin.com/in/valdir-neves/" target="_blank" rel="noopener" aria-label="LinkedIn">
-						<img src="media/linkedin.png" width="263" height="263" alt="LinkedIn"><span class="social-handle">valdir-neves</span>
+				</div>
+			</section>
+
+			<section class="section">
+				<div class="section-title" data-translate="home.profiles">PROFILES</div>
+				<div class="content-grid grid-4">
+					<a class="card card-noborder" href="https://www.linkedin.com/in/valdir-neves/" target="_blank" rel="noopener">
+						<img src="media/linkedin.png" width="263" height="263" alt="LinkedIn">
 					</a>
-					<a class="social-link" href="https://www.instagram.com/val.nevs/" target="_blank" rel="noopener" aria-label="Instagram">
-						<img src="media/instagram.png" width="300" height="300" alt="Instagram"><span class="social-handle">@val.nevs</span>
+					<a class="card card-noborder" href="https://www.instagram.com/val.nevs/" target="_blank" rel="noopener">
+						<img src="media/instagram.png" width="300" height="300" alt="Instagram">
 					</a>
-					<a class="social-link" href="https://github.com/val-nvs" target="_blank" rel="noopener" aria-label="GitHub">
-						<img src="media/github.png" width="341" height="334" alt="GitHub"><span class="social-handle">val-nvs</span>
+					<a class="card card-noborder" href="https://github.com/val-nvs" target="_blank" rel="noopener">
+						<img src="media/github.png" width="341" height="334" alt="GitHub">
 					</a>
-					<a class="social-link" href="https://letterboxd.com/eerom/" target="_blank" rel="noopener" aria-label="Letterboxd">
-						<img src="media/letterboxd.png" width="1024" height="1024" alt="Letterboxd"><span class="social-handle">eerom</span>
+					<a class="card card-noborder" href="https://letterboxd.com/eerom/" target="_blank" rel="noopener">
+						<img src="media/letterboxd.png" width="1024" height="1024" alt="Letterboxd">
 					</a>
 				</div>
 			</section>
@@ -1637,41 +1176,6 @@
 
 
 
-		<!-- FILMS PAGE -->
-		<!-- Add a film: drop a poster into media/films/, then copy one <section> below and set
-		     the poster src, title, Letterboxd link and note. No month/date dividers on this page. -->
-		<div class="page page-hidden" id="films" role="tabpanel" aria-labelledby="tab-films" tabindex="0">
-
-			<!-- FILM: poster (1/4) on the left; right column (3/4) = title, note, then a nav bar
-			     (same style & height as the top nav) whose tabs expand text below on click.
-			     To add a film: drop a poster in media/films/ and copy one <section> block. -->
-
-			<section class="section film-entry" data-film="firefly">
-				<div class="film-layout">
-					<a class="card film-poster" href="https://www.themoviedb.org/search?query=Firefly" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/films/firefly.jpg" width="600" height="900" alt="Firefly (2026)">
-					</a>
-					<div class="film-body">
-						<div class="section-title">Firefly <span class="film-year">(2026)</span></div>
-						<p class="film-desc">Direction &amp; camera. — replace with your note.</p>
-						<ul class="film-nav-list">
-							<li class="film-tab" data-tab="cast">Cast</li>
-							<li class="film-tab" data-tab="crew">Crew</li>
-							<li class="film-tab" data-tab="details">Details</li>
-						</ul>
-					</div>
-				</div>
-				<div class="film-panels">
-					<div class="film-panel hidden" data-panel="cast"></div>
-					<div class="film-panel hidden" data-panel="crew"></div>
-					<div class="film-panel hidden" data-panel="details">2026</div>
-				</div>
-			</section>
-
-		</div>
-
-
-
 		<!-- ABOUT PAGE -->
 		<div class="page page-hidden" id="about" role="tabpanel" aria-labelledby="tab-about" tabindex="0">
 			<section class="hero-section">
@@ -1685,62 +1189,53 @@
 			</section>
 
 			<section class="section about-content">
-				<h1 class="hub-name">Valdir Neves</h1>
-				<p class="hub-tagline">Filmmaker · Photographer · Engineering student</p>
-				<p class="hub-loc">Lisbon, Portugal</p>
-				<p class="hub-desc">An aspiring multi-hyphenate from Brazil, drawn to filmmaking, photography, optics, architecture and engineering, and fluent in English and Portuguese.</p>
+				<div class="section-title" data-translate="about.title">ABOUT ME</div>
+				<p data-translate="about.bio1">Brazilian living in Lisbon, Portugal.</p>
+				<p data-translate="about.bio2">Passionate about filmmaking, photography, optics, architecture and engineering.</p>
+				<p data-translate="about.bio3">Fluent in English & Portuguese.</p>
 			</section>
 
 			<section class="section">
 				<div class="section-title" data-translate="about.contact">CONTACT</div>
 				<p data-translate="about.collaborate">Looking to collaborate or share ideas?<br>Drop me a message- I'd love to connect.</p><br>
-				<div class="social-grid">
-					<a class="social-link" href="/cdn-cgi/l/email-protection#1a6c7b767e736834746c695a756f6e7675757134797577" aria-label="Email">
-						<span class="social-icon"><span class="material-symbols-outlined">mail</span></span><span class="social-handle"><span class="__cf_email__" data-cfemail="8afcebe6eee3f8a4e4fcf9cae5fffee6e5e5e1a4e9e5e7">[email&#160;protected]</span></span>
+				<p>Email: <a href="/cdn-cgi/l/email-protection#1a6c7b767e736834746c695a756f6e7675757134797577"><span class="__cf_email__" data-cfemail="8afcebe6eee3f8a4e4fcf9cae5fffee6e5e5e1a4e9e5e7">[email&#160;protected]</span></a></p>
+				<p>Phone: (+351) 930 946 697</p>
+				<p>Instagram: <a href="https://www.instagram.com/val.nevs" target="_blank" rel="noopener">@val.nevs</a></p>
+				<p>LinkedIn: <a href="https://www.linkedin.com/in/valdir-neves/" target="_blank" rel="noopener">/valdir-neves/</a></p>
+
+				<div class="content-grid grid-4">
+					<a class="card card-noborder" href="https://www.linkedin.com/in/valdir-neves/" target="_blank" rel="noopener">
+						<img loading="lazy" src="media/linkedin.png" width="263" height="263" alt="LinkedIn">
 					</a>
-					<a class="social-link" href="tel:+351930946697" aria-label="Phone">
-						<span class="social-icon"><span class="material-symbols-outlined">call</span></span><span class="social-handle">(+351) 930 946 697</span>
+					<a class="card card-noborder" href="https://www.instagram.com/val.nevs/" target="_blank" rel="noopener">
+						<img loading="lazy" src="media/instagram.png" width="300" height="300" alt="Instagram">
 					</a>
-					<a class="social-link" href="https://www.linkedin.com/in/valdir-neves/" target="_blank" rel="noopener" aria-label="LinkedIn">
-						<img loading="lazy" src="media/linkedin.png" width="263" height="263" alt="LinkedIn"><span class="social-handle">valdir-neves</span>
+					<a class="card card-noborder" href="https://github.com/val-nvs" target="_blank" rel="noopener">
+						<img loading="lazy" src="media/github.png" width="341" height="334" alt="GitHub">
 					</a>
-					<a class="social-link" href="https://www.instagram.com/val.nevs/" target="_blank" rel="noopener" aria-label="Instagram">
-						<img loading="lazy" src="media/instagram.png" width="300" height="300" alt="Instagram"><span class="social-handle">@val.nevs</span>
-					</a>
-					<a class="social-link" href="https://github.com/val-nvs" target="_blank" rel="noopener" aria-label="GitHub">
-						<img loading="lazy" src="media/github.png" width="341" height="334" alt="GitHub"><span class="social-handle">val-nvs</span>
-					</a>
-					<a class="social-link" href="https://letterboxd.com/eerom/" target="_blank" rel="noopener" aria-label="Letterboxd">
-						<img loading="lazy" src="media/letterboxd.png" width="1024" height="1024" alt="Letterboxd"><span class="social-handle">eerom</span>
+					<a class="card card-noborder" href="https://letterboxd.com/eerom/" target="_blank" rel="noopener">
+						<img loading="lazy" src="media/letterboxd.png" width="1024" height="1024" alt="Letterboxd">
 					</a>
 				</div>
 			</section>
 
 			<section class="section">
 				<div class="section-title" data-translate="t.education">EDUCATION</div>
-				<ol class="resume">
-					<li class="resume-item">
-						<span class="resume-date">2026 — 2029</span>
-						<div class="resume-body">
-							<span class="resume-role">Electrical Engineering</span>
-							<span class="resume-org resume-muted">BSc — starting 2026</span>
-						</div>
-					</li>
-					<li class="resume-item">
-						<span class="resume-date">2025 — 2026</span>
-						<div class="resume-body">
-							<span class="resume-role">Film Photography</span>
-							<a class="resume-org" href="https://atelierdelisboa.pt/bruno-pelletier-sequeira" target="_blank" rel="noopener">Atelier de Lisboa — Coord. Bruno Pelletier Sequeira</a>
-						</div>
-					</li>
-					<li class="resume-item">
-						<span class="resume-date">2023 — 2025</span>
-						<div class="resume-body">
-							<span class="resume-role">Film &amp; TV</span>
-							<a class="resume-org" href="https://www.artecapital.net/entrevista-314-pedro-senna-nune" target="_blank" rel="noopener">ETIC — Coord. Pedro Senna Nunes</a>
-						</div>
-					</li>
-				</ol>
+				<div class="content-grid grid-3">
+					<a class="card" href="https://www.artecapital.net/entrevista-314-pedro-senna-nune" target="_blank" rel="noopener">
+						<img loading="lazy" src="media/switch.jpg" width="600" height="400" alt="ETIC - Pedro Senna Nunes">
+					</a>
+					<a class="card" href="https://www.artecapital.net/entrevista-314-pedro-senna-nune" target="_blank" rel="noopener">
+						<img loading="lazy" src="media/hall.jpg" width="600" height="400" alt="ETIC - Pedro Senna Nunes">
+					</a>
+					<a class="card" href="https://atelierdelisboa.pt/bruno-pelletier-sequeira" target="_blank" rel="noopener">
+						<img loading="lazy" src="media/negatives.jpg" width="600" height="400" alt="Atelier de Lisboa">
+					</a>
+				</div>
+				<br>
+				<p>2023 — 2025:&nbsp;&nbsp;<a href="https://www.artecapital.net/entrevista-314-pedro-senna-nune" target="_blank" rel="noopener">ETIC — Coord. Pedro Senna Nunes</a></p>
+				<p>2025 — 2026:&nbsp;&nbsp;<a href="https://atelierdelisboa.pt/bruno-pelletier-sequeira" target="_blank" rel="noopener">Atelier de Lisboa — Coord. Bruno Pelletier Sequeira</a></p>
+				<p>2026 — 2029:&nbsp;&nbsp;<span class="tba">To be announced</span></p>
 			</section>
 
 			<section class="section">
@@ -1775,59 +1270,192 @@
 
 			<section class="section">
 				<div class="section-title" data-translate="t.equipment">EQUIPMENT</div>
-				<div class="gear">
-					<details class="gear-item" open>
-						<summary class="gear-summary">
-							<span class="gear-name">Sony α6400</span>
-						<span class="gear-tag">E-Mount</span>
-						</summary>
-						<div class="gear-body">
-						<p class="gear-specs">APS-C / S35 • No-IBIS • 18mm flange<br>S35: 4K 25fps 100Mbps • HD 60fps 50Mbps<br>Crop: 4K 30fps 100Mbps • HD 120fps 100Mbps</p>
-						<div class="gear-row"><span class="gear-lens">35mm ƒ/0.95</span><span class="gear-detail"><span class="gear-badge">MF</span>7artisans • 52ø</span></div>
-						<div class="gear-row"><span class="gear-lens">16-50mm ƒ/3.5-5.6</span><span class="gear-detail"><span class="gear-badge">AF</span>Kit Sony OSS • 40.5ø</span></div>
-						<div class="gear-row"><span class="gear-lens">55-210mm ƒ/4.5-6.3</span><span class="gear-detail"><span class="gear-badge">AF</span>Kit Sony OSS • 49ø</span></div>
-						<div class="gear-row"><span class="gear-lens">3.6-10mm ƒ/1.4</span><span class="gear-detail"><span class="gear-badge">MF</span>CCTV 1/1.8" • with C-to-E adapter</span></div>
+				<div class="equipment-grid">
+					<div class="equipment-card">
+						<div class="equipment-header">
+							<span class="equipment-icon">📹</span>
+							<div>
+								<div class="equipment-name">Sony α6400 (E-Mount)</div>
+								<div class="equipment-specs">APS-C/S35 • No-IBIS •<br>S35: 4K-25fps-100Mbps<br>S35: HD-60fps-50Mbps<br>Crop: 4K-30fps-100Mbps<br>Crop: HD-120fps-100Mbps •<br>18mm flange</div>
+							</div>
 						</div>
-					</details>
-					<details class="gear-item">
-						<summary class="gear-summary">
-							<span class="gear-name">Pentax P30T</span>
-						<span class="gear-tag">K-Mount</span>
-						</summary>
-						<div class="gear-body">
-						<p class="gear-specs">35mm full frame • 8 perf • 45.46mm flange</p>
-						<div class="gear-row"><span class="gear-lens">35-80mm ƒ/4-?</span><span class="gear-detail"><span class="gear-badge">MF</span>Kit lens • 49ø</span></div>
+						<div class="item-list">
+							<div class="list-item">
+								<span class="item-bullet">35mm ƒ/0.95</span>
+								<div>
+									<span class="item-type">MF</span>
+									<span class="item-description">7artisans • 52ø</span>
+								</div>
+							</div>
+							<div class="list-item">
+								<span class="item-bullet">16-50mm ƒ/3.5-5.6</span>
+								<div>
+									<span class="item-type">AF</span>
+									<span class="item-description">Kit Sony OSS • 40.5ø</span>
+								</div>
+							</div>
+							<div class="list-item">
+								<span class="item-bullet">55-210mm ƒ/4.5-6.3</span>
+								<div>
+									<span class="item-type">AF</span>
+									<span class="item-description">Kit Sony OSS • 49ø</span>
+								</div>
+							</div>
 						</div>
-					</details>
-					<details class="gear-item">
-						<summary class="gear-summary">
-							<span class="gear-name">Olympus Pen-EE S</span>
-						<span class="gear-tag">Half-frame</span>
-						</summary>
-						<div class="gear-body">
-						<p class="gear-specs">35mm half frame • 4 perf • fixed 1/40s • fixed lens</p>
-						<div class="gear-row"><span class="gear-lens">30mm ƒ/2.8</span><span class="gear-detail"><span class="gear-badge">MF</span>22.5ø</span></div>
+					</div>
+					
+					<div class="equipment-card">
+						<div class="equipment-header">
+							<span class="equipment-icon">📷</span>
+							<div>
+								<div class="equipment-name">(C-Mount)</div>
+								<div class="equipment-specs">17.526mm flange</div>
+							</div>
 						</div>
-					</details>
-					<details class="gear-item">
-						<summary class="gear-summary">
-							<span class="gear-name">Accessories</span>
-						</summary>
-						<div class="gear-body">
-						<div class="gear-row"><span class="gear-lens">Microphone</span><span class="gear-detail"><span class="gear-badge">×1</span>BOYA BY-MM1 cardioid • cold-shoe • 3.5mm TRS</span></div>
-						<div class="gear-row"><span class="gear-lens">5W Light</span><span class="gear-detail"><span class="gear-badge">×1</span>5W RGB • cold-shoe</span></div>
-						<div class="gear-row"><span class="gear-lens">ND Filters</span><span class="gear-detail"><span class="gear-badge">×0</span>—</span></div>
-						<div class="gear-row"><span class="gear-lens">Polarizing Filter</span><span class="gear-detail"><span class="gear-badge">×1</span>72ø</span></div>
-						<div class="gear-row"><span class="gear-lens">Star Filter</span><span class="gear-detail"><span class="gear-badge">×2</span>X shape • 67ø / 72ø</span></div>
-						<div class="gear-row"><span class="gear-lens">RGB Filters</span><span class="gear-detail"><span class="gear-badge">×3</span>72ø</span></div>
-						<div class="gear-row"><span class="gear-lens">Filter Adapters</span><span class="gear-detail"><span class="gear-badge">×6</span>49ø→52ø / 52ø→62ø (film scanner) / 52ø→67ø / 3× 52ø→72ø</span></div>
-						<div class="gear-row"><span class="gear-lens">Magnetic Filter Adapters</span><span class="gear-detail"><span class="gear-badge">×2</span>72ø</span></div>
-						<div class="gear-row"><span class="gear-lens">UV Filter</span><span class="gear-detail"><span class="gear-badge">×1</span>52ø</span></div>
-						<div class="gear-row"><span class="gear-lens">Reflector</span><span class="gear-detail"><span class="gear-badge">×1</span>110cm white / silver</span></div>
-						<div class="gear-row"><span class="gear-lens">Macro Converter</span><span class="gear-detail"><span class="gear-badge">×2</span>10+16mm AF E-Mount</span></div>
-						<div class="gear-row"><span class="gear-lens">Clapper</span><span class="gear-detail"><span class="gear-badge">×1</span>—</span></div>
+						<div class="item-list">
+							<div class="list-item">
+								<span class="item-bullet">3.6-10mm ƒ/1.4</span>
+								<div>
+									<span class="item-type">MF</span>
+									<span class="item-description">CCTV 1/1.8" • With C to E-mount adapter</span>
+								</div>
+							</div>
 						</div>
-					</details>
+					</div>
+
+					<div class="equipment-card">
+						<div class="equipment-header">
+							<span class="equipment-icon">📷</span>
+							<div>
+								<div class="equipment-name">Pentax P30T (K-Mount)</div>
+								<div class="equipment-specs">35mm Full Frame 8 perf • 45.46mm flange</div>
+							</div>
+						</div>
+						<div class="item-list">
+							<div class="list-item">
+								<span class="item-bullet">35-80mm ƒ/4-?</span>
+								<div>
+									<span class="item-type">MF</span>
+									<span class="item-description">Kit Lens • 49ø</span>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="equipment-card">
+						<div class="equipment-header">
+							<span class="equipment-icon">📷</span>
+							<div>
+								<div class="equipment-name">Olympus Pen-EE S</div>
+								<div class="equipment-specs">35mm Half Frame 4 perf • Fixed 1/40s • Fixed Lens</div>
+							</div>
+						</div>
+						<div class="item-list">
+							<div class="list-item">
+								<span class="item-bullet">30mm ƒ/2.8</span>
+								<div>
+									<span class="item-type">MF</span>
+									<span class="item-description">22.5ø</span>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="equipment-card">
+						<div class="equipment-header">
+							<span class="equipment-icon">🪩</span>
+							<div>
+								<div class="equipment-name">Accessories</div>
+								<div class="equipment-specs"></div>
+							</div>
+						</div>
+						<div class="item-list">
+							<div class="list-item">
+								<span class="item-bullet">Microphone</span>
+								<div>
+									<span class="item-type">1</span>
+									<span class="item-description">BOYA BY-MM1 Cardioid cold-shoe 3.5mmTRS</span>
+								</div>
+							</div>
+							<div class="list-item">
+								<span class="item-bullet">5W Light</span>
+								<div>
+									<span class="item-type">1</span>
+									<span class="item-description">5W RGB cold-shoe</span>
+								</div>
+							</div>
+							<div class="list-item">
+								<span class="item-bullet">ND Filters</span>
+								<div>
+									<span class="item-type">0</span>
+									<span class="item-description"></span>
+								</div>
+							</div>
+							<div class="list-item">
+								<span class="item-bullet">Polarizing Filter</span>
+								<div>
+									<span class="item-type">1</span>
+									<span class="item-description">72ø</span>
+								</div>
+							</div>
+							<div class="list-item">
+								<span class="item-bullet">Star Filter</span>
+								<div>
+									<span class="item-type">2</span>
+									<span class="item-description">X shape. 67ø / 72ø</span>
+								</div>
+							</div>
+							<div class="list-item">
+								<span class="item-bullet">RGB Filters</span>
+								<div>
+									<span class="item-type">3</span>
+									<span class="item-description">72ø</span>
+								</div>
+							</div>
+							<div class="list-item">
+								<span class="item-bullet">Filter Adapters</span>
+								<div>
+									<span class="item-type">6</span>
+									<span class="item-description">49ø->52ø / 52ø->62ø (film scanner) / 52ø->67ø / 3x 52ø->72ø</span>
+								</div>
+							</div>
+							<div class="list-item">
+								<span class="item-bullet">Magnetic Filter Adapters</span>
+								<div>
+									<span class="item-type">2</span>
+									<span class="item-description">72ø</span>
+								</div>
+							</div>
+							<div class="list-item">
+								<span class="item-bullet">UV Filter</span>
+								<div>
+									<span class="item-type">1</span>
+									<span class="item-description">52ø</span>
+								</div>
+							</div>
+							<div class="list-item">
+								<span class="item-bullet">Reflector</span>
+								<div>
+									<span class="item-type">1</span>
+									<span class="item-description">110cm White/Silver</span>
+								</div>
+							</div>
+							<div class="list-item">
+								<span class="item-bullet">Macro Converter</span>
+								<div>
+									<span class="item-type">2</span>
+									<span class="item-description">10+16mm AF E-Mount</span>
+								</div>
+							</div>
+							<div class="list-item">
+								<span class="item-bullet">Clapper</span>
+								<div>
+									<span class="item-type">1</span>
+									<span class="item-description"></span>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
 			</section>
 		</div>
@@ -1890,9 +1518,8 @@ const translations = {
 		't.equipment': 'EQUIPMENT',
 		'nav.home': 'Home',
 		'nav.tools': 'Tools',
-		'nav.projects': 'Projects',
+		'nav.projects': 'Tech Projects',
 		'nav.about': 'About',
-		'nav.films': 'Films',
 		'home.videography': 'VIDEOGRAPHY PORTFOLIO',
 		'home.photography': 'PHOTOGRAPHY PORTFOLIOS',
 		'home.profiles': 'PROFILES',
@@ -1936,7 +1563,6 @@ const translations = {
 		'nav.tools': 'Ferramentas',
 		'nav.projects': 'Projetos Tech',
 		'nav.about': 'Sobre',
-		'nav.films': 'Filmes',
 		'home.videography': 'PORTFÓLIO DE VIDEOGRAFIA',
 		'home.photography': 'PORTFÓLIOS DE FOTOGRAFIA',
 		'home.profiles': 'PERFIS',
@@ -1980,7 +1606,6 @@ const translations = {
 		'nav.tools': 'Herramientas',
 		'nav.projects': 'Proyectos Tech',
 		'nav.about': 'Acerca',
-		'nav.films': 'Películas',
 		'home.videography': 'PORTAFOLIO DE VIDEOGRAFÍA',
 		'home.photography': 'PORTAFOLIO DE FOTOGRAFÍA',
 		'home.profiles': 'PERFILES',
@@ -2024,7 +1649,6 @@ const translations = {
 		'nav.tools': 'Outils',
 		'nav.projects': 'Projets Tech',
 		'nav.about': 'À propos',
-		'nav.films': 'Films',
 		'home.videography': 'PORTFOLIO DE VIDÉOGRAPHIE',
 		'home.photography': 'PORTFOLIO DE PHOTOGRAPHIE',
 		'home.profiles': 'PROFILS',
@@ -2068,7 +1692,6 @@ const translations = {
 		'nav.tools': 'Werkzeuge',
 		'nav.projects': 'Tech-Projekte',
 		'nav.about': 'Über',
-		'nav.films': 'Filme',
 		'home.videography': 'VIDEOGRAFIE-PORTFOLIO',
 		'home.photography': 'FOTOGRAFIE-PORTFOLIO',
 		'home.profiles': 'PROFILE',
@@ -2112,7 +1735,6 @@ const translations = {
 		'nav.tools': '工具',
 		'nav.projects': '技术项目',
 		'nav.about': '关于',
-		'nav.films': '电影',
 		'home.videography': '视频作品集',
 		'home.photography': '摄影作品集',
 		'home.profiles': '个人主页',
@@ -2156,7 +1778,6 @@ const translations = {
 		'nav.tools': 'ツール',
 		'nav.projects': 'テックプロジェクト',
 		'nav.about': '概要',
-		'nav.films': '映画',
 		'home.videography': 'ビデオグラフィーポートフォリオ',
 		'home.photography': '写真ポートフォリオ',
 		'home.profiles': 'プロフィール',
@@ -2200,7 +1821,6 @@ const translations = {
 		'nav.tools': 'الأدوات',
 		'nav.projects': 'المشاريع التقنية',
 		'nav.about': 'حول',
-		'nav.films': 'أفلام',
 		'home.videography': 'معرض الفيديو',
 		'home.photography': 'معرض التصوير',
 		'home.profiles': 'الملفات الشخصية',
@@ -2392,159 +2012,6 @@ navButtons.forEach((button, index) => {
 			target.focus();
 			activateTab(target);
 		}
-	});
-});
-
-// ========================================
-// HUB ROUTE CARDS (jump to a tab)
-// ========================================
-document.querySelectorAll('[data-goto]').forEach(el => {
-	el.addEventListener('click', () => {
-		const tab = document.getElementById('tab-' + el.dataset.goto);
-		if (tab) tab.click();
-	});
-});
-
-// ========================================
-// FILM CARD TABS (click a tab to expand its text below)
-// ========================================
-document.querySelectorAll('.film-entry').forEach(entry => {
-	const tabs = entry.querySelectorAll('.film-tab');
-	const panels = entry.querySelectorAll('.film-panel');
-	tabs.forEach(tab => {
-		tab.addEventListener('click', () => {
-			const wasActive = tab.classList.contains('active');
-			tabs.forEach(t => t.classList.remove('active'));
-			panels.forEach(p => p.classList.add('hidden'));
-			if (!wasActive) {
-				tab.classList.add('active');
-				const panel = entry.querySelector('.film-panel[data-panel="' + tab.dataset.tab + '"]');
-				if (panel) panel.classList.remove('hidden');
-			}
-		});
-	});
-});
-
-// ========================================
-// FILM CAST / CREW — reusable people
-// ========================================
-// Define each person ONCE here; films reference them by key, so the same
-// person is reused across films (and across cast + crew). To add a photo:
-// drop an image in media/people/ and set that person's `photo` path below.
-const people = {
-	'marta-taborda': { name: 'Marta Taborda', photo: '' },
-	'leonor-canas': { name: 'Leonor Canas', photo: '' },
-	'joao-guilherme-gouveia': { name: 'João Guilherme Gouveia', photo: '' },
-	'ines-garcias-lopes': { name: 'Inês Garcias Lopes', photo: '' },
-	'sofia-aragao': { name: 'Sofia Aragão', photo: '' },
-	'xihe-yu': { name: 'Xihe Yu', photo: '' },
-	'valdir-neves': { name: 'Valdir Neves', photo: 'media/people/valdir-neves.jpg' },
-	'rafaela-sousa': { name: 'Rafaela Sousa', photo: '' },
-	'jiani-shi': { name: 'Jiani Shi', photo: '' },
-	'sara-silva-veiga': { name: 'Sara Silva Veiga', photo: '' },
-	'nikolas-serra': { name: 'Nikolas Serra', photo: '' },
-	'charlie-chaves': { name: 'Charlie Chaves', photo: '' },
-	'giovanna-domiciano-neto': { name: 'Giovanna Domiciano Neto', photo: '' },
-	'andre-de-brito': { name: 'André de Brito', photo: '' },
-	'dylan-cabanis': { name: 'Dylan Cabanis', photo: '' },
-	'rita-primavera-lopes-familia': { name: 'Rita Primavera Lopes Família', photo: '' },
-	'sinou-gomez': { name: 'Sinou Gomez', photo: '' }
-};
-
-// Each film references people by key + their role in THAT film. The same key
-// can appear in multiple films and in both cast and crew (e.g. valdir-neves).
-const filmCredits = {
-	firefly: {
-		cast: [['marta-taborda', 'Ophelia'], ['leonor-canas', 'Sophie'], ['joao-guilherme-gouveia', '']],
-		crew: [
-			['ines-garcias-lopes', 'Art Director'],
-			['sofia-aragao', 'Art Director'],
-			['xihe-yu', 'Additional Photography'],
-			['valdir-neves', 'Camera Operator'],
-			['rafaela-sousa', 'Cinematographer'],
-			['jiani-shi', 'Lighting'],
-			['sara-silva-veiga', 'Assistant Director'],
-			['valdir-neves', 'Director'],
-			['nikolas-serra', 'Editor'],
-			['jiani-shi', 'Lighting'],
-			['charlie-chaves', 'Producer'],
-			['giovanna-domiciano-neto', 'Producer'],
-			['andre-de-brito', 'Composer'],
-			['dylan-cabanis', 'Sound'],
-			['rita-primavera-lopes-familia', 'Writer'],
-			['sinou-gomez', 'Writer']
-		]
-	}
-};
-
-function renderPersonRow(key, role) {
-	const p = people[key] || { name: key, photo: '' };
-	const row = document.createElement('div');
-	row.className = 'cast-row';
-
-	const avatar = document.createElement('span');
-	avatar.className = 'cast-avatar';
-	const iconFallback = () => { avatar.innerHTML = '<span class="material-symbols-outlined">person</span>'; };
-	if (p.photo) {
-		const img = document.createElement('img');
-		img.src = p.photo;
-		img.alt = p.name;
-		img.loading = 'lazy';
-		img.addEventListener('error', iconFallback);
-		avatar.appendChild(img);
-	} else {
-		iconFallback();
-	}
-
-	const info = document.createElement('div');
-	const nameEl = document.createElement('div');
-	nameEl.className = 'cast-name';
-	nameEl.textContent = p.name;
-	const roleEl = document.createElement('div');
-	roleEl.className = 'cast-role';
-	roleEl.textContent = role;
-	info.append(nameEl, roleEl);
-
-	row.append(avatar, info);
-	return row;
-}
-
-// Canonical crew role order (Letterboxd credits convention) — the ONLY roles used.
-const roleOrder = [
-	'Actors', 'Director', 'Producer', 'Writer', 'Original Writer', 'Story', 'Casting',
-	'Editor', 'Cinematographer', 'Assistant Director', 'Additional Directing', 'Executive Producer',
-	'Lighting', 'Camera Operator', 'Additional Photography', 'Production Designer', 'Art Director',
-	'Set Decorator', 'Special Effects', 'Visual Effects', 'Stunts', 'Composer', 'Songs', 'Sound',
-	'Costume Design', 'Makeup', 'Hair Styling'
-];
-const roleRank = role => { const i = roleOrder.indexOf(role); return i === -1 ? roleOrder.length : i; };
-
-document.querySelectorAll('.film-entry[data-film]').forEach(section => {
-	const credits = filmCredits[section.dataset.film];
-	if (!credits) return;
-	['cast', 'crew'].forEach(kind => {
-		const panel = section.querySelector('.film-panel[data-panel="' + kind + '"]');
-		let list = credits[kind];
-		if (!panel || !list) return;
-		if (kind === 'crew') {
-			// collapse duplicate person+role (so one person listed twice for the same
-			// role shows once), then order by the Letterboxd role convention (stable).
-			const seen = new Set();
-			list = list.filter(([k, r]) => {
-				const id = k + '|' + r;
-				if (seen.has(id)) return false;
-				seen.add(id);
-				return true;
-			});
-			list = list
-				.map((item, i) => [item, i])
-				.sort((a, b) => (roleRank(a[0][1]) - roleRank(b[0][1])) || (a[1] - b[1]))
-				.map(x => x[0]);
-		}
-		const wrap = document.createElement('div');
-		wrap.className = 'cast-list';
-		list.forEach(([key, role]) => wrap.appendChild(renderPersonRow(key, role)));
-		panel.appendChild(wrap);
 	});
 });
 
