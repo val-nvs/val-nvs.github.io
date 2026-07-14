@@ -66,6 +66,22 @@
 			--bg-secondary: #000;
 			--text-primary: #A1AAB3;
 			--accent-color: #00E054;
+			/* surfaces */
+			--surface-1: #1D1F25;
+			--surface-sunken: #0d0f12;
+			--surface-avatar: #222831;
+			/* text (muted lifted to meet WCAG AA contrast on --bg-primary) */
+			--text-strong: #fff;
+			--text-bright: #e8ecf0;
+			--text-muted: #868f99;
+			--text-faint: #5b6672;
+			/* interactive */
+			--tab-active: #728393;
+			/* hairline borders (text-primary at low opacity) */
+			--border-strong: rgba(161, 170, 179, 0.6);
+			--border-med: rgba(161, 170, 179, 0.3);
+			--border-subtle: rgba(161, 170, 179, 0.15);
+			--border-faint: rgba(161, 170, 179, 0.12);
 		}
 
 		/* ========================================
@@ -202,7 +218,7 @@
 			cursor: pointer;
 			display: inline-block;
 			font-weight: 200;
-			color: #808080;
+			color: var(--text-muted);
 			transition: font-weight 0.3s ease, color 0.3s ease;
 			animation: charWave 3s ease-in-out infinite;
 		}
@@ -210,7 +226,7 @@
 		@keyframes charWave {
 			0% {
 				font-weight: 200;
-				color: #808080;
+				color: var(--text-muted);
 			}
 			25% {
 				font-weight: 500;
@@ -226,7 +242,7 @@
 			}
 			100% {
 				font-weight: 200;
-				color: #808080;
+				color: var(--text-muted);
 			}
 		}
 
@@ -242,7 +258,7 @@
 		.nav-list {
 			display: grid;
 			grid-template-columns: repeat(5, 1fr);
-			background: #1D1F25;
+			background: var(--surface-1);
 			list-style: none;
 			border-radius: 0.3125rem;
 			padding: 0.125rem;
@@ -255,13 +271,13 @@
 			border-radius: 0.3125rem;
 			font-weight: bold;
 			cursor: pointer;
-			transition: all 0.2s ease;
+			transition: background-color 0.2s ease, color 0.2s ease;
 			font-size: 0.875rem;
 		}
 
 		.nav-item.active {
-			background: #728393;
-			color: #fff;
+			background: var(--tab-active);
+			color: var(--text-strong);
 			cursor: default;
 		}
 
@@ -352,7 +368,7 @@
 			left: 0;
 			right: 0;
 			bottom: 0;
-			border: 1px solid rgba(161, 170, 179, 0.6);
+			border: 1px solid var(--border-strong);
 			transition: border 0.1s ease;
 			border-radius: inherit;
 			pointer-events: none;
@@ -407,12 +423,12 @@
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			background: #0d0f12;
+			background: var(--surface-sunken);
 		}
 
 		.card-placeholder::after {
 			content: 'no image';
-			color: #4a5560;
+			color: var(--text-faint);
 			font-size: 0.7rem;
 			letter-spacing: 0.08em;
 			text-transform: uppercase;
@@ -421,12 +437,12 @@
 
 		/* Not-yet-announced link placeholder */
 		.tba {
-			color: #808080;
+			color: var(--text-muted);
 			font-style: italic;
 		}
 
 		.film-year {
-			color: #808080;
+			color: var(--text-muted);
 			font-weight: 400;
 			font-size: 0.9em;
 		}
@@ -463,7 +479,7 @@
 		.film-nav-list {
 			display: grid;
 			grid-template-columns: repeat(3, 1fr);
-			background: #0d0f12;
+			background: var(--surface-sunken);
 			list-style: none;
 			border-radius: 0.3125rem;
 			padding: 0.125rem;
@@ -479,12 +495,12 @@
 			font-size: 0.875rem;
 			color: var(--text-primary);
 			cursor: pointer;
-			transition: all 0.2s ease;
+			transition: background-color 0.2s ease, color 0.2s ease;
 		}
 
 		.film-tab.active {
-			background: #728393;
-			color: #fff;
+			background: var(--tab-active);
+			color: var(--text-strong);
 		}
 
 		.film-tab:hover:not(.active) {
@@ -497,7 +513,7 @@
 			color: var(--text-primary);
 			margin-top: 0.6rem;
 			padding-top: 0.6rem;
-			border-top: 1px solid rgba(161, 170, 179, 0.15);
+			border-top: 1px solid var(--border-subtle);
 		}
 
 		.film-panel.hidden {
@@ -515,7 +531,7 @@
 			align-items: center;
 			gap: 0.75rem;
 			padding: 0.55rem 0;
-			border-top: 1px solid rgba(161, 170, 179, 0.12);
+			border-top: 1px solid var(--border-faint);
 		}
 
 		.cast-row:first-child {
@@ -527,11 +543,11 @@
 			height: 48px;
 			flex: 0 0 auto;
 			border-radius: 0.6rem;
-			background: #222831;
+			background: var(--surface-avatar);
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			color: #5b6672;
+			color: var(--text-faint);
 		}
 
 		.cast-avatar .material-symbols-outlined {
@@ -547,14 +563,14 @@
 		}
 
 		.cast-name {
-			color: #e8ecf0;
+			color: var(--text-bright);
 			font-size: 1.05rem;
 			font-weight: 500;
 			line-height: 1.2;
 		}
 
 		.cast-role {
-			color: #808a94;
+			color: var(--text-muted);
 			font-size: 0.85rem;
 			line-height: 1.2;
 			margin-top: 0.1rem;
@@ -563,14 +579,10 @@
 		/* ========================================
 		   HOME HUB
 		   ======================================== */
-		.hub-head {
-			padding-top: 80px;
-		}
-
 		.hub-name {
 			font-size: 1.6rem;
 			font-weight: 700;
-			color: #fff;
+			color: var(--text-strong);
 			letter-spacing: 0.02em;
 			margin-bottom: 0.2rem;
 			line-height: 1.1;
@@ -579,21 +591,17 @@
 		.hub-tagline {
 			color: var(--accent-color);
 			font-family: "Atkinson Hyperlegible Mono", monospace;
-			font-size: 0.9rem;
-			letter-spacing: 0.03em;
+			font-size: 0.8rem;
+			letter-spacing: 0;
+			word-spacing: -0.12em;
 			margin-bottom: 0.1rem;
 		}
 
 		.hub-loc {
-			color: #808080;
+			color: var(--text-muted);
 			font-family: "Atkinson Hyperlegible Mono", monospace;
 			font-size: 0.85rem;
 			margin-bottom: 0.75rem;
-		}
-
-		.hub-intro {
-			max-width: 34ch;
-			margin: 0 auto;
 		}
 
 		/* Compact home intro */
@@ -601,6 +609,13 @@
 			text-align: center;
 			padding-top: 1.25rem;
 			padding-bottom: 1.25rem;
+		}
+
+		/* higher specificity than `.section p` so the tagline size actually applies */
+		.hub-mini .hub-tagline,
+		.about-content .hub-tagline {
+			font-size: 0.72rem;
+			line-height: 1.3;
 		}
 
 		.hub-mini .hub-tagline {
@@ -659,7 +674,7 @@
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			background: #1D1F25;
+			background: var(--surface-1);
 			border: 1px solid var(--border-color);
 			border-radius: 0.5rem;
 			color: var(--text-primary);
@@ -695,52 +710,12 @@
 			bottom: 0.5rem;
 			z-index: 5;
 			background: rgba(0, 0, 0, 0.7);
-			color: #fff;
+			color: var(--text-strong);
 			font-family: "Atkinson Hyperlegible Mono", monospace;
 			font-size: 0.8rem;
 			letter-spacing: 0.03em;
 			padding: 0.2rem 0.55rem;
 			border-radius: 0.3rem;
-		}
-
-		.route-grid {
-			display: grid;
-			grid-template-columns: repeat(2, 1fr);
-			gap: 0.375rem;
-		}
-
-		.route-card {
-			display: flex;
-			flex-direction: column;
-			gap: 0.3rem;
-			padding: 1rem;
-			text-align: left;
-			background: var(--bg-secondary);
-			border: 1px solid var(--border-color);
-			border-radius: 0.5rem;
-			color: var(--text-primary);
-			font-family: inherit;
-			cursor: pointer;
-			transition: border-color 0.2s ease, transform 0.15s ease;
-		}
-
-		.route-card:hover,
-		.route-card:focus-visible {
-			border-color: var(--accent-color);
-			transform: translateY(-2px);
-			outline: none;
-		}
-
-		.route-title {
-			color: #fff;
-			font-weight: 600;
-			font-size: 1rem;
-		}
-
-		.route-desc {
-			color: #808080;
-			font-size: 0.8rem;
-			line-height: 1.35;
 		}
 
 		/* Work: offering label + its proof */
@@ -754,7 +729,7 @@
 
 		.work-name {
 			display: block;
-			color: #fff;
+			color: var(--text-strong);
 			font-weight: 600;
 			font-size: 1rem;
 			letter-spacing: 0.01em;
@@ -762,7 +737,7 @@
 
 		.work-note {
 			display: block;
-			color: #808080;
+			color: var(--text-muted);
 			font-size: 0.8rem;
 			margin-top: 0.1rem;
 		}
@@ -779,7 +754,7 @@
 			grid-template-columns: 6.5rem 1fr;
 			gap: 0.85rem;
 			padding: 0.7rem 0;
-			border-top: 1px solid rgba(161, 170, 179, 0.15);
+			border-top: 1px solid var(--border-subtle);
 		}
 
 		.resume-item:first-child {
@@ -797,7 +772,7 @@
 
 		.resume-role {
 			display: block;
-			color: #fff;
+			color: var(--text-strong);
 			font-weight: 500;
 			font-size: 0.95rem;
 			line-height: 1.25;
@@ -820,7 +795,7 @@
 		}
 
 		.resume-muted {
-			color: #808080;
+			color: var(--text-muted);
 		}
 
 		.card.card-noborder {
@@ -845,12 +820,12 @@
 		}
 
 		.card.card-nolink::before {
-			border-color: rgba(161, 170, 179, 0.6);
+			border-color: var(--border-strong);
 		}
 
 		.card.card-nolink:hover::before,
 		.card.card-nolink:focus::before {
-			border: 1px solid rgba(161, 170, 179, 0.6);
+			border: 1px solid var(--border-strong);
 		}
 
 		.card-tooltip {
@@ -921,7 +896,7 @@
 
 		.gear-item {
 			background: var(--bg-secondary);
-			border: 1px solid rgba(161, 170, 179, 0.3);
+			border: 1px solid var(--border-med);
 			border-radius: 0.5rem;
 			overflow: hidden;
 			transition: border-color 0.2s ease;
@@ -952,18 +927,18 @@
 		}
 
 		.gear-name {
-			color: #fff;
+			color: var(--text-strong);
 			font-weight: 600;
 			font-size: 0.95rem;
 		}
 
 		.gear-tag {
-			color: #808080;
+			color: var(--text-muted);
 			font-family: "Atkinson Hyperlegible Mono", monospace;
 			font-size: 0.7rem;
 			text-transform: uppercase;
 			letter-spacing: 0.04em;
-			border: 1px solid rgba(161, 170, 179, 0.3);
+			border: 1px solid var(--border-med);
 			padding: 0.05rem 0.35rem;
 			border-radius: 0.25rem;
 		}
@@ -988,7 +963,7 @@
 		}
 
 		.gear-specs {
-			color: #808080;
+			color: var(--text-muted);
 			font-family: "Atkinson Hyperlegible Mono", monospace;
 			font-size: 0.72rem;
 			line-height: 1.55;
@@ -1001,7 +976,7 @@
 			align-items: baseline;
 			gap: 0.35rem 0.6rem;
 			padding: 0.4rem 0;
-			border-top: 1px solid rgba(161, 170, 179, 0.12);
+			border-top: 1px solid var(--border-faint);
 			font-size: 0.82rem;
 			line-height: 1.4;
 		}
@@ -1013,7 +988,7 @@
 		}
 
 		.gear-badge {
-			color: #808080;
+			color: var(--text-muted);
 			font-family: "Atkinson Hyperlegible Mono", monospace;
 			font-size: 0.68rem;
 			text-transform: uppercase;
@@ -1229,9 +1204,21 @@
 			.site-nav {
 				display: none;
 			}
-			
+
 			.page {
 				display: block !important;
+			}
+		}
+
+		/* Respect users who prefer reduced motion */
+		@media (prefers-reduced-motion: reduce) {
+			*,
+			*::before,
+			*::after {
+				animation-duration: 0.001ms !important;
+				animation-iteration-count: 1 !important;
+				transition-duration: 0.001ms !important;
+				scroll-behavior: auto !important;
 			}
 		}
 	</style>
@@ -1262,9 +1249,9 @@
 	<nav class="site-nav" aria-label="Main navigation">
 		<ul class="nav-list" role="tablist">
 			<li class="nav-item active" id="tab-home" data-page="home" data-translate="nav.home" role="tab" aria-selected="true" aria-controls="home" tabindex="0">Home</li>
-			<li class="nav-item" id="tab-projects" data-page="projects" data-translate="nav.projects" role="tab" aria-selected="false" aria-controls="projects" tabindex="-1">Projects</li>
-			<li class="nav-item" id="tab-tools" data-page="tools" data-translate="nav.tools" role="tab" aria-selected="false" aria-controls="tools" tabindex="-1">Tools</li>
 			<li class="nav-item" id="tab-films" data-page="films" data-translate="nav.films" role="tab" aria-selected="false" aria-controls="films" tabindex="-1">Films</li>
+			<li class="nav-item" id="tab-tools" data-page="tools" data-translate="nav.tools" role="tab" aria-selected="false" aria-controls="tools" tabindex="-1">Tools</li>
+			<li class="nav-item" id="tab-projects" data-page="projects" data-translate="nav.projects" role="tab" aria-selected="false" aria-controls="projects" tabindex="-1">Projects</li>
 			<li class="nav-item" id="tab-about" data-page="about" data-translate="nav.about" role="tab" aria-selected="false" aria-controls="about" tabindex="-1">About</li>
 		</ul>
 	</nav>
@@ -1276,7 +1263,8 @@
 			<section class="section hub-mini">
 				<h1 class="hub-name">Valdir Neves</h1>
 				<p class="hub-tagline">Filmmaker · Photographer · Engineering student</p>
-				<p class="hub-desc">Based in Lisbon — film direction &amp; camera, photography, and building tools and electronics.</p>
+				<p class="hub-loc">Lisbon, Portugal</p>
+				<p class="hub-desc">Film direction &amp; camera, photography, and building tools and electronics.</p>
 			</section>
 
 			<!-- Work: each offering paired with its proof -->
@@ -1653,7 +1641,7 @@
 					</a>
 					<div class="film-body">
 						<div class="section-title">Firefly <span class="film-year">(2026)</span></div>
-						<p class="film-desc">Direction &amp; camera. — replace with your note.</p>
+						<p class="film-desc">Made for the 48 Hour Film Project — Lisbon, 2026.</p>
 						<ul class="film-nav-list">
 							<li class="film-tab" data-tab="cast">Cast</li>
 							<li class="film-tab" data-tab="crew">Crew</li>
@@ -2417,21 +2405,12 @@ navButtons.forEach((button, index) => {
 		if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
 		const current = navButtons.findIndex(b => b.classList.contains('active'));
 		if (current === -1) return;
-		const next = dx < 0 ? current + 1 : current - 1; // swipe left -> next tab
-		if (next < 0 || next >= navButtons.length) return; // clamp at the ends (no wrap)
+		const n = navButtons.length;
+		// wrap around: past the last tab loops to the first, and before the first loops to the last
+		const next = dx < 0 ? (current + 1) % n : (current - 1 + n) % n;
 		activateTab(navButtons[next]);
 	}, { passive: true });
 })();
-
-// ========================================
-// HUB ROUTE CARDS (jump to a tab)
-// ========================================
-document.querySelectorAll('[data-goto]').forEach(el => {
-	el.addEventListener('click', () => {
-		const tab = document.getElementById('tab-' + el.dataset.goto);
-		if (tab) tab.click();
-	});
-});
 
 // ========================================
 // FILM CARD TABS (click a tab to expand its text below)
@@ -2627,6 +2606,16 @@ document.querySelectorAll('.card').forEach(card => {
 	//card.appendChild(debug);
 	/* END DEBUG */
 });
+
+// ========================================
+// REDUCED MOTION — don't autoplay looping videos
+// ========================================
+if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+	document.querySelectorAll('video[autoplay]').forEach(v => {
+		v.removeAttribute('autoplay');
+		v.pause();
+	});
+}
 
 </script>
 </body>
