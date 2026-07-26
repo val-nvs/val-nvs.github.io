@@ -257,7 +257,7 @@
 
 		.nav-list {
 			display: grid;
-			grid-template-columns: repeat(5, 1fr);
+			grid-template-columns: repeat(6, 1fr);
 			background: var(--surface-1);
 			list-style: none;
 			border-radius: 0.3125rem;
@@ -479,6 +479,62 @@
 			height: 100%;
 			object-fit: cover;
 		}
+
+		/* PHOTOS: alternating asymmetric blocks. A wide column of three 3:2 photos sits
+		   beside a narrow column of two 2:3 photos; they balance to equal height because
+		   3 x 2/3 = 2 x 3/2. Between blocks, a full-width photo of any ratio. */
+		.photo-gallery {
+			display: flex;
+			flex-direction: column;
+			gap: 10px;
+			padding: 22.5px;
+		}
+
+		.pblock {
+			display: flex;
+			gap: 10px;
+		}
+
+		.pblock.flip {
+			flex-direction: row-reverse;
+		}
+
+		.pcol {
+			display: flex;
+			flex-direction: column;
+			gap: 10px;
+			min-width: 0;
+		}
+
+		.pcol-wide { flex: 3; }
+		.pcol-narrow { flex: 2; }
+
+		.pshot {
+			display: block;
+			width: 100%;
+			object-fit: cover;
+			border-radius: 0.375rem;
+			outline: 1px solid var(--border-strong);
+			outline-offset: -1px;
+			transition: outline 0.1s ease;
+		}
+
+		/* Same hover as the film posters (1px border -> 3px green), drawn inside the
+		   rounded corners via an outline so it paints over the image; no wrap-overlay. */
+		.pshot:hover,
+		.pshot:focus {
+			outline: 3px solid var(--accent-color);
+			outline-offset: -3px;
+		}
+
+		.pcol-wide .pshot { aspect-ratio: 3 / 2; }
+		/* Wide column's three 3:2 photos set the block height; the two narrow photos
+		   flex to fill it evenly, so every gap is a uniform 10px and columns stay level.
+		   The resulting box is within ~1% of a true 2:3, cropped via object-fit. */
+		.pcol-narrow .pshot { flex: 1; min-height: 0; }
+
+		.pfeat { display: block; width: 100%; }
+		.pfeat .pshot { height: auto; }
 
 		.film-body .section-title {
 			margin-bottom: 0;
@@ -1283,6 +1339,7 @@
 		<ul class="nav-list" role="tablist">
 			<li class="nav-item active" id="tab-home" data-page="home" data-translate="nav.home" role="tab" aria-selected="true" aria-controls="home" tabindex="0">Home</li>
 			<li class="nav-item" id="tab-films" data-page="films" data-translate="nav.films" role="tab" aria-selected="false" aria-controls="films" tabindex="-1">Films</li>
+			<li class="nav-item" id="tab-photos" data-page="photos" data-translate="nav.photos" role="tab" aria-selected="false" aria-controls="photos" tabindex="-1">Photos</li>
 			<li class="nav-item" id="tab-software" data-page="software" data-translate="nav.software" role="tab" aria-selected="false" aria-controls="software" tabindex="-1">Software</li>
 			<li class="nav-item" id="tab-hardware" data-page="hardware" data-translate="nav.hardware" role="tab" aria-selected="false" aria-controls="hardware" tabindex="-1">Hardware</li>
 			<li class="nav-item" id="tab-about" data-page="about" data-translate="nav.about" role="tab" aria-selected="false" aria-controls="about" tabindex="-1">About</li>
@@ -2012,6 +2069,51 @@
 
 
 
+		<!-- PHOTOS PAGE -->
+		<div class="page page-hidden" id="photos" role="tabpanel" aria-labelledby="tab-photos" tabindex="0">
+
+			<!-- Alternating blocks: wide column of three 3:2 photos + narrow column of two 2:3
+			     photos (they balance to equal height), then a full-width photo of any ratio.
+			     Add real photos to media/photos/ and swap src; .flip mirrors the sides. -->
+			<div class="photo-gallery">
+
+				<div class="pblock">
+					<div class="pcol pcol-wide">
+						<img class="pshot" loading="lazy" src="https://picsum.photos/seed/vn01/600/400" alt="">
+						<img class="pshot" loading="lazy" src="https://picsum.photos/seed/vn02/600/400" alt="">
+						<img class="pshot" loading="lazy" src="https://picsum.photos/seed/vn03/600/400" alt="">
+					</div>
+					<div class="pcol pcol-narrow">
+						<img class="pshot" loading="lazy" src="https://picsum.photos/seed/vn04/400/600" alt="">
+						<img class="pshot" loading="lazy" src="https://picsum.photos/seed/vn05/400/600" alt="">
+					</div>
+				</div>
+
+				<div class="pfeat">
+					<img class="pshot" loading="lazy" src="https://picsum.photos/seed/vn06/1000/600" alt="">
+				</div>
+
+				<div class="pblock flip">
+					<div class="pcol pcol-wide">
+						<img class="pshot" loading="lazy" src="https://picsum.photos/seed/vn07/600/400" alt="">
+						<img class="pshot" loading="lazy" src="https://picsum.photos/seed/vn08/600/400" alt="">
+						<img class="pshot" loading="lazy" src="https://picsum.photos/seed/vn09/600/400" alt="">
+					</div>
+					<div class="pcol pcol-narrow">
+						<img class="pshot" loading="lazy" src="https://picsum.photos/seed/vn10/400/600" alt="">
+						<img class="pshot" loading="lazy" src="https://picsum.photos/seed/vn11/400/600" alt="">
+					</div>
+				</div>
+
+				<div class="pfeat">
+					<img class="pshot" loading="lazy" src="https://picsum.photos/seed/vn12/1000/600" alt="">
+				</div>
+
+			</div>
+		</div>
+
+
+
 		<!-- ABOUT PAGE -->
 		<div class="page page-hidden" id="about" role="tabpanel" aria-labelledby="tab-about" tabindex="0">
 			<section class="hero-section">
@@ -2233,6 +2335,7 @@ const translations = {
 		'nav.hardware': 'Hardware',
 		'nav.about': 'About',
 		'nav.films': 'Films',
+		'nav.photos': 'Photos',
 		'home.videography': 'VIDEOGRAPHY PORTFOLIO',
 		'home.photography': 'PHOTOGRAPHY PORTFOLIOS',
 		'home.profiles': 'PROFILES',
@@ -2277,6 +2380,7 @@ const translations = {
 		'nav.hardware': 'Hardware',
 		'nav.about': 'Sobre',
 		'nav.films': 'Filmes',
+		'nav.photos': 'Fotos',
 		'home.videography': 'PORTFÓLIO DE VIDEOGRAFIA',
 		'home.photography': 'PORTFÓLIOS DE FOTOGRAFIA',
 		'home.profiles': 'PERFIS',
@@ -2321,6 +2425,7 @@ const translations = {
 		'nav.hardware': 'Hardware',
 		'nav.about': 'Acerca',
 		'nav.films': 'Películas',
+		'nav.photos': 'Fotos',
 		'home.videography': 'PORTAFOLIO DE VIDEOGRAFÍA',
 		'home.photography': 'PORTAFOLIO DE FOTOGRAFÍA',
 		'home.profiles': 'PERFILES',
@@ -2365,6 +2470,7 @@ const translations = {
 		'nav.hardware': 'Hardware',
 		'nav.about': 'À propos',
 		'nav.films': 'Films',
+		'nav.photos': 'Photos',
 		'home.videography': 'PORTFOLIO DE VIDÉOGRAPHIE',
 		'home.photography': 'PORTFOLIO DE PHOTOGRAPHIE',
 		'home.profiles': 'PROFILS',
@@ -2409,6 +2515,7 @@ const translations = {
 		'nav.hardware': 'Hardware',
 		'nav.about': 'Über',
 		'nav.films': 'Filme',
+		'nav.photos': 'Fotos',
 		'home.videography': 'VIDEOGRAFIE-PORTFOLIO',
 		'home.photography': 'FOTOGRAFIE-PORTFOLIO',
 		'home.profiles': 'PROFILE',
@@ -2453,6 +2560,7 @@ const translations = {
 		'nav.hardware': '硬件',
 		'nav.about': '关于',
 		'nav.films': '电影',
+		'nav.photos': '照片',
 		'home.videography': '视频作品集',
 		'home.photography': '摄影作品集',
 		'home.profiles': '个人主页',
@@ -2497,6 +2605,7 @@ const translations = {
 		'nav.hardware': 'ハードウェア',
 		'nav.about': '概要',
 		'nav.films': '映画',
+		'nav.photos': '写真',
 		'home.videography': 'ビデオグラフィーポートフォリオ',
 		'home.photography': '写真ポートフォリオ',
 		'home.profiles': 'プロフィール',
@@ -2541,6 +2650,7 @@ const translations = {
 		'nav.hardware': 'أجهزة',
 		'nav.about': 'حول',
 		'nav.films': 'أفلام',
+		'nav.photos': 'صور',
 		'home.videography': 'معرض الفيديو',
 		'home.photography': 'معرض التصوير',
 		'home.profiles': 'الملفات الشخصية',
