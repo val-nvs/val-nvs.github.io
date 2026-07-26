@@ -447,6 +447,12 @@
 			font-size: 0.9em;
 		}
 
+		.film-role {
+			color: var(--accent-color);
+			font-weight: 500;
+			font-size: 0.78em;
+		}
+
 		/* ========================================
 		   FILMS PAGE — poster + right column (desc + tab bar)
 		   ======================================== */
@@ -462,6 +468,16 @@
 			flex-direction: column;
 			gap: 0.5rem;
 			min-width: 0;
+		}
+
+		.film-poster {
+			aspect-ratio: 2 / 3;
+			align-self: start;
+		}
+
+		.film-poster img {
+			height: 100%;
+			object-fit: cover;
 		}
 
 		.film-body .section-title {
@@ -689,6 +705,23 @@
 			color: var(--accent-color);
 		}
 
+		/* Home Work: narrower than full width so each image reads as a button, with a lift on hover */
+		.portfolio-card {
+			height: 150px;
+			transition: transform 0.15s ease;
+		}
+
+		.portfolio-card img,
+		.portfolio-card .card-media {
+			height: 100%;
+			object-fit: cover;
+		}
+
+		.portfolio-card:hover,
+		.portfolio-card:focus-visible {
+			transform: translateY(-3px);
+		}
+
 		/* Heavy vignette on work images */
 		.portfolio-card::after {
 			content: '';
@@ -706,15 +739,15 @@
 
 		.portfolio-card .portfolio-tag {
 			position: absolute;
-			left: 0.5rem;
-			bottom: 0.5rem;
+			left: 0.6rem;
+			bottom: 0.6rem;
 			z-index: 5;
 			background: rgba(0, 0, 0, 0.7);
 			color: var(--text-strong);
 			font-family: "Atkinson Hyperlegible Mono", monospace;
 			font-size: 0.8rem;
 			letter-spacing: 0.03em;
-			padding: 0.2rem 0.55rem;
+			padding: 0.25rem 0.6rem;
 			border-radius: 0.3rem;
 		}
 
@@ -1262,7 +1295,7 @@
 			<!-- Compact intro (full about lives on the About tab) -->
 			<section class="section hub-mini">
 				<h1 class="hub-name">Valdir Neves</h1>
-				<p class="hub-tagline">Filmmaker · Photographer · Engineering student</p>
+				<p class="hub-tagline">Filmmaker · Photographer</p>
 				<p class="hub-loc">Lisbon, Portugal</p>
 				<p class="hub-desc">Film direction &amp; camera, photography, and building tools and electronics.</p>
 			</section>
@@ -1273,9 +1306,7 @@
 
 				<div class="work-item">
 					<div class="work-head">
-						<span class="work-name">Film — Direction &amp; Camera</span>
-						<span class="work-note">Directing, DP &amp; camera operation</span>
-					</div>
+						<span class="work-name">Film — Direction &amp; Camera</span>					</div>
 					<div class="content-grid grid-1">
 						<a class="card portfolio-card" href="https://val-nvs.com/portfolio/" target="_blank" rel="noopener">
 							<video class="card-media" autoplay muted loop playsinline width="438" height="214" poster="media/film-poster.jpg" aria-label="Film portfolio reel">
@@ -1289,9 +1320,7 @@
 
 				<div class="work-item">
 					<div class="work-head">
-						<span class="work-name">Photography</span>
-						<span class="work-note">Portraits, events &amp; editorial</span>
-					</div>
+						<span class="work-name">Photography</span>					</div>
 					<div class="content-grid grid-1">
 						<a class="card portfolio-card" href="https://valdirneves.mypixieset.com/" target="_blank" rel="noopener">
 							<img loading="lazy" src="media/pixieset2.jpg" width="1647" height="903" alt="Photography portfolio on Pixieset">
@@ -1624,6 +1653,358 @@
 					<div class="film-panel hidden" data-panel="cast"></div>
 					<div class="film-panel hidden" data-panel="crew"></div>
 					<div class="film-panel hidden" data-panel="details">2026</div>
+				</div>
+			</section>
+
+			<section class="section film-entry" data-film="otto">
+				<div class="film-layout">
+					<a class="card film-poster" href="https://val-nvs.com/portfolio/" target="_blank" rel="noopener">
+						<img loading="lazy" src="media/films/Screenshot_20260409-210354.png" alt="OTTO">
+					</a>
+					<div class="film-body">
+						<div class="section-title">OTTO <span class="film-year">(2026)</span></div>
+						<p class="film-desc">OTTO, a short film about a man crossing a metropolitan station.</p>
+						<ul class="film-nav-list">
+							<li class="film-tab" data-tab="cast">Cast</li>
+							<li class="film-tab" data-tab="crew">Crew</li>
+							<li class="film-tab" data-tab="details">Details</li>
+						</ul>
+					</div>
+				</div>
+				<div class="film-panels">
+					<div class="film-panel hidden" data-panel="cast"></div>
+					<div class="film-panel hidden" data-panel="crew"></div>
+					<div class="film-panel hidden" data-panel="details">2026 · 10 MIN · Short Film</div>
+				</div>
+			</section>
+
+			<section class="section film-entry" data-film="nini">
+				<div class="film-layout">
+					<a class="card film-poster" href="https://www.youtube.com/watch?v=MCx7GS_gBK4" target="_blank" rel="noopener">
+						<img loading="lazy" src="media/films/nini.jpg" alt="Interview">
+					</a>
+					<div class="film-body">
+						<div class="section-title">Interview <span class="film-year">(2025)</span></div>
+						<p class="film-desc">Interview</p>
+						<ul class="film-nav-list">
+							<li class="film-tab" data-tab="cast">Cast</li>
+							<li class="film-tab" data-tab="crew">Crew</li>
+							<li class="film-tab" data-tab="details">Details</li>
+						</ul>
+					</div>
+				</div>
+				<div class="film-panels">
+					<div class="film-panel hidden" data-panel="cast"></div>
+					<div class="film-panel hidden" data-panel="crew"></div>
+					<div class="film-panel hidden" data-panel="details">2025 · 04 MIN · Interview</div>
+				</div>
+			</section>
+
+			<section class="section film-entry" data-film="bang">
+				<div class="film-layout">
+					<a class="card film-poster" href="https://val-nvs.com/portfolio/" target="_blank" rel="noopener">
+						<img loading="lazy" src="media/films/bang.jpg" alt="Music Video">
+					</a>
+					<div class="film-body">
+						<div class="section-title">Music Video <span class="film-year">(2025)</span></div>
+						<p class="film-desc">K-pop dance cover shot with two cameras, one operated on a gimbal to capture dynamic angles inspired by 1theK's On The Spot series.</p>
+						<ul class="film-nav-list">
+							<li class="film-tab" data-tab="cast">Cast</li>
+							<li class="film-tab" data-tab="crew">Crew</li>
+							<li class="film-tab" data-tab="details">Details</li>
+						</ul>
+					</div>
+				</div>
+				<div class="film-panels">
+					<div class="film-panel hidden" data-panel="cast"></div>
+					<div class="film-panel hidden" data-panel="crew"></div>
+					<div class="film-panel hidden" data-panel="details">2025 · 03 MIN · Music Video</div>
+				</div>
+			</section>
+
+			<section class="section film-entry" data-film="monitor">
+				<div class="film-layout">
+					<a class="card film-poster" href="https://val-nvs.com/portfolio/" target="_blank" rel="noopener">
+						<img loading="lazy" src="media/films/monitor.jpg" alt="Short Film">
+					</a>
+					<div class="film-body">
+						<div class="section-title">Short Film <span class="film-year">(2025)</span></div>
+						<p class="film-desc">Recorded production sound and streamlined file workflow with batch-edit scripts and spreadsheet tracking for a 30-minute action thriller, shot in 13 days at 5 varied locations across Lisbon.</p>
+						<ul class="film-nav-list">
+							<li class="film-tab" data-tab="cast">Cast</li>
+							<li class="film-tab" data-tab="crew">Crew</li>
+							<li class="film-tab" data-tab="details">Details</li>
+						</ul>
+					</div>
+				</div>
+				<div class="film-panels">
+					<div class="film-panel hidden" data-panel="cast"></div>
+					<div class="film-panel hidden" data-panel="crew"></div>
+					<div class="film-panel hidden" data-panel="details">2025 · 30 MIN · Short Film</div>
+				</div>
+			</section>
+
+			<section class="section film-entry" data-film="chapito">
+				<div class="film-layout">
+					<a class="card film-poster" href="https://www.youtube.com/watch?v=ztUn9QWYk_Y" target="_blank" rel="noopener">
+						<img loading="lazy" src="media/films/chapito.gif" alt="Documentary">
+					</a>
+					<div class="film-body">
+						<div class="section-title">Documentary <span class="film-year">(2025)</span></div>
+						<p class="film-desc">Documentary about Pascoal Furtado, a teacher at Chapitô, a circus school in Lisbon.</p>
+						<ul class="film-nav-list">
+							<li class="film-tab" data-tab="cast">Cast</li>
+							<li class="film-tab" data-tab="crew">Crew</li>
+							<li class="film-tab" data-tab="details">Details</li>
+						</ul>
+					</div>
+				</div>
+				<div class="film-panels">
+					<div class="film-panel hidden" data-panel="cast"></div>
+					<div class="film-panel hidden" data-panel="crew"></div>
+					<div class="film-panel hidden" data-panel="details">2025 · 13 MIN · Documentary</div>
+				</div>
+			</section>
+
+			<section class="section film-entry" data-film="doclis">
+				<div class="film-layout">
+					<a class="card film-poster" href="https://www.youtube.com/watch?v=NPPzUJvmkq8" target="_blank" rel="noopener">
+						<img loading="lazy" src="media/films/doclis.png" alt="Film Festival Coverage">
+					</a>
+					<div class="film-body">
+						<div class="section-title">Film Festival Coverage <span class="film-year">(2024)</span></div>
+						<p class="film-desc">Filmed B-roll and presentations for Doclisboa, Portugal's leading international documentary film festival.</p>
+						<ul class="film-nav-list">
+							<li class="film-tab" data-tab="cast">Cast</li>
+							<li class="film-tab" data-tab="crew">Crew</li>
+							<li class="film-tab" data-tab="details">Details</li>
+						</ul>
+					</div>
+				</div>
+				<div class="film-panels">
+					<div class="film-panel hidden" data-panel="cast"></div>
+					<div class="film-panel hidden" data-panel="crew"></div>
+					<div class="film-panel hidden" data-panel="details">2024 · DAYS · Film Festival Coverage</div>
+				</div>
+			</section>
+
+			<section class="section film-entry" data-film="seb">
+				<div class="film-layout">
+					<a class="card film-poster" href="https://www.youtube.com/watch?v=__UxmK7BD68" target="_blank" rel="noopener">
+						<img loading="lazy" src="media/films/seb.jpg" alt="Interview">
+					</a>
+					<div class="film-body">
+						<div class="section-title">Interview <span class="film-year">(2024)</span></div>
+						<p class="film-desc">Interview about Sebastião Ogando.</p>
+						<ul class="film-nav-list">
+							<li class="film-tab" data-tab="cast">Cast</li>
+							<li class="film-tab" data-tab="crew">Crew</li>
+							<li class="film-tab" data-tab="details">Details</li>
+						</ul>
+					</div>
+				</div>
+				<div class="film-panels">
+					<div class="film-panel hidden" data-panel="cast"></div>
+					<div class="film-panel hidden" data-panel="crew"></div>
+					<div class="film-panel hidden" data-panel="details">2024 · 04 MIN · Interview</div>
+				</div>
+			</section>
+
+			<section class="section film-entry" data-film="free">
+				<div class="film-layout">
+					<a class="card film-poster" href="https://www.youtube.com/watch?v=FcrQnCTnG0M" target="_blank" rel="noopener">
+						<img loading="lazy" src="media/films/free.jpg" alt="Short Film">
+					</a>
+					<div class="film-body">
+						<div class="section-title">Short Film <span class="film-year">(2024)</span></div>
+						<p class="film-desc">Experimental short film.</p>
+						<ul class="film-nav-list">
+							<li class="film-tab" data-tab="cast">Cast</li>
+							<li class="film-tab" data-tab="crew">Crew</li>
+							<li class="film-tab" data-tab="details">Details</li>
+						</ul>
+					</div>
+				</div>
+				<div class="film-panels">
+					<div class="film-panel hidden" data-panel="cast"></div>
+					<div class="film-panel hidden" data-panel="crew"></div>
+					<div class="film-panel hidden" data-panel="details">2024 · 04 MIN · Short Film</div>
+				</div>
+			</section>
+
+			<section class="section film-entry" data-film="group1">
+				<div class="film-layout">
+					<a class="card film-poster" href="https://www.youtube.com/watch?v=5LlSdajis7g" target="_blank" rel="noopener">
+						<img loading="lazy" src="media/films/group1.png" alt="TV Pilot">
+					</a>
+					<div class="film-body">
+						<div class="section-title">TV Pilot <span class="film-year">(2024)</span></div>
+						<p class="film-desc">Crane Cam in a Live TV program mock-up and Pre-Vis in Blender using photogrammetry.</p>
+						<ul class="film-nav-list">
+							<li class="film-tab" data-tab="cast">Cast</li>
+							<li class="film-tab" data-tab="crew">Crew</li>
+							<li class="film-tab" data-tab="details">Details</li>
+						</ul>
+					</div>
+				</div>
+				<div class="film-panels">
+					<div class="film-panel hidden" data-panel="cast"></div>
+					<div class="film-panel hidden" data-panel="crew"></div>
+					<div class="film-panel hidden" data-panel="details">2024 · 32 MIN · TV Pilot</div>
+				</div>
+			</section>
+
+			<section class="section film-entry" data-film="redroom">
+				<div class="film-layout">
+					<a class="card film-poster" href="https://val-nvs.com/portfolio/" target="_blank" rel="noopener">
+						<img loading="lazy" src="media/films/redroom.jpg" alt="TV Pilot">
+					</a>
+					<div class="film-body">
+						<div class="section-title">TV Pilot <span class="film-year">(2024)</span></div>
+						<p class="film-desc">Assistant camera of the crane cam.</p>
+						<ul class="film-nav-list">
+							<li class="film-tab" data-tab="cast">Cast</li>
+							<li class="film-tab" data-tab="crew">Crew</li>
+							<li class="film-tab" data-tab="details">Details</li>
+						</ul>
+					</div>
+				</div>
+				<div class="film-panels">
+					<div class="film-panel hidden" data-panel="cast"></div>
+					<div class="film-panel hidden" data-panel="crew"></div>
+					<div class="film-panel hidden" data-panel="details">2024 · 30 MIN · TV Pilot</div>
+				</div>
+			</section>
+
+			<section class="section film-entry" data-film="alges">
+				<div class="film-layout">
+					<a class="card film-poster" href="https://www.youtube.com/watch?v=UsGJUCy7Mx0" target="_blank" rel="noopener">
+						<img loading="lazy" src="media/films/alges.png" alt="Music Video">
+					</a>
+					<div class="film-body">
+						<div class="section-title">Music Video <span class="film-year">(2024)</span></div>
+						<p class="film-desc">Dance cover, RIIZE 라이즈 - 'Impossible'.</p>
+						<ul class="film-nav-list">
+							<li class="film-tab" data-tab="cast">Cast</li>
+							<li class="film-tab" data-tab="crew">Crew</li>
+							<li class="film-tab" data-tab="details">Details</li>
+						</ul>
+					</div>
+				</div>
+				<div class="film-panels">
+					<div class="film-panel hidden" data-panel="cast"></div>
+					<div class="film-panel hidden" data-panel="crew"></div>
+					<div class="film-panel hidden" data-panel="details">2024 · 04 MIN · Music Video</div>
+				</div>
+			</section>
+
+			<section class="section film-entry" data-film="cinema">
+				<div class="film-layout">
+					<a class="card film-poster" href="https://vimeo.com/930022904" target="_blank" rel="noopener">
+						<img loading="lazy" src="media/films/cinema.png" alt="Short Film">
+					</a>
+					<div class="film-body">
+						<div class="section-title">Short Film <span class="film-year">(2024)</span></div>
+						<p class="film-desc">Recorded production sound and operated boom for a dark comedy short film following a troubled artist's pursuit of perfection, filmed on a single-location set.</p>
+						<ul class="film-nav-list">
+							<li class="film-tab" data-tab="cast">Cast</li>
+							<li class="film-tab" data-tab="crew">Crew</li>
+							<li class="film-tab" data-tab="details">Details</li>
+						</ul>
+					</div>
+				</div>
+				<div class="film-panels">
+					<div class="film-panel hidden" data-panel="cast"></div>
+					<div class="film-panel hidden" data-panel="crew"></div>
+					<div class="film-panel hidden" data-panel="details">2024 · 04 MIN · Short Film</div>
+				</div>
+			</section>
+
+			<section class="section film-entry" data-film="curta">
+				<div class="film-layout">
+					<a class="card film-poster" href="https://val-nvs.com/portfolio/" target="_blank" rel="noopener">
+						<img loading="lazy" src="media/films/curta.jpg" alt="Short Film">
+					</a>
+					<div class="film-body">
+						<div class="section-title">Short Film <span class="film-year">(2024)</span></div>
+						<p class="film-desc">A very short experimental piece.</p>
+						<ul class="film-nav-list">
+							<li class="film-tab" data-tab="cast">Cast</li>
+							<li class="film-tab" data-tab="crew">Crew</li>
+							<li class="film-tab" data-tab="details">Details</li>
+						</ul>
+					</div>
+				</div>
+				<div class="film-panels">
+					<div class="film-panel hidden" data-panel="cast"></div>
+					<div class="film-panel hidden" data-panel="crew"></div>
+					<div class="film-panel hidden" data-panel="details">2024 · 02 MIN · Short Film</div>
+				</div>
+			</section>
+
+			<section class="section film-entry" data-film="people">
+				<div class="film-layout">
+					<a class="card film-poster" href="https://www.youtube.com/watch?v=ayyPyMsfCJo" target="_blank" rel="noopener">
+						<img loading="lazy" src="media/films/people.png" alt="Short Film">
+					</a>
+					<div class="film-body">
+						<div class="section-title">Short Film <span class="film-year">(2024)</span></div>
+						<p class="film-desc">Behind the scenes photographs</p>
+						<ul class="film-nav-list">
+							<li class="film-tab" data-tab="cast">Cast</li>
+							<li class="film-tab" data-tab="crew">Crew</li>
+							<li class="film-tab" data-tab="details">Details</li>
+						</ul>
+					</div>
+				</div>
+				<div class="film-panels">
+					<div class="film-panel hidden" data-panel="cast"></div>
+					<div class="film-panel hidden" data-panel="crew"></div>
+					<div class="film-panel hidden" data-panel="details">2024 · 02 MIN · Short Film</div>
+				</div>
+			</section>
+
+			<section class="section film-entry" data-film="lisbiff">
+				<div class="film-layout">
+					<a class="card film-poster" href="https://www.youtube.com/watch?v=R7H1_9789N4" target="_blank" rel="noopener">
+						<img loading="lazy" src="media/films/lisbiff.jpg" alt="Short Film">
+					</a>
+					<div class="film-body">
+						<div class="section-title">Short Film <span class="film-year">(2024)</span></div>
+						<p class="film-desc">Production assistant role</p>
+						<ul class="film-nav-list">
+							<li class="film-tab" data-tab="cast">Cast</li>
+							<li class="film-tab" data-tab="crew">Crew</li>
+							<li class="film-tab" data-tab="details">Details</li>
+						</ul>
+					</div>
+				</div>
+				<div class="film-panels">
+					<div class="film-panel hidden" data-panel="cast"></div>
+					<div class="film-panel hidden" data-panel="crew"></div>
+					<div class="film-panel hidden" data-panel="details">2024 · 03 MIN · Short Film</div>
+				</div>
+			</section>
+
+			<section class="section film-entry" data-film="skydive">
+				<div class="film-layout">
+					<a class="card film-poster" href="https://www.youtube.com/watch?v=KUs1Popfd8g" target="_blank" rel="noopener">
+						<img loading="lazy" src="media/films/skydive.png" alt="Film">
+					</a>
+					<div class="film-body">
+						<div class="section-title">Film <span class="film-year">(2015)</span></div>
+						<p class="film-desc">Project description pending.</p>
+						<ul class="film-nav-list">
+							<li class="film-tab" data-tab="cast">Cast</li>
+							<li class="film-tab" data-tab="crew">Crew</li>
+							<li class="film-tab" data-tab="details">Details</li>
+						</ul>
+					</div>
+				</div>
+				<div class="film-panels">
+					<div class="film-panel hidden" data-panel="cast"></div>
+					<div class="film-panel hidden" data-panel="crew"></div>
+					<div class="film-panel hidden" data-panel="details">2015 · 01 MIN</div>
 				</div>
 			</section>
 
@@ -2410,6 +2791,42 @@ document.querySelectorAll('.film-entry').forEach(entry => {
 // person is reused across films (and across cast + crew). To add a photo:
 // drop an image in media/people/ and set that person's `photo` path below.
 const people = {
+	'nusaibah-ahmed': { name: 'Nusaibah Ahmed', photo: '' },
+	'ines': { name: 'Inês', photo: '' },
+	'amora': { name: 'Amora', photo: '' },
+	'carolina': { name: 'Carolina', photo: '' },
+	'inna': { name: 'Inna', photo: '' },
+	'marta': { name: 'Marta', photo: '' },
+	'nunchi': { name: 'NUNCHI', photo: '' },
+	'ines-serra': { name: 'Inês Serra', photo: '' },
+	'sofia-serra': { name: 'Sofia Serra', photo: '' },
+	'akshay-tharabole': { name: 'Akshay Tharabole', photo: '' },
+	'nilesh-suryawanshi': { name: 'Nilesh Suryawanshi', photo: '' },
+	'varsha-mehra': { name: 'Varsha Mehra', photo: '' },
+	'yacine-meziti': { name: 'Yacine Meziti', photo: '' },
+	'francisco-lopes': { name: 'Francisco Lopes', photo: '' },
+	'nityam': { name: 'Nityam', photo: '' },
+	'rasmus': { name: 'Rasmus', photo: '' },
+	'fabio-duarte': { name: 'Fabio Duarte', photo: '' },
+	'lia-paladino': { name: 'Lia Paladino', photo: '' },
+	'madalena-oliveira': { name: 'Madalena Oliveira', photo: '' },
+	'jose-machado': { name: 'José Machado', photo: '' },
+	'junta-de-freguesia-de-alvalade': { name: 'Junta de Freguesia de Alvalade', photo: '' },
+	'stal-direccao-regional-lisboa': { name: 'STAL Direcção Regional Lisboa', photo: '' },
+	'etic': { name: 'ETIC', photo: '' },
+	'joao-ramos': { name: 'João Ramos', photo: '' },
+	'isabel-castelo-branco': { name: 'Isabel Castelo-Branco', photo: '' },
+	'gustavo-chaves': { name: 'Gustavo Chaves', photo: '' },
+	'lorena-calderon': { name: 'Lorena Calderon', photo: '' },
+	'bruno-de-franclieu': { name: 'Bruno de Franclieu', photo: '' },
+	'patricia-pontes': { name: 'Patricia Pontes', photo: '' },
+	'goncalo-pereira': { name: 'Gonçalo Pereira', photo: '' },
+	'joao-formiga': { name: 'João Formiga', photo: '' },
+	'carlos-calderon': { name: 'Carlos Calderon', photo: '' },
+	'ines-pinheiro': { name: 'Inês Pinheiro', photo: '' },
+	'fred-ferreira': { name: 'Fred Ferreira', photo: '' },
+	'marta-roquete': { name: 'Marta Roquete', photo: '' },
+	'alex-brian': { name: 'Alex Brian', photo: '' },
 	'marta-taborda': { name: 'Marta Taborda', photo: '' },
 	'leonor-canas': { name: 'Leonor Canas', photo: '' },
 	'joao-guilherme-gouveia': { name: 'João Guilherme Gouveia', photo: '' },
@@ -2432,6 +2849,70 @@ const people = {
 // Each film references people by key + their role in THAT film. The same key
 // can appear in multiple films and in both cast and crew (e.g. valdir-neves).
 const filmCredits = {
+	otto: {
+		cast: [],
+		crew: [['valdir-neves', 'Camera Operator']]
+	},
+	nini: {
+		cast: [['nusaibah-ahmed', 'Nusaibah']],
+		crew: [['valdir-neves', 'Camera Operator']]
+	},
+	bang: {
+		cast: [['ines', 'Dancer'], ['amora', 'Dancer'], ['carolina', 'Dancer'], ['inna', 'Dancer'], ['marta', 'Dancer']],
+		crew: [['nunchi', 'Dance Crew'], ['ines-serra', 'Camera Operator'], ['sofia-serra', 'Additional Photography'], ['valdir-neves', 'Camera Operator']]
+	},
+	monitor: {
+		cast: [['akshay-tharabole', 'Jay Gupta'], ['nilesh-suryawanshi', 'Akash'], ['varsha-mehra', 'Veera'], ['yacine-meziti', 'Fábio'], ['francisco-lopes', 'Gustavo']],
+		crew: [['charlie-chaves', 'Story'], ['charlie-chaves', 'Director'], ['charlie-chaves', 'Writer'], ['charlie-chaves', 'Editor'], ['charlie-chaves', 'Producer'], ['nityam', 'Director'], ['nityam', 'Writer'], ['nityam', 'Editor'], ['ines-serra', 'Assistant Director'], ['ines-serra', 'Producer'], ['rasmus', 'Cinematographer'], ['fabio-duarte', 'Sound'], ['lia-paladino', 'Editor'], ['madalena-oliveira', 'Art Director'], ['jose-machado', 'Production Assistant'], ['junta-de-freguesia-de-alvalade', 'Support'], ['stal-direccao-regional-lisboa', 'Support'], ['etic', 'Special Thanks'], ['joao-ramos', 'Special Thanks'], ['isabel-castelo-branco', 'Special Thanks'], ['gustavo-chaves', 'Special Thanks'], ['lorena-calderon', 'Special Thanks'], ['valdir-neves', 'Sound']]
+	},
+	chapito: {
+		cast: [],
+		crew: [['valdir-neves', 'Camera Operator'], ['valdir-neves', 'Sound']]
+	},
+	doclis: {
+		cast: [],
+		crew: [['valdir-neves', 'Assistant']]
+	},
+	seb: {
+		cast: [],
+		crew: [['valdir-neves', 'Camera Operator']]
+	},
+	free: {
+		cast: [],
+		crew: [['valdir-neves', 'Camera Operator']]
+	},
+	group1: {
+		cast: [],
+		crew: [['valdir-neves', 'Crane Camera Operator'], ['valdir-neves', 'Pre-Visualization']]
+	},
+	redroom: {
+		cast: [],
+		crew: [['valdir-neves', 'Crane Camera Assistant']]
+	},
+	alges: {
+		cast: [],
+		crew: [['valdir-neves', 'Camera Operator']]
+	},
+	cinema: {
+		cast: [['charlie-chaves', 'The Artist'], ['bruno-de-franclieu', 'The Opportunistic Art Critic']],
+		crew: [['charlie-chaves', 'Director'], ['charlie-chaves', 'Producer'], ['charlie-chaves', 'Actor'], ['nityam', 'Assistant Director'], ['nityam', 'Producer'], ['nityam', 'Camera Operator'], ['patricia-pontes', 'Assistant Director'], ['patricia-pontes', 'Special Thanks'], ['goncalo-pereira', 'Camera Operator'], ['joao-formiga', 'Camera Operator'], ['carlos-calderon', 'Editor'], ['ines-pinheiro', 'Special Thanks'], ['valdir-neves', 'Sound']]
+	},
+	curta: {
+		cast: [],
+		crew: [['valdir-neves', 'Camera Operator']]
+	},
+	people: {
+		cast: [],
+		crew: [['valdir-neves', 'Behind the Scenes']]
+	},
+	lisbiff: {
+		cast: [['fred-ferreira', 'Actor']],
+		crew: [['fred-ferreira', 'Director'], ['marta-roquete', 'Production Assistant'], ['ines-serra', 'Production Assistant'], ['lia-paladino', 'Production Assistant'], ['alex-brian', 'Composer'], ['valdir-neves', 'Production Assistant']]
+	},
+	skydive: {
+		cast: [],
+		crew: [['valdir-neves', 'Camera Animation']]
+	},
 	firefly: {
 		cast: [['marta-taborda', 'Ophelia'], ['leonor-canas', 'Sophie'], ['joao-guilherme-gouveia', '']],
 		crew: [
@@ -2524,6 +3005,21 @@ document.querySelectorAll('.film-entry[data-film]').forEach(section => {
 		list.forEach(([key, role]) => wrap.appendChild(renderPersonRow(key, role)));
 		panel.appendChild(wrap);
 	});
+
+	// My role(s) on this film, appended to the title in green — derived from the credits, not hard-coded
+	const mine = [];
+	['cast', 'crew'].forEach(kind => {
+		(credits[kind] || []).forEach(([k, role]) => {
+			if (k === 'valdir-neves' && role && !mine.includes(role)) mine.push(role);
+		});
+	});
+	if (mine.length) {
+		mine.sort((a, b) => roleRank(a) - roleRank(b));
+		const span = document.createElement('span');
+		span.className = 'film-role';
+		span.textContent = ' · ' + mine.join(', ');
+		section.querySelector('.section-title').appendChild(span);
+	}
 });
 
 // ========================================
@@ -2562,6 +3058,7 @@ const wraps = [
 ];
 document.querySelectorAll('.card').forEach(card => {
 	if (card.classList.contains('card-noborder')) return;
+	if (card.classList.contains('portfolio-card')) return;
 	if (card.querySelector('.wrap-overlay')) return;
 	// Only overlay cards that have a base image (skip placeholders and <video> cards)
 	if (!card.querySelector('img')) return;
