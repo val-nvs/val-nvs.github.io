@@ -480,23 +480,56 @@
 			object-fit: cover;
 		}
 
-		/* PHOTOS: 2-column masonry. Each tile keeps its own aspect ratio (set inline from
-		   the catalog) so nothing is force-cropped; a few wide shots span full width via
-		   column-span. Uneven column bottoms are fine. Each tile links to the full image. */
+		/* PHOTOS: structured blocks stacked in one column. Three grouping types:
+		   (1) a full-width photo (.pfeat), (2) an asymmetric block of three 3:2 photos
+		   beside two 2:3 photos — they balance because 3 x 2/3 = 2 x 3/2 — and (3) that
+		   same block flipped (.flip). */
 		.photo-gallery {
-			columns: 2;
-			column-gap: 10px;
+			display: flex;
+			flex-direction: column;
+			gap: 12px;
 			padding: 22.5px;
 		}
 
-		.pshot-link {
-			display: block;
-			margin: 0 0 10px;
-			break-inside: avoid;
+		/* When every section is collapsed, fill the space between nav and footer and
+		   center the titles; expanding any section reverts to normal top-aligned flow. */
+		.photo-gallery.all-collapsed {
+			min-height: calc(100vh - 254px);
+			justify-content: center;
 		}
 
-		.pshot-link.full {
-			column-span: all;
+		.pblock {
+			display: flex;
+			gap: 10px;
+		}
+
+		.pblock.flip {
+			flex-direction: row-reverse;
+		}
+
+		.pcol {
+			display: flex;
+			flex-direction: column;
+			gap: 10px;
+			min-width: 0;
+		}
+
+		.pcol-wide { flex: 3; }
+		.pcol-narrow { flex: 2; }
+
+		.pshot-link {
+			display: block;
+			position: relative;
+			margin: 0;
+		}
+
+		/* Narrow column holds up to two vertical photos (never a cropped horizontal); a
+		   missing one is a blank slot. They flex to fill the height set by the wide
+		   column's three 3:2 photos, so gaps stay uniform and the columns stay level. */
+		.pcol-narrow .pshot-link,
+		.pcol-narrow .pcol-slot-empty {
+			flex: 1;
+			min-height: 0;
 		}
 
 		.pshot {
@@ -509,6 +542,9 @@
 			transition: outline 0.1s ease;
 		}
 
+		.pcol-wide .pshot { aspect-ratio: 3 / 2; }
+		.pcol-narrow .pshot { height: 100%; }   /* fills the flex-sized tile, cropped via cover */
+
 		/* Same hover as the film posters (1px border -> 3px green), drawn inside the
 		   rounded corners via an outline so it paints over the image; no wrap-overlay. */
 		.pshot:hover,
@@ -517,7 +553,163 @@
 			outline-offset: -3px;
 		}
 
-		/* Click a photo to zoom: full image over a dim backdrop, no URL change. */
+		.pfeat { display: block; }
+
+		/* Collapsible section: a clickable title that toggles its group of photos.
+		   Sections start collapsed (only titles show). */
+		.photo-group {
+			display: flex;
+			flex-direction: column;
+		}
+
+		.photo-group-body {
+			display: flex;
+			flex-direction: column;
+			gap: 10px;
+			padding: 12px 0 22px;
+		}
+
+		.photo-group.collapsed .photo-group-body {
+			display: none;
+		}
+
+		/* Section as a cover card: a representative photo with the title overlaid. */
+		.photo-section {
+			position: relative;
+			display: block;
+			width: 100%;
+			height: 150px;
+			margin: 0;
+			padding: 0;
+			border: none;
+			border-radius: 0.375rem;
+			overflow: hidden;
+			cursor: pointer;
+			background: var(--bg-secondary);
+			outline: 1px solid var(--border-strong);
+			outline-offset: -1px;
+			transition: height 0.35s ease;
+		}
+
+		.photo-section-cover {
+			position: absolute;
+			inset: 0;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			filter: brightness(0.58);
+			transition: opacity 0.35s ease, transform 0.4s ease, filter 0.2s ease;
+		}
+
+		.photo-section:hover .photo-section-cover,
+		.photo-section:focus-visible .photo-section-cover {
+			transform: scale(1.05);
+			filter: brightness(0.72);
+		}
+
+		/* Bottom scrim so the title stays legible over any photo. */
+		.photo-section::after {
+			content: '';
+			position: absolute;
+			inset: 0;
+			background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 60%);
+			pointer-events: none;
+			transition: opacity 0.3s ease;
+		}
+
+		.photo-section-caption {
+			position: absolute;
+			left: 18px;
+			bottom: 14px;
+			z-index: 1;
+			display: flex;
+			flex-direction: column;
+			gap: 3px;
+			text-align: left;
+		}
+
+		.photo-section-title {
+			color: #fff;
+			font-size: 1.45rem;
+			font-weight: 600;
+			letter-spacing: 0.02em;
+			line-height: 1.1;
+			text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
+		}
+
+		.photo-section-count {
+			color: rgba(255, 255, 255, 0.75);
+			font-size: 0.78rem;
+			letter-spacing: 0.08em;
+			text-transform: uppercase;
+		}
+
+		.photo-section-caret {
+			position: absolute;
+			right: 18px;
+			bottom: 20px;
+			z-index: 1;
+			width: 0;
+			height: 0;
+			border-left: 7px solid rgba(255, 255, 255, 0.9);
+			border-top: 6px solid transparent;
+			border-bottom: 6px solid transparent;
+			transition: transform 0.15s ease;
+		}
+
+		.photo-group:not(.collapsed) .photo-section-caret {
+			transform: rotate(90deg);
+		}
+
+		/* Opened: the cover photo fades to solid color and the header shrinks to a title bar. */
+		.photo-group:not(.collapsed) .photo-section {
+			height: 64px;
+		}
+
+		.photo-group:not(.collapsed) .photo-section-cover,
+		.photo-group:not(.collapsed) .photo-section::after {
+			opacity: 0;
+		}
+
+		.photo-group:not(.collapsed) .photo-section-count {
+			display: none;
+		}
+
+		/* Grid fades and slides in when a section opens. */
+		@keyframes photoBodyIn {
+			from { opacity: 0; transform: translateY(8px); }
+			to   { opacity: 1; transform: translateY(0); }
+		}
+
+		.photo-group:not(.collapsed) .photo-group-body {
+			animation: photoBodyIn 0.35s ease both;
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			.photo-section,
+			.photo-section-cover,
+			.photo-section::after { transition: none; }
+			.photo-group:not(.collapsed) .photo-group-body { animation: none; }
+		}
+
+		/* Debug: filename overlay on each tile. */
+		.pshot-name {
+			position: absolute;
+			left: 6px;
+			bottom: 6px;
+			z-index: 2;
+			padding: 2px 6px;
+			font-family: monospace;
+			font-size: 11px;
+			color: #fff;
+			background: rgba(0, 0, 0, 0.65);
+			border-radius: 3px;
+			pointer-events: none;
+			word-break: break-all;
+		}
+
+		/* Click a photo: full image over a dim backdrop with its story caption. Tap the
+		   image to fade the text for a clean view; backdrop / x / Esc closes. No URL change. */
 		.lightbox {
 			position: fixed;
 			inset: 0;
@@ -527,10 +719,17 @@
 			justify-content: center;
 			padding: 20px;
 			background: rgba(0, 0, 0, 0.92);
-			cursor: zoom-out;
 		}
 
 		.lightbox.open {
+			display: flex;
+		}
+
+		.lightbox-figure {
+			position: relative;
+			margin: 0;
+			max-width: 100%;
+			max-height: 100%;
 			display: flex;
 		}
 
@@ -539,6 +738,48 @@
 			max-height: 100%;
 			object-fit: contain;
 			border-radius: 0.375rem;
+			cursor: zoom-in;
+		}
+
+		.lightbox-story {
+			position: absolute;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			padding: 44px 16px 16px;
+			font-size: 0.95rem;
+			line-height: 1.5;
+			color: #fff;
+			background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.5) 55%, rgba(0, 0, 0, 0) 100%);
+			border-radius: 0 0 0.375rem 0.375rem;
+			transition: opacity 0.25s ease;
+			pointer-events: none;
+		}
+
+		.lightbox:not(.has-story) .lightbox-story {
+			display: none;
+		}
+
+		.lightbox.text-hidden .lightbox-story {
+			opacity: 0;
+		}
+
+		.lightbox.text-hidden .lightbox-img {
+			cursor: zoom-out;
+		}
+
+		.lightbox-close {
+			position: absolute;
+			top: 8px;
+			right: 12px;
+			z-index: 2;
+			background: none;
+			border: none;
+			color: #fff;
+			font-size: 30px;
+			line-height: 1;
+			cursor: pointer;
+			padding: 4px 10px;
 		}
 
 		.film-body .section-title {
@@ -2081,44 +2322,229 @@
 			     photos (they balance to equal height), then a full-width photo of any ratio.
 			     Add real photos to media/photos/ and swap src; .flip mirrors the sides. -->
 			<div class="photo-gallery">
-				<a class="pshot-link full" href="media/photos/cctv.jpg" target="_blank" rel="noopener"><img class="pshot" loading="lazy" src="media/photos/cctv-small.jpg" alt="crew at a live-broadcast control desk, wall of monitors" style="aspect-ratio:2.04"></a>
-				<a class="pshot-link" href="media/photos/redroom.jpg" target="_blank" rel="noopener"><img class="pshot" loading="lazy" src="media/photos/redroom-small.jpg" alt="performer on a red-lit stage set, crew filming" style="aspect-ratio:1.50"></a>
-				<a class="pshot-link" href="media/photos/bts-filming.jpg" target="_blank" rel="noopener"><img class="pshot" loading="lazy" src="media/photos/bts-filming-small.jpg" alt="red-lit interior, operator with rig, subject with cake" style="aspect-ratio:1.50"></a>
-				<a class="pshot-link" href="media/photos/bts-camera.jpg" target="_blank" rel="noopener"><img class="pshot" loading="lazy" src="media/photos/bts-camera-small.jpg" alt="two operators, one shooting over the other&#x27;s shoulder" style="aspect-ratio:1.50"></a>
-				<a class="pshot-link" href="media/photos/clapperboard.jpg" target="_blank" rel="noopener"><img class="pshot" loading="lazy" src="media/photos/clapperboard-small.jpg" alt="crew member holding a slate on an outdoor set" style="aspect-ratio:1.50"></a>
-				<a class="pshot-link" href="media/photos/chapito.jpg" target="_blank" rel="noopener"><img class="pshot" loading="lazy" src="media/photos/chapito-small.jpg" alt="camera operator at work (documentary shoot)" style="aspect-ratio:1.50"></a>
-				<a class="pshot-link" href="media/photos/charlie.jpg" target="_blank" rel="noopener"><img class="pshot" loading="lazy" src="media/photos/charlie-small.jpg" alt="portrait of an operator holding a cinema camera" style="aspect-ratio:1.50"></a>
-				<a class="pshot-link full" href="media/photos/b3.jpg" target="_blank" rel="noopener"><img class="pshot" loading="lazy" src="media/photos/b3-small.jpg" alt="group of five in school-uniform cosplay" style="aspect-ratio:1.50"></a>
-				<a class="pshot-link" href="media/photos/fairy.jpg" target="_blank" rel="noopener"><img class="pshot" loading="lazy" src="media/photos/fairy-small.jpg" alt="diptych of a deer/fairy-costume cosplayer, warm bokeh" style="aspect-ratio:1.50"></a>
-				<a class="pshot-link" href="media/photos/fairy-alt.jpg" target="_blank" rel="noopener"><img class="pshot" loading="lazy" src="media/photos/fairy-alt-small.jpg" alt="fairy cosplayer raising a camera, night lights" style="aspect-ratio:1.50"></a>
-				<a class="pshot-link" href="media/photos/fairy-alt-alt.jpg" target="_blank" rel="noopener"><img class="pshot" loading="lazy" src="media/photos/fairy-alt-alt-small.jpg" alt="fairy cosplayer, camera to the eye" style="aspect-ratio:1.50"></a>
-				<a class="pshot-link" href="media/photos/pink-portrait.jpg" target="_blank" rel="noopener"><img class="pshot" loading="lazy" src="media/photos/pink-portrait-small.jpg" alt="cosplayer with pink hair and glasses" style="aspect-ratio:1.50"></a>
-				<a class="pshot-link" href="media/photos/green-portrait.jpg" target="_blank" rel="noopener"><img class="pshot" loading="lazy" src="media/photos/green-portrait-small.jpg" alt="night portrait, green-lit hair, glasses" style="aspect-ratio:0.67"></a>
-				<a class="pshot-link" href="media/photos/red-hands.jpg" target="_blank" rel="noopener"><img class="pshot" loading="lazy" src="media/photos/red-hands-small.jpg" alt="figure in red light, hands over the face" style="aspect-ratio:1.50"></a>
-				<a class="pshot-link" href="media/photos/red-sunflowers.jpg" target="_blank" rel="noopener"><img class="pshot" loading="lazy" src="media/photos/red-sunflowers-small.jpg" alt="red-lit portrait against a sunflower backdrop" style="aspect-ratio:1.50"></a>
-				<a class="pshot-link" href="media/photos/double-exposure.jpg" target="_blank" rel="noopener"><img class="pshot" loading="lazy" src="media/photos/double-exposure-small.jpg" alt="multi-face double-exposure portrait" style="aspect-ratio:1.50"></a>
-				<a class="pshot-link" href="media/photos/aquarium-portrait.jpg" target="_blank" rel="noopener"><img class="pshot" loading="lazy" src="media/photos/aquarium-portrait-small.jpg" alt="woman before a glowing blue tank" style="aspect-ratio:0.80"></a>
-				<a class="pshot-link" href="media/photos/jellyfish.jpg" target="_blank" rel="noopener"><img class="pshot" loading="lazy" src="media/photos/jellyfish-small.jpg" alt="face lit blue beside jellyfish" style="aspect-ratio:1.50"></a>
-				<a class="pshot-link" href="media/photos/keyboard-build.jpg" target="_blank" rel="noopener"><img class="pshot" loading="lazy" src="media/photos/keyboard-build-small.jpg" alt="macro of a custom keyboard PCB with switches" style="aspect-ratio:1.50"></a>
-				<a class="pshot-link" href="media/photos/pcb.jpg" target="_blank" rel="noopener"><img class="pshot" loading="lazy" src="media/photos/pcb-small.jpg" alt="custom PCB / keyboard on a cutting mat" style="aspect-ratio:1.50"></a>
-				<a class="pshot-link" href="media/photos/narrativa.jpg" target="_blank" rel="noopener"><img class="pshot" loading="lazy" src="media/photos/narrativa-small.jpg" alt="silhouette in a red room photographing a framed piece" style="aspect-ratio:1.50"></a>
-				<a class="pshot-link" href="media/photos/lucky.jpg" target="_blank" rel="noopener"><img class="pshot" loading="lazy" src="media/photos/lucky-small.jpg" alt="black-and-white rooftop / building study" style="aspect-ratio:1.50"></a>
-				<a class="pshot-link" href="media/photos/aquarium.jpg" target="_blank" rel="noopener"><img class="pshot" loading="lazy" src="media/photos/aquarium-small.jpg" alt="figure silhouetted in an aquarium tunnel" style="aspect-ratio:1.50"></a>
-				<a class="pshot-link full" href="media/photos/golden-gate.jpg" target="_blank" rel="noopener"><img class="pshot" loading="lazy" src="media/photos/golden-gate-small.jpg" alt="Golden Gate Bridge with traffic, daytime" style="aspect-ratio:1.50"></a>
-				<a class="pshot-link" href="media/photos/bridge-van.jpg" target="_blank" rel="noopener"><img class="pshot" loading="lazy" src="media/photos/bridge-van-small.jpg" alt="Golden Gate red steelwork detail with a van" style="aspect-ratio:1.50"></a>
-				<a class="pshot-link" href="media/photos/bridge-moon.jpg" target="_blank" rel="noopener"><img class="pshot" loading="lazy" src="media/photos/bridge-moon-small.jpg" alt="bridge tower with the moon behind, dusk" style="aspect-ratio:0.76"></a>
-				<a class="pshot-link" href="media/photos/bridge-night.jpg" target="_blank" rel="noopener"><img class="pshot" loading="lazy" src="media/photos/bridge-night-small.jpg" alt="bridge at night, full moon centered" style="aspect-ratio:0.80"></a>
-				<a class="pshot-link full" href="media/photos/san-francisco.jpg" target="_blank" rel="noopener"><img class="pshot" loading="lazy" src="media/photos/san-francisco-small.jpg" alt="SF skyline over rolling streets" style="aspect-ratio:1.50"></a>
-				<a class="pshot-link" href="media/photos/riomar.jpg" target="_blank" rel="noopener"><img class="pshot" loading="lazy" src="media/photos/riomar-small.jpg" alt="night city with a lit tower, shot through glass" style="aspect-ratio:1.50"></a>
-				<a class="pshot-link" href="media/photos/toning.jpg" target="_blank" rel="noopener"><img class="pshot" loading="lazy" src="media/photos/toning-small.jpg" alt="pastel-sunset cityscape with greenery" style="aspect-ratio:1.50"></a>
-				<a class="pshot-link" href="media/photos/basilica.jpg" target="_blank" rel="noopener"><img class="pshot" loading="lazy" src="media/photos/basilica-small.jpg" alt="ornate cathedral spire behind a fountain" style="aspect-ratio:0.56"></a>
-				<a class="pshot-link" href="media/photos/beach.jpg" target="_blank" rel="noopener"><img class="pshot" loading="lazy" src="media/photos/beach-small.jpg" alt="sea and palm framed through a window, film look" style="aspect-ratio:1.50"></a>
-				<a class="pshot-link" href="media/photos/palm-balcony.jpg" target="_blank" rel="noopener"><img class="pshot" loading="lazy" src="media/photos/palm-balcony-small.jpg" alt="palm and sea from a balcony, purple tint" style="aspect-ratio:1.50"></a>
-				<a class="pshot-link" href="media/photos/palm-silhouette.jpg" target="_blank" rel="noopener"><img class="pshot" loading="lazy" src="media/photos/palm-silhouette-small.jpg" alt="lone palm silhouette with a film light-leak" style="aspect-ratio:1.00"></a>
-				<a class="pshot-link" href="media/photos/spain-flag-moon.jpg" target="_blank" rel="noopener"><img class="pshot" loading="lazy" src="media/photos/spain-flag-moon-small.jpg" alt="Spanish flag with the moon" style="aspect-ratio:0.80"></a>
-				<a class="pshot-link full" href="media/photos/seine.jpg" target="_blank" rel="noopener"><img class="pshot" loading="lazy" src="media/photos/seine-small.jpg" alt="silhouetted people along a railing at dusk (Paris)" style="aspect-ratio:1.50"></a>
-				<a class="pshot-link" href="media/photos/recife.jpg" target="_blank" rel="noopener"><img class="pshot" loading="lazy" src="media/photos/recife-small.jpg" alt="trees silhouetted against a pale sky" style="aspect-ratio:1.50"></a>
-				<a class="pshot-link" href="media/photos/kreatori.jpg" target="_blank" rel="noopener"><img class="pshot" loading="lazy" src="media/photos/kreatori-small.jpg" alt="dim red-lit venue, crowd silhouettes" style="aspect-ratio:1.50"></a>
+				<div class="photo-group collapsed">
+					<button type="button" class="photo-section" aria-expanded="false">
+						<img class="photo-section-cover" loading="lazy" src="media/photos/cctv-small.jpg" alt="">
+						<span class="photo-section-caption">
+							<span class="photo-section-title">Behind the Scenes</span>
+							<span class="photo-section-count">7 photos</span>
+						</span>
+						<span class="photo-section-caret" aria-hidden="true"></span>
+					</button>
+					<div class="photo-group-body">
+				<div class="pblock">
+					<div class="pcol pcol-wide">
+						<a class="pshot-link" href="media/photos/cctv.jpg" data-story="crew at a live-broadcast control desk, wall of monitors">
+							<img class="pshot" loading="lazy" src="media/photos/cctv-small.jpg" alt="cctv">
+							<span class="pshot-name">cctv &middot; horizontal</span>
+						</a>
+						<a class="pshot-link" href="media/photos/redroom.jpg" data-story="performer on a red-lit stage set, crew filming">
+							<img class="pshot" loading="lazy" src="media/photos/redroom-small.jpg" alt="redroom">
+							<span class="pshot-name">redroom &middot; horizontal</span>
+						</a>
+						<a class="pshot-link" href="media/photos/bts-filming.jpg" data-story="red-lit interior, operator with rig, subject with cake">
+							<img class="pshot" loading="lazy" src="media/photos/bts-filming-small.jpg" alt="bts-filming">
+							<span class="pshot-name">bts-filming &middot; horizontal</span>
+						</a>
+					</div>
+					<div class="pcol pcol-narrow">
+						<a class="pshot-link" href="media/photos/clapperboard.jpg" data-story="crew member holding a slate on an outdoor set">
+							<img class="pshot" loading="lazy" src="media/photos/clapperboard-small.jpg" alt="clapperboard">
+							<span class="pshot-name">clapperboard &middot; both</span>
+						</a>
+						<div class="pcol-slot-empty" aria-hidden="true"></div>
+					</div>
+				</div>
+				<div class="pblock flip">
+					<div class="pcol pcol-wide">
+						<a class="pshot-link" href="media/photos/bts-camera.jpg" data-story="two operators, one shooting over the other&#x27;s shoulder">
+							<img class="pshot" loading="lazy" src="media/photos/bts-camera-small.jpg" alt="bts-camera">
+							<span class="pshot-name">bts-camera &middot; horizontal</span>
+						</a>
+						<a class="pshot-link" href="media/photos/chapito.jpg" data-story="camera operator at work (documentary shoot)">
+							<img class="pshot" loading="lazy" src="media/photos/chapito-small.jpg" alt="chapito">
+							<span class="pshot-name">chapito &middot; horizontal</span>
+						</a>
+						<a class="pshot-link" href="media/photos/charlie.jpg" data-story="portrait of an operator holding a cinema camera">
+							<img class="pshot" loading="lazy" src="media/photos/charlie-small.jpg" alt="charlie">
+							<span class="pshot-name">charlie &middot; horizontal</span>
+						</a>
+					</div>
+					<div class="pcol pcol-narrow">
+						<div class="pcol-slot-empty" aria-hidden="true"></div>
+						<div class="pcol-slot-empty" aria-hidden="true"></div>
+					</div>
+				</div>
+					</div>
+				</div>
+				<div class="photo-group collapsed">
+					<button type="button" class="photo-section" aria-expanded="false">
+						<img class="photo-section-cover" loading="lazy" src="media/photos/red-hands-small.jpg" alt="">
+						<span class="photo-section-caption">
+							<span class="photo-section-title">Portraits</span>
+							<span class="photo-section-count">9 photos</span>
+						</span>
+						<span class="photo-section-caret" aria-hidden="true"></span>
+					</button>
+					<div class="photo-group-body">
+				<div class="pblock">
+					<div class="pcol pcol-wide">
+						<a class="pshot-link" href="media/photos/b3.jpg" data-story="group of five in school-uniform cosplay">
+							<img class="pshot" loading="lazy" src="media/photos/b3-small.jpg" alt="b3">
+							<span class="pshot-name">b3 &middot; horizontal</span>
+						</a>
+						<a class="pshot-link" href="media/photos/fairy-alt.jpg" data-story="fairy cosplayer raising a camera, night lights">
+							<img class="pshot" loading="lazy" src="media/photos/fairy-alt-small.jpg" alt="fairy-alt">
+							<span class="pshot-name">fairy-alt &middot; horizontal</span>
+						</a>
+						<a class="pshot-link" href="media/photos/pink-portrait.jpg" data-story="cosplayer with pink hair and glasses">
+							<img class="pshot" loading="lazy" src="media/photos/pink-portrait-small.jpg" alt="pink-portrait">
+							<span class="pshot-name">pink-portrait &middot; horizontal</span>
+						</a>
+					</div>
+					<div class="pcol pcol-narrow">
+						<a class="pshot-link" href="media/photos/green-portrait.jpg" data-story="night portrait, green-lit hair, glasses">
+							<img class="pshot" loading="lazy" src="media/photos/green-portrait-small.jpg" alt="green-portrait">
+							<span class="pshot-name">green-portrait &middot; vertical</span>
+						</a>
+						<a class="pshot-link" href="media/photos/aquarium-portrait.jpg" data-story="woman before a glowing blue tank">
+							<img class="pshot" loading="lazy" src="media/photos/aquarium-portrait-small.jpg" alt="aquarium-portrait">
+							<span class="pshot-name">aquarium-portrait &middot; vertical</span>
+						</a>
+					</div>
+				</div>
+				<div class="pblock flip">
+					<div class="pcol pcol-wide">
+						<a class="pshot-link" href="media/photos/red-sunflowers.jpg" data-story="red-lit portrait against a sunflower backdrop">
+							<img class="pshot" loading="lazy" src="media/photos/red-sunflowers-small.jpg" alt="red-sunflowers">
+							<span class="pshot-name">red-sunflowers &middot; horizontal</span>
+						</a>
+						<a class="pshot-link" href="media/photos/double-exposure.jpg" data-story="multi-face double-exposure portrait">
+							<img class="pshot" loading="lazy" src="media/photos/double-exposure-small.jpg" alt="double-exposure">
+							<span class="pshot-name">double-exposure &middot; horizontal</span>
+						</a>
+						<a class="pshot-link" href="media/photos/jellyfish.jpg" data-story="face lit blue beside jellyfish">
+							<img class="pshot" loading="lazy" src="media/photos/jellyfish-small.jpg" alt="jellyfish">
+							<span class="pshot-name">jellyfish &middot; horizontal</span>
+						</a>
+					</div>
+					<div class="pcol pcol-narrow">
+						<a class="pshot-link" href="media/photos/red-hands.jpg" data-story="figure in red light, hands over the face">
+							<img class="pshot" loading="lazy" src="media/photos/red-hands-small.jpg" alt="red-hands">
+							<span class="pshot-name">red-hands &middot; both</span>
+						</a>
+						<div class="pcol-slot-empty" aria-hidden="true"></div>
+					</div>
+				</div>
+					</div>
+				</div>
+				<div class="photo-group collapsed">
+					<button type="button" class="photo-section" aria-expanded="false">
+						<img class="photo-section-cover" loading="lazy" src="media/photos/golden-gate-small.jpg" alt="">
+						<span class="photo-section-caption">
+							<span class="photo-section-title">Landscapes</span>
+							<span class="photo-section-count">16 photos</span>
+						</span>
+						<span class="photo-section-caret" aria-hidden="true"></span>
+					</button>
+					<div class="photo-group-body">
+				<div class="pfeat">
+					<a class="pshot-link" href="media/photos/golden-gate.jpg" data-story="Golden Gate Bridge with traffic, daytime">
+						<img class="pshot" loading="lazy" src="media/photos/golden-gate-small.jpg" alt="golden-gate">
+						<span class="pshot-name">golden-gate &middot; horizontal</span>
+					</a>
+				</div>
+				<div class="pblock">
+					<div class="pcol pcol-wide">
+						<a class="pshot-link" href="media/photos/bridge-van.jpg" data-story="Golden Gate red steelwork detail with a van">
+							<img class="pshot" loading="lazy" src="media/photos/bridge-van-small.jpg" alt="bridge-van">
+							<span class="pshot-name">bridge-van &middot; horizontal</span>
+						</a>
+						<a class="pshot-link" href="media/photos/san-francisco.jpg" data-story="SF skyline over rolling streets">
+							<img class="pshot" loading="lazy" src="media/photos/san-francisco-small.jpg" alt="san-francisco">
+							<span class="pshot-name">san-francisco &middot; horizontal</span>
+						</a>
+						<a class="pshot-link" href="media/photos/riomar.jpg" data-story="night city with a lit tower, shot through glass">
+							<img class="pshot" loading="lazy" src="media/photos/riomar-small.jpg" alt="riomar">
+							<span class="pshot-name">riomar &middot; horizontal</span>
+						</a>
+					</div>
+					<div class="pcol pcol-narrow">
+						<a class="pshot-link" href="media/photos/bridge-night.jpg" data-story="bridge at night, full moon centered">
+							<img class="pshot" loading="lazy" src="media/photos/bridge-night-small.jpg" alt="bridge-night">
+							<span class="pshot-name">bridge-night &middot; vertical</span>
+						</a>
+						<a class="pshot-link" href="media/photos/spain-flag-moon.jpg" data-story="Spanish flag with the moon">
+							<img class="pshot" loading="lazy" src="media/photos/spain-flag-moon-small.jpg" alt="spain-flag-moon">
+							<span class="pshot-name">spain-flag-moon &middot; vertical</span>
+						</a>
+					</div>
+				</div>
+				<div class="pblock flip">
+					<div class="pcol pcol-wide">
+						<a class="pshot-link" href="media/photos/toning.jpg" data-story="pastel-sunset cityscape with greenery">
+							<img class="pshot" loading="lazy" src="media/photos/toning-small.jpg" alt="toning">
+							<span class="pshot-name">toning &middot; horizontal</span>
+						</a>
+						<a class="pshot-link" href="media/photos/beach.jpg" data-story="sea and palm framed through a window, film look">
+							<img class="pshot" loading="lazy" src="media/photos/beach-small.jpg" alt="beach">
+							<span class="pshot-name">beach &middot; horizontal</span>
+						</a>
+						<a class="pshot-link" href="media/photos/seine.jpg" data-story="silhouetted people along a railing at dusk (Paris)">
+							<img class="pshot" loading="lazy" src="media/photos/seine-small.jpg" alt="seine">
+							<span class="pshot-name">seine &middot; horizontal</span>
+						</a>
+					</div>
+					<div class="pcol pcol-narrow">
+						<a class="pshot-link" href="media/photos/basilica.jpg" data-story="ornate cathedral spire behind a fountain">
+							<img class="pshot" loading="lazy" src="media/photos/basilica-small.jpg" alt="basilica">
+							<span class="pshot-name">basilica &middot; vertical</span>
+						</a>
+						<div class="pcol-slot-empty" aria-hidden="true"></div>
+					</div>
+				</div>
+				<div class="pblock">
+					<div class="pcol pcol-wide">
+						<a class="pshot-link" href="media/photos/aquarium.jpg" data-story="figure silhouetted in an aquarium tunnel">
+							<img class="pshot" loading="lazy" src="media/photos/aquarium-small.jpg" alt="aquarium">
+							<span class="pshot-name">aquarium &middot; horizontal</span>
+						</a>
+						<a class="pshot-link" href="media/photos/kreatori.jpg" data-story="dim red-lit venue, crowd silhouettes">
+							<img class="pshot" loading="lazy" src="media/photos/kreatori-small.jpg" alt="kreatori">
+							<span class="pshot-name">kreatori &middot; horizontal</span>
+						</a>
+						<a class="pshot-link" href="media/photos/lucky.jpg" data-story="black-and-white rooftop / building study">
+							<img class="pshot" loading="lazy" src="media/photos/lucky-small.jpg" alt="lucky">
+							<span class="pshot-name">lucky &middot; horizontal</span>
+						</a>
+					</div>
+					<div class="pcol pcol-narrow">
+						<div class="pcol-slot-empty" aria-hidden="true"></div>
+						<div class="pcol-slot-empty" aria-hidden="true"></div>
+					</div>
+				</div>
+				<div class="pblock flip">
+					<div class="pcol pcol-wide">
+						<a class="pshot-link" href="media/photos/narrativa.jpg" data-story="silhouette in a red room photographing a framed piece">
+							<img class="pshot" loading="lazy" src="media/photos/narrativa-small.jpg" alt="narrativa">
+							<span class="pshot-name">narrativa &middot; horizontal</span>
+						</a>
+						<a class="pshot-link" href="media/photos/keyboard-build.jpg" data-story="macro of a custom keyboard PCB with switches">
+							<img class="pshot" loading="lazy" src="media/photos/keyboard-build-small.jpg" alt="keyboard-build">
+							<span class="pshot-name">keyboard-build &middot; horizontal</span>
+						</a>
+						<a class="pshot-link" href="media/photos/recife.jpg" data-story="trees silhouetted against a pale sky">
+							<img class="pshot" loading="lazy" src="media/photos/recife-small.jpg" alt="recife">
+							<span class="pshot-name">recife &middot; horizontal</span>
+						</a>
+					</div>
+					<div class="pcol pcol-narrow">
+						<div class="pcol-slot-empty" aria-hidden="true"></div>
+						<div class="pcol-slot-empty" aria-hidden="true"></div>
+					</div>
+				</div>
+					</div>
+				</div>
 			</div>
 		</div>
 
@@ -2285,9 +2711,13 @@
 		</div>
 	</main>
 
-	<!-- Photo lightbox overlay (full-size zoom, no navigation) -->
+	<!-- Photo lightbox overlay (full image + story, no navigation) -->
 	<div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Photo viewer">
-		<img class="lightbox-img" alt="">
+		<button type="button" class="lightbox-close" aria-label="Close">&times;</button>
+		<figure class="lightbox-figure">
+			<img class="lightbox-img" alt="">
+			<figcaption class="lightbox-story"></figcaption>
+		</figure>
 	</div>
 
 	<!-- Background Music Footer -->
@@ -3218,9 +3648,10 @@ if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').m
 	const photos = document.getElementById('photos');
 	if (!lb || !photos) return;
 	const img = lb.querySelector('.lightbox-img');
+	const story = lb.querySelector('.lightbox-story');
 
 	function close() {
-		lb.classList.remove('open');
+		lb.classList.remove('open', 'text-hidden');
 		lb.setAttribute('aria-hidden', 'true');
 		img.removeAttribute('src');
 	}
@@ -3232,14 +3663,42 @@ if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').m
 		const tile = link.querySelector('img');
 		img.src = link.getAttribute('href');      // full-size image
 		img.alt = tile ? tile.alt : '';
+		const text = link.dataset.story || '';
+		story.textContent = text;
+		lb.classList.toggle('has-story', !!text);
+		lb.classList.remove('text-hidden');       // story visible on open
 		lb.classList.add('open');
 		lb.setAttribute('aria-hidden', 'false');
 	});
 
-	lb.addEventListener('click', close);
+	lb.addEventListener('click', (e) => {
+		if (e.target === lb || e.target.closest('.lightbox-close')) { close(); return; }
+		if (e.target === img) lb.classList.toggle('text-hidden');   // tap photo: fade story
+	});
+
 	document.addEventListener('keydown', (e) => {
 		if (e.key === 'Escape' && lb.classList.contains('open')) close();
 	});
+})();
+
+// ========================================
+// PHOTO SECTIONS: collapsible (start collapsed)
+// ========================================
+(() => {
+	const gallery = document.querySelector('#photos .photo-gallery');
+	const groups = [...document.querySelectorAll('#photos .photo-group')];
+	if (!gallery || !groups.length) return;
+	const sync = () => gallery.classList.toggle('all-collapsed',
+		groups.every((g) => g.classList.contains('collapsed')));
+	groups.forEach((group) => {
+		const btn = group.querySelector('.photo-section');
+		btn.addEventListener('click', () => {
+			const collapsed = group.classList.toggle('collapsed');
+			btn.setAttribute('aria-expanded', String(!collapsed));
+			sync();
+		});
+	});
+	sync();   // all collapsed on load -> centered
 })();
 
 </script>
