@@ -1070,6 +1070,61 @@
 			letter-spacing: 0.01em;
 		}
 
+		/* Home Work: two side-by-side buttons that jump to the Films / Photos tabs. */
+		.work-switch {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 12px;
+		}
+
+		.work-btn {
+			position: relative;
+			height: 150px;
+			padding: 0;
+			border: none;
+			border-radius: 0.375rem;
+			overflow: hidden;
+			cursor: pointer;
+			background: var(--bg-secondary);
+			outline: 1px solid var(--border-strong);
+			outline-offset: -1px;
+			transition: outline-color 0.15s ease;
+		}
+
+		.work-btn:hover,
+		.work-btn:focus-visible {
+			outline: 2px solid var(--accent-color);
+		}
+
+		.work-btn-bg {
+			position: absolute;
+			inset: 0;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			filter: brightness(0.55);
+			transition: transform 0.4s ease, filter 0.2s ease;
+		}
+
+		.work-btn:hover .work-btn-bg,
+		.work-btn:focus-visible .work-btn-bg {
+			transform: scale(1.06);
+			filter: brightness(0.72);
+		}
+
+		.work-btn-label {
+			position: absolute;
+			inset: 0;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			color: #fff;
+			font-size: 1.35rem;
+			font-weight: 600;
+			letter-spacing: 0.04em;
+			text-shadow: 0 1px 10px rgba(0, 0, 0, 0.55);
+		}
+
 		.work-note {
 			display: block;
 			color: var(--text-muted);
@@ -1607,29 +1662,15 @@
 			<section class="section">
 				<div class="section-title">WORK</div>
 
-				<div class="work-item">
-					<div class="work-head">
-						<span class="work-name">Film — Direction &amp; Camera</span>					</div>
-					<div class="content-grid grid-1">
-						<a class="card portfolio-card" href="https://val-nvs.com/portfolio/" target="_blank" rel="noopener">
-							<video class="card-media" autoplay muted loop playsinline width="438" height="214" poster="media/film-poster.jpg" aria-label="Film portfolio reel">
-								<source src="media/film.webm" type="video/webm">
-								<source src="media/film.mp4" type="video/mp4">
-							</video>
-							<span class="portfolio-tag">Reel ↗</span>
-						</a>
-					</div>
-				</div>
-
-				<div class="work-item">
-					<div class="work-head">
-						<span class="work-name">Photography</span>					</div>
-					<div class="content-grid grid-1">
-						<a class="card portfolio-card" href="https://valdirneves.mypixieset.com/" target="_blank" rel="noopener">
-							<img loading="lazy" src="media/pixieset2.jpg" width="1647" height="903" alt="Photography portfolio on Pixieset">
-							<span class="portfolio-tag">Pixieset ↗</span>
-						</a>
-					</div>
+				<div class="work-switch">
+					<button type="button" class="work-btn" data-goto="films">
+						<img class="work-btn-bg" loading="lazy" src="media/film-poster.jpg" alt="">
+						<span class="work-btn-label">Film</span>
+					</button>
+					<button type="button" class="work-btn" data-goto="photos">
+						<img class="work-btn-bg" loading="lazy" src="media/photos/beach-small.jpg" alt="">
+						<span class="work-btn-label">Photo</span>
+					</button>
 				</div>
 			</section>
 
@@ -2598,7 +2639,7 @@
 						<span class="resume-date">2026 — 2029</span>
 						<div class="resume-body">
 							<span class="resume-role">Electrical Engineering</span>
-							<span class="resume-org resume-muted">BSc — starting 2026</span>
+							<span class="resume-org resume-muted">BSc — Polytechnic Institute of Lisbon</span>
 						</div>
 					</li>
 					<li class="resume-item">
@@ -3696,6 +3737,18 @@ if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').m
 		});
 	});
 	sync();   // all collapsed on load -> centered
+})();
+
+// ========================================
+// HOME WORK: buttons that jump to Films / Photos tabs
+// ========================================
+(() => {
+	document.querySelectorAll('.work-btn[data-goto]').forEach((btn) => {
+		btn.addEventListener('click', () => {
+			const tab = document.getElementById('tab-' + btn.dataset.goto);
+			if (tab) tab.click();   // reuses the nav's activateTab handler
+		});
+	});
 })();
 
 </script>
