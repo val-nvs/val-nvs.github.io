@@ -257,7 +257,7 @@
 
 		.nav-list {
 			display: grid;
-			grid-template-columns: repeat(6, 1fr);
+			grid-template-columns: repeat(5, 1fr);
 			background: var(--surface-1);
 			list-style: none;
 			border-radius: 0.3125rem;
@@ -1643,65 +1643,10 @@
 			<li class="nav-item" id="tab-photos" data-page="photos" data-translate="nav.photos" role="tab" aria-selected="false" aria-controls="photos" tabindex="-1">Photos</li>
 			<li class="nav-item" id="tab-software" data-page="software" data-translate="nav.software" role="tab" aria-selected="false" aria-controls="software" tabindex="-1">Software</li>
 			<li class="nav-item" id="tab-hardware" data-page="hardware" data-translate="nav.hardware" role="tab" aria-selected="false" aria-controls="hardware" tabindex="-1">Hardware</li>
-			<li class="nav-item" id="tab-about" data-page="about" data-translate="nav.about" role="tab" aria-selected="false" aria-controls="about" tabindex="-1">About</li>
 		</ul>
 	</nav>
 	
 	<main>
-		<!-- HOME PAGE (hub) -->
-		<div class="page" id="home" role="tabpanel" aria-labelledby="tab-home" tabindex="0">
-			<!-- Compact intro (full about lives on the About tab) -->
-			<section class="section hub-mini">
-				<h1 class="hub-name">Valdir Neves</h1>
-				<p class="hub-tagline">Filmmaker · Photographer</p>
-				<p class="hub-loc">Lisbon, Portugal</p>
-				<p class="hub-desc">Film direction &amp; camera, photography, and building tools and electronics.</p>
-			</section>
-
-			<!-- Work: each offering paired with its proof -->
-			<section class="section">
-				<div class="section-title">WORK</div>
-
-				<div class="work-switch">
-					<button type="button" class="work-btn" data-goto="films">
-						<img class="work-btn-bg" loading="lazy" src="media/film-poster.jpg" alt="">
-						<span class="work-btn-label">Film</span>
-					</button>
-					<button type="button" class="work-btn" data-goto="photos">
-						<img class="work-btn-bg" loading="lazy" src="media/photos/beach-small.jpg" alt="">
-						<span class="work-btn-label">Photo</span>
-					</button>
-				</div>
-			</section>
-
-			<!-- Contact -->
-			<section class="section">
-				<div class="section-title">CONTACT</div>
-				<div class="social-grid">
-					<a class="social-link" href="/cdn-cgi/l/email-protection#1a6c7b767e736834746c695a756f6e7675757134797577" aria-label="Email">
-						<span class="social-icon"><span class="material-symbols-outlined">mail</span></span><span class="social-handle"><span class="__cf_email__" data-cfemail="8afcebe6eee3f8a4e4fcf9cae5fffee6e5e5e1a4e9e5e7">[email&#160;protected]</span></span>
-					</a>
-					<a class="social-link" href="tel:+351930946697" aria-label="Phone">
-						<span class="social-icon"><span class="material-symbols-outlined">call</span></span><span class="social-handle">(+351) 930 946 697</span>
-					</a>
-					<a class="social-link" href="https://www.linkedin.com/in/valdir-neves/" target="_blank" rel="noopener" aria-label="LinkedIn">
-						<img src="media/linkedin.png" width="263" height="263" alt="LinkedIn"><span class="social-handle">valdir-neves</span>
-					</a>
-					<a class="social-link" href="https://www.instagram.com/val.nevs/" target="_blank" rel="noopener" aria-label="Instagram">
-						<img src="media/instagram.png" width="300" height="300" alt="Instagram"><span class="social-handle">@val.nevs</span>
-					</a>
-					<a class="social-link" href="https://github.com/val-nvs" target="_blank" rel="noopener" aria-label="GitHub">
-						<img src="media/github.png" width="341" height="334" alt="GitHub"><span class="social-handle">val-nvs</span>
-					</a>
-					<a class="social-link" href="https://letterboxd.com/eerom/" target="_blank" rel="noopener" aria-label="Letterboxd">
-						<img src="media/letterboxd.png" width="1024" height="1024" alt="Letterboxd"><span class="social-handle">eerom</span>
-					</a>
-				</div>
-			</section>
-		</div>
-
-
-
 		<!-- SOFTWARE PAGE -->
 		<div class="page page-hidden" id="software" role="tabpanel" aria-labelledby="tab-software" tabindex="0">
 
@@ -2589,13 +2534,13 @@
 
 
 		<!-- ABOUT PAGE -->
-		<div class="page page-hidden" id="about" role="tabpanel" aria-labelledby="tab-about" tabindex="0">
+		<div class="page" id="home" role="tabpanel" aria-labelledby="tab-home" tabindex="0">
 			<section class="hero-section">
 				<div class="hero-image-container">
 					<img class="hero-image" src="media/cctv.jpg" width="1000" height="388" alt="" loading="eager">
 					<div class="hero-image-fade"></div>
 					<div class="profile-pic-container">
-						<img class="profile-pic" src="media/favicon.png" width="249" height="249" alt="" loading="eager">
+						<img class="profile-pic" src="media/profile.jpg" width="900" height="900" alt="Valdir Neves" loading="eager">
 					</div>
 				</div>
 			</section>
@@ -2608,8 +2553,21 @@
 			</section>
 
 			<section class="section">
+				<div class="section-title">WORK</div>
+				<div class="work-switch">
+					<button type="button" class="work-btn" data-goto="films">
+						<img class="work-btn-bg" loading="lazy" src="media/film-poster.jpg" alt="">
+						<span class="work-btn-label">Film</span>
+					</button>
+					<button type="button" class="work-btn" data-goto="photos">
+						<img class="work-btn-bg" loading="lazy" src="media/photos/beach-small.jpg" alt="">
+						<span class="work-btn-label">Photo</span>
+					</button>
+				</div>
+			</section>
+
+			<section class="section">
 				<div class="section-title" data-translate="about.contact">CONTACT</div>
-				<p data-translate="about.collaborate">Looking to collaborate or share ideas?<br>Drop me a message- I'd love to connect.</p><br>
 				<div class="social-grid">
 					<a class="social-link" href="/cdn-cgi/l/email-protection#1a6c7b767e736834746c695a756f6e7675757134797577" aria-label="Email">
 						<span class="social-icon"><span class="material-symbols-outlined">mail</span></span><span class="social-handle"><span class="__cf_email__" data-cfemail="8afcebe6eee3f8a4e4fcf9cae5fffee6e5e5e1a4e9e5e7">[email&#160;protected]</span></span>
