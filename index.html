@@ -450,7 +450,6 @@
 		.film-role {
 			color: var(--accent-color);
 			font-weight: 500;
-			font-size: 0.78em;
 		}
 
 		/* ========================================
@@ -784,6 +783,14 @@
 
 		.film-body .section-title {
 			margin-bottom: 0;
+			font-size: 0.95rem;
+		}
+
+		.film-type {
+			color: var(--text-muted);
+			font-weight: 400;
+			font-size: 0.85em;
+			margin-left: 0.5em;
 		}
 
 		.film-desc {
@@ -1118,9 +1125,20 @@
 			filter: brightness(0.72);
 		}
 
+		/* Heavy vignette: bright-ish center, strongly darkened edges. */
+		.work-btn::after {
+			content: '';
+			position: absolute;
+			inset: 0;
+			background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0) 18%, rgba(0, 0, 0, 0.55) 62%, rgba(0, 0, 0, 0.9) 100%);
+			pointer-events: none;
+			z-index: 1;
+		}
+
 		.work-btn-label {
 			position: absolute;
 			inset: 0;
+			z-index: 2;
 			display: flex;
 			align-items: center;
 			justify-content: center;
@@ -1976,7 +1994,7 @@
 					</a>
 					<div class="film-body">
 						<div class="section-title">Firefly <span class="film-year">(2026)</span></div>
-						<p class="film-desc">Made for the 48 Hour Film Project — Lisbon, 2026.</p>
+						<p class="film-desc"><span class="film-role">Direction</span> and <span class="film-role">camera</span> for the 48 Hour Film Project — Lisbon, 2026.</p>
 						<ul class="film-nav-list">
 							<li class="film-tab" data-tab="cast">Cast</li>
 							<li class="film-tab" data-tab="crew">Crew</li>
@@ -1998,7 +2016,7 @@
 					</a>
 					<div class="film-body">
 						<div class="section-title">OTTO <span class="film-year">(2026)</span></div>
-						<p class="film-desc">OTTO, a short film about a man crossing a metropolitan station.</p>
+						<p class="film-desc"><span class="film-role">Camera</span> on a short film about a man crossing a metropolitan station.</p>
 						<ul class="film-nav-list">
 							<li class="film-tab" data-tab="cast">Cast</li>
 							<li class="film-tab" data-tab="crew">Crew</li>
@@ -2020,7 +2038,7 @@
 					</a>
 					<div class="film-body">
 						<div class="section-title">Interview <span class="film-year">(2025)</span></div>
-						<p class="film-desc">Interview</p>
+						<p class="film-desc"><span class="film-role">Camera</span> on an interview.</p>
 						<ul class="film-nav-list">
 							<li class="film-tab" data-tab="cast">Cast</li>
 							<li class="film-tab" data-tab="crew">Crew</li>
@@ -2042,7 +2060,7 @@
 					</a>
 					<div class="film-body">
 						<div class="section-title">Music Video <span class="film-year">(2025)</span></div>
-						<p class="film-desc">K-pop dance cover shot with two cameras, one operated on a gimbal to capture dynamic angles inspired by 1theK's On The Spot series.</p>
+						<p class="film-desc"><span class="film-role">Camera</span> on a K-pop dance cover, shot with two cameras — one on a gimbal for dynamic angles, inspired by 1theK's On The Spot series.</p>
 						<ul class="film-nav-list">
 							<li class="film-tab" data-tab="cast">Cast</li>
 							<li class="film-tab" data-tab="crew">Crew</li>
@@ -2064,7 +2082,7 @@
 					</a>
 					<div class="film-body">
 						<div class="section-title">Short Film <span class="film-year">(2025)</span></div>
-						<p class="film-desc">Recorded production sound and streamlined file workflow with batch-edit scripts and spreadsheet tracking for a 30-minute action thriller, shot in 13 days at 5 varied locations across Lisbon.</p>
+						<p class="film-desc"><span class="film-role">Sound</span> and file-workflow tooling (batch-edit scripts, spreadsheet tracking) for a 30-minute action thriller, shot over 13 days across five Lisbon locations.</p>
 						<ul class="film-nav-list">
 							<li class="film-tab" data-tab="cast">Cast</li>
 							<li class="film-tab" data-tab="crew">Crew</li>
@@ -2086,7 +2104,7 @@
 					</a>
 					<div class="film-body">
 						<div class="section-title">Documentary <span class="film-year">(2025)</span></div>
-						<p class="film-desc">Documentary about Pascoal Furtado, a teacher at Chapitô, a circus school in Lisbon.</p>
+						<p class="film-desc"><span class="film-role">Camera</span> and <span class="film-role">sound</span> on a documentary about Pascoal Furtado, a teacher at Chapitô, a circus school in Lisbon.</p>
 						<ul class="film-nav-list">
 							<li class="film-tab" data-tab="cast">Cast</li>
 							<li class="film-tab" data-tab="crew">Crew</li>
@@ -2108,7 +2126,7 @@
 					</a>
 					<div class="film-body">
 						<div class="section-title">Film Festival Coverage <span class="film-year">(2024)</span></div>
-						<p class="film-desc">Filmed B-roll and presentations for Doclisboa, Portugal's leading international documentary film festival.</p>
+						<p class="film-desc"><span class="film-role">Assistant</span> on B-roll and presentations for Doclisboa, Portugal's leading international documentary festival.</p>
 						<ul class="film-nav-list">
 							<li class="film-tab" data-tab="cast">Cast</li>
 							<li class="film-tab" data-tab="crew">Crew</li>
@@ -2130,7 +2148,7 @@
 					</a>
 					<div class="film-body">
 						<div class="section-title">Interview <span class="film-year">(2024)</span></div>
-						<p class="film-desc">Interview about Sebastião Ogando.</p>
+						<p class="film-desc"><span class="film-role">Camera</span> on an interview about Sebastião Ogando.</p>
 						<ul class="film-nav-list">
 							<li class="film-tab" data-tab="cast">Cast</li>
 							<li class="film-tab" data-tab="crew">Crew</li>
@@ -2152,7 +2170,7 @@
 					</a>
 					<div class="film-body">
 						<div class="section-title">Short Film <span class="film-year">(2024)</span></div>
-						<p class="film-desc">Experimental short film.</p>
+						<p class="film-desc"><span class="film-role">Camera</span> on an experimental short film.</p>
 						<ul class="film-nav-list">
 							<li class="film-tab" data-tab="cast">Cast</li>
 							<li class="film-tab" data-tab="crew">Crew</li>
@@ -2174,7 +2192,7 @@
 					</a>
 					<div class="film-body">
 						<div class="section-title">TV Pilot <span class="film-year">(2024)</span></div>
-						<p class="film-desc">Crane Cam in a Live TV program mock-up and Pre-Vis in Blender using photogrammetry.</p>
+						<p class="film-desc"><span class="film-role">Crane camera</span> and <span class="film-role">pre-visualization</span> — built in Blender from photogrammetry — on a live TV program mock-up.</p>
 						<ul class="film-nav-list">
 							<li class="film-tab" data-tab="cast">Cast</li>
 							<li class="film-tab" data-tab="crew">Crew</li>
@@ -2196,7 +2214,7 @@
 					</a>
 					<div class="film-body">
 						<div class="section-title">TV Pilot <span class="film-year">(2024)</span></div>
-						<p class="film-desc">Assistant camera of the crane cam.</p>
+						<p class="film-desc"><span class="film-role">Crane camera assistant</span> on a live TV mock-up.</p>
 						<ul class="film-nav-list">
 							<li class="film-tab" data-tab="cast">Cast</li>
 							<li class="film-tab" data-tab="crew">Crew</li>
@@ -2218,7 +2236,7 @@
 					</a>
 					<div class="film-body">
 						<div class="section-title">Music Video <span class="film-year">(2024)</span></div>
-						<p class="film-desc">Dance cover, RIIZE 라이즈 - 'Impossible'.</p>
+						<p class="film-desc"><span class="film-role">Camera</span> on a dance cover of RIIZE (라이즈) — 'Impossible'.</p>
 						<ul class="film-nav-list">
 							<li class="film-tab" data-tab="cast">Cast</li>
 							<li class="film-tab" data-tab="crew">Crew</li>
@@ -2240,7 +2258,7 @@
 					</a>
 					<div class="film-body">
 						<div class="section-title">Short Film <span class="film-year">(2024)</span></div>
-						<p class="film-desc">Recorded production sound and operated boom for a dark comedy short film following a troubled artist's pursuit of perfection, filmed on a single-location set.</p>
+						<p class="film-desc"><span class="film-role">Sound</span> — recording and boom — for a dark-comedy short about a troubled artist's pursuit of perfection, on a single-location set.</p>
 						<ul class="film-nav-list">
 							<li class="film-tab" data-tab="cast">Cast</li>
 							<li class="film-tab" data-tab="crew">Crew</li>
@@ -2262,7 +2280,7 @@
 					</a>
 					<div class="film-body">
 						<div class="section-title">Short Film <span class="film-year">(2024)</span></div>
-						<p class="film-desc">A very short experimental piece.</p>
+						<p class="film-desc"><span class="film-role">Camera</span> on a very short experimental piece.</p>
 						<ul class="film-nav-list">
 							<li class="film-tab" data-tab="cast">Cast</li>
 							<li class="film-tab" data-tab="crew">Crew</li>
@@ -2284,7 +2302,7 @@
 					</a>
 					<div class="film-body">
 						<div class="section-title">Short Film <span class="film-year">(2024)</span></div>
-						<p class="film-desc">Behind the scenes photographs</p>
+						<p class="film-desc"><span class="film-role">Behind-the-scenes</span> photography on set.</p>
 						<ul class="film-nav-list">
 							<li class="film-tab" data-tab="cast">Cast</li>
 							<li class="film-tab" data-tab="crew">Crew</li>
@@ -2306,7 +2324,7 @@
 					</a>
 					<div class="film-body">
 						<div class="section-title">Short Film <span class="film-year">(2024)</span></div>
-						<p class="film-desc">Production assistant role</p>
+						<p class="film-desc"><span class="film-role">Production assistant</span> at the festival.</p>
 						<ul class="film-nav-list">
 							<li class="film-tab" data-tab="cast">Cast</li>
 							<li class="film-tab" data-tab="crew">Crew</li>
@@ -2328,7 +2346,7 @@
 					</a>
 					<div class="film-body">
 						<div class="section-title">Film <span class="film-year">(2015)</span></div>
-						<p class="film-desc">Project description pending.</p>
+						<p class="film-desc"><span class="film-role">Camera animation</span> for the piece — more soon.</p>
 						<ul class="film-nav-list">
 							<li class="film-tab" data-tab="cast">Cast</li>
 							<li class="film-tab" data-tab="crew">Crew</li>
@@ -3609,20 +3627,23 @@ document.querySelectorAll('.film-entry[data-film]').forEach(section => {
 		panel.appendChild(wrap);
 	});
 
-	// My role(s) on this film, appended to the title in green — derived from the credits, not hard-coded
-	const mine = [];
-	['cast', 'crew'].forEach(kind => {
-		(credits[kind] || []).forEach(([k, role]) => {
-			if (k === 'valdir-neves' && role && !mine.includes(role)) mine.push(role);
-		});
-	});
-	if (mine.length) {
-		mine.sort((a, b) => roleRank(a) - roleRank(b));
-		const span = document.createElement('span');
-		span.className = 'film-role';
-		span.textContent = ' · ' + mine.join(', ');
-		section.querySelector('.section-title').appendChild(span);
+	// Type label (e.g. "Music Video") pulled from the details panel ("YEAR · DUR · TYPE"),
+	// shown after the year — skipped when it just duplicates the title.
+	const titleEl = section.querySelector('.section-title');
+	const detailsEl = section.querySelector('.film-panel[data-panel="details"]');
+	const titleText = ((titleEl.firstChild && titleEl.firstChild.textContent) || '').trim();
+	if (detailsEl) {
+		const parts = detailsEl.textContent.split('·').map(s => s.trim()).filter(Boolean);
+		const type = parts.length ? parts[parts.length - 1] : '';
+		if (type && !/^\d/.test(type) && type.toLowerCase() !== titleText.toLowerCase()) {
+			const t = document.createElement('span');
+			t.className = 'film-type';
+			t.textContent = type;
+			titleEl.appendChild(t);
+		}
 	}
+
+	// (Roles are written into each film's description, with the role words in green.)
 });
 
 // ========================================
