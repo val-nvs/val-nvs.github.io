@@ -30,7 +30,7 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono:wght@200..800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,100,0,200&icon_names=call,language,mail,open_in_new,person" />
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,100,0,200&icon_names=call,language,location_on,mail,open_in_new,person" />
 
 	<!-- Structured data -->
 	<script type="application/ld+json">
@@ -922,6 +922,12 @@
 			margin-bottom: 0.75rem;
 		}
 
+		.loc-pin {
+			font-size: 1.05em;
+			vertical-align: -3px;
+			margin-right: 0.15em;
+		}
+
 		/* Compact home intro */
 		.hub-mini {
 			text-align: center;
@@ -992,7 +998,7 @@
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			background: var(--surface-1);
+			background: var(--surface-avatar);
 			border: 1px solid var(--border-color);
 			border-radius: 0.5rem;
 			color: var(--text-primary);
@@ -1186,6 +1192,46 @@
 
 		.resume-muted {
 			color: var(--text-muted);
+		}
+
+		/* Coordinator hidden under a one-line dropdown (school name is the toggle). */
+		.resume-coord summary {
+			cursor: pointer;
+			color: var(--accent-color);
+			list-style: none;
+			display: inline-flex;
+			align-items: center;
+			gap: 0.35em;
+		}
+
+		.resume-coord summary::-webkit-details-marker {
+			display: none;
+		}
+
+		.resume-coord summary::after {
+			content: '';
+			width: 0;
+			height: 0;
+			border-left: 4px solid currentColor;
+			border-top: 3px solid transparent;
+			border-bottom: 3px solid transparent;
+			transition: transform 0.15s ease;
+		}
+
+		.resume-coord[open] summary::after {
+			transform: rotate(90deg);
+		}
+
+		.resume-coord-name {
+			display: block;
+			margin-top: 0.1rem;
+			font-size: 0.82rem;
+			color: var(--text-muted);
+			text-decoration: none;
+		}
+
+		.resume-coord-name:hover {
+			text-decoration: underline;
 		}
 
 		.card.card-noborder {
@@ -1429,7 +1475,7 @@
 
 		.profile-pic-container {
 			position: absolute;
-			bottom: -18px;
+			bottom: -10px;
 			left: 50%;
 			transform: translateX(-50%);
 			z-index: 10;
@@ -1447,7 +1493,7 @@
 
 		.about-content {
 			position: relative;
-			padding: 30px 10px var(--content-padding);
+			padding: 20px 10px var(--content-padding);
 			text-align: center;
 			z-index: 1;
 			border-top: none;
@@ -1523,11 +1569,11 @@
 			}
 
 			.profile-pic-container {
-				bottom: -22px;
+				bottom: -12px;
 			}
 
 			.about-content {
-				padding-top: 36px;
+				padding-top: 26px;
 			}
 		}
 
@@ -1555,11 +1601,11 @@
 			}
 
 			.profile-pic-container {
-				bottom: -26px;
+				bottom: -14px;
 			}
 
 			.about-content {
-				padding-top: 40px;
+				padding-top: 30px;
 			}
 		}
 
@@ -2548,8 +2594,8 @@
 			<section class="section about-content">
 				<h1 class="hub-name">Valdir Neves</h1>
 				<p class="hub-tagline">Filmmaker · Photographer · Engineering student</p>
-				<p class="hub-loc">Lisbon, Portugal</p>
-				<p class="hub-desc">A multi-hyphenate from Brazil, drawn to filmmaking, photography, and the optics, architecture, and engineering behind them. Fluent in English and Portuguese.</p>
+				<p class="hub-loc"><span class="material-symbols-outlined loc-pin">location_on</span>Lisbon, Portugal</p>
+				<p class="hub-desc">A multi-hyphenate from Brazil, drawn to filmmaking, photography, optics, architecture, and engineering.</p>
 			</section>
 
 			<section class="section">
@@ -2604,14 +2650,20 @@
 						<span class="resume-date">2025 — 2026</span>
 						<div class="resume-body">
 							<span class="resume-role">Film Photography</span>
-							<a class="resume-org" href="https://atelierdelisboa.pt/bruno-pelletier-sequeira" target="_blank" rel="noopener">Atelier de Lisboa — Coord. Bruno Pelletier Sequeira</a>
+							<details class="resume-coord">
+								<summary class="resume-org">Atelier de Lisboa</summary>
+								<a class="resume-coord-name" href="https://atelierdelisboa.pt/bruno-pelletier-sequeira" target="_blank" rel="noopener">Coord. Bruno Pelletier Sequeira</a>
+							</details>
 						</div>
 					</li>
 					<li class="resume-item">
 						<span class="resume-date">2023 — 2025</span>
 						<div class="resume-body">
 							<span class="resume-role">Film &amp; TV</span>
-							<a class="resume-org" href="https://www.artecapital.net/entrevista-314-pedro-senna-nune" target="_blank" rel="noopener">ETIC — Coord. Pedro Senna Nunes</a>
+							<details class="resume-coord">
+								<summary class="resume-org">ETIC</summary>
+								<a class="resume-coord-name" href="https://www.artecapital.net/entrevista-314-pedro-senna-nune" target="_blank" rel="noopener">Coord. Pedro Senna Nunes</a>
+							</details>
 						</div>
 					</li>
 				</ol>
