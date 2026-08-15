@@ -691,8 +691,10 @@
 			.photo-group:not(.collapsed) .photo-group-body { animation: none; }
 		}
 
-		/* Debug: filename overlay on each tile. */
+		/* Debug: filename overlay on each tile — hidden unless debug mode is on
+		   (click the site title 5 times to toggle body.debug-photos). */
 		.pshot-name {
+			display: none;
 			position: absolute;
 			left: 6px;
 			bottom: 6px;
@@ -705,6 +707,20 @@
 			border-radius: 3px;
 			pointer-events: none;
 			word-break: break-all;
+		}
+
+		.debug-photos .pshot-name {
+			display: block;
+		}
+
+		/* Debug-only: the rest of the photos in the folder that the gallery doesn't use.
+		   Reuses the normal collapsible section — only its visibility is gated here. */
+		#debug-unused {
+			display: none;
+		}
+
+		.debug-photos #debug-unused {
+			display: flex;
 		}
 
 		/* Click a photo: full image over a dim backdrop with its story caption. Tap the
@@ -1994,7 +2010,7 @@
 					</a>
 					<div class="film-body">
 						<div class="section-title">Firefly <span class="film-year">(2026)</span></div>
-						<p class="film-desc"><span class="film-role">Direction</span> and <span class="film-role">camera</span> for the 48 Hour Film Project — Lisbon, 2026.</p>
+						<p class="film-desc"><span class="film-role">Direction</span> and <span class="film-role">camera</span> on a single-room film, made in 48 hours for the 48 Hour Film Project.</p>
 						<ul class="film-nav-list">
 							<li class="film-tab" data-tab="cast">Cast</li>
 							<li class="film-tab" data-tab="crew">Crew</li>
@@ -2038,7 +2054,7 @@
 					</a>
 					<div class="film-body">
 						<div class="section-title">Interview <span class="film-year">(2025)</span></div>
-						<p class="film-desc"><span class="film-role">Camera</span> on an interview.</p>
+						<p class="film-desc"><span class="film-role">Camera</span> on an interview, shot for a school project.</p>
 						<ul class="film-nav-list">
 							<li class="film-tab" data-tab="cast">Cast</li>
 							<li class="film-tab" data-tab="crew">Crew</li>
@@ -2082,7 +2098,7 @@
 					</a>
 					<div class="film-body">
 						<div class="section-title">Short Film <span class="film-year">(2025)</span></div>
-						<p class="film-desc"><span class="film-role">Sound</span> and file-workflow tooling (batch-edit scripts, spreadsheet tracking) for a 30-minute action thriller, shot over 13 days across five Lisbon locations.</p>
+						<p class="film-desc"><span class="film-role">Sound</span> for a 30-minute action thriller, shot over 13 days across five Lisbon locations.</p>
 						<ul class="film-nav-list">
 							<li class="film-tab" data-tab="cast">Cast</li>
 							<li class="film-tab" data-tab="crew">Crew</li>
@@ -2126,7 +2142,7 @@
 					</a>
 					<div class="film-body">
 						<div class="section-title">Film Festival Coverage <span class="film-year">(2024)</span></div>
-						<p class="film-desc"><span class="film-role">Assistant</span> on B-roll and presentations for Doclisboa, Portugal's leading international documentary festival.</p>
+						<p class="film-desc"><span class="film-role">Camera</span> on B-roll and presentations for Doclisboa, Portugal's leading international documentary festival.</p>
 						<ul class="film-nav-list">
 							<li class="film-tab" data-tab="cast">Cast</li>
 							<li class="film-tab" data-tab="crew">Crew</li>
@@ -2148,7 +2164,7 @@
 					</a>
 					<div class="film-body">
 						<div class="section-title">Interview <span class="film-year">(2024)</span></div>
-						<p class="film-desc"><span class="film-role">Camera</span> on an interview about Sebastião Ogando.</p>
+						<p class="film-desc"><span class="film-role">Camera</span> on an interview about Sebastião Ogando, for a school project.</p>
 						<ul class="film-nav-list">
 							<li class="film-tab" data-tab="cast">Cast</li>
 							<li class="film-tab" data-tab="crew">Crew</li>
@@ -2170,7 +2186,7 @@
 					</a>
 					<div class="film-body">
 						<div class="section-title">Short Film <span class="film-year">(2024)</span></div>
-						<p class="film-desc"><span class="film-role">Camera</span> on an experimental short film.</p>
+						<p class="film-desc"><span class="film-role">Camera</span> on an experimental short, made for a school project.</p>
 						<ul class="film-nav-list">
 							<li class="film-tab" data-tab="cast">Cast</li>
 							<li class="film-tab" data-tab="crew">Crew</li>
@@ -2346,7 +2362,7 @@
 					</a>
 					<div class="film-body">
 						<div class="section-title">Film <span class="film-year">(2015)</span></div>
-						<p class="film-desc"><span class="film-role">Camera animation</span> for the piece — more soon.</p>
+						<p class="film-desc"><span class="film-role">Camera animation</span>.</p>
 						<ul class="film-nav-list">
 							<li class="film-tab" data-tab="cast">Cast</li>
 							<li class="film-tab" data-tab="crew">Crew</li>
@@ -3492,7 +3508,7 @@ const filmCredits = {
 	},
 	doclis: {
 		cast: [],
-		crew: [['valdir-neves', 'Assistant']]
+		crew: [['valdir-neves', 'Camera']]
 	},
 	seb: {
 		cast: [],
@@ -3779,6 +3795,52 @@ if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').m
 			const tab = document.getElementById('tab-' + btn.dataset.goto);
 			if (tab) tab.click();   // reuses the nav's activateTab handler
 		});
+	});
+})();
+
+// ========================================
+// PHOTO DEBUG TOGGLE — click the site title 5 times to show/hide filename overlays
+// ========================================
+(() => {
+	const title = document.querySelector('.header-content');
+	if (!title) return;
+	// every full photo in media/photos/ (basenames)
+	const ALL = ['aquarium-portrait','aquarium','b3','basilica','beach','bridge-moon','bridge-night','bridge-van','bts-camera','bts-filming','cctv','chapito','charlie','clapperboard','double-exposure','fairy-alt-alt','fairy-alt','fairy-small-alt','fairy','golden-gate','green-portrait','jellyfish','keyboard-build','kreatori','lucky','narrativa','palm-balcony','palm-silhouette','pcb','pink-portrait','recife','red-hands','red-sunflowers','redroom','riomar','san-francisco','seine','spain-flag-moon','toning'];
+	function buildUnused() {
+		const gallery = document.querySelector('#photos .photo-gallery');
+		if (!gallery || document.getElementById('debug-unused')) return;
+		const used = new Set([...gallery.querySelectorAll('.pshot-link')].map(a => a.getAttribute('href').split('/').pop().replace('.jpg', '')));
+		const unused = ALL.filter(n => !used.has(n));
+		if (!unused.length) return;
+		const tiles = unused.map(n =>
+			'<div class="pfeat"><a class="pshot-link" href="media/photos/' + n + '.jpg"><img class="pshot" loading="lazy" src="media/photos/' + n + '-small.jpg" alt=""><span class="pshot-name">' + n + '</span></a></div>'
+		).join('');
+		const box = document.createElement('div');
+		box.className = 'photo-group collapsed';
+		box.id = 'debug-unused';
+		box.innerHTML =
+			'<button type="button" class="photo-section" aria-expanded="false">'
+			+ '<img class="photo-section-cover" loading="lazy" src="media/photos/' + unused[0] + '-small.jpg" alt="">'
+			+ '<span class="photo-section-caption"><span class="photo-section-title">Unused in folder</span><span class="photo-section-count">' + unused.length + ' photos</span></span>'
+			+ '<span class="photo-section-caret" aria-hidden="true"></span></button>'
+			+ '<div class="photo-group-body">' + tiles + '</div>';
+		gallery.appendChild(box);
+		const btn = box.querySelector('.photo-section');
+		btn.addEventListener('click', () => {
+			const collapsed = box.classList.toggle('collapsed');
+			btn.setAttribute('aria-expanded', String(!collapsed));
+		});
+	}
+	let clicks = 0, timer;
+	title.addEventListener('click', () => {
+		clicks++;
+		clearTimeout(timer);
+		timer = setTimeout(() => { clicks = 0; }, 1500);   // must be 5 clicks in a row
+		if (clicks >= 5) {
+			clicks = 0;
+			document.body.classList.toggle('debug-photos');
+			if (document.body.classList.contains('debug-photos')) buildUnused();
+		}
 	});
 })();
 
