@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="home" data-hw="mat">
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
@@ -31,6 +31,8 @@
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono:wght@200..800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,100,0,200&icon_names=call,language,location_on,mail,open_in_new,person" />
+	<!-- Per-tab theme fonts (Photos / Software / Hardware), loaded without blocking first paint -->
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&family=Jost:wght@200..700&family=Share+Tech+Mono&display=swap" media="print" onload="this.media='all'">
 
 	<!-- Structured data -->
 	<script type="application/ld+json">
@@ -82,6 +84,18 @@
 			--border-med: rgba(161, 170, 179, 0.3);
 			--border-subtle: rgba(161, 170, 179, 0.15);
 			--border-faint: rgba(161, 170, 179, 0.12);
+			/* per-tab theming — Home & Films use these defaults */
+			--page-bg: #000;
+			--main-bg: #191C21;
+			--chrome-bg: #000;
+			--footer-bg: #000;
+			--font-body: 'Roboto', sans-serif;
+			--font-display: "Atkinson Hyperlegible Mono", monospace;
+			--title-base: #868f99;
+			--title-mid: #00A03D;
+			--title-hot: #00E054;
+			--glow-from: #808080;
+			--glow-to: #00ff50;
 		}
 
 		/* ========================================
@@ -100,11 +114,12 @@
 		}
 
 		body {
-			font-family: 'Roboto', sans-serif;
+			font-family: var(--font-body);
 			font-weight: 400;
-			background: var(--bg-secondary);
+			background-color: var(--page-bg);
 			color: var(--text-primary);
 			min-height: 100dvh;
+			transition: background-color 0.45s ease, color 0.45s ease;
 		}
 
 		/* ========================================
@@ -123,13 +138,14 @@
 		   HEADER
 		   ======================================== */
 		.site-header {
-			background: #000;
+			background: var(--chrome-bg);
+			transition: background-color 0.45s ease;
 			padding: 0.5rem var(--content-padding);
 			text-align: center;
 			font-size: 1.75rem;
 			line-height: 1;
 			color: var(--text-primary);
-			font-family: "Atkinson Hyperlegible Mono", monospace;
+			font-family: var(--font-display);
 			font-optical-sizing: auto;
 			font-weight: 200;
 			font-style: normal;
@@ -218,39 +234,23 @@
 			cursor: pointer;
 			display: inline-block;
 			font-weight: 200;
-			color: var(--text-muted);
+			color: var(--title-base);
 			transition: font-weight 0.3s ease, color 0.3s ease;
 			animation: charWave 3s ease-in-out infinite;
 		}
 
 		@keyframes charWave {
-			0% {
-				font-weight: 200;
-				color: var(--text-muted);
-			}
-			25% {
-				font-weight: 500;
-				color: #00A03D;
-			}
-			50% {
-				font-weight: 800;
-				color: #00E054;
-			}
-			75% {
-				font-weight: 500;
-				color: #00A03D;
-			}
-			100% {
-				font-weight: 200;
-				color: var(--text-muted);
-			}
+			0%, 100% { font-weight: 200; color: var(--title-base); }
+			25%, 75% { font-weight: 500; color: var(--title-mid); }
+			50% { font-weight: 800; color: var(--title-hot); }
 		}
 
 		/* ========================================
 		   NAVIGATION
 		   ======================================== */
 		.site-nav {
-			background: var(--bg-secondary);
+			background: var(--chrome-bg);
+			transition: background-color 0.45s ease;
 			padding: 0.5rem var(--content-padding);
 			padding-top: 0;
 		}
@@ -290,8 +290,9 @@
 		   MAIN CONTENT
 		   ======================================== */
 		main {
-			background: var(--bg-primary);
+			background: var(--main-bg);
 			flex: 1;
+			transition: background-color 0.45s ease;
 		}
 
 		.page {
@@ -977,6 +978,38 @@
 			margin: 0.4rem auto 0;
 		}
 
+		/* Book CTA between the bio and Work */
+		.book-cta {
+			display: flex;
+			justify-content: center;
+		}
+
+		.book-cta .book-btn {
+			display: inline-block;
+			padding: 0.7rem 2.4rem;
+			border-radius: 0.5rem;
+			background: var(--accent-color);
+			color: #0d0f12;
+			font-weight: 700;
+			font-size: 0.95rem;
+			letter-spacing: 0.08em;
+			text-transform: uppercase;
+			text-decoration: none;
+			transition: transform 0.15s ease, box-shadow 0.2s ease;
+			animation: bookPulse 2.4s ease-in-out infinite;
+		}
+
+		@keyframes bookPulse {
+			0%, 100% { box-shadow: 0 0 0 0 rgba(0, 224, 84, 0); }
+			50% { box-shadow: 0 0 18px 2px rgba(0, 224, 84, 0.45); }
+		}
+
+		.book-cta .book-btn:hover,
+		.book-cta .book-btn:focus-visible {
+			transform: translateY(-2px) scale(1.03);
+			box-shadow: 0 0 24px 3px rgba(0, 224, 84, 0.55);
+		}
+
 		/* Social icons with usernames */
 		.social-grid {
 			display: grid;
@@ -1554,7 +1587,7 @@
 		   FOOTER
 		   ======================================== */
 		footer {
-			background: #000;
+			background: var(--footer-bg);
 			border-top: 1px solid var(--border-color);
 			padding: 1rem var(--content-padding);
 		}
@@ -1678,6 +1711,330 @@
 			.page {
 				display: block !important;
 			}
+		}
+
+		/* ========================================
+		   PER-TAB THEMES
+		   Home & Films keep the defaults above. activateTab() sets <html data-theme="…">;
+		   each theme re-colours the tokens, swaps the fonts, and gives the (unchanged)
+		   header markup its own entrance animation.
+		   ======================================== */
+
+		/* ---------- SOFTWARE — Matrix ---------- */
+		html[data-theme="software"] {
+			--page-bg: #000;
+			--main-bg: rgba(0, 0, 0, 0.6);
+			--chrome-bg: rgba(0, 0, 0, 0.94);
+			--footer-bg: #000;
+			--font-body: 'Share Tech Mono', ui-monospace, monospace;
+			--font-display: 'Share Tech Mono', ui-monospace, monospace;
+			--text-primary: #7ddc97;
+			--text-strong: #d6ffe1;
+			--text-bright: #b8ffc9;
+			--text-muted: #43a861;
+			--text-faint: #2d7342;
+			--accent-color: #00ff41;
+			--border-color: rgba(0, 255, 65, 0.3);
+			--border-strong: rgba(0, 255, 65, 0.5);
+			--border-med: rgba(0, 255, 65, 0.26);
+			--border-subtle: rgba(0, 255, 65, 0.14);
+			--border-faint: rgba(0, 255, 65, 0.1);
+			--surface-1: #021006;
+			--surface-sunken: #010803;
+			--surface-avatar: #06180b;
+			--bg-secondary: #000;
+			--tab-active: #00ff41;
+			--title-base: #1d7a36;
+			--title-mid: #00c236;
+			--title-hot: #b8ffc9;
+			--glow-from: #1d7a36;
+			--glow-to: #eafff0;
+		}
+
+		html[data-theme="software"] .site-header span,
+		html[data-theme="software"] .nav-item {
+			font-synthesis: none;   /* single-weight mono: no faux bold */
+		}
+
+		html[data-theme="software"] .header-content {
+			text-shadow: 0 0 8px rgba(0, 255, 65, 0.55);
+		}
+
+		html[data-theme="software"] .header-content::after {
+			content: '_';
+			color: var(--accent-color);
+			animation: cursorBlink 1s steps(1) infinite;
+		}
+
+		@keyframes cursorBlink {
+			50% { opacity: 0; }
+		}
+
+		html[data-theme="software"] .nav-list {
+			box-shadow: inset 0 0 0 1px var(--border-med);
+		}
+
+		html[data-theme="software"] .nav-item.active {
+			color: #000;
+		}
+
+		html[data-theme="software"] .section-title {
+			color: var(--accent-color);
+			text-shadow: 0 0 6px rgba(0, 255, 65, 0.35);
+		}
+
+		html[data-theme="software"] .language-popup {
+			background: #000;
+		}
+
+		/* digital rain canvas — drawn by JS only while Software is open */
+		#matrix-rain {
+			position: fixed;
+			inset: 0;
+			z-index: -1;
+			width: 100%;
+			height: 100%;
+			pointer-events: none;
+			opacity: 0;
+			transition: opacity 0.6s ease;
+		}
+
+		html[data-theme="software"] #matrix-rain {
+			opacity: 0.55;
+		}
+
+		/* ---------- PHOTOS — clean gallery ---------- */
+		html[data-theme="photos"] {
+			color-scheme: light;
+			--page-bg: #efeee9;
+			--main-bg: #f8f7f3;
+			--chrome-bg: #f8f7f3;
+			--footer-bg: #141414;
+			--font-body: 'Jost', system-ui, sans-serif;
+			--font-display: 'Jost', system-ui, sans-serif;
+			--text-primary: #2a2a28;
+			--text-strong: #111;
+			--text-bright: #1a1a18;
+			--text-muted: #77766f;
+			--text-faint: #a5a49d;
+			--accent-color: #111;
+			--border-color: #dddcd5;
+			--border-strong: rgba(0, 0, 0, 0.16);
+			--border-med: rgba(0, 0, 0, 0.1);
+			--border-subtle: rgba(0, 0, 0, 0.06);
+			--border-faint: rgba(0, 0, 0, 0.05);
+			--surface-1: #ebeae4;
+			--surface-sunken: #e5e4de;
+			--surface-avatar: #e2e1db;
+			--bg-secondary: #fff;
+			--tab-active: #111;
+			--title-base: #a3a29b;
+			--title-mid: #5c5b55;
+			--title-hot: #111;
+			--glow-from: #a3a29b;
+			--glow-to: #111;
+		}
+
+		/* the title "develops" like a print in the tray */
+		html[data-theme="photos"] .header-content {
+			animation: develop 0.9s ease-out;
+		}
+
+		@keyframes develop {
+			from { filter: blur(8px); opacity: 0; letter-spacing: 0.25em; }
+			to { filter: blur(0); opacity: 1; letter-spacing: 0; }
+		}
+
+		html[data-theme="photos"] .nav-item.active {
+			color: #f8f7f3;
+		}
+
+		html[data-theme="photos"] .language-popup {
+			background: #fff;
+		}
+
+		/* opened photo sections become a light title bar */
+		html[data-theme="photos"] .photo-section {
+			background: var(--surface-1);
+		}
+
+		html[data-theme="photos"] .photo-group:not(.collapsed) .photo-section-title {
+			color: var(--text-strong);
+			text-shadow: none;
+		}
+
+		html[data-theme="photos"] .photo-group:not(.collapsed) .photo-section-caret {
+			border-left-color: var(--text-strong);
+		}
+
+		/* the footer keeps dark tokens so the dark Bandcamp players sit on dark */
+		html[data-theme="photos"] footer {
+			--text-primary: #A1AAB3;
+			--border-color: #2a2a28;
+		}
+
+		/* ---------- HARDWARE — cutting mat ---------- */
+		html[data-theme="hardware"][data-hw="mat"] {
+			--page-bg: #2b5a46;
+			--main-bg: transparent;
+			--chrome-bg: #efe7d1;
+			--footer-bg: #214636;
+			--font-body: 'Barlow', system-ui, sans-serif;
+			--font-display: 'Barlow Condensed', 'Barlow', sans-serif;
+			--text-primary: #e6efe8;
+			--text-strong: #fff;
+			--text-bright: #f3f8f4;
+			--text-muted: #b3cbbb;
+			--text-faint: #8aac97;
+			--accent-color: #f4d43f;
+			--border-color: rgba(255, 255, 255, 0.3);
+			--border-strong: rgba(255, 255, 255, 0.55);
+			--border-med: rgba(255, 255, 255, 0.28);
+			--border-subtle: rgba(255, 255, 255, 0.16);
+			--border-faint: rgba(255, 255, 255, 0.12);
+			--surface-1: rgba(43, 90, 70, 0.12);
+			--surface-sunken: #234c3b;
+			--surface-avatar: #234c3b;
+			--bg-secondary: #1f4434;
+			--tab-active: #2b5a46;
+			--title-base: #6b6752;
+			--title-mid: #2b5a46;
+			--title-hot: #13291f;
+			--glow-from: #6b6752;
+			--glow-to: #0d1f17;
+		}
+
+		/* 1 cm grid, 5 cm majors, 45° cutting guides */
+		html[data-theme="hardware"][data-hw="mat"] body {
+			background-image:
+				linear-gradient(rgba(255, 255, 255, 0.24) 1px, transparent 1px),
+				linear-gradient(90deg, rgba(255, 255, 255, 0.24) 1px, transparent 1px),
+				linear-gradient(rgba(255, 255, 255, 0.09) 1px, transparent 1px),
+				linear-gradient(90deg, rgba(255, 255, 255, 0.09) 1px, transparent 1px),
+				repeating-linear-gradient(45deg, transparent 0 140px, rgba(255, 255, 255, 0.07) 140px 141px);
+			background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px, auto;
+		}
+
+		/* header + nav become a cream ruler whose ticks "measure" in */
+		html[data-theme="hardware"][data-hw="mat"] .site-nav {
+			position: relative;
+			padding-bottom: 1.1rem;
+		}
+
+		html[data-theme="hardware"][data-hw="mat"] .site-nav::after {
+			content: '';
+			position: absolute;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			height: 12px;
+			background:
+				repeating-linear-gradient(90deg, #2c2a22 0 1px, transparent 1px 10px) left bottom / 100% 5px no-repeat,
+				repeating-linear-gradient(90deg, #2c2a22 0 1px, transparent 1px 50px) left bottom / 100% 12px no-repeat;
+			transform-origin: left;
+			animation: rulerMeasure 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+		}
+
+		@keyframes rulerMeasure {
+			from { transform: scaleX(0); }
+		}
+
+		html[data-theme="hardware"][data-hw="mat"] .header-content {
+			animation: stamp 0.55s cubic-bezier(0.2, 0.8, 0.3, 1.2);
+		}
+
+		@keyframes stamp {
+			from { transform: scale(1.18); opacity: 0; }
+		}
+
+		html[data-theme="hardware"][data-hw="mat"] .nav-item {
+			color: #3d3a2c;
+		}
+
+		html[data-theme="hardware"][data-hw="mat"] .nav-item.active {
+			color: #efe7d1;
+		}
+
+		html[data-theme="hardware"][data-hw="mat"] .section-title {
+			font-family: var(--font-display);
+			font-weight: 600;
+			letter-spacing: 0.08em;
+		}
+
+		/* ---------- HARDWARE — blueprint ---------- */
+		html[data-theme="hardware"][data-hw="blueprint"] {
+			--page-bg: #1c4c8c;
+			--main-bg: transparent;
+			--chrome-bg: #173f76;
+			--footer-bg: #153869;
+			--font-body: 'Architects Daughter', 'Barlow', sans-serif;
+			--font-display: 'Architects Daughter', sans-serif;
+			--text-primary: #e4edff;
+			--text-strong: #fff;
+			--text-bright: #f2f6ff;
+			--text-muted: #a9c0e6;
+			--text-faint: #7f9dcc;
+			--accent-color: #fff;
+			--border-color: rgba(255, 255, 255, 0.35);
+			--border-strong: rgba(255, 255, 255, 0.7);
+			--border-med: rgba(255, 255, 255, 0.3);
+			--border-subtle: rgba(255, 255, 255, 0.16);
+			--border-faint: rgba(255, 255, 255, 0.12);
+			--surface-1: rgba(0, 0, 0, 0.18);
+			--surface-sunken: rgba(0, 0, 0, 0.14);
+			--surface-avatar: rgba(0, 0, 0, 0.14);
+			--bg-secondary: #163e74;
+			--tab-active: #fff;
+			--title-base: #a9c0e6;
+			--title-mid: #dbe6ff;
+			--title-hot: #fff;
+			--glow-from: #a9c0e6;
+			--glow-to: #fff;
+		}
+
+		html[data-theme="hardware"][data-hw="blueprint"] body {
+			background-image:
+				linear-gradient(rgba(255, 255, 255, 0.22) 1px, transparent 1px),
+				linear-gradient(90deg, rgba(255, 255, 255, 0.22) 1px, transparent 1px),
+				linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+				linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+			background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+		}
+
+		html[data-theme="hardware"][data-hw="blueprint"] .site-header span,
+		html[data-theme="hardware"][data-hw="blueprint"] .nav-item {
+			font-synthesis: none;
+		}
+
+		/* the title is "drafted" left to right, with a dimension line under it */
+		html[data-theme="hardware"][data-hw="blueprint"] .header-content {
+			animation: draft 0.9s cubic-bezier(0.45, 0, 0.2, 1);
+		}
+
+		@keyframes draft {
+			from { clip-path: inset(0 100% 0 0); }
+			to { clip-path: inset(0 0 0 0); }
+		}
+
+		html[data-theme="hardware"][data-hw="blueprint"] .site-header::after {
+			content: '';
+			position: absolute;
+			left: 18%;
+			right: 18%;
+			bottom: 3px;
+			height: 7px;
+			border-left: 1px solid var(--text-muted);
+			border-right: 1px solid var(--text-muted);
+			background: linear-gradient(var(--text-muted), var(--text-muted)) center / 100% 1px no-repeat;
+			animation: dimLine 0.8s ease-out;
+		}
+
+		@keyframes dimLine {
+			from { transform: scaleX(0); }
+		}
+
+		html[data-theme="hardware"][data-hw="blueprint"] .nav-item.active {
+			color: #173f76;
 		}
 
 		/* Respect users who prefer reduced motion */
@@ -2632,6 +2989,10 @@
 				<p class="hub-desc">A filmmaker and maker, drawn to photography, optics, and electronics.</p>
 			</section>
 
+			<section class="section book-cta">
+				<a class="book-btn" href="https://photographers.pt" target="_blank" rel="noopener">Book a shoot</a>
+			</section>
+
 			<section class="section">
 				<div class="section-title">WORK</div>
 				<div class="work-switch">
@@ -3313,12 +3674,8 @@ document.addEventListener('mousemove', (e) => {
 				const intensity = Math.pow(1 - (distance / maxDistance), 3);
 				const weight = 200 + Math.round(intensity * 600);
 				
-				const gray = 128;
-				const green = Math.round(intensity * 224);
-				const greenMid = Math.round(intensity * 80);
-				
 				span.style.fontWeight = weight;
-				span.style.color = `rgb(${Math.round(gray * (1 - intensity))}, ${gray + green}, ${gray * (1 - intensity) + greenMid})`;
+				span.style.color = `color-mix(in srgb, var(--glow-to) ${Math.round(intensity * 100)}%, var(--glow-from))`;
 				span.style.animation = 'none';
 			} else {
 				span.style.animation = '';
@@ -3327,6 +3684,91 @@ document.addEventListener('mousemove', (e) => {
 		rafPending = false;
 	});
 });
+
+// ========================================
+// PER-TAB THEMES — Photos / Software / Hardware re-skin the page; Home & Films use the default
+// ========================================
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+// Software: faint digital rain behind the page (only runs while that tab is open)
+const matrixRain = (() => {
+	const canvas = document.createElement('canvas');
+	canvas.id = 'matrix-rain';
+	canvas.setAttribute('aria-hidden', 'true');
+	document.body.prepend(canvas);
+	const ctx = canvas.getContext('2d');
+	const glyphs = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワン0123456789';
+	const size = 16;
+	let drops = [], raf = 0, last = 0, running = false;
+	function resize() {
+		const dpr = Math.min(window.devicePixelRatio || 1, 2);
+		canvas.width = innerWidth * dpr;
+		canvas.height = innerHeight * dpr;
+		ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+		drops = Array.from({ length: Math.ceil(innerWidth / size) }, () => Math.random() * -40);
+	}
+	function tick(t) {
+		raf = requestAnimationFrame(tick);
+		if (t - last < 55) return;                 // ~18 fps is plenty for rain
+		last = t;
+		ctx.fillStyle = 'rgba(0, 0, 0, 0.09)';      // fade the previous glyphs into trails
+		ctx.fillRect(0, 0, innerWidth, innerHeight);
+		ctx.fillStyle = '#00ff41';
+		ctx.font = size + 'px monospace';
+		drops.forEach((y, i) => {
+			ctx.fillText(glyphs[(Math.random() * glyphs.length) | 0], i * size, y * size);
+			drops[i] = y * size > innerHeight && Math.random() > 0.975 ? 0 : y + 1;
+		});
+	}
+	return {
+		start() {
+			if (running || reduceMotion.matches) return;
+			running = true;
+			resize();
+			window.addEventListener('resize', resize);
+			raf = requestAnimationFrame(tick);
+		},
+		stop() {
+			if (!running) return;
+			running = false;
+			cancelAnimationFrame(raf);
+			window.removeEventListener('resize', resize);
+		}
+	};
+})();
+
+// Software: the title "decodes" through random glyphs into val-nvs.com
+function decodeTitle() {
+	if (reduceMotion.matches) return;
+	const pool = '01<>/\\|#$%&*+=?';
+	headerChars.forEach((span, i) => {
+		let n = 0;
+		const timer = setInterval(() => {
+			if (++n > 5 + i) {
+				span.textContent = headerText[i];
+				clearInterval(timer);
+			} else {
+				span.textContent = pool[(Math.random() * pool.length) | 0];
+			}
+		}, 45);
+	});
+}
+
+function setTheme(name) {
+	const root = document.documentElement;
+	if (root.dataset.theme === name) return;
+	root.dataset.theme = name;
+	// restart the title's colour wave (keeping its stagger) so the header visibly re-skins
+	headerChars.forEach(s => { s.style.animation = 'none'; s.style.color = ''; s.style.fontWeight = ''; });
+	void root.offsetWidth;
+	headerChars.forEach((s, i) => { s.style.animation = ''; s.style.animationDelay = `${i * 0.15}s`; });
+	if (name === 'software') {
+		matrixRain.start();
+		decodeTitle();
+	} else {
+		matrixRain.stop();
+	}
+}
 
 // ========================================
 // NAVIGATION
@@ -3345,6 +3787,7 @@ function activateTab(button) {
 	document.querySelectorAll('.page').forEach(page => {
 		page.classList.toggle('page-hidden', page.id !== selectedPage);
 	});
+	setTheme(selectedPage);
 
 	window.scrollTo({ top: 0, behavior: 'smooth' });
 }
