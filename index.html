@@ -30,7 +30,7 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono:wght@200..800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,100,0,200&icon_names=call,language,location_on,mail,open_in_new,person" />
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,100,0,200&icon_names=call,language,location_on,mail,memory,open_in_new,person" />
 	<!-- Per-tab theme fonts (Photos / Software / Hardware), loaded without blocking first paint -->
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&family=Jost:wght@200..700&family=Share+Tech+Mono&display=swap" media="print" onload="this.media='all'">
 
@@ -96,6 +96,7 @@
 			--title-hot: #00E054;
 			--glow-from: #808080;
 			--glow-to: #00ff50;
+			--card-bg: #1D1F25;
 		}
 
 		/* ========================================
@@ -132,6 +133,117 @@
 			min-height: 100dvh;
 			display: flex;
 			flex-direction: column;
+		}
+
+		/* ========================================
+		   MARQUEE (site-wide message strip)
+		   JS repeats the item to fill the strip and sets --marquee-shift (one item's
+		   width) and --marquee-duration, so the loop is seamless at a steady speed.
+		   ======================================== */
+		.marquee {
+			display: block;
+			overflow: hidden;
+			background: #d71920;
+			color: #fff;
+			font-family: 'Roboto', sans-serif;
+			font-size: 0.75rem;
+			line-height: 1;
+		}
+
+		.marquee[hidden] {
+			display: none;
+		}
+
+		.marquee-track {
+			display: flex;
+			width: max-content;
+			animation: marquee var(--marquee-duration, 20s) linear infinite;
+		}
+
+		.marquee:hover .marquee-track,
+		.marquee:focus-within .marquee-track {
+			animation-play-state: paused;
+		}
+
+		@keyframes marquee {
+			to { transform: translateX(var(--marquee-shift, -50%)); }
+		}
+
+		.marquee-item {
+			display: flex;
+			flex: none;
+			align-items: center;
+			gap: 0.5rem;
+			padding: 0.55rem 0;
+			color: inherit;
+			text-decoration: none;
+			white-space: nowrap;
+		}
+
+		/* dot between repeats */
+		.marquee-item::after {
+			content: '';
+			width: 4px;
+			height: 4px;
+			margin: 0 1.25rem 0 0.75rem;
+			border-radius: 50%;
+			background: currentColor;
+			opacity: 0.6;
+		}
+
+		.marquee-text {
+			font-weight: 700;
+			letter-spacing: 0.08em;
+			text-transform: uppercase;
+		}
+
+		.marquee-arrow {
+			width: 0.75rem;
+			height: 0.75rem;
+			fill: none;
+			stroke: currentColor;
+			stroke-width: 2;
+			stroke-linecap: round;
+			stroke-linejoin: round;
+		}
+
+		.marquee-url {
+			font-weight: 500;
+			text-decoration: underline;
+			text-decoration-color: rgba(255, 255, 255, 0.5);
+			text-underline-offset: 2px;
+		}
+
+		a.marquee-item:hover .marquee-url {
+			text-decoration-color: #fff;
+		}
+
+		.marquee-item:focus-visible {
+			outline: 2px solid #fff;
+			outline-offset: -2px;
+		}
+
+		/* no scrolling: one centred copy of the message */
+		@media (prefers-reduced-motion: reduce) {
+			.marquee-track {
+				width: auto;
+				justify-content: center;
+				animation: none;
+			}
+
+			.marquee-item {
+				flex: 0 1 auto;
+				flex-wrap: wrap;
+				justify-content: center;
+				padding-inline: var(--content-padding);
+				white-space: normal;
+				text-align: center;
+			}
+
+			.marquee-item[aria-hidden],
+			.marquee-item::after {
+				display: none;
+			}
 		}
 
 		/* ========================================
@@ -418,28 +530,206 @@
 			border-radius: inherit;
 		}
 
-		/* Empty placeholder cards (projects with no image yet) */
-		.card-placeholder {
-			aspect-ratio: 4 / 3;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			background: var(--surface-sunken);
-		}
-
-		.card-placeholder::after {
-			content: 'no image';
-			color: var(--text-faint);
-			font-size: 0.7rem;
-			letter-spacing: 0.08em;
-			text-transform: uppercase;
-			font-family: "Atkinson Hyperlegible Mono", monospace;
-		}
-
 		/* Not-yet-announced link placeholder */
 		.tba {
 			color: var(--text-muted);
 			font-style: italic;
+		}
+
+		/* ========================================
+		   PROJECT CARDS (Software & Hardware)
+		   A list of cards: thumbnail on the start side, then title, description and
+		   link. The title's link is stretched over the whole card; .is-static cards
+		   have no link and no hover; .is-featured puts its media on top.
+		   ======================================== */
+		.proj-list {
+			display: grid;
+			gap: 0.625rem;
+			padding: var(--content-padding);
+		}
+
+		.proj {
+			position: relative;
+			display: flex;
+			background: var(--card-bg);
+			border: 1px solid var(--border-subtle);
+			border-radius: 12px;
+			overflow: hidden;
+			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+			transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+		}
+
+		.proj.is-featured {
+			flex-direction: column;
+		}
+
+		.proj-media {
+			position: relative;
+			flex: 0 0 38%;
+			min-height: 6rem;
+			overflow: hidden;
+			background: var(--surface-sunken);
+			border-inline-end: 1px solid var(--border-subtle);
+		}
+
+		.proj.is-featured .proj-media {
+			flex: none;
+			aspect-ratio: 16 / 9;
+			border-inline-end: 0;
+			border-bottom: 1px solid var(--border-subtle);
+		}
+
+		/* the text sets the card's height; the thumbnail fills it */
+		.proj-media img,
+		.proj-media video {
+			position: absolute;
+			inset: 0;
+			display: block;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			transition: transform 0.4s ease;
+		}
+
+		.proj-media.fit-top img {
+			object-position: top;
+		}
+
+		.proj-media.fit-contain img {
+			object-fit: contain;
+			padding: 12%;
+		}
+
+		/* no photo yet */
+		.proj-media.is-empty {
+			display: grid;
+			place-items: center;
+			color: var(--text-faint);
+		}
+
+		.proj-media.is-empty .material-symbols-outlined {
+			font-size: 2.5rem;
+		}
+
+		.proj-badges {
+			position: absolute;
+			top: 0.5rem;
+			inset-inline-start: 0.5rem;
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.25rem;
+		}
+
+		.proj-badge {
+			padding: 0.2rem 0.5rem;
+			border-radius: 999px;
+			background: rgba(0, 0, 0, 0.62);
+			color: #fff;
+			font-size: 0.6875rem;
+			font-weight: 500;
+			line-height: 1.2;
+			-webkit-backdrop-filter: blur(6px);
+			backdrop-filter: blur(6px);
+		}
+
+		.proj-badge.is-featured {
+			background: var(--accent-color);
+			color: #000;
+		}
+
+		.proj-body {
+			display: flex;
+			flex: 1;
+			flex-direction: column;
+			min-width: 0;
+			gap: 0.3rem;
+			padding: 0.75rem 0.8rem 0.8rem;
+		}
+
+		.proj-title {
+			margin: 0;
+			color: var(--text-strong);
+			font-family: var(--font-body);
+			font-size: 0.9375rem;
+			font-weight: 600;
+			line-height: 1.3;
+		}
+
+		.proj-title a {
+			color: inherit;
+			text-decoration: none;
+		}
+
+		.proj-title a::after {
+			content: '';
+			position: absolute;
+			inset: 0;
+			z-index: 1;
+		}
+
+		.proj-title a:focus-visible {
+			outline: none;
+		}
+
+		.proj:has(.proj-title a:focus-visible) {
+			outline: 2px solid var(--accent-color);
+			outline-offset: 2px;
+		}
+
+		.proj-desc {
+			margin: 0;
+			color: var(--text-primary);
+			font-size: 0.8125rem;
+			line-height: 1.45;
+		}
+
+		.proj-meta {
+			display: flex;
+			align-items: center;
+			gap: 0.25rem;
+			margin-top: auto;
+			padding-top: 0.35rem;
+			color: var(--text-muted);
+			font-size: 0.75rem;
+		}
+
+		.proj-url {
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+
+		.proj-arrow {
+			flex: none;
+			width: 0.75rem;
+			height: 0.75rem;
+			fill: none;
+			stroke: currentColor;
+			stroke-width: 1.75;
+			stroke-linecap: round;
+			stroke-linejoin: round;
+			transition: transform 0.2s ease;
+		}
+
+		@media (hover: hover) {
+			.proj:not(.is-static):hover {
+				transform: translateY(-3px);
+				border-color: var(--border-med);
+				box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+			}
+
+			.proj:not(.is-static):hover .proj-media img,
+			.proj:not(.is-static):hover .proj-media video {
+				transform: scale(1.04);
+			}
+
+			.proj:not(.is-static):hover .proj-meta {
+				color: var(--text-primary);
+			}
+
+			.proj:not(.is-static):hover .proj-arrow {
+				transform: translate(2px, -2px);
+			}
 		}
 
 		.film-year {
@@ -1318,56 +1608,11 @@
 			border: none;
 		}
 
-		.card.card-nolink {
-			cursor: default;
-		}
-
-		.card.card-nolink::before {
-			border-color: var(--border-strong);
-		}
-
-		.card.card-nolink:hover::before,
-		.card.card-nolink:focus::before {
-			border: 1px solid var(--border-strong);
-		}
-
-		.card-tooltip {
-			position: absolute;
-			background: var(--bg-primary);
-			border: 1px solid var(--border-color);
-			border-radius: 0.25rem;
-			padding: 0.3rem 0.6rem;
-			font-size: 0.75rem;
-			color: var(--text-primary);
-			white-space: nowrap;
-			z-index: 5;
-			pointer-events: none;
-			opacity: 0;
-			transition: opacity 0.3s ease;
-		}
-
-		.card-tooltip.visible {
-			opacity: 1;
-		}
-
 		/* ========================================
 		   PAGE VISIBILITY
 		   ======================================== */
 		.page-hidden {
 			display: none;
-		}
-
-		/* ========================================
-		   TEXT CARD (spans 3 columns in a 4-col grid)
-		   ======================================== */
-		.text-card {
-			grid-column: span 3;
-			padding: 0.5rem;
-			display: flex;
-			align-items: center;
-			color: var(--text-primary);
-			font-size: 1rem;
-			line-height: 1.5;
 		}
 
 		/* ========================================
@@ -1703,6 +1948,7 @@
 		}
 
 		@media print {
+			.marquee,
 			.site-header,
 			.site-nav {
 				display: none;
@@ -1749,10 +1995,12 @@
 			--title-hot: #b8ffc9;
 			--glow-from: #1d7a36;
 			--glow-to: #eafff0;
+			--card-bg: rgba(1, 14, 5, 0.88);
 		}
 
 		html[data-theme="software"] .site-header span,
-		html[data-theme="software"] .nav-item {
+		html[data-theme="software"] .nav-item,
+		html[data-theme="software"] .proj:not(.hw-island) {
 			font-synthesis: none;   /* single-weight mono: no faux bold */
 		}
 
@@ -1781,6 +2029,13 @@
 		html[data-theme="software"] .section-title {
 			color: var(--accent-color);
 			text-shadow: 0 0 6px rgba(0, 255, 65, 0.35);
+		}
+
+		@media (hover: hover) {
+			html[data-theme="software"] .proj:not(.hw-island):not(.is-static):hover {
+				border-color: var(--border-strong);
+				box-shadow: 0 0 24px rgba(0, 255, 65, 0.2);
+			}
 		}
 
 		html[data-theme="software"] .language-popup {
@@ -1874,7 +2129,8 @@
 		}
 
 		/* ---------- HARDWARE — cutting mat ---------- */
-		html[data-theme="hardware"][data-hw="mat"] {
+		html[data-theme="hardware"][data-hw="mat"],
+		html[data-hw="mat"] .hw-island {
 			--page-bg: #2b5a46;
 			--main-bg: transparent;
 			--chrome-bg: #efe7d1;
@@ -1902,10 +2158,12 @@
 			--title-hot: #13291f;
 			--glow-from: #6b6752;
 			--glow-to: #0d1f17;
+			--card-bg: rgba(22, 50, 38, 0.82);
 		}
 
 		/* 1 cm grid, 5 cm majors, 45° cutting guides */
-		html[data-theme="hardware"][data-hw="mat"] body {
+		html[data-theme="hardware"][data-hw="mat"] body,
+		html[data-hw="mat"] .hw-island {
 			background-image:
 				linear-gradient(rgba(255, 255, 255, 0.24) 1px, transparent 1px),
 				linear-gradient(90deg, rgba(255, 255, 255, 0.24) 1px, transparent 1px),
@@ -1962,7 +2220,8 @@
 		}
 
 		/* ---------- HARDWARE — blueprint ---------- */
-		html[data-theme="hardware"][data-hw="blueprint"] {
+		html[data-theme="hardware"][data-hw="blueprint"],
+		html[data-hw="blueprint"] .hw-island {
 			--page-bg: #1c4c8c;
 			--main-bg: transparent;
 			--chrome-bg: #173f76;
@@ -1990,9 +2249,11 @@
 			--title-hot: #fff;
 			--glow-from: #a9c0e6;
 			--glow-to: #fff;
+			--card-bg: rgba(13, 42, 86, 0.78);
 		}
 
-		html[data-theme="hardware"][data-hw="blueprint"] body {
+		html[data-theme="hardware"][data-hw="blueprint"] body,
+		html[data-hw="blueprint"] .hw-island {
 			background-image:
 				linear-gradient(rgba(255, 255, 255, 0.22) 1px, transparent 1px),
 				linear-gradient(90deg, rgba(255, 255, 255, 0.22) 1px, transparent 1px),
@@ -2002,7 +2263,9 @@
 		}
 
 		html[data-theme="hardware"][data-hw="blueprint"] .site-header span,
-		html[data-theme="hardware"][data-hw="blueprint"] .nav-item {
+		html[data-theme="hardware"][data-hw="blueprint"] .nav-item,
+		html[data-theme="hardware"][data-hw="blueprint"] .proj,
+		html[data-hw="blueprint"] .hw-island {
 			font-synthesis: none;
 		}
 
@@ -2037,6 +2300,16 @@
 			color: #173f76;
 		}
 
+		/* ---------- Hardware island ----------
+		   A hardware project shown on another tab keeps the hardware look: the hardware
+		   selectors above hand it their tokens and grid; this paints them (and, coming
+		   after .proj, swaps the card surface for the hardware background). */
+		.hw-island {
+			background-color: var(--page-bg);
+			color: var(--text-primary);
+			font-family: var(--font-body);
+		}
+
 		/* Respect users who prefer reduced motion */
 		@media (prefers-reduced-motion: reduce) {
 			*,
@@ -2053,6 +2326,19 @@
 <body>
 
 <div class="container">
+	<!-- MARQUEE: red message strip above the header, on every tab. To change the message, edit
+	     the item below (and its 'marquee.gofundme' translations, or drop data-translate); use
+	     <span class="marquee-item"> for a message without a link; add hidden to <aside> to turn it off. -->
+	<aside class="marquee" aria-label="Announcement">
+		<div class="marquee-track">
+			<a class="marquee-item" href="https://gofund.me/1efe380d9" target="_blank" rel="noopener">
+				<span class="marquee-text" data-translate="marquee.gofundme">Support our film on GoFundMe</span>
+				<svg class="marquee-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg>
+				<span class="marquee-url">gofund.me/1efe380d9</span>
+			</a>
+		</div>
+	</aside>
+
 	<!-- Header -->
 	<div class="site-header">
 		<div class="header-spacer"></div>
@@ -2087,195 +2373,255 @@
 		<!-- SOFTWARE PAGE -->
 		<div class="page page-hidden" id="software" role="tabpanel" aria-labelledby="tab-software" tabindex="0">
 
-			<section class="section">
-				<div class="section-title" data-translate="t.benares">CLUB BENARES WEBSITE</div>
-				<div class="content-grid grid-1">
-					<a class="card" href="https://thebenaresclub.com" target="_blank" rel="noopener">
+			<div class="proj-list">
+				<article class="proj">
+					<div class="proj-media">
 						<img loading="lazy" src="media/benares.png" width="818" height="354" alt="Club Benares website">
-					</a>
-				</div>
-			</section>
+					</div>
+					<div class="proj-body">
+						<h2 class="proj-title"><a href="https://thebenaresclub.com" target="_blank" rel="noopener" data-translate="t.benares">Club Benares Website</a></h2>
+						<div class="proj-meta"><span class="proj-url">thebenaresclub.com</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
+					</div>
+				</article>
 
-			<section class="section">
-				<div class="section-title" data-translate="t.chat">CHAT ROOM</div>
-				<div class="content-grid grid-4">
-					<a class="card span-4" href="https://val-nvs.com/chat/" target="_blank" rel="noopener">
+				<article class="proj">
+					<div class="proj-media">
 						<img loading="lazy" src="media/chat.png" width="1450" height="628" alt="Web chat room">
-					</a>
-					<div class="text-card span-2">Real-time web-based chat room.</div>
-				</div>
-			</section>
+					</div>
+					<div class="proj-body">
+						<h2 class="proj-title"><a href="https://val-nvs.com/chat/" target="_blank" rel="noopener" data-translate="t.chat">Chat Room</a></h2>
+						<p class="proj-desc">Real-time web-based chat room.</p>
+						<div class="proj-meta"><span class="proj-url">val-nvs.com/chat</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
+					</div>
+				</article>
 
-			<section class="section">
-				<div class="section-title" data-translate="t.filmsoftware">Film Production Software W.I.P</div>
-				<div class="content-grid grid-4">
-					<a class="card" href="https://callsheet.studio" target="_blank" rel="noopener">
+				<article class="proj">
+					<div class="proj-media fit-top">
 						<img loading="lazy" src="media/crew.jpg" width="587" height="880" alt="Callsheet.studio production tool">
-					</a>
-					<div class="text-card"><a href="https://callsheet.studio" target="_blank" rel="noopener noreferrer">callsheet.studio</a></div>
-				</div>
-			</section>
+						<span class="proj-badges"><span class="proj-badge" data-translate="p.wip">In progress</span></span>
+					</div>
+					<div class="proj-body">
+						<h2 class="proj-title"><a href="https://callsheet.studio" target="_blank" rel="noopener" data-translate="t.filmsoftware">Film Production Software</a></h2>
+						<div class="proj-meta"><span class="proj-url">callsheet.studio</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
+					</div>
+				</article>
 
-			<section class="section">
-				<div class="section-title" data-translate="t.metro">LISBON METRO ENTRANCES</div>
-				<div class="content-grid grid-4">
-					<a class="card" href="https://val-nvs.com/lisbon" target="_blank" rel="noopener">
+				<article class="proj">
+					<div class="proj-media fit-top">
 						<img loading="lazy" src="media/lis.jpg" width="642" height="963" alt="Lisbon metro entrances map">
-					</a>
-					<div class="text-card">Map of every Lisbon metro station entrance. Route mode will lead you to the nearest entrance.</div>
-				</div>
-			</section>
+					</div>
+					<div class="proj-body">
+						<h2 class="proj-title"><a href="https://val-nvs.com/lisbon" target="_blank" rel="noopener" data-translate="t.metro">Lisbon Metro Entrances</a></h2>
+						<p class="proj-desc">Map of every Lisbon metro station entrance. Route mode will lead you to the nearest entrance.</p>
+						<div class="proj-meta"><span class="proj-url">val-nvs.com/lisbon</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
+					</div>
+				</article>
 
-			<section class="section">
-				<div class="section-title" data-translate="t.duotone">DUOTONE TECHNICOLOR FILTER</div>
-				<div class="content-grid grid-4">
-					<a class="card" href="https://val-nvs.com/colors/" target="_blank" rel="noopener">
+				<article class="proj">
+					<div class="proj-media fit-top">
 						<img loading="lazy" src="media/mex.jpg" width="776" height="1163" alt="Duotone Technicolor filter">
-					</a>
-					<div class="text-card">Upload any photo and split it into two-tone colour channels, inspired by early Technicolor processes.</div>
-				</div>
-			</section>
+					</div>
+					<div class="proj-body">
+						<h2 class="proj-title"><a href="https://val-nvs.com/colors/" target="_blank" rel="noopener" data-translate="t.duotone">Duotone Technicolor Filter</a></h2>
+						<p class="proj-desc">Upload any photo and split it into two-tone colour channels, inspired by early Technicolor processes.</p>
+						<div class="proj-meta"><span class="proj-url">val-nvs.com/colors</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
+					</div>
+				</article>
 
-			<section class="section">
-				<div class="section-title" data-translate="t.stats">STATS</div>
-				<div class="content-grid grid-1">
-					<a class="card" href="https://val-nvs.com/stats/" target="_blank" rel="noopener">
+				<article class="proj">
+					<div class="proj-media">
 						<img loading="lazy" src="media/stats.png" width="670" height="255" alt="Letterboxd stats dashboard">
-					</a>
-				</div>
-			</section>
+					</div>
+					<div class="proj-body">
+						<h2 class="proj-title"><a href="https://val-nvs.com/stats/" target="_blank" rel="noopener" data-translate="t.stats">Stats</a></h2>
+						<p class="proj-desc">Letterboxd stats dashboard.</p>
+						<div class="proj-meta"><span class="proj-url">val-nvs.com/stats</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
+					</div>
+				</article>
 
-			<section class="section">
-				<div class="section-title" data-translate="t.broadcast">BROADCAST TABLE</div>
-				<div class="content-grid grid-1">
-					<a class="card" href="https://val-nvs.com/tv/" target="_blank" rel="noopener">
-						<video class="card-media" autoplay muted loop playsinline width="652" height="336" poster="media/switcher-poster.jpg" aria-label="Broadcast switcher table animation">
+				<article class="proj">
+					<div class="proj-media">
+						<video autoplay muted loop playsinline width="652" height="336" poster="media/switcher-poster.jpg" aria-label="Broadcast switcher table animation">
 							<source src="media/switcher.webm" type="video/webm">
 							<source src="media/switcher.mp4" type="video/mp4">
 						</video>
-					</a>
-					<div class="text-card span-1">Functional but not really.</div>
-				</div>
-			</section>
+					</div>
+					<div class="proj-body">
+						<h2 class="proj-title"><a href="https://val-nvs.com/tv/" target="_blank" rel="noopener" data-translate="t.broadcast">Broadcast Table</a></h2>
+						<p class="proj-desc">Functional but not really.</p>
+						<div class="proj-meta"><span class="proj-url">val-nvs.com/tv</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
+					</div>
+				</article>
 
-			<section class="section">
-				<div class="section-title" data-translate="t.engine">ENGINE</div>
-				<div class="content-grid grid-1">
-					<a class="card" href="https://val-nvs.com/game-engine/" target="_blank" rel="noopener">
+				<article class="proj">
+					<div class="proj-media">
 						<img loading="lazy" src="media/engine.jpg" width="1592" height="850" alt="Game engine project">
-					</a>
-				</div>
-			</section>
+					</div>
+					<div class="proj-body">
+						<h2 class="proj-title"><a href="https://val-nvs.com/game-engine/" target="_blank" rel="noopener" data-translate="t.engine">Engine</a></h2>
+						<div class="proj-meta"><span class="proj-url">val-nvs.com/game-engine</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
+					</div>
+				</article>
 
-			<section class="section">
-				<div class="section-title" data-translate="t.previs">BLENDER 3D PRE-VIS & PHOTOGRAMMETRY</div>
-				<div class="content-grid grid-1">
-					<a class="card" href="https://www.youtube.com/watch?v=5LlSdajis7g" target="_blank" rel="noopener">
+				<article class="proj">
+					<div class="proj-media">
 						<img loading="lazy" src="media/previs.png" width="1000" height="366" alt="Blender 3D pre-visualization">
-					</a>
-					<div class="text-card">test</div>
-				</div>
-			</section>
+					</div>
+					<div class="proj-body">
+						<h2 class="proj-title"><a href="https://www.youtube.com/watch?v=5LlSdajis7g" target="_blank" rel="noopener" data-translate="t.previs">Blender 3D Pre-vis &amp; Photogrammetry</a></h2>
+						<div class="proj-meta"><span class="proj-url">youtube.com</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
+					</div>
+				</article>
 
-			<section class="section">
-				<div class="section-title" data-translate="t.blenderguide">BLENDER GUIDE</div>
-				<div class="content-grid grid-1">
-					<a class="card" href="https://val-nvs.com/blender-guide/" target="_blank" rel="noopener">
-						<video class="card-media" autoplay muted loop playsinline width="1208" height="574" poster="media/pan-poster.jpg" aria-label="Blender guide animation">
+				<article class="proj">
+					<div class="proj-media">
+						<video autoplay muted loop playsinline width="1208" height="574" poster="media/pan-poster.jpg" aria-label="Blender guide animation">
 							<source src="media/pan.webm" type="video/webm">
 							<source src="media/pan.mp4" type="video/mp4">
 						</video>
-					</a>
-				</div>
-			</section>
+					</div>
+					<div class="proj-body">
+						<h2 class="proj-title"><a href="https://val-nvs.com/blender-guide/" target="_blank" rel="noopener" data-translate="t.blenderguide">Blender Guide</a></h2>
+						<div class="proj-meta"><span class="proj-url">val-nvs.com/blender-guide</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
+					</div>
+				</article>
 
-			<section class="section">
-				<div class="section-title" data-translate="t.blendernodes">BLENDER NODES</div>
-				<div class="content-grid grid-1">
-					<span class="card card-nolink" aria-disabled="true">
+				<article class="proj is-static">
+					<div class="proj-media">
 						<img loading="lazy" src="media/nodes.png" width="1000" height="388" alt="Blender shader nodes">
-					</span>
-				</div>
-			</section>
+					</div>
+					<div class="proj-body">
+						<h2 class="proj-title" data-translate="t.blendernodes">Blender Nodes</h2>
+						<div class="proj-meta"><span data-translate="p.nolink">No link yet</span></div>
+					</div>
+				</article>
 
-			<section class="section">
-				<div class="section-title" data-translate="t.lenssim">LENS SIMULATION work in progress</div>
-				<div class="content-grid grid-4">
-					<a class="card" href="https://val-nvs.com/lens/test5.html" target="_blank" rel="noopener">
+				<article class="proj">
+					<div class="proj-media fit-top">
 						<img loading="lazy" src="media/lens.jpg" width="201" height="305" alt="Lens simulation">
-					</a>
-					<div class="text-card">work in progress</div>
-				</div>
-			</section>
+						<span class="proj-badges"><span class="proj-badge" data-translate="p.wip">In progress</span></span>
+					</div>
+					<div class="proj-body">
+						<h2 class="proj-title"><a href="https://val-nvs.com/lens/test5.html" target="_blank" rel="noopener" data-translate="t.lenssim">Lens Simulation</a></h2>
+						<div class="proj-meta"><span class="proj-url">val-nvs.com/lens/test5.html</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
+					</div>
+				</article>
 
-			<section class="section">
-				<div class="section-title" data-translate="t.devtimes">DEVELOPMENT TIMES</div>
-				<div class="content-grid grid-4">
-					<a class="card" href="https://val-nvs.com/rodinal/" target="_blank" rel="noopener">
+				<!-- also listed in Hardware; keeps the hardware look (hw-island) -->
+				<article class="proj hw-island">
+					<div class="proj-media fit-top">
+						<img loading="lazy" src="media/logic.jpg" width="751" height="1127" alt="Logic gate simulator">
+					</div>
+					<div class="proj-body">
+						<h2 class="proj-title"><a href="https://val-nvs.com/logic/game.html" target="_blank" rel="noopener" data-translate="t.logicgate">Logic Gate Simulation</a></h2>
+						<p class="proj-desc">A digital logic gate simulator where the most advanced gate is a NOT/NOR. That's all you need really.</p>
+						<div class="proj-meta"><span class="proj-url">val-nvs.com/logic/game.html</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
+					</div>
+				</article>
+
+				<article class="proj">
+					<div class="proj-media fit-top">
 						<img loading="lazy" src="media/times.jpg" width="744" height="1115" alt="Rodinal development times">
-					</a>
-					<div class="text-card">20°C Rodinal 1+25 Development Times for 35mm film.</div>
-				</div>
-			</section>
+					</div>
+					<div class="proj-body">
+						<h2 class="proj-title"><a href="https://val-nvs.com/rodinal/" target="_blank" rel="noopener" data-translate="t.devtimes">Development Times</a></h2>
+						<p class="proj-desc">20°C Rodinal 1+25 development times for 35mm film.</p>
+						<div class="proj-meta"><span class="proj-url">val-nvs.com/rodinal</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
+					</div>
+				</article>
 
-			<section class="section">
-				<div class="section-title" data-translate="t.favfilms">FAVORITE FILMS</div>
-				<div class="content-grid grid-1">
-					<a class="card" href="https://val-nvs.com/favorites/" target="_blank" rel="noopener">
+				<article class="proj">
+					<div class="proj-media">
 						<img loading="lazy" src="media/films.jpg" width="1592" height="850" alt="Favorite films collection">
-					</a>
-				</div>
-			</section>
+					</div>
+					<div class="proj-body">
+						<h2 class="proj-title"><a href="https://val-nvs.com/favorites/" target="_blank" rel="noopener" data-translate="p.favfilms">Favorite Films</a></h2>
+						<div class="proj-meta"><span class="proj-url">val-nvs.com/favorites</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
+					</div>
+				</article>
 
-			<section class="section">
-				<div class="section-title" data-translate="t.portfolios">PORTFOLIO WEBSITES</div>
-				<div class="content-grid grid-4">
-					<a class="card" href="https://val-nvs.com/portfolio/" target="_blank" rel="noopener">
+				<article class="proj">
+					<div class="proj-media">
 						<img loading="lazy" src="media/film.jpg" width="400" height="214" alt="Film portfolio">
-					</a>
-					<div class="text-card span-1">Film.</div>
-					<a class="card" href="https://val-nvs.com/photo/" target="_blank" rel="noopener">
+					</div>
+					<div class="proj-body">
+						<h2 class="proj-title"><a href="https://val-nvs.com/portfolio/" target="_blank" rel="noopener" data-translate="p.filmportfolio">Film Portfolio</a></h2>
+						<div class="proj-meta"><span class="proj-url">val-nvs.com/portfolio</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
+					</div>
+				</article>
+
+				<article class="proj">
+					<div class="proj-media">
 						<img loading="lazy" src="media/photofolio.jpg" width="1362" height="747" alt="Photography portfolio">
-					</a>
-					<div class="text-card span-1">Photo.</div>
-				</div>
-			</section>
+					</div>
+					<div class="proj-body">
+						<h2 class="proj-title"><a href="https://val-nvs.com/photo/" target="_blank" rel="noopener" data-translate="p.photoportfolio">Photo Portfolio</a></h2>
+						<div class="proj-meta"><span class="proj-url">val-nvs.com/photo</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
+					</div>
+				</article>
 
-			<section class="section">
-				<div class="section-title" data-translate="t.otherwebsites">OTHER WEBSITES</div>
-				<div class="content-grid grid-2">
-					<a class="card" href="https://val-nvs.com/klotski.html" target="_blank" rel="noopener">
+				<article class="proj">
+					<div class="proj-media">
 						<img loading="lazy" src="media/klotski.png" width="1592" height="850" alt="Klotski puzzle game">
-					</a>
-					<a class="card" href="https://val-nvs.com/calc.html" target="_blank" rel="noopener">
+					</div>
+					<div class="proj-body">
+						<h2 class="proj-title"><a href="https://val-nvs.com/klotski.html" target="_blank" rel="noopener" data-translate="p.klotski">Klotski</a></h2>
+						<p class="proj-desc">Puzzle game.</p>
+						<div class="proj-meta"><span class="proj-url">val-nvs.com/klotski.html</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
+					</div>
+				</article>
+
+				<article class="proj">
+					<div class="proj-media">
 						<img loading="lazy" src="media/calc.png" width="1592" height="850" alt="Custom calculator">
-					</a>
-					<a class="card" href="https://val-nvs.com/portfolio/old.html" target="_blank" rel="noopener">
+					</div>
+					<div class="proj-body">
+						<h2 class="proj-title"><a href="https://val-nvs.com/calc.html" target="_blank" rel="noopener" data-translate="p.calc">Web Calculator</a></h2>
+						<div class="proj-meta"><span class="proj-url">val-nvs.com/calc.html</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
+					</div>
+				</article>
+
+				<article class="proj">
+					<div class="proj-media">
 						<img loading="lazy" src="media/old.png" width="1592" height="850" alt="Old portfolio website">
-					</a>
-					<a class="card" href="https://val-nvs.com/404" target="_blank" rel="noopener">
+					</div>
+					<div class="proj-body">
+						<h2 class="proj-title"><a href="https://val-nvs.com/portfolio/old.html" target="_blank" rel="noopener" data-translate="p.oldportfolio">Old Portfolio</a></h2>
+						<div class="proj-meta"><span class="proj-url">val-nvs.com/portfolio/old.html</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
+					</div>
+				</article>
+
+				<article class="proj">
+					<div class="proj-media">
 						<img loading="lazy" src="media/404.png" width="1592" height="850" alt="404 error page">
-					</a>
-				</div>
-			</section>
+					</div>
+					<div class="proj-body">
+						<h2 class="proj-title"><a href="https://val-nvs.com/404" target="_blank" rel="noopener" data-translate="p.404">404 Page</a></h2>
+						<div class="proj-meta"><span class="proj-url">val-nvs.com/404</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
+					</div>
+				</article>
 
-			<section class="section">
-				<div class="section-title" data-translate="t.oldlander">OLD LANDER</div>
-				<div class="content-grid grid-1">
-					<a class="card" href="https://val-nvs.com/OLDindex.html" target="_blank" rel="noopener">
+				<article class="proj">
+					<div class="proj-media">
 						<img loading="lazy" src="media/pic1.jpg" width="1000" height="388" alt="Original landing page">
-					</a>
-				</div>
-			</section>
+					</div>
+					<div class="proj-body">
+						<h2 class="proj-title"><a href="https://val-nvs.com/OLDindex.html" target="_blank" rel="noopener" data-translate="t.oldlander">Old Lander</a></h2>
+						<p class="proj-desc">The original landing page.</p>
+						<div class="proj-meta"><span class="proj-url">val-nvs.com/OLDindex.html</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
+					</div>
+				</article>
 
-			<section class="section">
-				<div class="section-title" data-translate="t.github">GITHUB PROFILE</div>
-				<div class="content-grid grid-1">
-					<a class="card" href="https://github.com/val-nvs" target="_blank" rel="noopener">
+				<article class="proj">
+					<div class="proj-media fit-contain">
 						<img loading="lazy" src="media/github.png" width="341" height="334" alt="GitHub profile">
-					</a>
-				</div>
-			</section>
+					</div>
+					<div class="proj-body">
+						<h2 class="proj-title"><a href="https://github.com/val-nvs" target="_blank" rel="noopener" data-translate="t.github">GitHub Profile</a></h2>
+						<div class="proj-meta"><span class="proj-url">github.com/val-nvs</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
+					</div>
+				</article>
+			</div>
 
 		</div>
 
@@ -2284,68 +2630,87 @@
 		<!-- HARDWARE PAGE -->
 		<div class="page page-hidden" id="hardware" role="tabpanel" aria-labelledby="tab-hardware" tabindex="0">
 
-			<section class="section">
-				<div class="section-title" data-translate="t.filmcamera">3D PRINTED FILM CAMERA 📌</div>
-				<div class="content-grid grid-4">
-					<a class="card span-4" href="https://github.com/val-nvs/film-camera" target="_blank" rel="noopener">
-						<video class="card-media" autoplay muted loop playsinline width="378" height="210" poster="media/v19-poster.jpg" aria-label="3D printed film camera animation">
+			<div class="proj-list">
+				<article class="proj is-featured">
+					<div class="proj-media">
+						<video autoplay muted loop playsinline width="378" height="210" poster="media/v19-poster.jpg" aria-label="3D printed film camera animation">
 							<source src="media/v19.webm" type="video/webm">
 							<source src="media/v19.mp4" type="video/mp4">
 						</video>
-					</a>
-					<div class="text-card">Coming soon</div>
-				</div>
-			</section>
+						<span class="proj-badges"><span class="proj-badge is-featured" data-translate="p.featured">Featured</span><span class="proj-badge" data-translate="p.soon">Coming soon</span></span>
+					</div>
+					<div class="proj-body">
+						<h2 class="proj-title"><a href="https://github.com/val-nvs/film-camera" target="_blank" rel="noopener" data-translate="t.filmcamera">3D Printed Film Camera</a></h2>
+						<div class="proj-meta"><span class="proj-url">github.com/val-nvs/film-camera</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
+					</div>
+				</article>
 
-			<section class="section">
-				<div class="section-title" data-translate="t.fulladder">FULL ADDER</div>
-				<div class="content-grid grid-4">
-					<span class="card card-nolink card-placeholder" aria-disabled="true"></span>
-					<div class="text-card span-2">Full added made out of NORS (11 NOR, 3 NOT, 2 OR).</div>
-				</div>
-			</section>
+				<article class="proj is-static">
+					<div class="proj-media is-empty" aria-hidden="true">
+						<span class="material-symbols-outlined">memory</span>
+					</div>
+					<div class="proj-body">
+						<h2 class="proj-title" data-translate="t.fulladder">Full Adder</h2>
+						<p class="proj-desc">Full adder made out of NORS (11 NOR, 3 NOT, 2 OR).</p>
+						<div class="proj-meta"><span data-translate="p.nolink">No link yet</span></div>
+					</div>
+				</article>
 
-			<section class="section">
-				<div class="section-title" data-translate="t.ledcounter">LED COUNTER</div>
-				<div class="content-grid grid-4">
-					<span class="card card-nolink card-placeholder" aria-disabled="true"></span>
-					<div class="text-card">LED counter CAD workshop at NOVA School of Science and Technology</div>
-				</div>
-			</section>
+				<article class="proj is-static">
+					<div class="proj-media is-empty" aria-hidden="true">
+						<span class="material-symbols-outlined">memory</span>
+					</div>
+					<div class="proj-body">
+						<h2 class="proj-title" data-translate="t.ledcounter">LED Counter</h2>
+						<p class="proj-desc">LED counter CAD workshop at NOVA School of Science and Technology.</p>
+						<div class="proj-meta"><span data-translate="p.nolink">No link yet</span></div>
+					</div>
+				</article>
 
-			<section class="section">
-				<div class="section-title" data-translate="t.computer">COMPUTER</div>
-				<div class="content-grid grid-4">
-					<span class="card card-nolink card-placeholder" aria-disabled="true"></span>
-					<div class="text-card">Computer in Minecraft and addition program.</div>
-				</div>
-			</section>
+				<article class="proj is-static">
+					<div class="proj-media is-empty" aria-hidden="true">
+						<span class="material-symbols-outlined">memory</span>
+					</div>
+					<div class="proj-body">
+						<h2 class="proj-title" data-translate="t.computer">Computer</h2>
+						<p class="proj-desc">Computer in Minecraft and addition program.</p>
+						<div class="proj-meta"><span data-translate="p.nolink">No link yet</span></div>
+					</div>
+				</article>
 
-			<section class="section">
-				<div class="section-title" data-translate="t.calculator">CALCULATOR</div>
-				<div class="content-grid grid-4">
-					<span class="card card-nolink card-placeholder" aria-disabled="true"></span>
-					<div class="text-card">Calculator in Minecraft capable of multiplication.</div>
-				</div>
-			</section>
+				<article class="proj is-static">
+					<div class="proj-media is-empty" aria-hidden="true">
+						<span class="material-symbols-outlined">memory</span>
+					</div>
+					<div class="proj-body">
+						<h2 class="proj-title" data-translate="t.calculator">Calculator</h2>
+						<p class="proj-desc">Calculator in Minecraft capable of multiplication.</p>
+						<div class="proj-meta"><span data-translate="p.nolink">No link yet</span></div>
+					</div>
+				</article>
 
-			<section class="section">
-				<div class="section-title" data-translate="t.logicgate">LOGIC GATE SIMULATION</div>
-				<div class="content-grid grid-4">
-					<a class="card" href="https://val-nvs.com/logic/game.html" target="_blank" rel="noopener">
+				<article class="proj">
+					<div class="proj-media fit-top">
 						<img loading="lazy" src="media/logic.jpg" width="751" height="1127" alt="Logic gate simulator">
-					</a>
-					<div class="text-card">A digital logic gate simulator where the most advanced gate is a NOT/NOR. That's all you need really.</div>
-				</div>
-			</section>
+					</div>
+					<div class="proj-body">
+						<h2 class="proj-title"><a href="https://val-nvs.com/logic/game.html" target="_blank" rel="noopener" data-translate="t.logicgate">Logic Gate Simulation</a></h2>
+						<p class="proj-desc">A digital logic gate simulator where the most advanced gate is a NOT/NOR. That's all you need really.</p>
+						<div class="proj-meta"><span class="proj-url">val-nvs.com/logic/game.html</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
+					</div>
+				</article>
 
-			<section class="section">
-				<div class="section-title" data-translate="t.desmoslens">DESMOS LENS</div>
-				<div class="content-grid grid-4">
-					<span class="card card-nolink card-placeholder" aria-disabled="true"></span>
-					<div class="text-card">2D Lens simulation in Desmos with bokeh simulation.</div>
-				</div>
-			</section>
+				<article class="proj is-static">
+					<div class="proj-media is-empty" aria-hidden="true">
+						<span class="material-symbols-outlined">memory</span>
+					</div>
+					<div class="proj-body">
+						<h2 class="proj-title" data-translate="t.desmoslens">Desmos Lens</h2>
+						<p class="proj-desc">2D lens simulation in Desmos with bokeh simulation.</p>
+						<div class="proj-meta"><span data-translate="p.nolink">No link yet</span></div>
+					</div>
+				</article>
+			</div>
 
 		</div>
 
@@ -3191,31 +3556,40 @@ headerChars.forEach(span => headerDisplay.appendChild(span));
 // ========================================
 const translations = {
 	en: {
-		't.filmcamera': '3D PRINTED FILM CAMERA 📌',
-		't.benares': 'CLUB BENARES WEBSITE',
-		't.chat': 'CHAT ROOM',
-		't.previs': 'BLENDER 3D PRE-VIS & PHOTOGRAMMETRY',
-		't.portfolios': 'PORTFOLIO WEBSITES',
-		't.fulladder': 'FULL ADDER',
-		't.ledcounter': 'LED COUNTER',
-		't.computer': 'COMPUTER',
-		't.calculator': 'CALCULATOR',
-		't.broadcast': 'BROADCAST TABLE',
-		't.blenderguide': 'BLENDER GUIDE',
+		't.filmcamera': '3D Printed Film Camera',
+		't.benares': 'Club Benares Website',
+		't.chat': 'Chat Room',
+		't.previs': 'Blender 3D Pre-vis & Photogrammetry',
+		't.fulladder': 'Full Adder',
+		't.ledcounter': 'LED Counter',
+		't.computer': 'Computer',
+		't.calculator': 'Calculator',
+		't.broadcast': 'Broadcast Table',
+		't.blenderguide': 'Blender Guide',
 		't.favfilms': 'FAVORITE FILMS',
-		't.engine': 'ENGINE',
-		't.desmoslens': 'DESMOS LENS',
-		't.blendernodes': 'BLENDER NODES',
-		't.stats': 'STATS',
-		't.otherwebsites': 'OTHER WEBSITES',
-		't.oldlander': 'OLD LANDER',
-		't.github': 'GITHUB PROFILE',
-		't.filmsoftware': 'Film Production Software W.I.P',
-		't.metro': 'LISBON METRO ENTRANCES',
-		't.lenssim': 'LENS SIMULATION work in progress',
-		't.duotone': 'DUOTONE TECHNICOLOR FILTER',
-		't.devtimes': 'DEVELOPMENT TIMES',
-		't.logicgate': 'LOGIC GATE SIMULATION',
+		't.engine': 'Engine',
+		't.desmoslens': 'Desmos Lens',
+		'p.favfilms': 'Favorite Films',
+		'p.filmportfolio': 'Film Portfolio',
+		'p.photoportfolio': 'Photo Portfolio',
+		'p.klotski': 'Klotski',
+		'p.calc': 'Web Calculator',
+		'p.oldportfolio': 'Old Portfolio',
+		'p.404': '404 Page',
+		'p.wip': 'In progress',
+		'p.soon': 'Coming soon',
+		'p.featured': 'Featured',
+		'p.nolink': 'No link yet',
+		't.blendernodes': 'Blender Nodes',
+		't.stats': 'Stats',
+		't.oldlander': 'Old Lander',
+		't.github': 'GitHub Profile',
+		't.filmsoftware': 'Film Production Software',
+		't.metro': 'Lisbon Metro Entrances',
+		't.lenssim': 'Lens Simulation',
+		't.duotone': 'Duotone Technicolor Filter',
+		't.devtimes': 'Development Times',
+		't.logicgate': 'Logic Gate Simulation',
 		't.education': 'EDUCATION',
 		't.equipment': 'EQUIPMENT',
 		'nav.home': 'Home',
@@ -3233,34 +3607,44 @@ const translations = {
 		'about.bio3': 'Fluent in English & Portuguese.',
 		'about.collaborate': 'Looking to collaborate or share ideas?<br>Drop me a message- I\'d love to connect.',
 		'about.contact': 'CONTACT',
+		'marquee.gofundme': 'Support our film on GoFundMe',
 		'footer.music': 'BACKGROUND MUSIC'
 	},
 	pt: {
-		't.filmcamera': 'CÂMARA DE FILME IMPRESSA EM 3D 📌',
-		't.benares': 'SITE DO CLUB BENARES',
-		't.chat': 'SALA DE CHAT',
-		't.previs': 'PRÉ-VIS 3D E FOTOGRAMETRIA NO BLENDER',
-		't.portfolios': 'SITES DE PORTFÓLIO',
-		't.fulladder': 'SOMADOR COMPLETO',
-		't.ledcounter': 'CONTADOR LED',
-		't.computer': 'COMPUTADOR',
-		't.calculator': 'CALCULADORA',
-		't.broadcast': 'MESA DE TRANSMISSÃO',
-		't.blenderguide': 'GUIA DO BLENDER',
+		't.filmcamera': 'Câmara de filme impressa em 3D',
+		't.benares': 'Site do Club Benares',
+		't.chat': 'Sala de chat',
+		't.previs': 'Pré-vis 3D e fotogrametria no Blender',
+		't.fulladder': 'Somador completo',
+		't.ledcounter': 'Contador LED',
+		't.computer': 'Computador',
+		't.calculator': 'Calculadora',
+		't.broadcast': 'Mesa de transmissão',
+		't.blenderguide': 'Guia do Blender',
 		't.favfilms': 'FILMES FAVORITOS',
-		't.engine': 'MOTOR',
-		't.desmoslens': 'LENTE NO DESMOS',
-		't.blendernodes': 'NÓS DO BLENDER',
-		't.stats': 'ESTATÍSTICAS',
-		't.otherwebsites': 'OUTROS SITES',
-		't.oldlander': 'PÁGINA ANTIGA',
-		't.github': 'PERFIL DO GITHUB',
-		't.filmsoftware': 'SOFTWARE DE PRODUÇÃO DE CINEMA (EM CURSO)',
-		't.metro': 'ENTRADAS DO METRO DE LISBOA',
-		't.lenssim': 'SIMULAÇÃO DE LENTE (em desenvolvimento)',
-		't.duotone': 'FILTRO DUOTONE TECHNICOLOR',
-		't.devtimes': 'TEMPOS DE REVELAÇÃO',
-		't.logicgate': 'SIMULAÇÃO DE PORTAS LÓGICAS',
+		't.engine': 'Motor',
+		't.desmoslens': 'Lente no Desmos',
+		'p.favfilms': 'Filmes favoritos',
+		'p.filmportfolio': 'Portfólio de cinema',
+		'p.photoportfolio': 'Portfólio de fotografia',
+		'p.klotski': 'Klotski',
+		'p.calc': 'Calculadora web',
+		'p.oldportfolio': 'Portfólio antigo',
+		'p.404': 'Página 404',
+		'p.wip': 'Em desenvolvimento',
+		'p.soon': 'Em breve',
+		'p.featured': 'Destaque',
+		'p.nolink': 'Ainda sem link',
+		't.blendernodes': 'Nós do Blender',
+		't.stats': 'Estatísticas',
+		't.oldlander': 'Página antiga',
+		't.github': 'Perfil do GitHub',
+		't.filmsoftware': 'Software de produção de cinema',
+		't.metro': 'Entradas do metro de Lisboa',
+		't.lenssim': 'Simulação de lente',
+		't.duotone': 'Filtro duotone Technicolor',
+		't.devtimes': 'Tempos de revelação',
+		't.logicgate': 'Simulação de portas lógicas',
 		't.education': 'EDUCAÇÃO',
 		't.equipment': 'EQUIPAMENTO',
 		'nav.home': 'Início',
@@ -3278,34 +3662,44 @@ const translations = {
 		'about.bio3': 'Fluente em Inglês e Português.',
 		'about.collaborate': 'Quer colaborar ou compartilhar ideias?<br>Mande uma mensagem - adoraria conversar.',
 		'about.contact': 'CONTACTO',
+		'marquee.gofundme': 'Apoie o nosso filme no GoFundMe',
 		'footer.music': 'MÚSICA DE FUNDO'
 	},
 	es: {
-		't.filmcamera': 'CÁMARA DE CINE IMPRESA EN 3D 📌',
-		't.benares': 'SITIO WEB DE CLUB BENARES',
-		't.chat': 'SALA DE CHAT',
-		't.previs': 'PRE-VIS 3D Y FOTOGRAMETRÍA EN BLENDER',
-		't.portfolios': 'SITIOS DE PORTAFOLIO',
-		't.fulladder': 'SUMADOR COMPLETO',
-		't.ledcounter': 'CONTADOR LED',
-		't.computer': 'COMPUTADORA',
-		't.calculator': 'CALCULADORA',
-		't.broadcast': 'MESA DE TRANSMISIÓN',
-		't.blenderguide': 'GUÍA DE BLENDER',
+		't.filmcamera': 'Cámara de cine impresa en 3D',
+		't.benares': 'Sitio web de Club Benares',
+		't.chat': 'Sala de chat',
+		't.previs': 'Pre-vis 3D y fotogrametría en Blender',
+		't.fulladder': 'Sumador completo',
+		't.ledcounter': 'Contador LED',
+		't.computer': 'Computadora',
+		't.calculator': 'Calculadora',
+		't.broadcast': 'Mesa de transmisión',
+		't.blenderguide': 'Guía de Blender',
 		't.favfilms': 'PELÍCULAS FAVORITAS',
-		't.engine': 'MOTOR',
-		't.desmoslens': 'LENTE EN DESMOS',
-		't.blendernodes': 'NODOS DE BLENDER',
-		't.stats': 'ESTADÍSTICAS',
-		't.otherwebsites': 'OTROS SITIOS',
-		't.oldlander': 'PÁGINA ANTIGUA',
-		't.github': 'PERFIL DE GITHUB',
-		't.filmsoftware': 'SOFTWARE DE PRODUCCIÓN DE CINE (EN CURSO)',
-		't.metro': 'ENTRADAS DEL METRO DE LISBOA',
-		't.lenssim': 'SIMULACIÓN DE LENTE (en desarrollo)',
-		't.duotone': 'FILTRO DUOTONO TECHNICOLOR',
-		't.devtimes': 'TIEMPOS DE REVELADO',
-		't.logicgate': 'SIMULACIÓN DE PUERTAS LÓGICAS',
+		't.engine': 'Motor',
+		't.desmoslens': 'Lente en Desmos',
+		'p.favfilms': 'Películas favoritas',
+		'p.filmportfolio': 'Portafolio de cine',
+		'p.photoportfolio': 'Portafolio de fotografía',
+		'p.klotski': 'Klotski',
+		'p.calc': 'Calculadora web',
+		'p.oldportfolio': 'Portafolio antiguo',
+		'p.404': 'Página 404',
+		'p.wip': 'En desarrollo',
+		'p.soon': 'Próximamente',
+		'p.featured': 'Destacado',
+		'p.nolink': 'Aún sin enlace',
+		't.blendernodes': 'Nodos de Blender',
+		't.stats': 'Estadísticas',
+		't.oldlander': 'Página antigua',
+		't.github': 'Perfil de GitHub',
+		't.filmsoftware': 'Software de producción de cine',
+		't.metro': 'Entradas del metro de Lisboa',
+		't.lenssim': 'Simulación de lente',
+		't.duotone': 'Filtro duotono Technicolor',
+		't.devtimes': 'Tiempos de revelado',
+		't.logicgate': 'Simulación de puertas lógicas',
 		't.education': 'EDUCACIÓN',
 		't.equipment': 'EQUIPO',
 		'nav.home': 'Inicio',
@@ -3323,34 +3717,44 @@ const translations = {
 		'about.bio3': 'Fluido en Inglés y Portugués.',
 		'about.collaborate': '¿Quieres colaborar o compartir ideas?<br>Envíame un mensaje - me encantaría conectar.',
 		'about.contact': 'CONTACTO',
+		'marquee.gofundme': 'Apoya nuestra película en GoFundMe',
 		'footer.music': 'MÚSICA DE FONDO'
 	},
 	fr: {
-		't.filmcamera': 'CAMÉRA ARGENTIQUE IMPRIMÉE EN 3D 📌',
-		't.benares': 'SITE WEB DU CLUB BENARES',
-		't.chat': 'SALON DE DISCUSSION',
-		't.previs': 'PRÉVIS 3D ET PHOTOGRAMMÉTRIE BLENDER',
-		't.portfolios': 'SITES PORTFOLIO',
-		't.fulladder': 'ADDITIONNEUR COMPLET',
-		't.ledcounter': 'COMPTEUR LED',
-		't.computer': 'ORDINATEUR',
-		't.calculator': 'CALCULATRICE',
-		't.broadcast': 'RÉGIE DE DIFFUSION',
-		't.blenderguide': 'GUIDE BLENDER',
+		't.filmcamera': 'Caméra argentique imprimée en 3D',
+		't.benares': 'Site web du Club Benares',
+		't.chat': 'Salon de discussion',
+		't.previs': 'Prévis 3D et photogrammétrie Blender',
+		't.fulladder': 'Additionneur complet',
+		't.ledcounter': 'Compteur LED',
+		't.computer': 'Ordinateur',
+		't.calculator': 'Calculatrice',
+		't.broadcast': 'Régie de diffusion',
+		't.blenderguide': 'Guide Blender',
 		't.favfilms': 'FILMS PRÉFÉRÉS',
-		't.engine': 'MOTEUR',
-		't.desmoslens': 'LENTILLE DESMOS',
-		't.blendernodes': 'NODES BLENDER',
-		't.stats': 'STATISTIQUES',
-		't.otherwebsites': 'AUTRES SITES',
-		't.oldlander': 'ANCIENNE PAGE',
-		't.github': 'PROFIL GITHUB',
-		't.filmsoftware': 'LOGICIEL DE PRODUCTION DE FILM (EN COURS)',
-		't.metro': 'ENTRÉES DU MÉTRO DE LISBONNE',
-		't.lenssim': 'SIMULATION DE LENTILLE (en cours)',
-		't.duotone': 'FILTRE DUOTONE TECHNICOLOR',
-		't.devtimes': 'TEMPS DE DÉVELOPPEMENT',
-		't.logicgate': 'SIMULATION DE PORTES LOGIQUES',
+		't.engine': 'Moteur',
+		't.desmoslens': 'Lentille Desmos',
+		'p.favfilms': 'Films préférés',
+		'p.filmportfolio': 'Portfolio cinéma',
+		'p.photoportfolio': 'Portfolio photo',
+		'p.klotski': 'Klotski',
+		'p.calc': 'Calculatrice web',
+		'p.oldportfolio': 'Ancien portfolio',
+		'p.404': 'Page 404',
+		'p.wip': 'En cours',
+		'p.soon': 'Bientôt',
+		'p.featured': 'À la une',
+		'p.nolink': 'Pas encore de lien',
+		't.blendernodes': 'Nodes Blender',
+		't.stats': 'Statistiques',
+		't.oldlander': 'Ancienne page',
+		't.github': 'Profil GitHub',
+		't.filmsoftware': 'Logiciel de production de film',
+		't.metro': 'Entrées du métro de Lisbonne',
+		't.lenssim': 'Simulation de lentille',
+		't.duotone': 'Filtre duotone Technicolor',
+		't.devtimes': 'Temps de développement',
+		't.logicgate': 'Simulation de portes logiques',
 		't.education': 'FORMATION',
 		't.equipment': 'ÉQUIPEMENT',
 		'nav.home': 'Accueil',
@@ -3368,34 +3772,44 @@ const translations = {
 		'about.bio3': 'Bilingue en Anglais et Portugais.',
 		'about.collaborate': 'Envie de collaborer ou partager des idées?<br>Envoyez-moi un message - j\'aimerais échanger.',
 		'about.contact': 'CONTACT',
+		'marquee.gofundme': 'Soutenez notre film sur GoFundMe',
 		'footer.music': 'MUSIQUE DE FOND'
 	},
 	de: {
-		't.filmcamera': '3D-GEDRUCKTE FILMKAMERA 📌',
-		't.benares': 'CLUB-BENARES-WEBSITE',
-		't.chat': 'CHATROOM',
-		't.previs': 'BLENDER 3D-PREVIS & FOTOGRAMMETRIE',
-		't.portfolios': 'PORTFOLIO-WEBSITES',
-		't.fulladder': 'VOLLADDIERER',
-		't.ledcounter': 'LED-ZÄHLER',
-		't.computer': 'COMPUTER',
-		't.calculator': 'TASCHENRECHNER',
-		't.broadcast': 'SENDEPULT',
-		't.blenderguide': 'BLENDER-LEITFADEN',
+		't.filmcamera': '3D-gedruckte Filmkamera',
+		't.benares': 'Club-Benares-Website',
+		't.chat': 'Chatroom',
+		't.previs': 'Blender 3D-Previs & Fotogrammetrie',
+		't.fulladder': 'Volladdierer',
+		't.ledcounter': 'LED-Zähler',
+		't.computer': 'Computer',
+		't.calculator': 'Taschenrechner',
+		't.broadcast': 'Sendepult',
+		't.blenderguide': 'Blender-Leitfaden',
 		't.favfilms': 'LIEBLINGSFILME',
-		't.engine': 'ENGINE',
-		't.desmoslens': 'DESMOS-LINSE',
-		't.blendernodes': 'BLENDER-NODES',
-		't.stats': 'STATISTIKEN',
-		't.otherwebsites': 'WEITERE WEBSITES',
-		't.oldlander': 'ALTE STARTSEITE',
-		't.github': 'GITHUB-PROFIL',
-		't.filmsoftware': 'FILMPRODUKTIONS-SOFTWARE (IN ARBEIT)',
-		't.metro': 'EINGÄNGE DER METRO LISSABON',
-		't.lenssim': 'LINSENSIMULATION (in Arbeit)',
-		't.duotone': 'DUOTONE-TECHNICOLOR-FILTER',
-		't.devtimes': 'ENTWICKLUNGSZEITEN',
-		't.logicgate': 'LOGIKGATTER-SIMULATION',
+		't.engine': 'Engine',
+		't.desmoslens': 'Desmos-Linse',
+		'p.favfilms': 'Lieblingsfilme',
+		'p.filmportfolio': 'Film-Portfolio',
+		'p.photoportfolio': 'Foto-Portfolio',
+		'p.klotski': 'Klotski',
+		'p.calc': 'Web-Rechner',
+		'p.oldportfolio': 'Altes Portfolio',
+		'p.404': '404-Seite',
+		'p.wip': 'In Arbeit',
+		'p.soon': 'Demnächst',
+		'p.featured': 'Empfohlen',
+		'p.nolink': 'Noch kein Link',
+		't.blendernodes': 'Blender-Nodes',
+		't.stats': 'Statistiken',
+		't.oldlander': 'Alte Startseite',
+		't.github': 'GitHub-Profil',
+		't.filmsoftware': 'Filmproduktions-Software',
+		't.metro': 'Eingänge der Metro Lissabon',
+		't.lenssim': 'Linsensimulation',
+		't.duotone': 'Duotone-Technicolor-Filter',
+		't.devtimes': 'Entwicklungszeiten',
+		't.logicgate': 'Logikgatter-Simulation',
 		't.education': 'AUSBILDUNG',
 		't.equipment': 'AUSRÜSTUNG',
 		'nav.home': 'Startseite',
@@ -3413,14 +3827,14 @@ const translations = {
 		'about.bio3': 'Fließend in Englisch und Portugiesisch.',
 		'about.collaborate': 'Möchten Sie zusammenarbeiten oder Ideen austauschen?<br>Schreiben Sie mir - ich würde mich freuen.',
 		'about.contact': 'KONTAKT',
+		'marquee.gofundme': 'Unterstütze unseren Film auf GoFundMe',
 		'footer.music': 'HINTERGRUNDMUSIK'
 	},
 	zh: {
-		't.filmcamera': '3D打印胶片相机 📌',
+		't.filmcamera': '3D打印胶片相机',
 		't.benares': 'Club Benares 网站',
 		't.chat': '聊天室',
 		't.previs': 'Blender 3D 预演与摄影测量',
-		't.portfolios': '作品集网站',
 		't.fulladder': '全加器',
 		't.ledcounter': 'LED 计数器',
 		't.computer': '计算机',
@@ -3430,14 +3844,24 @@ const translations = {
 		't.favfilms': '最爱的电影',
 		't.engine': '引擎',
 		't.desmoslens': 'Desmos 镜头',
+		'p.favfilms': '最爱的电影',
+		'p.filmportfolio': '电影作品集',
+		'p.photoportfolio': '摄影作品集',
+		'p.klotski': 'Klotski',
+		'p.calc': '网页计算器',
+		'p.oldportfolio': '旧作品集',
+		'p.404': '404 页面',
+		'p.wip': '开发中',
+		'p.soon': '即将推出',
+		'p.featured': '精选',
+		'p.nolink': '暂无链接',
 		't.blendernodes': 'Blender 节点',
 		't.stats': '统计',
-		't.otherwebsites': '其他网站',
 		't.oldlander': '旧首页',
 		't.github': 'GitHub 主页',
-		't.filmsoftware': '影视制作软件（开发中）',
+		't.filmsoftware': '影视制作软件',
 		't.metro': '里斯本地铁入口',
-		't.lenssim': '镜头模拟（开发中）',
+		't.lenssim': '镜头模拟',
 		't.duotone': '双色 Technicolor 滤镜',
 		't.devtimes': '冲洗时间',
 		't.logicgate': '逻辑门模拟',
@@ -3458,14 +3882,14 @@ const translations = {
 		'about.bio3': '精通英语和葡萄牙语。',
 		'about.collaborate': '想要合作或分享想法？<br>给我发消息 - 我很乐意联系。',
 		'about.contact': '联系方式',
+		'marquee.gofundme': '在 GoFundMe 上支持我们的电影',
 		'footer.music': '背景音乐'
 	},
 	ja: {
-		't.filmcamera': '3Dプリント フィルムカメラ 📌',
+		't.filmcamera': '3Dプリント フィルムカメラ',
 		't.benares': 'Club Benares ウェブサイト',
 		't.chat': 'チャットルーム',
 		't.previs': 'Blender 3Dプレビズ＆フォトグラメトリ',
-		't.portfolios': 'ポートフォリオサイト',
 		't.fulladder': '全加算器',
 		't.ledcounter': 'LEDカウンター',
 		't.computer': 'コンピューター',
@@ -3475,14 +3899,24 @@ const translations = {
 		't.favfilms': 'お気に入りの映画',
 		't.engine': 'エンジン',
 		't.desmoslens': 'Desmos レンズ',
+		'p.favfilms': 'お気に入りの映画',
+		'p.filmportfolio': '映像ポートフォリオ',
+		'p.photoportfolio': '写真ポートフォリオ',
+		'p.klotski': 'Klotski',
+		'p.calc': 'Web電卓',
+		'p.oldportfolio': '旧ポートフォリオ',
+		'p.404': '404ページ',
+		'p.wip': '開発中',
+		'p.soon': '近日公開',
+		'p.featured': '注目',
+		'p.nolink': 'リンクなし',
 		't.blendernodes': 'Blender ノード',
 		't.stats': '統計',
-		't.otherwebsites': 'その他のサイト',
 		't.oldlander': '旧ランディングページ',
 		't.github': 'GitHub プロフィール',
-		't.filmsoftware': '映画制作ソフトウェア（開発中）',
+		't.filmsoftware': '映画制作ソフトウェア',
 		't.metro': 'リスボン地下鉄の入口',
-		't.lenssim': 'レンズシミュレーション（開発中）',
+		't.lenssim': 'レンズシミュレーション',
 		't.duotone': 'デュオトーン Technicolor フィルター',
 		't.devtimes': '現像時間',
 		't.logicgate': '論理ゲートシミュレーション',
@@ -3503,14 +3937,14 @@ const translations = {
 		'about.bio3': '英語とポルトガル語が堪能。',
 		'about.collaborate': 'コラボレーションやアイデアの共有をご希望ですか？<br>メッセージをお送りください。',
 		'about.contact': 'お問い合わせ',
+		'marquee.gofundme': 'GoFundMe で私たちの映画を応援してください',
 		'footer.music': 'BGM'
 	},
 	ar: {
-		't.filmcamera': 'كاميرا فيلم مطبوعة ثلاثية الأبعاد 📌',
+		't.filmcamera': 'كاميرا فيلم مطبوعة ثلاثية الأبعاد',
 		't.benares': 'موقع نادي بيناريس',
 		't.chat': 'غرفة الدردشة',
 		't.previs': 'التصور المسبق ثلاثي الأبعاد والقياس التصويري في Blender',
-		't.portfolios': 'مواقع المعرض',
 		't.fulladder': 'جامع كامل',
 		't.ledcounter': 'عداد LED',
 		't.computer': 'حاسوب',
@@ -3520,14 +3954,24 @@ const translations = {
 		't.favfilms': 'الأفلام المفضلة',
 		't.engine': 'محرك',
 		't.desmoslens': 'عدسة Desmos',
+		'p.favfilms': 'الأفلام المفضلة',
+		'p.filmportfolio': 'معرض الأفلام',
+		'p.photoportfolio': 'معرض الصور',
+		'p.klotski': 'Klotski',
+		'p.calc': 'آلة حاسبة على الويب',
+		'p.oldportfolio': 'المعرض القديم',
+		'p.404': 'صفحة 404',
+		'p.wip': 'قيد العمل',
+		'p.soon': 'قريبًا',
+		'p.featured': 'مميز',
+		'p.nolink': 'لا يوجد رابط بعد',
 		't.blendernodes': 'عقد Blender',
 		't.stats': 'إحصاءات',
-		't.otherwebsites': 'مواقع أخرى',
 		't.oldlander': 'الصفحة القديمة',
 		't.github': 'ملف GitHub',
-		't.filmsoftware': 'برنامج إنتاج الأفلام (قيد العمل)',
+		't.filmsoftware': 'برنامج إنتاج الأفلام',
 		't.metro': 'مداخل مترو لشبونة',
-		't.lenssim': 'محاكاة العدسة (قيد العمل)',
+		't.lenssim': 'محاكاة العدسة',
 		't.duotone': 'مرشح ثنائي اللون Technicolor',
 		't.devtimes': 'أوقات التحميض',
 		't.logicgate': 'محاكاة البوابات المنطقية',
@@ -3548,6 +3992,7 @@ const translations = {
 		'about.bio3': 'أتقن الإنجليزية والبرتغالية.',
 		'about.collaborate': 'تبحث عن التعاون أو مشاركة الأفكار؟<br>أرسل لي رسالة - يسعدني التواصل.',
 		'about.contact': 'تواصل معي',
+		'marquee.gofundme': 'ادعموا فيلمنا على GoFundMe',
 		'footer.music': 'موسيقى خلفية'
 	}
 };
@@ -4106,29 +4551,6 @@ document.querySelectorAll('.film-entry[data-film]').forEach(section => {
 });
 
 // ========================================
-// NO-LINK CARD TOOLTIP
-// ========================================
-document.querySelectorAll('.card-nolink').forEach(card => {
-	card.addEventListener('click', (e) => {
-		const existing = card.querySelector('.card-tooltip');
-		if (existing) return;
-		const tip = document.createElement('div');
-		tip.classList.add('card-tooltip');
-		tip.textContent = 'No link available';
-		card.style.position = 'relative';
-		card.appendChild(tip);
-		const rect = card.getBoundingClientRect();
-		tip.style.left = `${e.clientX - rect.left}px`;
-		tip.style.top = `${e.clientY - rect.top - 30}px`;
-		requestAnimationFrame(() => tip.classList.add('visible'));
-		setTimeout(() => {
-			tip.classList.remove('visible');
-			setTimeout(() => tip.remove(), 300);
-		}, 1500);
-	});
-});
-
-// ========================================
 // PLASTIC WRAP OVERLAY
 // ========================================
 // Available plastic-wrap overlay textures: filenames media/wrap/<n>.jpg
@@ -4167,6 +4589,39 @@ if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').m
 		v.pause();
 	});
 }
+
+// ========================================
+// MARQUEE — repeat the message to fill the strip; the CSS loop scrolls one copy's width
+// ========================================
+(() => {
+	const bar = document.querySelector('.marquee');
+	if (!bar || bar.hidden) return;
+	const track = bar.querySelector('.marquee-track');
+	const item = track.querySelector('.marquee-item');
+	const SPEED = 45; // px per second
+
+	function fill() {
+		track.querySelectorAll('.marquee-item[aria-hidden]').forEach(copy => copy.remove());
+		const w = item.getBoundingClientRect().width;
+		if (!w) return;
+		for (let i = Math.ceil(bar.clientWidth / w); i > 0; i--) {
+			const copy = item.cloneNode(true);
+			copy.setAttribute('aria-hidden', 'true');
+			copy.tabIndex = -1;
+			track.appendChild(copy);
+		}
+		track.style.setProperty('--marquee-shift', `${-w}px`);
+		track.style.setProperty('--marquee-duration', `${w / SPEED}s`);
+		track.style.animation = 'none';   // restart with the new distance
+		void track.offsetWidth;
+		track.style.animation = '';
+	}
+
+	// re-fill when the text changes size (fonts, language) or the strip is resized
+	const ro = new ResizeObserver(fill);
+	ro.observe(item);
+	ro.observe(bar);
+})();
 
 // ========================================
 // PHOTO LIGHTBOX (click to zoom, no URL change)
