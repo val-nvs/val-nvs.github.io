@@ -822,6 +822,13 @@
 			min-height: 0;
 		}
 
+		/* A block that runs out of photos (two 3:2 + one 2:3) ends at its last photo, with
+		   no empty bottom row; its 2:3 photo keeps its ratio instead of filling the column. */
+		.pblock.trimmed .pcol-narrow .pshot-link {
+			flex: none;
+			aspect-ratio: 2 / 3;
+		}
+
 		.pshot {
 			display: block;
 			width: 100%;
@@ -1970,36 +1977,42 @@
 		   header markup its own entrance animation.
 		   ======================================== */
 
-		/* ---------- SOFTWARE — Matrix ---------- */
+		/* ---------- SOFTWARE — old-school PCB ---------- */
 		html[data-theme="software"] {
-			--page-bg: #000;
-			--main-bg: rgba(0, 0, 0, 0.6);
-			--chrome-bg: rgba(0, 0, 0, 0.94);
-			--footer-bg: #000;
+			--page-bg: #8a4a1c;
+			--main-bg: transparent;
+			--chrome-bg: rgba(33, 18, 7, 0.96);
+			--footer-bg: #1f1107;
 			--font-body: 'Share Tech Mono', ui-monospace, monospace;
 			--font-display: 'Share Tech Mono', ui-monospace, monospace;
-			--text-primary: #7ddc97;
-			--text-strong: #d6ffe1;
-			--text-bright: #b8ffc9;
-			--text-muted: #43a861;
-			--text-faint: #2d7342;
-			--accent-color: #00ff41;
-			--border-color: rgba(0, 255, 65, 0.3);
-			--border-strong: rgba(0, 255, 65, 0.5);
-			--border-med: rgba(0, 255, 65, 0.26);
-			--border-subtle: rgba(0, 255, 65, 0.14);
-			--border-faint: rgba(0, 255, 65, 0.1);
-			--surface-1: #021006;
-			--surface-sunken: #010803;
-			--surface-avatar: #06180b;
-			--bg-secondary: #000;
-			--tab-active: #00ff41;
-			--title-base: #1d7a36;
-			--title-mid: #00c236;
-			--title-hot: #b8ffc9;
-			--glow-from: #1d7a36;
-			--glow-to: #eafff0;
-			--card-bg: rgba(1, 14, 5, 0.88);
+			--text-primary: #f0dcc0;
+			--text-strong: #fff3e2;
+			--text-bright: #fbe6ca;
+			--text-muted: #d2a577;
+			--text-faint: #a5774b;
+			--accent-color: #f39a4a;
+			--border-color: rgba(243, 154, 74, 0.35);
+			--border-strong: rgba(243, 154, 74, 0.55);
+			--border-med: rgba(243, 154, 74, 0.3);
+			--border-subtle: rgba(243, 154, 74, 0.18);
+			--border-faint: rgba(243, 154, 74, 0.12);
+			--surface-1: #2e1a0b;
+			--surface-sunken: #1f1107;
+			--surface-avatar: #3a220f;
+			--bg-secondary: #1f1107;
+			--tab-active: #d9894a;
+			--title-base: #a5774b;
+			--title-mid: #d9894a;
+			--title-hot: #ffe0b5;
+			--glow-from: #a5774b;
+			--glow-to: #fff3e2;
+			--card-bg: rgba(36, 19, 7, 0.92);
+		}
+
+		/* single-sided phenolic board: copper traces, pads and silkscreen (tiles seamlessly) */
+		html[data-theme="software"] body {
+			background-image: url("media/pcb.svg");
+			background-size: 480px 480px;
 		}
 
 		html[data-theme="software"] .site-header span,
@@ -2009,7 +2022,7 @@
 		}
 
 		html[data-theme="software"] .header-content {
-			text-shadow: 0 0 8px rgba(0, 255, 65, 0.55);
+			text-shadow: 0 0 8px rgba(243, 154, 74, 0.45);
 		}
 
 		html[data-theme="software"] .header-content::after {
@@ -2027,39 +2040,22 @@
 		}
 
 		html[data-theme="software"] .nav-item.active {
-			color: #000;
+			color: #1f1107;
 		}
 
 		html[data-theme="software"] .section-title {
 			color: var(--accent-color);
-			text-shadow: 0 0 6px rgba(0, 255, 65, 0.35);
 		}
 
 		@media (hover: hover) {
 			html[data-theme="software"] .proj:not(.hw-island):not(.is-static):hover {
 				border-color: var(--border-strong);
-				box-shadow: 0 0 24px rgba(0, 255, 65, 0.2);
+				box-shadow: 0 0 24px rgba(243, 154, 74, 0.28);
 			}
 		}
 
 		html[data-theme="software"] .language-popup {
-			background: #000;
-		}
-
-		/* digital rain canvas — drawn by JS only while Software is open */
-		#matrix-rain {
-			position: fixed;
-			inset: 0;
-			z-index: -1;
-			width: 100%;
-			height: 100%;
-			pointer-events: none;
-			opacity: 0;
-			transition: opacity 0.6s ease;
-		}
-
-		html[data-theme="software"] #matrix-rain {
-			opacity: 0.55;
+			background: #1f1107;
 		}
 
 		/* ---------- PHOTOS — clean gallery ---------- */
@@ -2112,17 +2108,41 @@
 			background: #fff;
 		}
 
-		/* opened photo sections become a light title bar */
+		/* category cards made for a light page: the cover photo at full brightness above a
+		   paper caption band with dark type (no darkened photo or black scrim). Opened, the
+		   photo fades away and the band becomes the title bar. */
 		html[data-theme="photos"] .photo-section {
+			background: var(--surface-1);
+			font-family: var(--font-display);
+		}
+
+		html[data-theme="photos"] .photo-group.collapsed .photo-section {
+			height: 190px;
+		}
+
+		html[data-theme="photos"] .photo-section-cover,
+		html[data-theme="photos"] .photo-section:hover .photo-section-cover,
+		html[data-theme="photos"] .photo-section:focus-visible .photo-section-cover {
+			filter: none;
+		}
+
+		html[data-theme="photos"] .photo-section::after {
+			top: auto;
+			height: 68px;
 			background: var(--surface-1);
 		}
 
-		html[data-theme="photos"] .photo-group:not(.collapsed) .photo-section-title {
+		html[data-theme="photos"] .photo-section-title {
 			color: var(--text-strong);
+			font-weight: 500;
 			text-shadow: none;
 		}
 
-		html[data-theme="photos"] .photo-group:not(.collapsed) .photo-section-caret {
+		html[data-theme="photos"] .photo-section-count {
+			color: rgba(0, 0, 0, 0.6);
+		}
+
+		html[data-theme="photos"] .photo-section-caret {
 			border-left-color: var(--text-strong);
 		}
 
@@ -2165,16 +2185,15 @@
 			--card-bg: rgba(22, 50, 38, 0.82);
 		}
 
-		/* 1 cm grid, 5 cm majors, 45° cutting guides */
+		/* 1 cm grid, 5 cm majors */
 		html[data-theme="hardware"][data-hw="mat"] body,
 		html[data-hw="mat"] .hw-island {
 			background-image:
 				linear-gradient(rgba(255, 255, 255, 0.24) 1px, transparent 1px),
 				linear-gradient(90deg, rgba(255, 255, 255, 0.24) 1px, transparent 1px),
 				linear-gradient(rgba(255, 255, 255, 0.09) 1px, transparent 1px),
-				linear-gradient(90deg, rgba(255, 255, 255, 0.09) 1px, transparent 1px),
-				repeating-linear-gradient(45deg, transparent 0 140px, rgba(255, 255, 255, 0.07) 140px 141px);
-			background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px, auto;
+				linear-gradient(90deg, rgba(255, 255, 255, 0.09) 1px, transparent 1px);
+			background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
 		}
 
 		/* header + nav become a cream ruler whose ticks "measure" in */
@@ -3119,7 +3138,7 @@
 						<img class="photo-section-cover" loading="lazy" src="media/photos/cctv-small.jpg" alt="">
 						<span class="photo-section-caption">
 							<span class="photo-section-title">Behind the Scenes</span>
-							<span class="photo-section-count">10 photos</span>
+							<span class="photo-section-count">9 photos</span>
 						</span>
 						<span class="photo-section-caret" aria-hidden="true"></span>
 					</button>
@@ -3136,41 +3155,27 @@
 							<img class="pshot" loading="lazy" src="media/photos/cctv-small.jpg" alt="cctv">
 							<span class="pshot-name">cctv &middot; horizontal</span>
 						</a>
-						<a class="pshot-link" href="media/photos/bts-filming.jpg" data-story="red-lit interior, operator with rig, subject with cake">
-							<img class="pshot" loading="lazy" src="media/photos/bts-filming-small.jpg" alt="bts-filming">
-							<span class="pshot-name">bts-filming &middot; horizontal</span>
-						</a>
 						<a class="pshot-link" href="media/photos/bts-camera.jpg" data-story="two operators, one shooting over the other&#x27;s shoulder">
 							<img class="pshot" loading="lazy" src="media/photos/bts-camera-small.jpg" alt="bts-camera">
 							<span class="pshot-name">bts-camera &middot; horizontal</span>
 						</a>
-					</div>
-					<div class="pcol pcol-narrow">
-						<div class="pcol-slot-empty" aria-hidden="true"></div>
-						<div class="pcol-slot-empty" aria-hidden="true"></div>
-					</div>
-				</div>
-				<div class="pblock flip">
-					<div class="pcol pcol-wide">
 						<a class="pshot-link" href="media/photos/chapito.jpg" data-story="camera operator at work (documentary shoot)">
 							<img class="pshot" loading="lazy" src="media/photos/chapito-small.jpg" alt="chapito">
 							<span class="pshot-name">chapito &middot; horizontal</span>
 						</a>
-						<a class="pshot-link" href="media/photos/charlie.jpg" data-story="portrait of an operator holding a cinema camera">
-							<img class="pshot" loading="lazy" src="media/photos/charlie-small.jpg" alt="charlie">
-							<span class="pshot-name">charlie &middot; horizontal</span>
-						</a>
-						<a class="pshot-link" href="media/photos/aquarium.jpg" data-story="figure silhouetted in an aquarium tunnel">
-							<img class="pshot" loading="lazy" src="media/photos/aquarium-small.jpg" alt="aquarium">
-							<span class="pshot-name">aquarium &middot; horizontal</span>
-						</a>
 					</div>
 					<div class="pcol pcol-narrow">
-						<div class="pcol-slot-empty" aria-hidden="true"></div>
-						<div class="pcol-slot-empty" aria-hidden="true"></div>
+						<a class="pshot-link" href="media/photos/charlie.jpg" data-story="portrait of an operator holding a cinema camera">
+							<img class="pshot" loading="lazy" src="media/photos/charlie-small.jpg" alt="charlie">
+							<span class="pshot-name">charlie &middot; both</span>
+						</a>
+						<a class="pshot-link" href="media/photos/bts-filming.jpg" data-story="red-lit interior, operator with rig, subject with cake">
+							<img class="pshot" loading="lazy" src="media/photos/bts-filming-small.jpg" alt="bts-filming">
+							<span class="pshot-name">bts-filming &middot; both</span>
+						</a>
 					</div>
 				</div>
-				<div class="pblock">
+				<div class="pblock flip trimmed">
 					<div class="pcol pcol-wide">
 						<a class="pshot-link" href="media/photos/kreatori.jpg" data-story="dim red-lit venue, crowd silhouettes">
 							<img class="pshot" loading="lazy" src="media/photos/kreatori-small.jpg" alt="kreatori">
@@ -3180,14 +3185,12 @@
 							<img class="pshot" loading="lazy" src="media/photos/narrativa-small.jpg" alt="narrativa">
 							<span class="pshot-name">narrativa &middot; horizontal</span>
 						</a>
-						<a class="pshot-link" href="media/photos/clapperboard.jpg" data-story="crew member holding a slate on an outdoor set">
-							<img class="pshot" loading="lazy" src="media/photos/clapperboard-small.jpg" alt="clapperboard">
-							<span class="pshot-name">clapperboard &middot; both</span>
-						</a>
 					</div>
 					<div class="pcol pcol-narrow">
-						<div class="pcol-slot-empty" aria-hidden="true"></div>
-						<div class="pcol-slot-empty" aria-hidden="true"></div>
+						<a class="pshot-link" href="media/photos/aquarium.jpg" data-story="figure silhouetted in an aquarium tunnel">
+							<img class="pshot" loading="lazy" src="media/photos/aquarium-small.jpg" alt="aquarium">
+							<span class="pshot-name">aquarium &middot; both</span>
+						</a>
 					</div>
 				</div>
 					</div>
@@ -3197,7 +3200,7 @@
 						<img class="photo-section-cover" loading="lazy" src="media/photos/fairy-alt-small.jpg" alt="">
 						<span class="photo-section-caption">
 							<span class="photo-section-title">People</span>
-							<span class="photo-section-count">9 photos</span>
+							<span class="photo-section-count">10 photos</span>
 						</span>
 						<span class="photo-section-caret" aria-hidden="true"></span>
 					</button>
@@ -3248,7 +3251,10 @@
 							<img class="pshot" loading="lazy" src="media/photos/red-hands-small.jpg" alt="red-hands">
 							<span class="pshot-name">red-hands &middot; both</span>
 						</a>
-						<div class="pcol-slot-empty" aria-hidden="true"></div>
+						<a class="pshot-link" href="media/photos/clapperboard.jpg" data-story="crew member holding a slate on an outdoor set">
+							<img class="pshot" loading="lazy" src="media/photos/clapperboard-small.jpg" alt="clapperboard" style="object-position: 55% 50%">
+							<span class="pshot-name">clapperboard &middot; both</span>
+						</a>
 					</div>
 				</div>
 					</div>
@@ -3289,6 +3295,12 @@
 						</a>
 					</div>
 				</div>
+				<div class="pfeat">
+					<a class="pshot-link" href="media/photos/recife.jpg" data-story="trees silhouetted against a pale sky">
+						<img class="pshot" loading="lazy" src="media/photos/recife-small.jpg" alt="recife">
+						<span class="pshot-name">recife &middot; horizontal</span>
+					</a>
+				</div>
 				<div class="pblock flip">
 					<div class="pcol pcol-wide">
 						<a class="pshot-link" href="media/photos/san-francisco.jpg" data-story="SF skyline over rolling streets">
@@ -3309,28 +3321,17 @@
 							<img class="pshot" loading="lazy" src="media/photos/basilica-small.jpg" alt="basilica">
 							<span class="pshot-name">basilica &middot; vertical</span>
 						</a>
-						<div class="pcol-slot-empty" aria-hidden="true"></div>
+						<a class="pshot-link" href="media/photos/lucky.jpg" data-story="black-and-white rooftop / building study">
+							<img class="pshot" loading="lazy" src="media/photos/lucky-small.jpg" alt="lucky" style="object-position: 68% 50%">
+							<span class="pshot-name">lucky &middot; both</span>
+						</a>
 					</div>
 				</div>
-				<div class="pblock">
-					<div class="pcol pcol-wide">
-						<a class="pshot-link" href="media/photos/lucky.jpg" data-story="black-and-white rooftop / building study">
-							<img class="pshot" loading="lazy" src="media/photos/lucky-small.jpg" alt="lucky">
-							<span class="pshot-name">lucky &middot; horizontal</span>
-						</a>
-						<a class="pshot-link" href="media/photos/keyboard-build.jpg" data-story="macro of a custom keyboard PCB with switches">
-							<img class="pshot" loading="lazy" src="media/photos/keyboard-build-small.jpg" alt="keyboard-build">
-							<span class="pshot-name">keyboard-build &middot; horizontal</span>
-						</a>
-						<a class="pshot-link" href="media/photos/recife.jpg" data-story="trees silhouetted against a pale sky">
-							<img class="pshot" loading="lazy" src="media/photos/recife-small.jpg" alt="recife">
-							<span class="pshot-name">recife &middot; horizontal</span>
-						</a>
-					</div>
-					<div class="pcol pcol-narrow">
-						<div class="pcol-slot-empty" aria-hidden="true"></div>
-						<div class="pcol-slot-empty" aria-hidden="true"></div>
-					</div>
+				<div class="pfeat">
+					<a class="pshot-link" href="media/photos/keyboard-build.jpg" data-story="macro of a custom keyboard PCB with switches">
+						<img class="pshot" loading="lazy" src="media/photos/keyboard-build-small.jpg" alt="keyboard-build">
+						<span class="pshot-name">keyboard-build &middot; both</span>
+					</a>
 				</div>
 					</div>
 				</div>
@@ -4212,53 +4213,6 @@ document.addEventListener('mousemove', (e) => {
 // ========================================
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-// Software: faint digital rain behind the page (only runs while that tab is open)
-const matrixRain = (() => {
-	const canvas = document.createElement('canvas');
-	canvas.id = 'matrix-rain';
-	canvas.setAttribute('aria-hidden', 'true');
-	document.body.prepend(canvas);
-	const ctx = canvas.getContext('2d');
-	const glyphs = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワン0123456789';
-	const size = 16;
-	let drops = [], raf = 0, last = 0, running = false;
-	function resize() {
-		const dpr = Math.min(window.devicePixelRatio || 1, 2);
-		canvas.width = innerWidth * dpr;
-		canvas.height = innerHeight * dpr;
-		ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-		drops = Array.from({ length: Math.ceil(innerWidth / size) }, () => Math.random() * -40);
-	}
-	function tick(t) {
-		raf = requestAnimationFrame(tick);
-		if (t - last < 55) return;                 // ~18 fps is plenty for rain
-		last = t;
-		ctx.fillStyle = 'rgba(0, 0, 0, 0.09)';      // fade the previous glyphs into trails
-		ctx.fillRect(0, 0, innerWidth, innerHeight);
-		ctx.fillStyle = '#00ff41';
-		ctx.font = size + 'px monospace';
-		drops.forEach((y, i) => {
-			ctx.fillText(glyphs[(Math.random() * glyphs.length) | 0], i * size, y * size);
-			drops[i] = y * size > innerHeight && Math.random() > 0.975 ? 0 : y + 1;
-		});
-	}
-	return {
-		start() {
-			if (running || reduceMotion.matches) return;
-			running = true;
-			resize();
-			window.addEventListener('resize', resize);
-			raf = requestAnimationFrame(tick);
-		},
-		stop() {
-			if (!running) return;
-			running = false;
-			cancelAnimationFrame(raf);
-			window.removeEventListener('resize', resize);
-		}
-	};
-})();
-
 // Software: the title "decodes" through random glyphs into val-nvs.com
 function decodeTitle() {
 	if (reduceMotion.matches) return;
@@ -4284,12 +4238,7 @@ function setTheme(name) {
 	headerChars.forEach(s => { s.style.animation = 'none'; s.style.color = ''; s.style.fontWeight = ''; });
 	void root.offsetWidth;
 	headerChars.forEach((s, i) => { s.style.animation = ''; s.style.animationDelay = `${i * 0.15}s`; });
-	if (name === 'software') {
-		matrixRain.start();
-		decodeTitle();
-	} else {
-		matrixRain.stop();
-	}
+	if (name === 'software') decodeTitle();
 }
 
 // ========================================

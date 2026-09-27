@@ -13,6 +13,10 @@ portraits **basilica 0.56**, **bridge-moon 0.76**, **aquarium-portrait / bridge-
 spain-flag-moon 0.80**. Only one native 0.67 (green-portrait), so most narrow-column slots
 would crop a 1.50 to 2:3 (fine via object-fit, but a tight crop).
 
+Cleared for 2:3 (vertical) slots even though they're 1.50: **bts-filming, charlie, aquarium,
+clapperboard, lucky, keyboard-build** and **red-hands** — labelled `both` on the site. lucky and
+clapperboard use an `object-position` so the crop keeps the building / the face and slate.
+
 `fairy-small-alt.jpg` is a stray 150×100 thumbnail — **recommend deleting.**
 
 ---
