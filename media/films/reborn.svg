@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="900" viewBox="0 0 600 900">
+<!-- stand-in poster for REBØRN until the real one is ready -->
+<defs>
+<radialGradient id="light" cx="50%" cy="44%" r="62%">
+<stop offset="0" stop-color="#3b3b42" stop-opacity=".6"/>
+<stop offset="1" stop-color="#0c0c0d" stop-opacity="0"/>
+</radialGradient>
+</defs>
+<rect width="600" height="900" fill="#0c0c0d"/>
+<rect width="600" height="900" fill="url(#light)"/>
+<text x="300" y="468" text-anchor="middle" fill="#f2f2f2" font-family="Helvetica, Arial, sans-serif" font-size="92" font-weight="700" letter-spacing="10">REBØRN</text>
+<text x="300" y="806" text-anchor="middle" fill="#9a9aa2" font-family="Helvetica, Arial, sans-serif" font-size="24" letter-spacing="8">4 OCT 2026</text>
+</svg>
