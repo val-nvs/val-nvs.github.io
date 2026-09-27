@@ -1634,118 +1634,122 @@
 
 		/* ========================================
 		   EQUIPMENT SECTION
+		   Letterboxd film-page style: small uppercase tabs over a hairline, and rows of
+		   "item ···· chips" like the crew / details lists.
 		   ======================================== */
-		.gear {
+		/* spread across the row so all six fit on one line on a phone */
+		.gear-tabs {
 			display: flex;
-			flex-direction: column;
-			gap: 0.5rem;
-			margin-top: 0.5rem;
+			flex-wrap: wrap;
+			justify-content: space-between;
+			gap: 0 0.5rem;
+			border-bottom: 1px solid var(--border-subtle);
 		}
 
-		.gear-item {
-			background: var(--bg-secondary);
-			border: 1px solid var(--border-med);
-			border-radius: 0.5rem;
-			overflow: hidden;
-			transition: border-color 0.2s ease;
-		}
-
-		.gear-item[open],
-		.gear-item:hover {
-			border-color: var(--accent-color);
-		}
-
-		.gear-summary {
-			list-style: none;
-			cursor: pointer;
-			display: flex;
-			align-items: center;
-			gap: 0.5rem;
-			padding: 0.75rem 0.9rem;
-			user-select: none;
-		}
-
-		.gear-summary::-webkit-details-marker {
-			display: none;
-		}
-
-		.gear-summary:focus-visible {
-			outline: 2px solid var(--accent-color);
-			outline-offset: -2px;
-		}
-
-		.gear-name {
-			color: var(--text-strong);
-			font-weight: 600;
-			font-size: 0.95rem;
-		}
-
-		.gear-tag {
+		.gear-tab {
+			margin-bottom: -1px;
+			padding: 0.4rem 0;
+			border: 0;
+			border-bottom: 1px solid transparent;
+			background: none;
 			color: var(--text-muted);
-			font-family: "Atkinson Hyperlegible Mono", monospace;
-			font-size: 0.7rem;
+			font: inherit;
+			font-size: 0.6875rem;
+			letter-spacing: 0.06em;
 			text-transform: uppercase;
-			letter-spacing: 0.04em;
-			border: 1px solid var(--border-med);
-			padding: 0.05rem 0.35rem;
-			border-radius: 0.25rem;
+			cursor: pointer;
+			transition: color 0.2s ease, border-color 0.2s ease;
 		}
 
-		.gear-summary::after {
-			content: '';
-			margin-left: auto;
-			width: 0.5rem;
-			height: 0.5rem;
-			border-right: 2px solid var(--text-primary);
-			border-bottom: 2px solid var(--text-primary);
-			transform: rotate(45deg);
-			transition: transform 0.2s ease;
+		.gear-tab:hover {
+			color: var(--text-bright);
 		}
 
-		.gear-item[open] .gear-summary::after {
-			transform: rotate(-135deg);
+		.gear-tab[aria-expanded="true"] {
+			color: var(--text-strong);
+			border-bottom-color: var(--text-strong);
 		}
 
-		.gear-body {
-			padding: 0 0.9rem 0.85rem;
+		.gear-tab:focus-visible {
+			outline: 2px solid var(--accent-color);
+			outline-offset: 2px;
 		}
 
-		.gear-specs {
+		.gear-panel {
+			padding-top: 0.5rem;
+		}
+
+		.gear-group {
+			margin: 0.75rem 0 0.15rem;
 			color: var(--text-muted);
-			font-family: "Atkinson Hyperlegible Mono", monospace;
-			font-size: 0.72rem;
-			line-height: 1.55;
-			margin: 0 0 0.6rem;
+			font-size: 0.68rem;
+			font-weight: 400;
+			letter-spacing: 0.075em;
+			text-transform: uppercase;
+		}
+
+		.gear-group:first-child {
+			margin-top: 0.25rem;
 		}
 
 		.gear-row {
+			display: grid;
+			grid-template-columns: 10rem minmax(0, 1fr);
+			align-items: baseline;
+			gap: 0.5rem;
+			padding: 0.3rem 0;
+		}
+
+		/* item name, then a dotted leader running to its chips */
+		.gear-row dt {
+			display: flex;
+			align-items: baseline;
+			gap: 0.4rem;
+			color: var(--text-bright);
+			font-size: 0.85rem;
+			line-height: 1.35;
+		}
+
+		.gear-row dt::after {
+			content: '';
+			flex: 1;
+			min-width: 0.75rem;
+			border-bottom: 1px dotted var(--text-faint);
+		}
+
+		.gear-row dd {
 			display: flex;
 			flex-wrap: wrap;
-			align-items: baseline;
-			gap: 0.35rem 0.6rem;
-			padding: 0.4rem 0;
-			border-top: 1px solid var(--border-faint);
-			font-size: 0.82rem;
-			line-height: 1.4;
+			gap: 0.25rem;
 		}
 
-		.gear-lens {
-			color: var(--accent-color);
-			font-weight: 600;
-			flex: 0 0 auto;
+		/* an item with no tags yet */
+		.gear-row dd:empty::before {
+			content: '\2014';
+			color: var(--text-faint);
+			font-size: 0.8rem;
 		}
 
-		.gear-badge {
+		.gear-chip {
+			padding: 0.15rem 0.4rem;
+			border-radius: 3px;
+			background: #283038;
+			color: var(--text-primary);
+			font-size: 0.72rem;
+			line-height: 1.3;
+			white-space: nowrap;
+		}
+
+		/* spec lines under a row, full width; spaces are kept so the mono columns line up */
+		.gear-row .gear-note {
+			display: block;
+			grid-column: 1 / -1;
+			margin-top: -0.2rem;
 			color: var(--text-muted);
 			font-family: "Atkinson Hyperlegible Mono", monospace;
 			font-size: 0.68rem;
-			text-transform: uppercase;
-			letter-spacing: 0.04em;
-			margin-right: 0.4rem;
-		}
-
-		.gear-detail {
-			color: var(--text-primary);
+			line-height: 1.5;
+			white-space: pre;
 		}
 
 		/* ========================================
@@ -3461,59 +3465,82 @@
 
 			<section class="section">
 				<div class="section-title" data-translate="t.equipment">EQUIPMENT</div>
+				<!-- Tabs: one category open at a time (click the open one to close it). Each row is
+				     an item, a dotted leader, then its chips; quantities only when not one. -->
 				<div class="gear">
-					<details class="gear-item">
-						<summary class="gear-summary">
-							<span class="gear-name">Sony α6400</span>
-						<span class="gear-tag">E-Mount</span>
-						</summary>
-						<div class="gear-body">
-						<p class="gear-specs">APS-C / S35 • No-IBIS • 18mm flange<br>S35: 4K 25fps 100Mbps • HD 60fps 50Mbps<br>Crop: 4K 30fps 100Mbps • HD 120fps 100Mbps</p>
-						<div class="gear-row"><span class="gear-lens">35mm ƒ/0.95</span><span class="gear-detail"><span class="gear-badge">MF</span>7artisans • 52ø</span></div>
-						<div class="gear-row"><span class="gear-lens">16-50mm ƒ/3.5-5.6</span><span class="gear-detail"><span class="gear-badge">AF</span>Kit Sony OSS • 40.5ø</span></div>
-						<div class="gear-row"><span class="gear-lens">55-210mm ƒ/4.5-6.3</span><span class="gear-detail"><span class="gear-badge">AF</span>Kit Sony OSS • 49ø</span></div>
-						<div class="gear-row"><span class="gear-lens">3.6-10mm ƒ/1.4</span><span class="gear-detail"><span class="gear-badge">MF</span>CCTV 1/1.8" • with C-to-E adapter</span></div>
-						</div>
-					</details>
-					<details class="gear-item">
-						<summary class="gear-summary">
-							<span class="gear-name">Pentax P30T</span>
-						<span class="gear-tag">K-Mount</span>
-						</summary>
-						<div class="gear-body">
-						<p class="gear-specs">35mm full frame • 8 perf • 45.46mm flange</p>
-						<div class="gear-row"><span class="gear-lens">35-80mm ƒ/4-?</span><span class="gear-detail"><span class="gear-badge">MF</span>Kit lens • 49ø</span></div>
-						</div>
-					</details>
-					<details class="gear-item">
-						<summary class="gear-summary">
-							<span class="gear-name">Olympus Pen-EE S</span>
-						<span class="gear-tag">Half-frame</span>
-						</summary>
-						<div class="gear-body">
-						<p class="gear-specs">35mm half frame • 4 perf • fixed 1/40s • fixed lens</p>
-						<div class="gear-row"><span class="gear-lens">30mm ƒ/2.8</span><span class="gear-detail"><span class="gear-badge">MF</span>22.5ø</span></div>
-						</div>
-					</details>
-					<details class="gear-item">
-						<summary class="gear-summary">
-							<span class="gear-name">Accessories</span>
-						</summary>
-						<div class="gear-body">
-						<div class="gear-row"><span class="gear-lens">Microphone</span><span class="gear-detail"><span class="gear-badge">×1</span>BOYA BY-MM1 cardioid • cold-shoe • 3.5mm TRS</span></div>
-						<div class="gear-row"><span class="gear-lens">5W Light</span><span class="gear-detail"><span class="gear-badge">×1</span>5W RGB • cold-shoe</span></div>
-						<div class="gear-row"><span class="gear-lens">ND Filters</span><span class="gear-detail"><span class="gear-badge">×0</span>—</span></div>
-						<div class="gear-row"><span class="gear-lens">Polarizing Filter</span><span class="gear-detail"><span class="gear-badge">×1</span>72ø</span></div>
-						<div class="gear-row"><span class="gear-lens">Star Filter</span><span class="gear-detail"><span class="gear-badge">×2</span>X shape • 67ø / 72ø</span></div>
-						<div class="gear-row"><span class="gear-lens">RGB Filters</span><span class="gear-detail"><span class="gear-badge">×3</span>72ø</span></div>
-						<div class="gear-row"><span class="gear-lens">Filter Adapters</span><span class="gear-detail"><span class="gear-badge">×6</span>49ø→52ø / 52ø→62ø (film scanner) / 52ø→67ø / 3× 52ø→72ø</span></div>
-						<div class="gear-row"><span class="gear-lens">Magnetic Filter Adapters</span><span class="gear-detail"><span class="gear-badge">×2</span>72ø</span></div>
-						<div class="gear-row"><span class="gear-lens">UV Filter</span><span class="gear-detail"><span class="gear-badge">×1</span>52ø</span></div>
-						<div class="gear-row"><span class="gear-lens">Reflector</span><span class="gear-detail"><span class="gear-badge">×1</span>110cm white / silver</span></div>
-						<div class="gear-row"><span class="gear-lens">Macro Converter</span><span class="gear-detail"><span class="gear-badge">×2</span>10+16mm AF E-Mount</span></div>
-						<div class="gear-row"><span class="gear-lens">Clapper</span><span class="gear-detail"><span class="gear-badge">×1</span>—</span></div>
-						</div>
-					</details>
+					<div class="gear-tabs">
+						<button type="button" class="gear-tab" aria-expanded="false" aria-controls="gear-cameras" data-translate="gear.cameras">Cameras</button>
+						<button type="button" class="gear-tab" aria-expanded="false" aria-controls="gear-lenses" data-translate="gear.lenses">Lenses</button>
+						<button type="button" class="gear-tab" aria-expanded="false" aria-controls="gear-rigs" data-translate="gear.rigs">Rigs</button>
+						<button type="button" class="gear-tab" aria-expanded="false" aria-controls="gear-light" data-translate="gear.light">Light</button>
+						<button type="button" class="gear-tab" aria-expanded="false" aria-controls="gear-sound" data-translate="gear.sound">Sound</button>
+						<button type="button" class="gear-tab" aria-expanded="false" aria-controls="gear-filters" data-translate="gear.filters">Filters</button>
+					</div>
+
+					<div class="gear-panel" id="gear-cameras" hidden>
+						<dl class="gear-list">
+							<div class="gear-row"><dt>Sony α6400</dt><dd><span class="gear-chip">E-mount</span><span class="gear-chip">APS-C / S35</span><span class="gear-chip">18mm flange</span><span class="gear-chip">No IBIS</span></dd><dd class="gear-note">Entire sensor:<br>  4K   25fps  100Mbps  40ms<br>  HD   60fps   50Mbps  13ms<br>Cropped sensor:<br>  4K   30fps  100Mbps  32ms<br>  HD  120fps  100Mbps   7ms</dd></div>
+							<div class="gear-row"><dt>Pentax P30T</dt><dd><span class="gear-chip">K-mount</span><span class="gear-chip">35mm full frame</span><span class="gear-chip">8 perf</span><span class="gear-chip">45.46mm flange</span></dd></div>
+							<div class="gear-row"><dt>Olympus Pen-EE S</dt><dd><span class="gear-chip">Half-frame</span><span class="gear-chip">4 perf</span><span class="gear-chip">Fixed 1/40s</span><span class="gear-chip">Fixed lens</span></dd></div>
+						</dl>
+					</div>
+
+					<div class="gear-panel" id="gear-lenses" hidden>
+						<h3 class="gear-group">E-mount</h3>
+						<dl class="gear-list">
+							<div class="gear-row"><dt>35mm ƒ/0.95</dt><dd><span class="gear-chip">MF</span><span class="gear-chip">7artisans</span><span class="gear-chip">52ø</span></dd></div>
+							<div class="gear-row"><dt>16-50mm ƒ/3.5-5.6</dt><dd><span class="gear-chip">AF</span><span class="gear-chip">Sony OSS kit</span><span class="gear-chip">40.5ø</span></dd></div>
+							<div class="gear-row"><dt>55-210mm ƒ/4.5-6.3</dt><dd><span class="gear-chip">AF</span><span class="gear-chip">Sony OSS kit</span><span class="gear-chip">49ø</span></dd></div>
+							<div class="gear-row"><dt>3.6-10mm ƒ/1.4</dt><dd><span class="gear-chip">MF</span><span class="gear-chip">CCTV 1/1.8"</span><span class="gear-chip">C-to-E adapter</span></dd></div>
+							<div class="gear-row"><dt>Macro converters</dt><dd><span class="gear-chip">AF</span><span class="gear-chip">10mm</span><span class="gear-chip">16mm</span></dd></div>
+						</dl>
+						<h3 class="gear-group">K-mount</h3>
+						<dl class="gear-list">
+							<div class="gear-row"><dt>35-80mm ƒ/4-?</dt><dd><span class="gear-chip">MF</span><span class="gear-chip">Pentax kit</span><span class="gear-chip">49ø</span></dd></div>
+						</dl>
+						<h3 class="gear-group">Pen-EE S</h3>
+						<dl class="gear-list">
+							<div class="gear-row"><dt>30mm ƒ/2.8</dt><dd><span class="gear-chip">MF</span><span class="gear-chip">Fixed to body</span><span class="gear-chip">22.5ø</span></dd></div>
+						</dl>
+					</div>
+
+					<div class="gear-panel" id="gear-rigs" hidden>
+						<dl class="gear-list">
+							<div class="gear-row"><dt>Video tripod</dt><dd></dd></div>
+							<div class="gear-row"><dt>Video head</dt><dd><span class="gear-chip">K&amp;F Concept</span></dd></div>
+							<div class="gear-row"><dt>Steadicam gimbal</dt><dd><span class="gear-chip">60cm</span></dd></div>
+							<div class="gear-row"><dt>Light tripods</dt><dd><span class="gear-chip">Ulanzi</span><span class="gear-chip">2m</span><span class="gear-chip">1.5m</span></dd></div>
+						</dl>
+					</div>
+
+					<div class="gear-panel" id="gear-light" hidden>
+						<dl class="gear-list">
+							<div class="gear-row"><dt>100W COB</dt><dd><span class="gear-chip">Bicolor</span><span class="gear-chip">RGB</span><span class="gear-chip">USB-C PD</span></dd></div>
+							<div class="gear-row"><dt>60W COB</dt><dd><span class="gear-chip">Bicolor</span><span class="gear-chip">USB-C PD</span></dd></div>
+							<div class="gear-row"><dt>5W light</dt><dd><span class="gear-chip">RGB</span><span class="gear-chip">Cold-shoe</span></dd></div>
+							<div class="gear-row"><dt>Reflector</dt><dd><span class="gear-chip">110cm</span><span class="gear-chip">2-in-1</span><span class="gear-chip">White</span><span class="gear-chip">Silver</span></dd></div>
+							<div class="gear-row"><dt>Diffuser / reflector</dt><dd><span class="gear-chip">110cm</span><span class="gear-chip">5-in-1</span><span class="gear-chip">Translucent</span><span class="gear-chip">White</span><span class="gear-chip">Silver</span><span class="gear-chip">Gold</span><span class="gear-chip">Black</span></dd></div>
+						</dl>
+					</div>
+
+					<div class="gear-panel" id="gear-sound" hidden>
+						<dl class="gear-list">
+							<div class="gear-row"><dt>Microphone</dt><dd><span class="gear-chip">BOYA BY-MM1</span><span class="gear-chip">Cardioid</span><span class="gear-chip">Cold-shoe</span><span class="gear-chip">3.5mm TRS</span></dd></div>
+							<div class="gear-row"><dt>Clapperboard</dt><dd><span class="gear-chip">Sound sync</span></dd></div>
+						</dl>
+					</div>
+
+					<div class="gear-panel" id="gear-filters" hidden>
+						<dl class="gear-list">
+							<div class="gear-row"><dt>Polarizer</dt><dd><span class="gear-chip">72ø</span></dd></div>
+							<div class="gear-row"><dt>UV</dt><dd><span class="gear-chip">52ø</span></dd></div>
+							<div class="gear-row"><dt>Star</dt><dd><span class="gear-chip">X shape</span><span class="gear-chip">67ø</span><span class="gear-chip">72ø</span></dd></div>
+							<div class="gear-row"><dt>RGB</dt><dd><span class="gear-chip">72ø</span><span class="gear-chip">×3</span></dd></div>
+							<div class="gear-row"><dt>ND</dt><dd><span class="gear-chip">×0</span></dd></div>
+							<div class="gear-row"><dt>Step-up rings</dt><dd><span class="gear-chip">49ø→52ø</span><span class="gear-chip">52ø→62ø film scanner</span><span class="gear-chip">52ø→67ø</span><span class="gear-chip">52ø→72ø ×3</span></dd></div>
+							<div class="gear-row"><dt>Magnetic adapters</dt><dd><span class="gear-chip">72ø</span><span class="gear-chip">×2</span></dd></div>
+						</dl>
+					</div>
 				</div>
 			</section>
 		</div>
@@ -3592,6 +3619,12 @@ const translations = {
 		't.logicgate': 'Logic Gate Simulation',
 		't.education': 'EDUCATION',
 		't.equipment': 'EQUIPMENT',
+		'gear.cameras': 'Cameras',
+		'gear.lenses': 'Lenses',
+		'gear.rigs': 'Rigs',
+		'gear.light': 'Light',
+		'gear.sound': 'Sound',
+		'gear.filters': 'Filters',
 		'nav.home': 'Home',
 		'nav.software': 'Software',
 		'nav.hardware': 'Hardware',
@@ -3647,6 +3680,12 @@ const translations = {
 		't.logicgate': 'Simulação de portas lógicas',
 		't.education': 'EDUCAÇÃO',
 		't.equipment': 'EQUIPAMENTO',
+		'gear.cameras': 'Câmaras',
+		'gear.lenses': 'Objetivas',
+		'gear.rigs': 'Suportes',
+		'gear.light': 'Luz',
+		'gear.sound': 'Som',
+		'gear.filters': 'Filtros',
 		'nav.home': 'Início',
 		'nav.software': 'Software',
 		'nav.hardware': 'Hardware',
@@ -3702,6 +3741,12 @@ const translations = {
 		't.logicgate': 'Simulación de puertas lógicas',
 		't.education': 'EDUCACIÓN',
 		't.equipment': 'EQUIPO',
+		'gear.cameras': 'Cámaras',
+		'gear.lenses': 'Objetivos',
+		'gear.rigs': 'Soportes',
+		'gear.light': 'Luz',
+		'gear.sound': 'Sonido',
+		'gear.filters': 'Filtros',
 		'nav.home': 'Inicio',
 		'nav.software': 'Software',
 		'nav.hardware': 'Hardware',
@@ -3757,6 +3802,12 @@ const translations = {
 		't.logicgate': 'Simulation de portes logiques',
 		't.education': 'FORMATION',
 		't.equipment': 'ÉQUIPEMENT',
+		'gear.cameras': 'Boîtiers',
+		'gear.lenses': 'Objectifs',
+		'gear.rigs': 'Supports',
+		'gear.light': 'Lumière',
+		'gear.sound': 'Son',
+		'gear.filters': 'Filtres',
 		'nav.home': 'Accueil',
 		'nav.software': 'Software',
 		'nav.hardware': 'Hardware',
@@ -3812,6 +3863,12 @@ const translations = {
 		't.logicgate': 'Logikgatter-Simulation',
 		't.education': 'AUSBILDUNG',
 		't.equipment': 'AUSRÜSTUNG',
+		'gear.cameras': 'Kameras',
+		'gear.lenses': 'Objektive',
+		'gear.rigs': 'Stative',
+		'gear.light': 'Licht',
+		'gear.sound': 'Ton',
+		'gear.filters': 'Filter',
 		'nav.home': 'Startseite',
 		'nav.software': 'Software',
 		'nav.hardware': 'Hardware',
@@ -3867,6 +3924,12 @@ const translations = {
 		't.logicgate': '逻辑门模拟',
 		't.education': '教育',
 		't.equipment': '器材',
+		'gear.cameras': '相机',
+		'gear.lenses': '镜头',
+		'gear.rigs': '支架',
+		'gear.light': '灯光',
+		'gear.sound': '声音',
+		'gear.filters': '滤镜',
 		'nav.home': '首页',
 		'nav.software': '软件',
 		'nav.hardware': '硬件',
@@ -3922,6 +3985,12 @@ const translations = {
 		't.logicgate': '論理ゲートシミュレーション',
 		't.education': '学歴',
 		't.equipment': '機材',
+		'gear.cameras': 'カメラ',
+		'gear.lenses': 'レンズ',
+		'gear.rigs': '三脚・ジンバル',
+		'gear.light': '照明',
+		'gear.sound': '音声',
+		'gear.filters': 'フィルター',
 		'nav.home': 'ホーム',
 		'nav.software': 'ソフトウェア',
 		'nav.hardware': 'ハードウェア',
@@ -3977,6 +4046,12 @@ const translations = {
 		't.logicgate': 'محاكاة البوابات المنطقية',
 		't.education': 'التعليم',
 		't.equipment': 'المعدات',
+		'gear.cameras': 'الكاميرات',
+		'gear.lenses': 'العدسات',
+		'gear.rigs': 'الحوامل',
+		'gear.light': 'الإضاءة',
+		'gear.sound': 'الصوت',
+		'gear.filters': 'المرشحات',
 		'nav.home': 'الرئيسية',
 		'nav.software': 'برمجيات',
 		'nav.hardware': 'أجهزة',
@@ -4308,6 +4383,25 @@ document.querySelectorAll('.film-entry').forEach(entry => {
 		});
 	});
 });
+
+// ========================================
+// EQUIPMENT TABS (one category open at a time; click the open one to close it)
+// ========================================
+(() => {
+	const tabs = document.querySelectorAll('.gear-tab');
+	const panelOf = tab => document.getElementById(tab.getAttribute('aria-controls'));
+	tabs.forEach(tab => tab.addEventListener('click', () => {
+		const opening = tab.getAttribute('aria-expanded') !== 'true';
+		tabs.forEach(t => {
+			t.setAttribute('aria-expanded', 'false');
+			panelOf(t).hidden = true;
+		});
+		if (opening) {
+			tab.setAttribute('aria-expanded', 'true');
+			panelOf(tab).hidden = false;
+		}
+	}));
+})();
 
 // ========================================
 // FILM CAST / CREW — reusable people
