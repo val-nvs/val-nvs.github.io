@@ -711,6 +711,51 @@
 			transition: transform 0.2s ease;
 		}
 
+		/* Software: the smaller / older projects, folded into a dropdown under the list */
+		.proj-more {
+			margin: 0 var(--content-padding) var(--content-padding);
+		}
+
+		.proj-more > summary {
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+			padding: 0.85rem 1rem;
+			border: 1px solid var(--border-subtle);
+			border-radius: 12px;
+			background: var(--card-bg);
+			color: var(--text-strong);
+			font-weight: 600;
+			cursor: pointer;
+			list-style: none;
+		}
+
+		.proj-more > summary::-webkit-details-marker {
+			display: none;
+		}
+
+		.proj-more > summary::after {
+			content: '';
+			margin-left: auto;
+			border-left: 6px solid currentColor;
+			border-top: 5px solid transparent;
+			border-bottom: 5px solid transparent;
+			transition: transform 0.15s ease;
+		}
+
+		.proj-more[open] > summary::after {
+			transform: rotate(90deg);
+		}
+
+		.proj-more-count {
+			color: var(--text-muted);
+			font-weight: 400;
+		}
+
+		.proj-more > .proj-list {
+			padding: 0.625rem 0 0;
+		}
+
 		@media (hover: hover) {
 			.proj:not(.is-static):hover {
 				transform: translateY(-3px);
@@ -736,6 +781,24 @@
 			color: var(--text-muted);
 			font-weight: 400;
 			font-size: 0.9em;
+		}
+
+		/* length + type after the year: "OTTO (2026) 10 min Short Film" */
+		.film-info {
+			margin-left: 0.4em;
+			color: var(--text-muted);
+			font-weight: 400;
+			font-size: 0.75em;
+			letter-spacing: 0.02em;
+		}
+
+		/* where it was shown, with a map pin */
+		.film-venue::before {
+			content: 'location_on';
+			margin-right: 0.2em;
+			font-family: 'Material Symbols Outlined';
+			font-size: 1.05em;
+			vertical-align: -3px;
 		}
 
 		.film-role {
@@ -768,6 +831,41 @@
 		.film-poster img {
 			height: 100%;
 			object-fit: cover;
+		}
+
+		/* posters that play inline get a small play badge */
+		.film-poster.has-player::after {
+			content: '';
+			position: absolute;
+			left: 6px;
+			bottom: 6px;
+			z-index: 2;
+			width: 24px;
+			height: 24px;
+			border-radius: 50%;
+			background: rgba(0, 0, 0, 0.65) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M4 2.5v7l6-3.5z' fill='%23fff'/%3E%3C/svg%3E") 55% 50% / 12px no-repeat;
+			pointer-events: none;
+		}
+
+		/* the inline player that opens under a film's card */
+		.film-player {
+			margin-top: 0.75rem;
+			aspect-ratio: 16 / 9;
+			border-radius: 0.375rem;
+			overflow: hidden;
+			background: #000;
+		}
+
+		.film-player iframe {
+			display: block;
+			width: 100%;
+			height: 100%;
+			border: 0;
+		}
+
+		/* works with no poster: a 3:2 still, same width as a poster */
+		.film-poster.is-still {
+			aspect-ratio: 3 / 2;
 		}
 
 		/* PHOTOS: structured blocks stacked in one column. Three grouping types:
@@ -1102,10 +1200,63 @@
 
 		/* type / length / month, one per line under the title */
 		.film-meta {
-			margin-top: 0.35rem;
+			margin-top: -0.5rem;   /* sits right under the title (cancels the column gap) */
 			color: var(--text-muted);
 			font-size: 1rem;
 			line-height: 1.5;
+		}
+
+		/* Showreel: static skeleton (no shimmer) holding the 16:9 space */
+		.showreel-frame {
+			position: relative;
+			aspect-ratio: 16 / 9;
+			border-radius: 0.375rem;
+			background: var(--surface-1);
+			outline: 1px solid var(--border-med);
+			outline-offset: -1px;
+		}
+
+		.showreel-play {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			width: 64px;
+			height: 64px;
+			margin: -32px 0 0 -32px;
+			border-radius: 50%;
+			background: var(--surface-avatar);
+		}
+
+		.showreel-play::after {
+			content: '';
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			margin: -11px 0 0 -6px;
+			border-left: 18px solid var(--text-faint);
+			border-top: 11px solid transparent;
+			border-bottom: 11px solid transparent;
+		}
+
+		.showreel-caption {
+			display: flex;
+			align-items: center;
+			gap: 0.75rem;
+			margin-top: 0.75rem;
+		}
+
+		.showreel-title {
+			color: var(--text-muted);
+			font-size: 0.8rem;
+			letter-spacing: 0.08em;
+			text-transform: uppercase;
+		}
+
+		.showreel-bar {
+			flex: 0 1 40%;
+			height: 0.6rem;
+			border-radius: 999px;
+			background: var(--surface-avatar);
 		}
 
 		.film-desc {
@@ -1155,6 +1306,12 @@
 			margin: 0;
 			color: var(--text-muted);
 			font-size: 0.8rem;
+		}
+
+		/* press / screening link under the facts */
+		.film-panel .film-link {
+			margin: 0.35rem 0 0;
+			font-size: 0.85rem;
 		}
 
 		.film-panel {
@@ -2431,30 +2588,6 @@
 
 				<article class="proj">
 					<div class="proj-media">
-						<video autoplay muted loop playsinline width="652" height="336" poster="media/switcher-poster.jpg" aria-label="Broadcast switcher table animation">
-							<source src="media/switcher.webm" type="video/webm">
-							<source src="media/switcher.mp4" type="video/mp4">
-						</video>
-					</div>
-					<div class="proj-body">
-						<h2 class="proj-title"><a href="https://val-nvs.com/tv/" target="_blank" rel="noopener" data-translate="t.broadcast">Broadcast Table</a></h2>
-						<p class="proj-desc">Functional but not really.</p>
-						<div class="proj-meta"><span class="proj-url">val-nvs.com/tv</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
-					</div>
-				</article>
-
-				<article class="proj">
-					<div class="proj-media">
-						<img loading="lazy" src="media/engine.jpg" width="1592" height="850" alt="Game engine project">
-					</div>
-					<div class="proj-body">
-						<h2 class="proj-title"><a href="https://val-nvs.com/game-engine/" target="_blank" rel="noopener" data-translate="t.engine">Engine</a></h2>
-						<div class="proj-meta"><span class="proj-url">val-nvs.com/game-engine</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
-					</div>
-				</article>
-
-				<article class="proj">
-					<div class="proj-media">
 						<img loading="lazy" src="media/previs.png" width="1000" height="366" alt="Blender 3D pre-visualization">
 					</div>
 					<div class="proj-body">
@@ -2473,16 +2606,6 @@
 					<div class="proj-body">
 						<h2 class="proj-title"><a href="https://val-nvs.com/blender-guide/" target="_blank" rel="noopener" data-translate="t.blenderguide">Blender Guide</a></h2>
 						<div class="proj-meta"><span class="proj-url">val-nvs.com/blender-guide</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
-					</div>
-				</article>
-
-				<article class="proj is-static">
-					<div class="proj-media">
-						<img loading="lazy" src="media/nodes.png" width="1000" height="388" alt="Blender shader nodes">
-					</div>
-					<div class="proj-body">
-						<h2 class="proj-title" data-translate="t.blendernodes">Blender Nodes</h2>
-						<div class="proj-meta"><span data-translate="p.nolink">No link yet</span></div>
 					</div>
 				</article>
 
@@ -2519,99 +2642,139 @@
 						<div class="proj-meta"><span class="proj-url">val-nvs.com/rodinal</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
 					</div>
 				</article>
-
-				<article class="proj">
-					<div class="proj-media">
-						<img loading="lazy" src="media/films.jpg" width="1592" height="850" alt="Favorite films collection">
-					</div>
-					<div class="proj-body">
-						<h2 class="proj-title"><a href="https://val-nvs.com/favorites/" target="_blank" rel="noopener" data-translate="p.favfilms">Favorite Films</a></h2>
-						<div class="proj-meta"><span class="proj-url">val-nvs.com/favorites</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
-					</div>
-				</article>
-
-				<article class="proj">
-					<div class="proj-media">
-						<img loading="lazy" src="media/film.jpg" width="400" height="214" alt="Film portfolio">
-					</div>
-					<div class="proj-body">
-						<h2 class="proj-title"><a href="https://val-nvs.com/portfolio/" target="_blank" rel="noopener" data-translate="p.filmportfolio">Film Portfolio</a></h2>
-						<div class="proj-meta"><span class="proj-url">val-nvs.com/portfolio</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
-					</div>
-				</article>
-
-				<article class="proj">
-					<div class="proj-media">
-						<img loading="lazy" src="media/photofolio.jpg" width="1362" height="747" alt="Photography portfolio">
-					</div>
-					<div class="proj-body">
-						<h2 class="proj-title"><a href="https://val-nvs.com/photo/" target="_blank" rel="noopener" data-translate="p.photoportfolio">Photo Portfolio</a></h2>
-						<div class="proj-meta"><span class="proj-url">val-nvs.com/photo</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
-					</div>
-				</article>
-
-				<article class="proj">
-					<div class="proj-media">
-						<img loading="lazy" src="media/klotski.png" width="1592" height="850" alt="Klotski puzzle game">
-					</div>
-					<div class="proj-body">
-						<h2 class="proj-title"><a href="https://val-nvs.com/klotski.html" target="_blank" rel="noopener" data-translate="p.klotski">Klotski</a></h2>
-						<p class="proj-desc">Puzzle game.</p>
-						<div class="proj-meta"><span class="proj-url">val-nvs.com/klotski.html</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
-					</div>
-				</article>
-
-				<article class="proj">
-					<div class="proj-media">
-						<img loading="lazy" src="media/calc.png" width="1592" height="850" alt="Custom calculator">
-					</div>
-					<div class="proj-body">
-						<h2 class="proj-title"><a href="https://val-nvs.com/calc.html" target="_blank" rel="noopener" data-translate="p.calc">Web Calculator</a></h2>
-						<div class="proj-meta"><span class="proj-url">val-nvs.com/calc.html</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
-					</div>
-				</article>
-
-				<article class="proj">
-					<div class="proj-media">
-						<img loading="lazy" src="media/old.png" width="1592" height="850" alt="Old portfolio website">
-					</div>
-					<div class="proj-body">
-						<h2 class="proj-title"><a href="https://val-nvs.com/portfolio/old.html" target="_blank" rel="noopener" data-translate="p.oldportfolio">Old Portfolio</a></h2>
-						<div class="proj-meta"><span class="proj-url">val-nvs.com/portfolio/old.html</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
-					</div>
-				</article>
-
-				<article class="proj">
-					<div class="proj-media">
-						<img loading="lazy" src="media/404.png" width="1592" height="850" alt="404 error page">
-					</div>
-					<div class="proj-body">
-						<h2 class="proj-title"><a href="https://val-nvs.com/404" target="_blank" rel="noopener" data-translate="p.404">404 Page</a></h2>
-						<div class="proj-meta"><span class="proj-url">val-nvs.com/404</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
-					</div>
-				</article>
-
-				<article class="proj">
-					<div class="proj-media">
-						<img loading="lazy" src="media/pic1.jpg" width="1000" height="388" alt="Original landing page">
-					</div>
-					<div class="proj-body">
-						<h2 class="proj-title"><a href="https://val-nvs.com/OLDindex.html" target="_blank" rel="noopener" data-translate="t.oldlander">Old Lander</a></h2>
-						<p class="proj-desc">The original landing page.</p>
-						<div class="proj-meta"><span class="proj-url">val-nvs.com/OLDindex.html</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
-					</div>
-				</article>
-
-				<article class="proj">
-					<div class="proj-media fit-contain">
-						<img loading="lazy" src="media/github.png" width="341" height="334" alt="GitHub profile">
-					</div>
-					<div class="proj-body">
-						<h2 class="proj-title"><a href="https://github.com/val-nvs" target="_blank" rel="noopener" data-translate="t.github">GitHub Profile</a></h2>
-						<div class="proj-meta"><span class="proj-url">github.com/val-nvs</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
-					</div>
-				</article>
 			</div>
+
+			<!-- smaller / older projects, folded away under the main list -->
+			<details class="proj-more">
+				<summary><span data-translate="p.more">More projects</span> <span class="proj-more-count">12</span></summary>
+				<div class="proj-list">
+					<article class="proj">
+						<div class="proj-media">
+							<video autoplay muted loop playsinline width="652" height="336" poster="media/switcher-poster.jpg" aria-label="Broadcast switcher table animation">
+								<source src="media/switcher.webm" type="video/webm">
+								<source src="media/switcher.mp4" type="video/mp4">
+							</video>
+						</div>
+						<div class="proj-body">
+							<h2 class="proj-title"><a href="https://val-nvs.com/tv/" target="_blank" rel="noopener" data-translate="t.broadcast">Broadcast Table</a></h2>
+							<p class="proj-desc">Functional but not really.</p>
+							<div class="proj-meta"><span class="proj-url">val-nvs.com/tv</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
+						</div>
+					</article>
+
+					<article class="proj">
+						<div class="proj-media">
+							<img loading="lazy" src="media/engine.jpg" width="1592" height="850" alt="Game engine project">
+						</div>
+						<div class="proj-body">
+							<h2 class="proj-title"><a href="https://val-nvs.com/game-engine/" target="_blank" rel="noopener" data-translate="t.engine">Engine</a></h2>
+							<div class="proj-meta"><span class="proj-url">val-nvs.com/game-engine</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
+						</div>
+					</article>
+
+					<article class="proj is-static">
+						<div class="proj-media">
+							<img loading="lazy" src="media/nodes.png" width="1000" height="388" alt="Blender shader nodes">
+						</div>
+						<div class="proj-body">
+							<h2 class="proj-title" data-translate="t.blendernodes">Blender Nodes</h2>
+							<div class="proj-meta"><span data-translate="p.nolink">No link yet</span></div>
+						</div>
+					</article>
+
+					<article class="proj">
+						<div class="proj-media">
+							<img loading="lazy" src="media/films.jpg" width="1592" height="850" alt="Favorite films collection">
+						</div>
+						<div class="proj-body">
+							<h2 class="proj-title"><a href="https://val-nvs.com/favorites/" target="_blank" rel="noopener" data-translate="p.favfilms">Favorite Films</a></h2>
+							<div class="proj-meta"><span class="proj-url">val-nvs.com/favorites</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
+						</div>
+					</article>
+
+					<article class="proj">
+						<div class="proj-media">
+							<img loading="lazy" src="media/film.jpg" width="400" height="214" alt="Film portfolio">
+						</div>
+						<div class="proj-body">
+							<h2 class="proj-title"><a href="https://val-nvs.com/portfolio/" target="_blank" rel="noopener" data-translate="p.filmportfolio">Film Portfolio</a></h2>
+							<div class="proj-meta"><span class="proj-url">val-nvs.com/portfolio</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
+						</div>
+					</article>
+
+					<article class="proj">
+						<div class="proj-media">
+							<img loading="lazy" src="media/photofolio.jpg" width="1362" height="747" alt="Photography portfolio">
+						</div>
+						<div class="proj-body">
+							<h2 class="proj-title"><a href="https://val-nvs.com/photo/" target="_blank" rel="noopener" data-translate="p.photoportfolio">Photo Portfolio</a></h2>
+							<div class="proj-meta"><span class="proj-url">val-nvs.com/photo</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
+						</div>
+					</article>
+
+					<article class="proj">
+						<div class="proj-media">
+							<img loading="lazy" src="media/klotski.png" width="1592" height="850" alt="Klotski puzzle game">
+						</div>
+						<div class="proj-body">
+							<h2 class="proj-title"><a href="https://val-nvs.com/klotski.html" target="_blank" rel="noopener" data-translate="p.klotski">Klotski</a></h2>
+							<p class="proj-desc">Puzzle game.</p>
+							<div class="proj-meta"><span class="proj-url">val-nvs.com/klotski.html</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
+						</div>
+					</article>
+
+					<article class="proj">
+						<div class="proj-media">
+							<img loading="lazy" src="media/calc.png" width="1592" height="850" alt="Custom calculator">
+						</div>
+						<div class="proj-body">
+							<h2 class="proj-title"><a href="https://val-nvs.com/calc.html" target="_blank" rel="noopener" data-translate="p.calc">Web Calculator</a></h2>
+							<div class="proj-meta"><span class="proj-url">val-nvs.com/calc.html</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
+						</div>
+					</article>
+
+					<article class="proj">
+						<div class="proj-media">
+							<img loading="lazy" src="media/old.png" width="1592" height="850" alt="Old portfolio website">
+						</div>
+						<div class="proj-body">
+							<h2 class="proj-title"><a href="https://val-nvs.com/portfolio/old.html" target="_blank" rel="noopener" data-translate="p.oldportfolio">Old Portfolio</a></h2>
+							<div class="proj-meta"><span class="proj-url">val-nvs.com/portfolio/old.html</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
+						</div>
+					</article>
+
+					<article class="proj">
+						<div class="proj-media">
+							<img loading="lazy" src="media/404.png" width="1592" height="850" alt="404 error page">
+						</div>
+						<div class="proj-body">
+							<h2 class="proj-title"><a href="https://val-nvs.com/404" target="_blank" rel="noopener" data-translate="p.404">404 Page</a></h2>
+							<div class="proj-meta"><span class="proj-url">val-nvs.com/404</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
+						</div>
+					</article>
+
+					<article class="proj">
+						<div class="proj-media">
+							<img loading="lazy" src="media/pic1.jpg" width="1000" height="388" alt="Original landing page">
+						</div>
+						<div class="proj-body">
+							<h2 class="proj-title"><a href="https://val-nvs.com/OLDindex.html" target="_blank" rel="noopener" data-translate="t.oldlander">Old Lander</a></h2>
+							<p class="proj-desc">The original landing page.</p>
+							<div class="proj-meta"><span class="proj-url">val-nvs.com/OLDindex.html</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
+						</div>
+					</article>
+
+					<article class="proj">
+						<div class="proj-media fit-contain">
+							<img loading="lazy" src="media/github.png" width="341" height="334" alt="GitHub profile">
+						</div>
+						<div class="proj-body">
+							<h2 class="proj-title"><a href="https://github.com/val-nvs" target="_blank" rel="noopener" data-translate="t.github">GitHub Profile</a></h2>
+							<div class="proj-meta"><span class="proj-url">github.com/val-nvs</span><svg class="proj-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5"/></svg></div>
+						</div>
+					</article>
+				</div>
+			</details>
 
 		</div>
 
@@ -2715,6 +2878,18 @@
 			     (same style & height as the top nav) whose tabs expand text below on click.
 			     To add a film: drop a poster in media/films/ and copy one <section> block. -->
 
+			<!-- SHOWREEL: static 16:9 skeleton until the reel is ready — swap .showreel-frame
+			     for the <video> / <iframe> (keep the 16:9 box). -->
+			<section class="section showreel">
+				<div class="showreel-frame" role="img" aria-label="Showreel, coming soon">
+					<span class="showreel-play" aria-hidden="true"></span>
+				</div>
+				<div class="showreel-caption">
+					<span class="showreel-title">Showreel</span>
+					<span class="showreel-bar" aria-hidden="true"></span>
+				</div>
+			</section>
+
 			<section class="section film-entry" data-film="reborn">
 				<div class="film-layout">
 					<div class="card film-poster">
@@ -2739,9 +2914,9 @@
 				</div>
 			</section>
 
-			<section class="section film-entry" data-film="firefly">
+			<section class="section film-entry" data-film="firefly" data-venue="Cinema São Jorge">
 				<div class="film-layout">
-					<a class="card film-poster" href="https://www.themoviedb.org/search?query=Firefly" target="_blank" rel="noopener">
+					<a class="card film-poster" href="https://youtu.be/MBt4IIQxU8U" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/films/firefly.jpg" width="600" height="900" alt="Firefly (2026)">
 					</a>
 					<div class="film-body">
@@ -2789,9 +2964,9 @@
 
 			<section class="section film-entry" data-film="nini">
 				<div class="film-layout">
-					<a class="card film-poster" href="https://www.youtube.com/watch?v=MCx7GS_gBK4" target="_blank" rel="noopener">
+					<div class="card film-poster is-still">
 						<img loading="lazy" src="media/films/nini.jpg" alt="Interview">
-					</a>
+					</div>
 					<div class="film-body">
 						<div class="section-title">Interview <span class="film-year">(2025)</span></div>
 						<ul class="film-nav-list">
@@ -2814,10 +2989,10 @@
 			<section class="section film-entry" data-film="bang">
 				<div class="film-layout">
 					<a class="card film-poster" href="https://val-nvs.com/portfolio/" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/films/bang.jpg" alt="Music Video">
+						<img loading="lazy" src="media/films/bang.jpg" alt="After School Bang! dance cover (2025)">
 					</a>
 					<div class="film-body">
-						<div class="section-title">Music Video <span class="film-year">(2025)</span></div>
+						<div class="section-title">Bang! <span class="film-year">(2025)</span></div>
 						<ul class="film-nav-list">
 							<li class="film-tab" data-tab="cast">Cast</li>
 							<li class="film-tab" data-tab="crew">Crew</li>
@@ -2829,8 +3004,8 @@
 					<div class="film-panel hidden" data-panel="cast"></div>
 					<div class="film-panel hidden" data-panel="crew"></div>
 					<div class="film-panel hidden" data-panel="details">
-						<p class="film-desc"><span class="film-role">Camera</span> on a K-pop dance cover, shot with two cameras — one on a gimbal for dynamic angles, inspired by 1theK's On The Spot series.</p>
-						<p class="film-facts">2025 · 03 MIN · Music Video</p>
+						<p class="film-desc"><span class="film-role">Camera</span> on a dance cover of After School — 'Bang!', shot with two cameras — one on a gimbal for dynamic angles, inspired by 1theK's On The Spot series.</p>
+						<p class="film-facts">2025 · 03 MIN · Dance Cover</p>
 					</div>
 				</div>
 			</section>
@@ -2838,10 +3013,10 @@
 			<section class="section film-entry" data-film="monitor">
 				<div class="film-layout">
 					<a class="card film-poster" href="https://val-nvs.com/portfolio/" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/films/monitor.jpg" alt="Short Film">
+						<img loading="lazy" src="media/films/monitor.jpg" alt="Jay Gupta (2025)">
 					</a>
 					<div class="film-body">
-						<div class="section-title">Short Film <span class="film-year">(2025)</span></div>
+						<div class="section-title">Jay Gupta <span class="film-year">(2025)</span></div>
 						<ul class="film-nav-list">
 							<li class="film-tab" data-tab="cast">Cast</li>
 							<li class="film-tab" data-tab="crew">Crew</li>
@@ -2859,13 +3034,13 @@
 				</div>
 			</section>
 
-			<section class="section film-entry" data-film="chapito">
+			<section class="section film-entry" data-film="chapito" data-venue="Festival PALARI, Momo – Museu do Circo · 23 May | Imagens no Tejo, Vila Franca de Xira · 19 Oct">
 				<div class="film-layout">
 					<a class="card film-poster" href="https://www.youtube.com/watch?v=ztUn9QWYk_Y" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/films/chapito.gif" alt="Documentary">
+						<img loading="lazy" src="media/films/chapito.gif" alt="Onde Cabem Todos (2025)">
 					</a>
 					<div class="film-body">
-						<div class="section-title">Documentary <span class="film-year">(2025)</span></div>
+						<div class="section-title">Onde Cabem Todos <span class="film-year">(2025)</span></div>
 						<ul class="film-nav-list">
 							<li class="film-tab" data-tab="cast">Cast</li>
 							<li class="film-tab" data-tab="crew">Crew</li>
@@ -2877,8 +3052,9 @@
 					<div class="film-panel hidden" data-panel="cast"></div>
 					<div class="film-panel hidden" data-panel="crew"></div>
 					<div class="film-panel hidden" data-panel="details">
-						<p class="film-desc"><span class="film-role">Camera</span> and <span class="film-role">sound</span> on a documentary about Pascoal Furtado, a teacher at Chapitô, a circus school in Lisbon.</p>
+						<p class="film-desc"><span class="film-role">Camera</span> and <span class="film-role">sound</span> on a documentary portrait of circus artist and teacher Pascoal Furtado, made in partnership with the Chapitô circus school. Selected for Festival PALARI and Imagens no Tejo – Mostra de Cinema Português.</p>
 						<p class="film-facts">2025 · 13 MIN · Documentary</p>
+						<p class="film-link"><a href="https://etic.pt/onde-cabem-todos-no-festival-palari/" target="_blank" rel="noopener">Article on ETIC ↗</a></p>
 					</div>
 				</div>
 			</section>
@@ -2909,7 +3085,7 @@
 
 			<section class="section film-entry" data-film="seb">
 				<div class="film-layout">
-					<a class="card film-poster" href="https://www.youtube.com/watch?v=__UxmK7BD68" target="_blank" rel="noopener">
+					<a class="card film-poster is-still" href="https://www.youtube.com/watch?v=__UxmK7BD68" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/films/seb.jpg" alt="Interview">
 					</a>
 					<div class="film-body">
@@ -2933,11 +3109,11 @@
 
 			<section class="section film-entry" data-film="free">
 				<div class="film-layout">
-					<a class="card film-poster" href="https://www.youtube.com/watch?v=FcrQnCTnG0M" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/films/free.jpg" alt="Short Film">
+					<a class="card film-poster is-still" href="https://www.youtube.com/watch?v=FcrQnCTnG0M" target="_blank" rel="noopener">
+						<img loading="lazy" src="media/films/free.jpg" alt="FRE.e (2024)">
 					</a>
 					<div class="film-body">
-						<div class="section-title">Short Film <span class="film-year">(2024)</span></div>
+						<div class="section-title">FRE.e <span class="film-year">(2024)</span></div>
 						<ul class="film-nav-list">
 							<li class="film-tab" data-tab="cast">Cast</li>
 							<li class="film-tab" data-tab="crew">Crew</li>
@@ -2958,10 +3134,10 @@
 			<section class="section film-entry" data-film="group1">
 				<div class="film-layout">
 					<a class="card film-poster" href="https://www.youtube.com/watch?v=5LlSdajis7g" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/films/group1.png" alt="TV Pilot">
+						<img loading="lazy" src="media/films/group1.png" alt="Liberdade Criativa (2024)">
 					</a>
 					<div class="film-body">
-						<div class="section-title">TV Pilot <span class="film-year">(2024)</span></div>
+						<div class="section-title">Liberdade Criativa <span class="film-year">(2024)</span></div>
 						<ul class="film-nav-list">
 							<li class="film-tab" data-tab="cast">Cast</li>
 							<li class="film-tab" data-tab="crew">Crew</li>
@@ -3006,10 +3182,10 @@
 			<section class="section film-entry" data-film="alges">
 				<div class="film-layout">
 					<a class="card film-poster" href="https://www.youtube.com/watch?v=UsGJUCy7Mx0" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/films/alges.png" alt="Music Video">
+						<img loading="lazy" src="media/films/alges.png" alt="RIIZE Impossible dance cover (2024)">
 					</a>
 					<div class="film-body">
-						<div class="section-title">Music Video <span class="film-year">(2024)</span></div>
+						<div class="section-title">Impossible <span class="film-year">(2024)</span></div>
 						<ul class="film-nav-list">
 							<li class="film-tab" data-tab="cast">Cast</li>
 							<li class="film-tab" data-tab="crew">Crew</li>
@@ -3022,18 +3198,18 @@
 					<div class="film-panel hidden" data-panel="crew"></div>
 					<div class="film-panel hidden" data-panel="details">
 						<p class="film-desc"><span class="film-role">Camera</span> on a dance cover of RIIZE (라이즈) — 'Impossible'.</p>
-						<p class="film-facts">2024 · 04 MIN · Music Video</p>
+						<p class="film-facts">2024 · 04 MIN · Dance Cover</p>
 					</div>
 				</div>
 			</section>
 
-			<section class="section film-entry" data-film="cinema">
+			<section class="section film-entry" data-film="cinema" data-venue="Anfiteatro AM, Pavilhão de Mecânica II · 9 May">
 				<div class="film-layout">
 					<a class="card film-poster" href="https://vimeo.com/930022904" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/films/cinema.png" alt="Short Film">
+						<img loading="lazy" src="media/films/cinema.png" alt="El Artista Compreendido (2024)">
 					</a>
 					<div class="film-body">
-						<div class="section-title">Short Film <span class="film-year">(2024)</span></div>
+						<div class="section-title">El Artista Compreendido <span class="film-year">(2024)</span></div>
 						<ul class="film-nav-list">
 							<li class="film-tab" data-tab="cast">Cast</li>
 							<li class="film-tab" data-tab="crew">Crew</li>
@@ -3045,19 +3221,20 @@
 					<div class="film-panel hidden" data-panel="cast"></div>
 					<div class="film-panel hidden" data-panel="crew"></div>
 					<div class="film-panel hidden" data-panel="details">
-						<p class="film-desc"><span class="film-role">Sound</span> — recording and boom — for a dark-comedy short about a troubled artist's pursuit of perfection, on a single-location set.</p>
+						<p class="film-desc"><span class="film-role">Sound</span> — recording and boom — for a dark-comedy short about a troubled artist's pursuit of perfection, on a single-location set. Screened in a national showcase of student short and medium-length films.</p>
 						<p class="film-facts">2024 · 04 MIN · Short Film</p>
+						<p class="film-link"><a href="https://www.e-cultura.pt/evento/40727" target="_blank" rel="noopener">Article on e-cultura ↗</a></p>
 					</div>
 				</div>
 			</section>
 
 			<section class="section film-entry" data-film="curta">
 				<div class="film-layout">
-					<a class="card film-poster" href="https://val-nvs.com/portfolio/" target="_blank" rel="noopener">
-						<img loading="lazy" src="media/films/curta.jpg" alt="Short Film">
+					<a class="card film-poster" href="https://youtu.be/0laM8mNg5xY" target="_blank" rel="noopener">
+						<img loading="lazy" src="media/films/curta.jpg" alt="Untitled (2024)">
 					</a>
 					<div class="film-body">
-						<div class="section-title">Short Film <span class="film-year">(2024)</span></div>
+						<div class="section-title">Untitled <span class="film-year">(2024)</span></div>
 						<ul class="film-nav-list">
 							<li class="film-tab" data-tab="cast">Cast</li>
 							<li class="film-tab" data-tab="crew">Crew</li>
@@ -3069,7 +3246,7 @@
 					<div class="film-panel hidden" data-panel="cast"></div>
 					<div class="film-panel hidden" data-panel="crew"></div>
 					<div class="film-panel hidden" data-panel="details">
-						<p class="film-desc"><span class="film-role">Camera</span> on a very short experimental piece.</p>
+						<p class="film-desc"><span class="film-role">Direction</span> and <span class="film-role">camera</span> on a very short experimental piece.</p>
 						<p class="film-facts">2024 · 02 MIN · Short Film</p>
 					</div>
 				</div>
@@ -3077,7 +3254,7 @@
 
 			<section class="section film-entry" data-film="people">
 				<div class="film-layout">
-					<a class="card film-poster" href="https://www.youtube.com/watch?v=ayyPyMsfCJo" target="_blank" rel="noopener">
+					<a class="card film-poster is-still" href="https://www.youtube.com/watch?v=ayyPyMsfCJo" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/films/people.png" alt="Short Film">
 					</a>
 					<div class="film-body">
@@ -3123,9 +3300,57 @@
 				</div>
 			</section>
 
+			<section class="section film-entry" data-film="matheus">
+				<div class="film-layout">
+					<a class="card film-poster is-still" href="https://youtu.be/PHQb5IYAWm0" target="_blank" rel="noopener">
+						<img loading="lazy" src="https://i.ytimg.com/vi/PHQb5IYAWm0/mqdefault.jpg" alt="Short Film (2023)">
+					</a>
+					<div class="film-body">
+						<div class="section-title">Short Film <span class="film-year">(2023)</span></div>
+						<ul class="film-nav-list">
+							<li class="film-tab" data-tab="cast">Cast</li>
+							<li class="film-tab" data-tab="crew">Crew</li>
+							<li class="film-tab" data-tab="details">Details</li>
+						</ul>
+					</div>
+				</div>
+				<div class="film-panels">
+					<div class="film-panel hidden" data-panel="cast"></div>
+					<div class="film-panel hidden" data-panel="crew"></div>
+					<div class="film-panel hidden" data-panel="details">
+						<p class="film-desc"><span class="film-role">Direction</span> on a short film starring Matheus Andrade.</p>
+						<p class="film-facts">2023 · Short Film</p>
+					</div>
+				</div>
+			</section>
+
+			<section class="section film-entry" data-film="exp2021">
+				<div class="film-layout">
+					<a class="card film-poster is-still" href="https://youtu.be/h13c_dRhnCg" target="_blank" rel="noopener">
+						<img loading="lazy" src="https://i.ytimg.com/vi/h13c_dRhnCg/mqdefault.jpg" alt="Experimental Short (2021)">
+					</a>
+					<div class="film-body">
+						<div class="section-title">Experimental Short <span class="film-year">(2021)</span></div>
+						<ul class="film-nav-list">
+							<li class="film-tab" data-tab="cast">Cast</li>
+							<li class="film-tab" data-tab="crew">Crew</li>
+							<li class="film-tab" data-tab="details">Details</li>
+						</ul>
+					</div>
+				</div>
+				<div class="film-panels">
+					<div class="film-panel hidden" data-panel="cast"></div>
+					<div class="film-panel hidden" data-panel="crew"></div>
+					<div class="film-panel hidden" data-panel="details">
+						<p class="film-desc">An experimental short film.</p>
+						<p class="film-facts">2021 · Short Film</p>
+					</div>
+				</div>
+			</section>
+
 			<section class="section film-entry" data-film="skydive">
 				<div class="film-layout">
-					<a class="card film-poster" href="https://www.youtube.com/watch?v=KUs1Popfd8g" target="_blank" rel="noopener">
+					<a class="card film-poster is-still" href="https://www.youtube.com/watch?v=KUs1Popfd8g" target="_blank" rel="noopener">
 						<img loading="lazy" src="media/films/skydive.png" alt="Film">
 					</a>
 					<div class="film-body">
@@ -3634,6 +3859,7 @@ const translations = {
 		'p.soon': 'Coming soon',
 		'p.featured': 'Featured',
 		'p.nolink': 'No link yet',
+		'p.more': 'More projects',
 		't.blendernodes': 'Blender Nodes',
 		't.stats': 'Stats',
 		't.oldlander': 'Old Lander',
@@ -3696,6 +3922,7 @@ const translations = {
 		'p.soon': 'Em breve',
 		'p.featured': 'Destaque',
 		'p.nolink': 'Ainda sem link',
+		'p.more': 'Mais projetos',
 		't.blendernodes': 'Nós do Blender',
 		't.stats': 'Estatísticas',
 		't.oldlander': 'Página antiga',
@@ -3758,6 +3985,7 @@ const translations = {
 		'p.soon': 'Próximamente',
 		'p.featured': 'Destacado',
 		'p.nolink': 'Aún sin enlace',
+		'p.more': 'Más proyectos',
 		't.blendernodes': 'Nodos de Blender',
 		't.stats': 'Estadísticas',
 		't.oldlander': 'Página antigua',
@@ -3820,6 +4048,7 @@ const translations = {
 		'p.soon': 'Bientôt',
 		'p.featured': 'À la une',
 		'p.nolink': 'Pas encore de lien',
+		'p.more': 'Autres projets',
 		't.blendernodes': 'Nodes Blender',
 		't.stats': 'Statistiques',
 		't.oldlander': 'Ancienne page',
@@ -3882,6 +4111,7 @@ const translations = {
 		'p.soon': 'Demnächst',
 		'p.featured': 'Empfohlen',
 		'p.nolink': 'Noch kein Link',
+		'p.more': 'Weitere Projekte',
 		't.blendernodes': 'Blender-Nodes',
 		't.stats': 'Statistiken',
 		't.oldlander': 'Alte Startseite',
@@ -3944,6 +4174,7 @@ const translations = {
 		'p.soon': '即将推出',
 		'p.featured': '精选',
 		'p.nolink': '暂无链接',
+		'p.more': '更多项目',
 		't.blendernodes': 'Blender 节点',
 		't.stats': '统计',
 		't.oldlander': '旧首页',
@@ -4006,6 +4237,7 @@ const translations = {
 		'p.soon': '近日公開',
 		'p.featured': '注目',
 		'p.nolink': 'リンクなし',
+		'p.more': 'その他のプロジェクト',
 		't.blendernodes': 'Blender ノード',
 		't.stats': '統計',
 		't.oldlander': '旧ランディングページ',
@@ -4068,6 +4300,7 @@ const translations = {
 		'p.soon': 'قريبًا',
 		'p.featured': 'مميز',
 		'p.nolink': 'لا يوجد رابط بعد',
+		'p.more': 'مشاريع أخرى',
 		't.blendernodes': 'عقد Blender',
 		't.stats': 'إحصاءات',
 		't.oldlander': 'الصفحة القديمة',
@@ -4293,6 +4526,7 @@ function activateTab(button) {
 	setTheme(selectedPage);
 
 	window.scrollTo({ top: 0, behavior: 'smooth' });
+	document.dispatchEvent(new CustomEvent('tabchange', { detail: selectedPage }));
 }
 
 navButtons.forEach((button, index) => {
@@ -4345,6 +4579,56 @@ navButtons.forEach((button, index) => {
 		const next = dx < 0 ? (current + 1) % n : (current - 1 + n) % n;
 		activateTab(navButtons[next]);
 	}, { passive: true });
+})();
+
+// ========================================
+// FILM PLAYER — a poster linking to YouTube / Vimeo opens the video in a 16:9 player
+// under its card instead of leaving the site; other poster links behave as normal
+// ========================================
+(() => {
+	function embedFor(href) {
+		let u;
+		try { u = new URL(href); } catch (e) { return ''; }
+		const host = u.hostname.replace(/^www\./, '');
+		if (host === 'youtube.com' && u.searchParams.get('v')) {
+			return 'https://www.youtube-nocookie.com/embed/' + u.searchParams.get('v') + '?autoplay=1&rel=0';
+		}
+		if (host === 'youtu.be') return 'https://www.youtube-nocookie.com/embed' + u.pathname + '?autoplay=1&rel=0';
+		const vimeo = host === 'vimeo.com' && u.pathname.match(/^\/(\d+)/);
+		if (vimeo) return 'https://player.vimeo.com/video/' + vimeo[1] + '?autoplay=1';
+		return '';
+	}
+
+	let open = null;
+	function close() {
+		if (open) { open.remove(); open = null; }   // removing the iframe stops playback
+	}
+
+	document.querySelectorAll('.film-entry .film-poster[href]').forEach(poster => {
+		const src = embedFor(poster.href);
+		if (!src) return;
+		poster.classList.add('has-player');
+		poster.addEventListener('click', e => {
+			e.preventDefault();
+			const entry = poster.closest('.film-entry');
+			const same = open && entry.contains(open);
+			close();
+			if (same) return;                           // second click closes it
+			const box = document.createElement('div');
+			box.className = 'film-player';
+			const frame = document.createElement('iframe');
+			frame.src = src;
+			frame.title = (poster.querySelector('img') || {}).alt || 'Film';
+			frame.allow = 'autoplay; encrypted-media; fullscreen; picture-in-picture';
+			frame.allowFullscreen = true;
+			box.appendChild(frame);
+			entry.querySelector('.film-layout').after(box);
+			open = box;
+			box.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+		});
+	});
+
+	document.addEventListener('tabchange', close);
 })();
 
 // ========================================
@@ -4402,6 +4686,8 @@ const people = {
 	'nunchi': { name: 'NUNCHI', photo: '' },
 	'onyx': { name: 'ØNƴX', photo: '' },
 	'dory': { name: 'Dory', photo: '' },
+	'pascoal-furtado': { name: 'Pascoal Furtado', photo: '' },
+	'matheus-andrade': { name: 'Matheus Andrade', photo: '' },
 	'madz': { name: 'Madz', photo: '' },
 	'moon': { name: 'Moon', photo: '' },
 	'fairy': { name: 'Fairy', photo: '' },
@@ -4462,6 +4748,10 @@ const people = {
 // can appear in multiple films and in both cast and crew (e.g. valdir-neves).
 // `count` gives the real head count when not everyone is named yet.
 const filmCredits = {
+	matheus: {
+		cast: [['matheus-andrade', '']],
+		crew: [['valdir-neves', 'Director']]
+	},
 	reborn: {
 		cast: [['rita-primavera-lopes-familia', ''], ['giovanna-domiciano-neto', ''], ['dory', ''], ['leonor-canas', '']],
 		crew: [
@@ -4489,9 +4779,8 @@ const filmCredits = {
 		crew: [['charlie-chaves', 'Story'], ['charlie-chaves', 'Director'], ['charlie-chaves', 'Writer'], ['charlie-chaves', 'Editor'], ['charlie-chaves', 'Producer'], ['nityam', 'Director'], ['nityam', 'Writer'], ['nityam', 'Editor'], ['ines-serra', 'Assistant Director'], ['ines-serra', 'Producer'], ['rasmus', 'Cinematographer'], ['fabio-duarte', 'Sound'], ['lia-paladino', 'Editor'], ['madalena-oliveira', 'Art Director'], ['jose-machado', 'Production Assistant'], ['junta-de-freguesia-de-alvalade', 'Support'], ['stal-direccao-regional-lisboa', 'Support'], ['etic', 'Special Thanks'], ['joao-ramos', 'Special Thanks'], ['isabel-castelo-branco', 'Special Thanks'], ['gustavo-chaves', 'Special Thanks'], ['lorena-calderon', 'Special Thanks'], ['valdir-neves', 'Sound']]
 	},
 	chapito: {
-		cast: [],
-		crew: [['valdir-neves', 'Camera Operator'], ['valdir-neves', 'Sound']],
-		count: { crew: 5 }
+		cast: [['pascoal-furtado', 'Himself']],
+		crew: [['ines-serra', 'Director'], ['madalena-oliveira', 'Director'], ['charlie-chaves', ''], ['nityam', ''], ['valdir-neves', 'Camera Operator'], ['valdir-neves', 'Sound']]
 	},
 	doclis: {
 		cast: [],
@@ -4503,8 +4792,8 @@ const filmCredits = {
 		count: { cast: 2, crew: 2 }
 	},
 	free: {
-		cast: [],
-		crew: [['valdir-neves', 'Camera Operator']],
+		cast: [['sofia-serra', '']],
+		crew: [['ines-serra', 'Director'], ['valdir-neves', 'Camera Operator']],
 		count: { cast: 1, crew: 3 }
 	},
 	group1: {
@@ -4535,7 +4824,7 @@ const filmCredits = {
 	},
 	curta: {
 		cast: [],
-		crew: [['valdir-neves', 'Camera Operator']]
+		crew: [['valdir-neves', 'Director'], ['valdir-neves', 'Camera Operator']]
 	},
 	people: {
 		cast: [],
@@ -4654,34 +4943,48 @@ document.querySelectorAll('.film-entry[data-film]').forEach(section => {
 		}
 	});
 
-	// Under the title, one line each for what it is, its length and (if known) its month,
-	// read from the facts line in Details: "[MON] YEAR · DUR · TYPE". The type is skipped
-	// when it just repeats the title.
+	// Title row: "OTTO (2026) 10 min Short Film" — length and type after the year, from the
+	// facts line in Details ("[MON] YEAR · DUR · TYPE"; the type is skipped when it repeats
+	// the title). Under it: Valdir's roles in green (the green words of the description),
+	// where it was shown (data-venue on the section), and the month if known.
 	const titleEl = section.querySelector('.section-title');
 	const factsEl = section.querySelector('.film-facts');
 	const titleText = ((titleEl.firstChild && titleEl.firstChild.textContent) || '').trim();
+	const lines = [];
+	const roles = [...section.querySelectorAll('.film-desc .film-role')]
+		.map(r => r.textContent.trim().replace(/^./, c => c.toUpperCase()));
+	if (roles.length) lines.push([roles.join(' · '), 'film-role']);
+	// several screenings are separated by " | " in data-venue, one line each
+	(section.dataset.venue || '').split('|').map(v => v.trim()).filter(Boolean)
+		.forEach(v => lines.push([v, 'film-venue']));
 	if (factsEl) {
 		const [when, ...parts] = factsEl.textContent.split('·').map(s => s.trim()).filter(Boolean);
 		const dur = parts.find(s => /\b(MIN|DAYS)\b/i.test(s));
 		const type = parts.find(s => s !== dur);
 		const mon = (when.match(/[A-Za-z]{3}/) || [''])[0];
-		const lines = [];
-		if (type && type.toLowerCase() !== titleText.toLowerCase()) lines.push(type);
-		if (dur) lines.push(dur.replace(/^0/, '').toLowerCase());
-		if (mon) lines.push(new Date(mon + ' 1, 2000').toLocaleString('en', { month: 'long' }));
-		if (lines.length) {
-			const meta = document.createElement('div');
-			meta.className = 'film-meta';
-			lines.forEach(text => {
-				const line = document.createElement('div');
-				line.textContent = text;
-				meta.appendChild(line);
-			});
-			titleEl.after(meta);
+		const info = [];
+		// only longer works show their length up here (it's always in Details)
+		if (dur && parseInt(dur, 10) > 12) info.push(dur.replace(/^0/, '').toLowerCase());
+		if (type && type.toLowerCase() !== titleText.toLowerCase()) info.push(type);
+		if (info.length) {
+			const span = document.createElement('span');
+			span.className = 'film-info';
+			span.textContent = info.join(' ');
+			titleEl.appendChild(span);
 		}
+		if (mon) lines.push([new Date(mon + ' 1, 2000').toLocaleString('en', { month: 'long' })]);
 	}
-
-	// (Roles are written into each film's description, with the role words in green.)
+	if (lines.length) {
+		const meta = document.createElement('div');
+		meta.className = 'film-meta';
+		lines.forEach(([text, cls]) => {
+			const line = document.createElement('div');
+			if (cls) line.className = cls;
+			line.textContent = text;
+			meta.appendChild(line);
+		});
+		titleEl.after(meta);
+	}
 });
 
 // ========================================
